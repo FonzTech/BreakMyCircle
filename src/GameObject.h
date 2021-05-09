@@ -15,8 +15,10 @@ public:
 	GameObject();
 	~GameObject();
 
+	static Vector2 windowSize;
+
 	virtual void update() = 0;
 	virtual void draw() = 0;
 
-	static Vector2 windowSize;
+	void updateProjectionMatrix();
 };

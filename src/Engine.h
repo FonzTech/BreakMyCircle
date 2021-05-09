@@ -7,10 +7,10 @@
 
 using namespace Magnum;
 
-class Game : public Platform::Application
+class Engine : public Platform::Application
 {
 public:
-	explicit Game(const Arguments& arguments);
+	explicit Engine(const Arguments& arguments);
 
 protected:
 	Magnum::Timeline timeline;
@@ -24,5 +24,6 @@ private:
 	void mousePressEvent(MouseEvent& event) override;
 	void mouseReleaseEvent(MouseEvent& event) override;
 	void mouseMoveEvent(MouseMoveEvent& event) override;
+	void viewportEvent(ViewportEvent& event) override;
 	void exitEvent(ExitEvent& event) override;
 };

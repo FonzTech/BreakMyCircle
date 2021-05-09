@@ -6,6 +6,7 @@
 #include <Magnum/MeshTools/CompressIndices.h>
 
 using namespace Magnum;
+using namespace Magnum::Math::Literals;
 
 Bubble::Bubble() : GameObject()
 {
@@ -23,17 +24,22 @@ Bubble::Bubble() : GameObject()
 		.setCount(meshData->indexCount())
 		.addVertexBuffer(std::move(vertices), 0, Shaders::Phong::Position{}, Shaders::Phong::Normal{})
 		.setIndexBuffer(std::move(indices), 0, compressed.second);
+
+	// Set diffuse color
+	mDiffuseColor = 0xffffff_rgbf;
+	mAmbientColor = 0xff0000_rgbf;
 }
 
 void Bubble::update()
 {
+	updateProjectionMatrix();
 }
 
 void Bubble::draw()
 {
-	mShader.setLightPosition({ {1.4f, 1.0f, 0.75f} })
-		.setDiffuseColor(mColor)
-		.setAmbientColor({ 0.0f, 0.0f, 0.0f, 1.0f })
+	mShader.setLightPositions({ {1.4f, 2.0f, 1.75f } })
+		.setDiffuseColor(mDiffuseColor)
+		.setAmbientColor(mAmbientColor)
 		.setTransformationMatrix(mTransformation)
 		.setNormalMatrix(mTransformation.normalMatrix())
 		.setProjectionMatrix(mProjection)

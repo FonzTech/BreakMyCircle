@@ -1,27 +1,28 @@
 #include <Magnum/GL/Renderer.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
-#include "Game.h"
+#include "Engine.h"
 #include "GameObject.h"
 #include "RoomManager.h"
 #include "Bubble.h"
 
-Game::Game(const Arguments& arguments) :
+Engine::Engine(const Arguments& arguments) :
 	Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
 {
 	// Start timeline
 	timeline.start();
 
-	// Create required singletons
-	RoomManager::singleton = std::make_shared<RoomManager>();
-	RoomManager::singleton->gameObjects.push_back(std::make_shared<Bubble>());
-
 	// Enable renderer features
 	GL::Renderer::enable(GL::Renderer::Feature::DepthTest);
 	GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
+	GL::Renderer::setClearColor(Magnum::Color4({ 0.25f, 0.25f, 0.25f, 1.0f }));
+
+	// Create required singletons
+	RoomManager::singleton = std::make_shared<RoomManager>();
+	RoomManager::singleton->gameObjects.push_back(std::make_shared<Bubble>());
 }
 
-void Game::tickEvent()
+void Engine::tickEvent()
 {
 	// Compute delta time
 	deltaTime = 15.0f * timeline.previousFrameDuration();
@@ -40,10 +41,9 @@ void Game::tickEvent()
 	redraw();
 }
 
-void Game::drawEvent()
+void Engine::drawEvent()
 {
 	// Clear buffer
-	GL::defaultFramebuffer.clearColor(Magnum::Color4({ 1.0f, 0.0f, 0.0f, 1.0f }));
 	GL::defaultFramebuffer.clear(GL::FramebufferClear::Color | GL::FramebufferClear::Depth);
 
 	// Draw all game objects
@@ -57,7 +57,7 @@ void Game::drawEvent()
 	swapBuffers();
 }
 
-void Game::mousePressEvent(MouseEvent& event)
+void Engine::mousePressEvent(MouseEvent& event)
 {
 	if (event.button() != MouseEvent::Button::Left)
 		return;
@@ -65,12 +65,12 @@ void Game::mousePressEvent(MouseEvent& event)
 	event.setAccepted();
 }
 
-void Game::mouseReleaseEvent(MouseEvent& event)
+void Engine::mouseReleaseEvent(MouseEvent& event)
 {
 	event.setAccepted();
 }
 
-void Game::mouseMoveEvent(MouseMoveEvent& event)
+void Engine::mouseMoveEvent(MouseMoveEvent& event)
 {
 	if (!(event.buttons() & MouseMoveEvent::Button::Left))
 		return;
@@ -78,7 +78,12 @@ void Game::mouseMoveEvent(MouseMoveEvent& event)
 	event.setAccepted();
 }
 
-void Game::exitEvent(ExitEvent& event)
+void Engine::viewportEvent(ViewportEvent& event)
+{
+	GameObject::windowSize = Vector2(event.windowSize());
+}
+
+void Engine::exitEvent(ExitEvent& event)
 {
 	if (RoomManager::singleton != nullptr)
 	{

@@ -17,5 +17,5 @@ protected:
 
 	GL::Mesh mMesh;
 	Shaders::Phong mShader;
-	Color3 mColor;
+	Color3 mDiffuseColor, mAmbientColor;
 };

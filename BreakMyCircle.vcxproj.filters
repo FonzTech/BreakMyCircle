@@ -13,35 +13,41 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Game">
+      <UniqueIdentifier>{36976138-1165-4a49-9238-eee77ecd9f80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Game">
+      <UniqueIdentifier>{51d583a4-c26c-4dcf-889a-b607ba07c287}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src/main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src/Game.cpp">
+    <ClCompile Include="src/RoomManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src/Bubble.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="src/GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src/RoomManager.cpp">
+    <ClCompile Include="src\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src/Game.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src/Bubble.h">
+    <ClInclude Include="src/RoomManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src/GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src/RoomManager.h">
+    <ClInclude Include="src/Bubble.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
