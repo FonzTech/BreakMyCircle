@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.1145
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BreakMyCircle", "BreakMyCircle\BreakMyCircle.vcxproj", "{A9B98530-5FE5-43DD-A9DE-8D95CD75CAA1}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BreakMyCircle", "BreakMyCircle.vcxproj", "{A9B98530-5FE5-43DD-A9DE-8D95CD75CAA1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
