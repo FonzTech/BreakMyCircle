@@ -158,17 +158,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Bubble.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Game.cpp" />
-    <ClCompile Include="RoomManager.cpp" />
+    <ClCompile Include="src/Bubble.cpp" />
+    <ClCompile Include="src/GameObject.cpp" />
+    <ClCompile Include="src/main.cpp" />
+    <ClCompile Include="src/Game.cpp" />
+    <ClCompile Include="src/RoomManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Bubble.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="RoomManager.h" />
+    <ClInclude Include="src/Bubble.h" />
+    <ClInclude Include="src/Game.h" />
+    <ClInclude Include="src/GameObject.h" />
+    <ClInclude Include="src/RoomManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
