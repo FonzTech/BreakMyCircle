@@ -33,7 +33,7 @@
     <ClCompile Include="src/GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Engine.cpp">
+    <ClCompile Include="src/Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -47,7 +47,10 @@
     <ClInclude Include="src/Bubble.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\Engine.h">
+    <ClInclude Include="src/Engine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CommonTypes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

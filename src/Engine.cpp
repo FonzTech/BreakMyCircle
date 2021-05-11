@@ -4,7 +4,6 @@
 #include "Engine.h"
 #include "GameObject.h"
 #include "RoomManager.h"
-#include "Bubble.h"
 
 Engine::Engine(const Arguments& arguments) :
 	Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
@@ -15,30 +14,34 @@ Engine::Engine(const Arguments& arguments) :
 	// Enable renderer features
 	GL::Renderer::enable(GL::Renderer::Feature::DepthTest);
 	GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
-	GL::Renderer::setClearColor(Magnum::Color4({ 0.25f, 0.25f, 0.25f, 1.0f }));
+	GL::Renderer::setClearColor(Color4({ 0.25f, 0.25f, 0.25f, 1.0f }));
 
-	// Create required singletons
 	RoomManager::singleton = std::make_shared<RoomManager>();
-	RoomManager::singleton->gameObjects.push_back(std::make_shared<Bubble>());
+	RoomManager::singleton->setupRoom();
+	RoomManager::singleton->createExampleRoom();
 }
 
 void Engine::tickEvent()
 {
 	// Compute delta time
-	deltaTime = 15.0f * timeline.previousFrameDuration();
+	deltaTime = timeline.previousFrameDuration();
 
-	// Set common data for GameObject
-	GameObject::windowSize = Vector2{ windowSize() };
+	RoomManager::singleton->cameraEye += Vector3(0, 0, deltaTime);
+	RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(RoomManager::singleton->cameraEye, RoomManager::singleton->cameraTarget, Vector3::yAxis()));
 
 	// Update all game objects
-	for (unsigned int i = 0; i < RoomManager::singleton->gameObjects.size(); ++i)
+	for (UnsignedInt i = 0; i < RoomManager::singleton->mGameObjects.size(); ++i)
 	{
-		std::shared_ptr<GameObject> go = RoomManager::singleton->gameObjects[i];
+		std::shared_ptr<GameObject> go = RoomManager::singleton->mGameObjects[i];
+		go->deltaTime = deltaTime;
 		go->update();
 	}
 
 	// Trigger draw event
 	redraw();
+
+	// Advance timeline
+	timeline.nextFrame();
 }
 
 void Engine::drawEvent()
@@ -46,12 +49,8 @@ void Engine::drawEvent()
 	// Clear buffer
 	GL::defaultFramebuffer.clear(GL::FramebufferClear::Color | GL::FramebufferClear::Depth);
 
-	// Draw all game objects
-	for (unsigned int i = 0; i < RoomManager::singleton->gameObjects.size(); ++i)
-	{
-		std::shared_ptr<GameObject> go = RoomManager::singleton->gameObjects[i];
-		go->draw();
-	}
+	// Draw scene
+	RoomManager::singleton->mCamera->draw(RoomManager::singleton->mDrawables);
 
 	// Swap buffers
 	swapBuffers();
@@ -80,16 +79,19 @@ void Engine::mouseMoveEvent(MouseMoveEvent& event)
 
 void Engine::viewportEvent(ViewportEvent& event)
 {
-	GameObject::windowSize = Vector2(event.windowSize());
+	// Update viewport for camera
+	RoomManager::singleton->mCamera->setViewport(event.windowSize());
 }
 
 void Engine::exitEvent(ExitEvent& event)
 {
+	// Clear entire room
 	if (RoomManager::singleton != nullptr)
 	{
 		RoomManager::singleton->clear();
 		RoomManager::singleton = nullptr;
 	}
 
+	// Pass default behaviour
 	event.setAccepted();
 }

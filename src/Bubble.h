@@ -9,13 +9,15 @@
 class Bubble : public GameObject
 {
 public:
-	Bubble();
+	Bubble(SceneGraph::DrawableGroup3D& group);
+
+	Color3 mAmbientColor;
 
 protected:
 	void update() override;
-	void draw() override;
+	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 
 	GL::Mesh mMesh;
 	Shaders::Phong mShader;
-	Color3 mDiffuseColor, mAmbientColor;
+	Color3 mDiffuseColor;
 };

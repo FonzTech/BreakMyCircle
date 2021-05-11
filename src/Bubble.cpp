@@ -8,10 +8,10 @@
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
 
-Bubble::Bubble() : GameObject()
+Bubble::Bubble(SceneGraph::DrawableGroup3D& group) : GameObject(group)
 {
 	// Create test mesh
-	meshData = std::make_shared<Trade::MeshData>(Primitives::icosphereSolid(1));
+	meshData = std::make_shared<Trade::MeshData>(Primitives::icosphereSolid(2));
 
 	GL::Buffer vertices;
 	vertices.setData(MeshTools::interleave(meshData->positions3DAsArray(), meshData->normalsAsArray()));
@@ -32,16 +32,15 @@ Bubble::Bubble() : GameObject()
 
 void Bubble::update()
 {
-	updateProjectionMatrix();
 }
 
-void Bubble::draw()
+void Bubble::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	mShader.setLightPositions({ {1.4f, 2.0f, 1.75f } })
+	mShader.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
 		.setDiffuseColor(mDiffuseColor)
 		.setAmbientColor(mAmbientColor)
-		.setTransformationMatrix(mTransformation)
-		.setNormalMatrix(mTransformation.normalMatrix())
-		.setProjectionMatrix(mProjection)
+		.setTransformationMatrix(transformationMatrix * Matrix4::translation(position))
+		.setNormalMatrix(transformationMatrix.normalMatrix())
+		.setProjectionMatrix(camera.projectionMatrix())
 		.draw(mMesh);
 }

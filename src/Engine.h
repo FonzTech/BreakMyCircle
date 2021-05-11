@@ -5,6 +5,8 @@
 #include <Magnum/Platform/Sdl2Application.h>
 #include <Magnum/Timeline.h>
 
+#include "CommonTypes.h"
+
 using namespace Magnum;
 
 class Engine : public Platform::Application
@@ -13,11 +15,10 @@ public:
 	explicit Engine(const Arguments& arguments);
 
 protected:
-	Magnum::Timeline timeline;
-	Magnum::Float deltaTime;
+	Timeline timeline;
+	Float deltaTime;
 
 	void tickEvent() override;
-
 
 private:
 	void drawEvent() override;
@@ -26,4 +27,6 @@ private:
 	void mouseMoveEvent(MouseMoveEvent& event) override;
 	void viewportEvent(ViewportEvent& event) override;
 	void exitEvent(ExitEvent& event) override;
+
+	void iterateThroughChildren(Corrade::Containers::LinkedList<Object3D>& list);
 };

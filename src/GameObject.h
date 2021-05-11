@@ -2,23 +2,27 @@
 
 #include <Magnum/Trade/MeshData.h>
 #include <Magnum/Math/Matrix4.h>
+#include <Magnum/SceneGraph/Camera.h>
+#include <Magnum/SceneGraph/Drawable.h>
+#include <Magnum/SceneGraph/MatrixTransformation3D.h>
+#include <Magnum/SceneGraph/Scene.h>
+
+#include "CommonTypes.h"
 
 using namespace Magnum;
 
-class GameObject
+class GameObject : public Object3D, SceneGraph::Drawable3D
 {
 protected:
 	std::shared_ptr<Trade::MeshData> meshData;
-	Matrix4 mTransformation, mProjection;
 
 public:
-	GameObject();
+	GameObject(SceneGraph::DrawableGroup3D& group);
 	~GameObject();
 
-	static Vector2 windowSize;
-
 	virtual void update() = 0;
-	virtual void draw() = 0;
+	virtual void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) = 0;
 
-	void updateProjectionMatrix();
+	Float deltaTime;
+	Vector3 position;
 };
