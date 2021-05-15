@@ -28,7 +28,6 @@ void Engine::tickEvent()
 {
 	// Update input mouse events
 	InputManager::singleton->updateMouseStates();
-	printf("left %d\n", InputManager::singleton->mouseStates[ImMouseButtons::Left]);
 
 	// Compute delta time
 	deltaTime = timeline.previousFrameDuration();
