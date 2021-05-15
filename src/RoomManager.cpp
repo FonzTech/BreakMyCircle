@@ -2,6 +2,9 @@
 #include <Magnum/GL/DefaultFramebuffer.h>
 
 #include "RoomManager.h"
+#include "Bubble.h"
+#include "Player.h"
+
 
 using namespace Magnum::Math::Literals;
 
@@ -30,6 +33,7 @@ void RoomManager::setupRoom()
 
 void RoomManager::createTestRoom()
 {
+	// Available colors
 	std::vector<Color3> colors = {
 		0x0000c0_rgbf,
 		0x00c000_rgbf,
@@ -37,6 +41,7 @@ void RoomManager::createTestRoom()
 		0x00c0c0_rgbf,
 	};
 
+	// Create bubbles
 	for (UnsignedInt i = 0; i < 10; ++i)
 	{
 		for (UnsignedInt j = 0; j < 10; ++j)
@@ -68,6 +73,13 @@ void RoomManager::createTestRoom()
 		}
 	}
 
+	// Create player
+	std::shared_ptr<Player> p = std::make_shared<Player>(RoomManager::singleton->mDrawables);
+	p->setParent(&RoomManager::singleton->mScene);
+	p->position = { 10.0f, -40.0f, 0.0f };
+	RoomManager::singleton->mGameObjects.push_back(p);
+
+	// Camera position
 	cameraEye = { 10.0f, -20.0f, 50.0f };
 	cameraTarget = { 10.0f, -20.0f, 0.0f };
 }

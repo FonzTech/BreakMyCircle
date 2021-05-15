@@ -10,9 +10,9 @@
 #include <Magnum/Magnum.h>
 #include <Magnum/Platform/Sdl2Application.h>
 
-using namespace Magnum;
+#include "CommonTypes.h"
 
-typedef Platform::Application::MouseEvent::Button ImMouseButtons;
+using namespace Magnum;
 
 class InputManager
 {

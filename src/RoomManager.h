@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "GameObject.h"
-#include "Bubble.h"
 
 class RoomManager
 {

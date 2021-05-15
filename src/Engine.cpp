@@ -3,6 +3,7 @@
 
 #include "Engine.h"
 #include "InputManager.h"
+#include "AssetManager.h"
 #include "RoomManager.h"
 #include "GameObject.h"
 
@@ -23,6 +24,8 @@ Engine::Engine(const Arguments& arguments) :
 	GL::Renderer::setClearColor(Color4({ 0.25f, 0.25f, 0.25f, 1.0f }));
 
 	InputManager::singleton = std::make_shared<InputManager>();
+
+	AssetManager::singleton = std::make_shared<AssetManager>();
 
 	RoomManager::singleton = std::make_shared<RoomManager>();
 	RoomManager::singleton->setupRoom();
@@ -118,6 +121,9 @@ void Engine::exitEvent(ExitEvent& event)
 
 	// Clear input manager
 	InputManager::singleton = nullptr;
+
+	// Clear asset manager
+	AssetManager::singleton = nullptr;
 
 	// Pass default behaviour
 	event.setAccepted();

@@ -163,15 +163,19 @@
     <ClCompile Include="src/main.cpp" />
     <ClCompile Include="src/Engine.cpp" />
     <ClCompile Include="src/RoomManager.cpp" />
+    <ClCompile Include="src\AssetManager.cpp" />
     <ClCompile Include="src\InputManager.cpp" />
+    <ClCompile Include="src\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src/Bubble.h" />
     <ClInclude Include="src/Engine.h" />
     <ClInclude Include="src/GameObject.h" />
     <ClInclude Include="src/RoomManager.h" />
+    <ClInclude Include="src\AssetManager.h" />
     <ClInclude Include="src\CommonTypes.h" />
     <ClInclude Include="src\InputManager.h" />
+    <ClInclude Include="src\Player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
