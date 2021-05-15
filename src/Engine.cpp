@@ -2,8 +2,9 @@
 #include <Magnum/GL/DefaultFramebuffer.h>
 
 #include "Engine.h"
-#include "GameObject.h"
+#include "InputManager.h"
 #include "RoomManager.h"
+#include "GameObject.h"
 
 Engine::Engine(const Arguments& arguments) :
 	Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
@@ -16,6 +17,8 @@ Engine::Engine(const Arguments& arguments) :
 	GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
 	GL::Renderer::setClearColor(Color4({ 0.25f, 0.25f, 0.25f, 1.0f }));
 
+	InputManager::singleton = std::make_shared<InputManager>();
+
 	RoomManager::singleton = std::make_shared<RoomManager>();
 	RoomManager::singleton->setupRoom();
 	RoomManager::singleton->createExampleRoom();
@@ -23,10 +26,14 @@ Engine::Engine(const Arguments& arguments) :
 
 void Engine::tickEvent()
 {
+	// Update input mouse events
+	InputManager::singleton->updateMouseStates();
+	printf("left %d\n", InputManager::singleton->mouseStates[ImMouseButtons::Left]);
+
 	// Compute delta time
 	deltaTime = timeline.previousFrameDuration();
 
-	RoomManager::singleton->cameraEye += Vector3(0, 0, deltaTime);
+	// RoomManager::singleton->cameraEye += Vector3(0, 0, deltaTime);
 	RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(RoomManager::singleton->cameraEye, RoomManager::singleton->cameraTarget, Vector3::yAxis()));
 
 	// Update all game objects
@@ -58,22 +65,33 @@ void Engine::drawEvent()
 
 void Engine::mousePressEvent(MouseEvent& event)
 {
-	if (event.button() != MouseEvent::Button::Left)
-		return;
+	// Update state for pressed mouse button
+	updateMouseButtonState(event, true);
 
+	// Capture event
 	event.setAccepted();
 }
 
 void Engine::mouseReleaseEvent(MouseEvent& event)
 {
+	// Update state for pressed mouse button
+	updateMouseButtonState(event, false);
+
+	// Capture event
 	event.setAccepted();
 }
 
 void Engine::mouseMoveEvent(MouseMoveEvent& event)
 {
+	/*
 	if (!(event.buttons() & MouseMoveEvent::Button::Left))
 		return;
+	*/
 
+	// Update state for all mouse buttons
+	updateMouseButtonStates(event);
+
+	// Capture event
 	event.setAccepted();
 }
 
@@ -94,4 +112,23 @@ void Engine::exitEvent(ExitEvent& event)
 
 	// Pass default behaviour
 	event.setAccepted();
+}
+
+void Engine::updateMouseButtonState(const MouseEvent& event, const bool & pressed)
+{
+	// Update state for the button which triggered the event
+	InputManager::singleton->setMouseState(event.button(), pressed);
+}
+
+void Engine::updateMouseButtonStates(const MouseMoveEvent& event)
+{
+	// Get current mouse position
+	InputManager::singleton->mousePosition = event.relativePosition();
+
+	// Get pressed buttons for this mouse move event
+	const auto& mouseButtons = event.buttons();
+
+	// Check if left button is actually pressed
+	const auto& value = mouseButtons & MouseMoveEvent::Button::Left;
+	InputManager::singleton->setMouseState(ImMouseButtons::Left, value ? true : false);
 }

@@ -28,5 +28,6 @@ private:
 	void viewportEvent(ViewportEvent& event) override;
 	void exitEvent(ExitEvent& event) override;
 
-	void iterateThroughChildren(Corrade::Containers::LinkedList<Object3D>& list);
+	void updateMouseButtonState(const MouseEvent& event, const bool & pressed);
+	void updateMouseButtonStates(const MouseMoveEvent& event);
 };
