@@ -28,7 +28,7 @@ void RoomManager::setupRoom()
 	mCamera->setViewport(GL::defaultFramebuffer.viewport().size());
 }
 
-void RoomManager::createExampleRoom()
+void RoomManager::createTestRoom()
 {
 	std::vector<Color3> colors = {
 		0x0000c0_rgbf,
@@ -50,11 +50,11 @@ void RoomManager::createExampleRoom()
 				{
 					break;
 				}
-				startX = 1.0f;
+				startX = 2.0f;
 			}
 			else
 			{
-				startX = 0.0f;
+				startX = 1.0f;
 			}
 
 			Float y = (Float) i;
@@ -67,4 +67,7 @@ void RoomManager::createExampleRoom()
 			RoomManager::singleton->mGameObjects.push_back(b);
 		}
 	}
+
+	cameraEye = { 10.0f, -20.0f, 50.0f };
+	cameraTarget = { 10.0f, -20.0f, 0.0f };
 }

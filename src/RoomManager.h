@@ -22,5 +22,5 @@ public:
 
 	void clear();
 	void setupRoom();
-	void createExampleRoom();
+	void createTestRoom();
 };

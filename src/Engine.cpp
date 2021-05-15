@@ -9,6 +9,11 @@
 Engine::Engine(const Arguments& arguments) :
 	Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
 {
+	// Setup window
+	#ifdef MAGNUM_SDL2APPLICATION_MAIN
+	setWindowSize({ 432, 768 });
+	#endif
+
 	// Start timeline
 	timeline.start();
 
@@ -21,7 +26,7 @@ Engine::Engine(const Arguments& arguments) :
 
 	RoomManager::singleton = std::make_shared<RoomManager>();
 	RoomManager::singleton->setupRoom();
-	RoomManager::singleton->createExampleRoom();
+	RoomManager::singleton->createTestRoom();
 }
 
 void Engine::tickEvent()
@@ -34,6 +39,7 @@ void Engine::tickEvent()
 
 	// RoomManager::singleton->cameraEye += Vector3(0, 0, deltaTime);
 	RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(RoomManager::singleton->cameraEye, RoomManager::singleton->cameraTarget, Vector3::yAxis()));
+	RoomManager::singleton->mCamera->setViewport(windowSize());
 
 	// Update all game objects
 	for (UnsignedInt i = 0; i < RoomManager::singleton->mGameObjects.size(); ++i)
@@ -96,7 +102,8 @@ void Engine::mouseMoveEvent(MouseMoveEvent& event)
 
 void Engine::viewportEvent(ViewportEvent& event)
 {
-	// Update viewport for camera
+	// Update viewports
+	GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, event.windowSize()));
 	RoomManager::singleton->mCamera->setViewport(event.windowSize());
 }
 
@@ -108,6 +115,9 @@ void Engine::exitEvent(ExitEvent& event)
 		RoomManager::singleton->clear();
 		RoomManager::singleton = nullptr;
 	}
+
+	// Clear input manager
+	InputManager::singleton = nullptr;
 
 	// Pass default behaviour
 	event.setAccepted();
