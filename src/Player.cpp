@@ -12,7 +12,7 @@ using namespace Magnum::Math::Literals;
 
 Player::Player(SceneGraph::DrawableGroup3D& group) : GameObject(group)
 {
-	AssetManager::singleton->loadMesh("scenes/test.glb");
+	std::shared_ptr<ImportedAssets> assets = AssetManager::singleton->loadAssets("scenes/test.glb");
 
 	// Set diffuse color
 	mDiffuseColor = 0xffffff_rgbf;

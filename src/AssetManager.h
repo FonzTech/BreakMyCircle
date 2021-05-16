@@ -3,19 +3,31 @@
 #include <memory>
 #include <string>
 #include <Corrade/Containers/Array.h>
+#include <Corrade/Containers/Optional.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/GL/Texture.h>
+#include <Magnum/Trade/AbstractImporter.h>
+#include <Magnum/Trade/PhongMaterialData.h>
+
+#include "CommonTypes.h"
 
 using namespace Magnum;
 
+struct ImportedAssets
+{
+	AssetMeshes meshes;
+	AssetTextures textures;
+	AssetMaterials materials;
+};
+
 class AssetManager
 {
-protected:
-	Containers::Array<Containers::Optional<GL::Mesh>> _meshes;
-	Containers::Array<Containers::Optional<GL::Texture2D>> _textures;
+private:
+	void processChildrenAssets(std::shared_ptr<ImportedAssets> assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i);
 
 public:
 	static std::shared_ptr<AssetManager> singleton;
 
-	void loadMesh(const std::string& filename);
+	std::shared_ptr<ImportedAssets> loadAssets(const std::string& filename);
+
 };

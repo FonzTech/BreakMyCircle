@@ -1,25 +1,23 @@
 #include "AssetManager.h"
 
-#include <Corrade/Containers/Optional.h>
 #include <Corrade/Utility/DebugStl.h>
 #include <Magnum/ImageView.h>
 #include <Magnum/PixelFormat.h>
 #include <Magnum/GL/Renderer.h>
 #include <Magnum/GL/TextureFormat.h>
 #include <Magnum/MeshTools/Compile.h>
-#include <Magnum/Trade/AbstractImporter.h>
 #include <Magnum/Trade/ImageData.h>
 #include <Magnum/Trade/MeshData.h>
 #include <Magnum/Trade/MeshObjectData3D.h>
-#include <Magnum/Trade/PhongMaterialData.h>
 #include <Magnum/Trade/SceneData.h>
 #include <Magnum/Trade/TextureData.h>
 
 #include "CommonTypes.h"
+#include "RoomManager.h"
 
 std::shared_ptr<AssetManager> AssetManager::singleton = nullptr;
 
-void AssetManager::loadMesh(const std::string& filename)
+std::shared_ptr<ImportedAssets> AssetManager::loadAssets(const std::string& filename)
 {
 	// Load a scene importer plugin
 	PluginManager::Manager<Trade::AbstractImporter> manager;
@@ -31,8 +29,11 @@ void AssetManager::loadMesh(const std::string& filename)
 		std::exit(4);
 	}
 
+	// Create asset container for this file
+	std::shared_ptr<ImportedAssets> assets = std::make_shared<ImportedAssets>();
+
 	// Load all textures. Textures that fail to load will be NullOpt
-	_textures = Containers::Array<Containers::Optional<GL::Texture2D>>{ importer->textureCount() };
+	assets->textures = AssetTextures{ importer->textureCount() };
 	for (UnsignedInt i = 0; i != importer->textureCount(); ++i)
 	{
 		Debug{} << "Importing texture" << i << importer->textureName(i);
@@ -72,7 +73,7 @@ void AssetManager::loadMesh(const std::string& filename)
 			.setSubImage(0, {}, *imageData)
 			.generateMipmap();
 
-		_textures[i] = std::move(texture);
+		assets->textures[i] = std::move(texture);
 	}
 
 	/*
@@ -80,7 +81,7 @@ void AssetManager::loadMesh(const std::string& filename)
 		data will be stored directly in objects later, so save them only
 		temporarily.
 	*/
-	Containers::Array<Containers::Optional<Trade::PhongMaterialData>> materials{ importer->materialCount() };
+	assets->materials = AssetMaterials{ importer->materialCount() };
 	for (UnsignedInt i = 0; i != importer->materialCount(); ++i)
 	{
 		Debug{} << "Importing material" << i << importer->materialName(i);
@@ -92,11 +93,11 @@ void AssetManager::loadMesh(const std::string& filename)
 			continue;
 		}
 
-		materials[i] = std::move(static_cast<Trade::PhongMaterialData&>(*materialData));
+		assets->materials[i] = std::move(static_cast<Trade::PhongMaterialData&>(*materialData));
 	}
 
 	// Load all meshes. Meshes that fail to load will be NullOpt.
-	_meshes = Containers::Array<Containers::Optional<GL::Mesh>>{ importer->meshCount() };
+	assets->meshes = AssetMeshes{ importer->meshCount() };
 	for (UnsignedInt i = 0; i != importer->meshCount(); ++i)
 	{
 		Debug{} << "Importing mesh" << i << importer->meshName(i);
@@ -109,7 +110,7 @@ void AssetManager::loadMesh(const std::string& filename)
 		}
 
 		/* Compile the mesh */
-		_meshes[i] = MeshTools::compile(*meshData);
+		assets->meshes[i] = MeshTools::compile(*meshData);
 	}
 
 	// Load the scene
@@ -121,13 +122,78 @@ void AssetManager::loadMesh(const std::string& filename)
 		if (!sceneData)
 		{
 			Error{} << "Cannot load scene, exiting";
-			return;
+			return nullptr;
 		}
 
 		// Recursively add all children
-		for (UnsignedInt objectId : sceneData->children3D())
+		for (const UnsignedInt & objectId : sceneData->children3D())
 		{
-			// addObject(*importer, materials, RoomManager::singleton->mScene, objectId);
+			processChildrenAssets(assets, *importer, RoomManager::singleton->mScene, objectId);
+			return assets;
 		}
+	}
+	else if (!assets->meshes.empty() && assets->meshes[0])
+	{
+		Error{} << "ColoredDrawable not supported for mesh 0";
+		return assets;
+	}
+	return nullptr;
+}
+
+void AssetManager::processChildrenAssets(std::shared_ptr<ImportedAssets> assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i)
+{
+	Debug{} << "Importing object" << i << importer.object3DName(i);
+	Containers::Pointer<Trade::ObjectData3D> objectData = importer.object3D(i);
+	if (!objectData) {
+		Error{} << "Cannot import object, skipping";
+		return;
+	}
+
+	// Add the object to the scene and set its transformation
+	auto* object = new Object3D{ &parent };
+	object->setTransformation(objectData->transformation());
+
+	// Add a drawable if the object has a mesh and the mesh is loaded
+	if (objectData->instanceType() == Trade::ObjectInstanceType3D::Mesh && objectData->instance() != -1 && assets->meshes[objectData->instance()])
+	{
+		const Int materialId = static_cast<Trade::MeshObjectData3D*>(objectData.get())->material();
+
+		// Material not available / not loaded, use a default material
+		if (materialId == -1 || !assets->materials[materialId])
+		{
+			Error{} << "ColoredDrawable not supported for mesh " << objectData->instance();
+			// new ColoredDrawable{ *object, _coloredShader, *_meshes[objectData->instance()], 0xffffff_rgbf, _drawables };
+
+			/*
+				Textured material. If the texture failed to load, again just use a
+				default colored material.
+			*/
+		}
+		else if (assets->materials[materialId]->flags() & Trade::PhongMaterialData::Flag::DiffuseTexture)
+		{
+			Containers::Optional<GL::Texture2D>& texture = assets->textures[assets->materials[materialId]->diffuseTexture()];
+			if (texture)
+			{
+				// new TexturedDrawable{ *object, _texturedShader, *_meshes[objectData->instance()], *texture, _drawables };
+			}
+			else
+			{
+				Error{} << "ColoredDrawable not supported for mesh " << objectData->instance();
+				// new ColoredDrawable{ *object, _coloredShader, *_meshes[objectData->instance()], 0xffffff_rgbf, _drawables };
+			}
+
+			// Color-only material
+		}
+		else
+		{
+			Error{} << "ColoredDrawable not supported for mesh " << objectData->instance();
+			// new ColoredDrawable{ *object, _coloredShader, *_meshes[objectData->instance()], materials[materialId]->diffuseColor(), _drawables };
+		}
+	}
+
+	// Recursively add children
+	for (const std::size_t & id : objectData->children())
+	{
+		processChildrenAssets(assets, importer, *object, id);
 	}
 }
