@@ -10,7 +10,7 @@ class RoomManager
 public:
 	static std::shared_ptr<RoomManager> singleton;
 
-	Vector3 cameraEye, cameraTarget;
+	Vector3 mCameraEye, mCameraTarget;
 	std::vector<std::shared_ptr<GameObject>> mGameObjects;
 	Scene3D mScene;
 	Object3D mCameraObject;

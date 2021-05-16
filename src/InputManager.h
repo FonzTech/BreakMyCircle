@@ -19,8 +19,8 @@ class InputManager
 public:
 	static std::shared_ptr<InputManager> singleton;
 
-	Vector2i mousePosition;
-	std::unordered_map<ImMouseButtons, Sint8> preTickMouseStates, mouseStates;
+	Vector2i mMousePosition;
+	std::unordered_map<ImMouseButtons, Sint8> mPreTickMouseStates, mMouseStates;
 
 	void setMouseState(const ImMouseButtons & key, const bool & pressed);
 	void updateMouseStates();

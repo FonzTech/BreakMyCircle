@@ -4,15 +4,15 @@ std::shared_ptr<InputManager> InputManager::singleton = nullptr;
 
 void InputManager::setMouseState(const ImMouseButtons & key, const bool & pressed)
 {
-	preTickMouseStates[key] = pressed;	
+	mPreTickMouseStates[key] = pressed;	
 }
 
 void InputManager::updateMouseStates()
 {
-	for (std::unordered_map<ImMouseButtons, Sint8>::iterator it = preTickMouseStates.begin(); it != preTickMouseStates.end(); ++it)
+	for (std::unordered_map<ImMouseButtons, Sint8>::iterator it = mPreTickMouseStates.begin(); it != mPreTickMouseStates.end(); ++it)
 	{
-		auto* ms = &mouseStates[it->first];
-		if (preTickMouseStates[it->first])
+		auto* ms = &mMouseStates[it->first];
+		if (mPreTickMouseStates[it->first])
 		{
 			if (*ms != IM_STATE_PRESSING)
 			{

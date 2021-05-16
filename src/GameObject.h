@@ -14,7 +14,7 @@ using namespace Magnum;
 class GameObject : public Object3D, SceneGraph::Drawable3D
 {
 protected:
-	std::shared_ptr<Trade::MeshData> meshData;
+	std::shared_ptr<Trade::MeshData> mMeshData;
 
 public:
 	GameObject(SceneGraph::DrawableGroup3D& group);

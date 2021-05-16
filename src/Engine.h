@@ -15,8 +15,8 @@ public:
 	explicit Engine(const Arguments& arguments);
 
 protected:
-	Timeline timeline;
-	Float deltaTime;
+	Timeline mTimeline;
+	Float mDeltaTime;
 
 	void tickEvent() override;
 

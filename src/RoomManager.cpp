@@ -12,8 +12,8 @@ std::shared_ptr<RoomManager> RoomManager::singleton = nullptr;
 
 RoomManager::RoomManager()
 {
-	cameraEye = { 0.0f, 0.0f, 20.0f };
-	cameraTarget = { 0.0f, 0.0f, 0.0f };
+	mCameraEye = { 0.0f, 0.0f, 20.0f };
+	mCameraTarget = { 0.0f, 0.0f, 0.0f };
 }
 
 void RoomManager::clear()
@@ -80,6 +80,6 @@ void RoomManager::createTestRoom()
 	RoomManager::singleton->mGameObjects.push_back(p);
 
 	// Camera position
-	cameraEye = { 10.0f, -20.0f, 50.0f };
-	cameraTarget = { 10.0f, -20.0f, 0.0f };
+	mCameraEye = { 10.0f, -20.0f, 50.0f };
+	mCameraTarget = { 10.0f, -20.0f, 0.0f };
 }

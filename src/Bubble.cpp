@@ -11,17 +11,17 @@ using namespace Magnum::Math::Literals;
 Bubble::Bubble(SceneGraph::DrawableGroup3D& group) : GameObject(group)
 {
 	// Create test mesh
-	meshData = std::make_shared<Trade::MeshData>(Primitives::icosphereSolid(2));
+	mMeshData = std::make_shared<Trade::MeshData>(Primitives::icosphereSolid(2));
 
 	GL::Buffer vertices;
-	vertices.setData(MeshTools::interleave(meshData->positions3DAsArray(), meshData->normalsAsArray()));
+	vertices.setData(MeshTools::interleave(mMeshData->positions3DAsArray(), mMeshData->normalsAsArray()));
 
-	std::pair<Containers::Array<char>, MeshIndexType> compressed = MeshTools::compressIndices(meshData->indicesAsArray());
+	std::pair<Containers::Array<char>, MeshIndexType> compressed = MeshTools::compressIndices(mMeshData->indicesAsArray());
 	GL::Buffer indices;
 	indices.setData(compressed.first);
 
-	mMesh.setPrimitive(meshData->primitive())
-		.setCount(meshData->indexCount())
+	mMesh.setPrimitive(mMeshData->primitive())
+		.setCount(mMeshData->indexCount())
 		.addVertexBuffer(std::move(vertices), 0, Shaders::Phong::Position{}, Shaders::Phong::Normal{})
 		.setIndexBuffer(std::move(indices), 0, compressed.second);
 

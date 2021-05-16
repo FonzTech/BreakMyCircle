@@ -16,7 +16,7 @@ Engine::Engine(const Arguments& arguments) :
 	#endif
 
 	// Start timeline
-	timeline.start();
+	mTimeline.start();
 
 	// Enable renderer features
 	GL::Renderer::enable(GL::Renderer::Feature::DepthTest);
@@ -38,17 +38,17 @@ void Engine::tickEvent()
 	InputManager::singleton->updateMouseStates();
 
 	// Compute delta time
-	deltaTime = timeline.previousFrameDuration();
+	mDeltaTime = mTimeline.previousFrameDuration();
 
 	// RoomManager::singleton->cameraEye += Vector3(0, 0, deltaTime);
-	RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(RoomManager::singleton->cameraEye, RoomManager::singleton->cameraTarget, Vector3::yAxis()));
+	RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(RoomManager::singleton->mCameraEye, RoomManager::singleton->mCameraTarget, Vector3::yAxis()));
 	RoomManager::singleton->mCamera->setViewport(windowSize());
 
 	// Update all game objects
 	for (UnsignedInt i = 0; i < RoomManager::singleton->mGameObjects.size(); ++i)
 	{
 		std::shared_ptr<GameObject> go = RoomManager::singleton->mGameObjects[i];
-		go->deltaTime = deltaTime;
+		go->deltaTime = mDeltaTime;
 		go->update();
 	}
 
@@ -56,7 +56,7 @@ void Engine::tickEvent()
 	redraw();
 
 	// Advance timeline
-	timeline.nextFrame();
+	mTimeline.nextFrame();
 }
 
 void Engine::drawEvent()
@@ -138,7 +138,7 @@ void Engine::updateMouseButtonState(const MouseEvent& event, const bool & presse
 void Engine::updateMouseButtonStates(const MouseMoveEvent& event)
 {
 	// Get current mouse position
-	InputManager::singleton->mousePosition = event.relativePosition();
+	InputManager::singleton->mMousePosition = event.relativePosition();
 
 	// Get pressed buttons for this mouse move event
 	const auto& mouseButtons = event.buttons();

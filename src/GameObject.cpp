@@ -8,8 +8,8 @@ GameObject::GameObject(SceneGraph::DrawableGroup3D& group) : SceneGraph::Drawabl
 
 GameObject::~GameObject()
 {
-	if (meshData != nullptr)
+	if (mMeshData != nullptr)
 	{
-		meshData = nullptr;
+		mMeshData = nullptr;
 	}
 }
