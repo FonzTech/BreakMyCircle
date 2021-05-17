@@ -10,9 +10,9 @@
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
 
-Player::Player(SceneGraph::DrawableGroup3D& group) : GameObject(group)
+Player::Player(SceneGraph::DrawableGroup3D& group) : GameObject()
 {
-	std::shared_ptr<ImportedAssets> assets = AssetManager::singleton->loadAssets("scenes/test.glb");
+	AssetManager::singleton->loadAssets(*this, "scenes/test.glb");
 
 	// Set diffuse color
 	mDiffuseColor = 0xffffff_rgbf;
@@ -23,9 +23,9 @@ void Player::update()
 {
 }
 
+/*
 void Player::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	/*
 	mShader.setLightPositions({ position })
 		.setDiffuseColor(mDiffuseColor)
 		.setAmbientColor(mAmbientColor)
@@ -33,5 +33,5 @@ void Player::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& cam
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
 		.draw(mMesh);
-		*/
 }
+		*/

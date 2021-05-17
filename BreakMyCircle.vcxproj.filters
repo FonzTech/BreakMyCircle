@@ -19,6 +19,12 @@
     <Filter Include="Header Files\Game">
       <UniqueIdentifier>{51d583a4-c26c-4dcf-889a-b607ba07c287}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{57d32256-2a8b-4e85-84d0-8ed53f2c4b21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics">
+      <UniqueIdentifier>{4302834a-33d8-4ddf-8c0d-3ac564201822}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src/main.cpp">
@@ -30,9 +36,6 @@
     <ClCompile Include="src/Bubble.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="src/GameObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src/Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -43,6 +46,15 @@
       <Filter>Source Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\AssetManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TexturedDrawable.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ColoredDrawable.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -70,6 +82,12 @@
     </ClInclude>
     <ClInclude Include="src\AssetManager.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TexturedDrawable.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ColoredDrawable.h">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

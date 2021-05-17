@@ -5,7 +5,6 @@
 #include "Bubble.h"
 #include "Player.h"
 
-
 using namespace Magnum::Math::Literals;
 
 std::shared_ptr<RoomManager> RoomManager::singleton = nullptr;
@@ -66,7 +65,6 @@ void RoomManager::createTestRoom()
 			Float x = (Float) j;
 
 			std::shared_ptr<Bubble> b = std::make_shared<Bubble>(RoomManager::singleton->mDrawables);
-			b->setParent(&RoomManager::singleton->mScene);
 			b->position = { startX + x * 2.0f, y * -2.0f, 0.0f };
 			b->mAmbientColor = colors[index];
 			RoomManager::singleton->mGameObjects.push_back(b);
@@ -75,7 +73,6 @@ void RoomManager::createTestRoom()
 
 	// Create player
 	std::shared_ptr<Player> p = std::make_shared<Player>(RoomManager::singleton->mDrawables);
-	p->setParent(&RoomManager::singleton->mScene);
 	p->position = { 10.0f, -40.0f, 0.0f };
 	RoomManager::singleton->mGameObjects.push_back(p);
 

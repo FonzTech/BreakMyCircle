@@ -17,7 +17,7 @@ public:
 	std::shared_ptr<SceneGraph::Camera3D> mCamera;
 	SceneGraph::DrawableGroup3D mDrawables;
 
-	RoomManager();
+	explicit RoomManager();
 
 	void clear();
 	void setupRoom();

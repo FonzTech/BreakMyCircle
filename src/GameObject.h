@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include <memory>
+
 #include <Magnum/Trade/MeshData.h>
 #include <Magnum/Math/Matrix4.h>
 #include <Magnum/SceneGraph/Camera.h>
@@ -11,17 +14,18 @@
 
 using namespace Magnum;
 
-class GameObject : public Object3D, SceneGraph::Drawable3D
+class GameObject
 {
 protected:
 	std::shared_ptr<Trade::MeshData> mMeshData;
 
 public:
-	GameObject(SceneGraph::DrawableGroup3D& group);
+	GameObject();
 	~GameObject();
 
 	virtual void update() = 0;
-	virtual void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) = 0;
+
+	std::vector<std::shared_ptr<SceneGraph::Drawable3D>> drawables;
 
 	Float deltaTime;
 	Vector3 position;

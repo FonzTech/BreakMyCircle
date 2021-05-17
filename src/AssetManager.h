@@ -6,10 +6,12 @@
 #include <Corrade/Containers/Optional.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/GL/Texture.h>
+#include <Magnum/Shaders/Phong.h>
 #include <Magnum/Trade/AbstractImporter.h>
 #include <Magnum/Trade/PhongMaterialData.h>
 
 #include "CommonTypes.h"
+#include "GameObject.h"
 
 using namespace Magnum;
 
@@ -23,11 +25,15 @@ struct ImportedAssets
 class AssetManager
 {
 private:
-	void processChildrenAssets(std::shared_ptr<ImportedAssets> assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i);
+	Shaders::Phong coloredShader;
+	Shaders::Phong texturedShader;
+
+	void processChildrenAssets(GameObject& gameObject, const ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i);
 
 public:
 	static std::shared_ptr<AssetManager> singleton;
 
-	std::shared_ptr<ImportedAssets> loadAssets(const std::string& filename);
+	AssetManager();
 
+	void loadAssets(GameObject& gameObject, const std::string& filename);
 };

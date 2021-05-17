@@ -15,7 +15,7 @@ public:
 
 protected:
 	void update() override;
-	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
+	// void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 
 	GL::Mesh mMesh;
 	Shaders::Phong mShader;

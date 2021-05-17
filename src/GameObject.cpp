@@ -1,15 +1,18 @@
 #include "GameObject.h"
 
-using namespace Magnum::Math::Literals;
-
-GameObject::GameObject(SceneGraph::DrawableGroup3D& group) : SceneGraph::Drawable3D{ *this, &group }
+GameObject::GameObject()
 {
 }
 
 GameObject::~GameObject()
 {
-	if (mMeshData != nullptr)
+	/*
+	while (!drawables.empty())
 	{
-		mMeshData = nullptr;
+		std::shared_ptr<SceneGraph::Drawable3D> back = drawables.back();
+		drawables.pop_back();
+
+		RoomManager::singleton->mDrawables.remove(*back);
 	}
+	*/
 }
