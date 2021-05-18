@@ -4,7 +4,7 @@
 #include <Magnum/Shaders/Phong.h>
 #include "CommonTypes.h"
 
-class TexturedDrawable : public Object3D, SceneGraph::Drawable3D
+class TexturedDrawable : public Object3D, public SceneGraph::Drawable3D
 {
 public:
 	explicit TexturedDrawable(SceneGraph::DrawableGroup3D& group, Shaders::Phong& shader, GL::Mesh& mesh, GL::Texture2D& texture);

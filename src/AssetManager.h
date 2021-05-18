@@ -28,7 +28,7 @@ private:
 	Shaders::Phong coloredShader;
 	Shaders::Phong texturedShader;
 
-	void processChildrenAssets(GameObject& gameObject, const ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i);
+	void processChildrenAssets(GameObject& gameObject, ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i);
 
 public:
 	static std::shared_ptr<AssetManager> singleton;

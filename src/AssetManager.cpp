@@ -151,13 +151,13 @@ void AssetManager::loadAssets(GameObject& gameObject, const std::string& filenam
 	}
 	else if (!assets.meshes.empty() && assets.meshes[0])
 	{
-		std::shared_ptr<ColoredDrawable> cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, coloredShader, assets.meshes[0], 0xffffff_rgbf);
+		std::shared_ptr<ColoredDrawable> cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, coloredShader, *(assets.meshes[0]), 0xffffffff_rgbaf);
 		cd->setParent(&RoomManager::singleton->mScene);
-		// gameObject.drawables.emplace_back(cd);
+		gameObject.drawables.emplace_back(cd);
 	}
 }
 
-void AssetManager::processChildrenAssets(GameObject& gameObject, const ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i)
+void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i)
 {
 	Debug{} << "Importing object" << i << importer.object3DName(i);
 	Containers::Pointer<Trade::ObjectData3D> objectData = importer.object3D(i);
@@ -179,10 +179,9 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, const ImportedA
 		// Material not available / not loaded, use a default material
 		if (materialId == -1 || !assets.materials[materialId])
 		{
-			std::shared_ptr<ColoredDrawable> cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, coloredShader, assets.meshes[objectData->instance()], 0xffffff_rgbf);
+			std::shared_ptr<ColoredDrawable> cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, coloredShader, *assets.meshes[objectData->instance()], 0xffffffff_rgbaf);
 			cd->setParent(&RoomManager::singleton->mScene);
-			// gameObject.drawables.emplace_back(cd);
-
+			gameObject.drawables.emplace_back(cd);
 		}
 		/*
 			Textured material. If the texture failed to load, again just use a
@@ -190,27 +189,27 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, const ImportedA
 		*/
 		else if (assets.materials[materialId]->flags() & Trade::PhongMaterialData::Flag::DiffuseTexture)
 		{
-			const Containers::Optional<GL::Texture2D>& texture = assets.textures[assets.materials[materialId]->diffuseTexture()];
+			Containers::Optional<GL::Texture2D>& texture = assets.textures[assets.materials[materialId]->diffuseTexture()];
 			if (texture)
 			{
-				std::shared_ptr<TexturedDrawable> td = std::make_shared<TexturedDrawable>(RoomManager::singleton->mDrawables, texturedShader, assets.meshes[objectData->instance()], *texture);
+				std::shared_ptr<TexturedDrawable> td = std::make_shared<TexturedDrawable>(RoomManager::singleton->mDrawables, texturedShader, *assets.meshes[objectData->instance()], *texture);
 				td->setParent(&RoomManager::singleton->mScene);
-				// gameObject.drawables.emplace_back(td);
+				gameObject.drawables.emplace_back(td);
 			}
 			else
 			{
-				std::shared_ptr<ColoredDrawable> cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, coloredShader, assets.meshes[objectData->instance()], 0xffffff_rgbf);
+				std::shared_ptr<ColoredDrawable> cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, coloredShader, *assets.meshes[objectData->instance()], 0xffffffff_rgbaf);
 				cd->setParent(&RoomManager::singleton->mScene);
-				// gameObject.drawables.emplace_back(cd);
+				gameObject.drawables.emplace_back(cd);
 			}
 
 		}
 		// Color-only material
 		else
 		{
-			std::shared_ptr<ColoredDrawable> cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, coloredShader, assets.meshes[objectData->instance()], assets.materials[materialId]->diffuseColor());
+			std::shared_ptr<ColoredDrawable> cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, coloredShader, *assets.meshes[objectData->instance()], assets.materials[materialId]->diffuseColor());
 			cd->setParent(&RoomManager::singleton->mScene);
-			// gameObject.drawables.emplace_back(cd);
+			gameObject.drawables.emplace_back(cd);
 		}
 	}
 
