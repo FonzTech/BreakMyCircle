@@ -176,6 +176,7 @@
     <ClInclude Include="src/RoomManager.h" />
     <ClInclude Include="src\AssetManager.h" />
     <ClInclude Include="src\ColoredDrawable.h" />
+    <ClInclude Include="src\IDrawCallback.h" />
     <ClInclude Include="src\TexturedDrawable.h" />
     <ClInclude Include="src\CommonTypes.h" />
     <ClInclude Include="src\InputManager.h" />

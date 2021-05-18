@@ -9,15 +9,13 @@
 class Player : public GameObject
 {
 public:
-	Player(SceneGraph::DrawableGroup3D& group);
+	Player();
 
 	Color3 mAmbientColor;
 
 protected:
 	void update() override;
-	// void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
+	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 
-	GL::Mesh mMesh;
-	Shaders::Phong mShader;
 	Color3 mDiffuseColor;
 };

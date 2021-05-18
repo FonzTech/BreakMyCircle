@@ -5,20 +5,19 @@
 #include <Magnum/Math/Color.h>
 
 #include "GameObject.h"
-#include "TexturedDrawable.h"
 
-class Bubble : public GameObject, public Object3D
+class Bubble : public GameObject
 {
 public:
-	Bubble(SceneGraph::DrawableGroup3D& group);
+	Bubble();
 
-	Color4 mAmbientColor;
+	Color3 mAmbientColor;
 
 protected:
 	void update() override;
-	// void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera);
+	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 
-	// GL::Mesh mMesh;
+	GL::Mesh mMesh;
 	Shaders::Phong mShader;
-	Color4 mDiffuseColor;
+	Color3 mDiffuseColor;
 };

@@ -41,9 +41,10 @@ void RoomManager::createTestRoom()
 	};
 
 	// Create bubbles
-	for (UnsignedInt i = 0; i < 10; ++i)
+	const UnsignedInt square = 0;
+	for (UnsignedInt i = 0; i < square; ++i)
 	{
-		for (UnsignedInt j = 0; j < 10; ++j)
+		for (UnsignedInt j = 0; j < square; ++j)
 		{
 			UnsignedInt index = std::rand() % colors.size();
 
@@ -64,7 +65,7 @@ void RoomManager::createTestRoom()
 			Float y = (Float) i;
 			Float x = (Float) j;
 
-			std::shared_ptr<Bubble> b = std::make_shared<Bubble>(RoomManager::singleton->mDrawables);
+			std::shared_ptr<Bubble> b = std::make_shared<Bubble>();
 			b->position = { startX + x * 2.0f, y * -2.0f, 0.0f };
 			b->mAmbientColor = colors[index];
 			RoomManager::singleton->mGameObjects.push_back(b);
@@ -72,7 +73,7 @@ void RoomManager::createTestRoom()
 	}
 
 	// Create player
-	std::shared_ptr<Player> p = std::make_shared<Player>(RoomManager::singleton->mDrawables);
+	std::shared_ptr<Player> p = std::make_shared<Player>();
 	p->position = { 10.0f, -40.0f, 0.0f };
 	RoomManager::singleton->mGameObjects.push_back(p);
 

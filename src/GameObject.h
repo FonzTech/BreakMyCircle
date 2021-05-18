@@ -11,10 +11,11 @@
 #include <Magnum/SceneGraph/Scene.h>
 
 #include "CommonTypes.h"
+#include "IDrawCallback.h"
 
 using namespace Magnum;
 
-class GameObject
+class GameObject : public IDrawCallback
 {
 protected:
 	std::shared_ptr<Trade::MeshData> mMeshData;

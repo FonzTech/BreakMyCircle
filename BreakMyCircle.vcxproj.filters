@@ -89,5 +89,8 @@
     <ClInclude Include="src\ColoredDrawable.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="src\IDrawCallback.h">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

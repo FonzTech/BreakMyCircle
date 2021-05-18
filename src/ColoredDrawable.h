@@ -1,8 +1,9 @@
 #pragma once
 
-#include <memory>
 #include <Magnum/Shaders/Phong.h>
+
 #include "CommonTypes.h"
+#include "IDrawCallback.h"
 
 class ColoredDrawable : public Object3D, public SceneGraph::Drawable3D
 {
@@ -13,6 +14,10 @@ public:
 	GL::Mesh& mMesh;
 	Color4 mColor;
 
+	void setDrawCallback(IDrawCallback* drawCallback);
+
 private:
+	IDrawCallback* mDrawCallback;
+
 	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 };

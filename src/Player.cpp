@@ -10,8 +10,9 @@
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
 
-Player::Player(SceneGraph::DrawableGroup3D& group) : GameObject()
+Player::Player() : GameObject()
 {
+	// Load asset
 	AssetManager::singleton->loadAssets(*this, "scenes/test.glb");
 
 	// Set diffuse color
@@ -23,15 +24,7 @@ void Player::update()
 {
 }
 
-/*
 void Player::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	mShader.setLightPositions({ position })
-		.setDiffuseColor(mDiffuseColor)
-		.setAmbientColor(mAmbientColor)
-		.setTransformationMatrix(transformationMatrix * Matrix4::translation(position))
-		.setNormalMatrix(transformationMatrix.normalMatrix())
-		.setProjectionMatrix(camera.projectionMatrix())
-		.draw(mMesh);
+	CORRADE_ASSERT(false, "The draw method for Player class shall not be called.");
 }
-		*/
