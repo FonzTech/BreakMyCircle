@@ -6,6 +6,7 @@
 #include <Magnum/MeshTools/CompressIndices.h>
 
 #include "AssetManager.h"
+#include "ColoredDrawable.h"
 
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
@@ -26,5 +27,5 @@ void Player::update()
 
 void Player::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	CORRADE_ASSERT(false, "The draw method for Player class shall not be called.");
+	CORRADE_ASSERT(false, "The draw method for Player class must not be called.");
 }

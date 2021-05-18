@@ -1,7 +1,10 @@
 #include "TexturedDrawable.h"
 
-TexturedDrawable::TexturedDrawable(SceneGraph::DrawableGroup3D& group, Shaders::Phong& shader, GL::Mesh& mesh, GL::Texture2D& texture) : SceneGraph::Drawable3D{ *this, &group }, mShader(shader), mMesh(mesh), mTexture(texture)
+TexturedDrawable::TexturedDrawable(SceneGraph::DrawableGroup3D& group, Shaders::Phong& shader, GL::Mesh& mesh, GL::Texture2D& texture) : SceneGraph::Drawable3D{ *this, &group }
 {
+	mShader = std::move(shader);
+	mMesh = std::move(mesh);
+	mTexture = std::move(texture);
 	mDrawCallback = nullptr;
 }
 

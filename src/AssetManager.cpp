@@ -180,7 +180,6 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 		// Material not available / not loaded, use a default material
 		if (materialId == -1 || !assets.materials[materialId])
 		{
-			printf("1111 %d\n", (*assets.meshes[objectData->instance()]).count());
 			std::shared_ptr<ColoredDrawable> cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, coloredShader, *assets.meshes[objectData->instance()], 0xffffffff_rgbaf);
 			cd->setParent(&RoomManager::singleton->mScene);
 			gameObject.drawables.emplace_back(cd);

@@ -11,8 +11,11 @@
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
 
-Bubble::Bubble() : GameObject()
+Bubble::Bubble(Color3& ambientColor) : GameObject()
 {
+	// Assign color
+	mAmbientColor = ambientColor;
+
 	// Create test mesh
 	Trade::MeshData mMeshData = Primitives::icosphereSolid(2);
 
@@ -23,7 +26,8 @@ Bubble::Bubble() : GameObject()
 	GL::Buffer indices;
 	indices.setData(compressed.first);
 
-	mMesh
+	GL::Mesh mesh;
+	mesh
 		.setPrimitive(mMeshData.primitive())
 		.setCount(mMeshData.indexCount())
 		.addVertexBuffer(std::move(vertices), 0, Shaders::Phong::Position{}, Shaders::Phong::Normal{})
@@ -31,10 +35,12 @@ Bubble::Bubble() : GameObject()
 
 	// Set diffuse color
 	mDiffuseColor = 0xffffff_rgbf;
-	mAmbientColor = 0xff0000_rgbf;
+
+	// Create Phong shader
+	Shaders::Phong shader;
 	
 	// Create colored drawable
-	std::shared_ptr<ColoredDrawable> cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, mShader, mMesh, mDiffuseColor);
+	cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, shader, mesh, mAmbientColor);
 	cd->setParent(&RoomManager::singleton->mScene);
 	cd->setDrawCallback(this);
 	drawables.emplace_back(cd);
@@ -46,11 +52,12 @@ void Bubble::update()
 
 void Bubble::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	mShader.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
+	cd->mShader
+		.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
 		.setDiffuseColor(mDiffuseColor)
 		.setAmbientColor(mAmbientColor)
 		.setTransformationMatrix(transformationMatrix * Matrix4::translation(position))
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
-		.draw(mMesh);
+		.draw(cd->mMesh);
 }

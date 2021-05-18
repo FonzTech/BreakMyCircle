@@ -1,18 +1,15 @@
 #include "ColoredDrawable.h"
 
-ColoredDrawable::ColoredDrawable(SceneGraph::DrawableGroup3D& group, Shaders::Phong& shader, GL::Mesh& mesh, const Color4& color) : SceneGraph::Drawable3D{ *this, &group }, mShader(shader), mMesh(mesh)
+ColoredDrawable::ColoredDrawable(SceneGraph::DrawableGroup3D& group, Shaders::Phong& shader, GL::Mesh& mesh, const Color4& color) : SceneGraph::Drawable3D{ *this, &group }
 {
+	mShader = std::move(shader);
+	mMesh = std::move(mesh);
 	mColor = color;
 	mDrawCallback = nullptr;
-	printf("5555 %d\n", mesh.count());
-	printf("6666 %d\n", mMesh.count());
-	printf("aaaa %d\n", &mesh);
 }
 
 void ColoredDrawable::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	printf("bbbb %p\n", &mMesh);
-	printf("2222 %d\n", mMesh.count());
 	if (mDrawCallback != nullptr)
 	{
 		mDrawCallback->draw(transformationMatrix, camera);

@@ -15,9 +15,9 @@ public:
 private:
 	IDrawCallback* mDrawCallback;
 
-	Shaders::Phong& mShader;
-	GL::Mesh& mMesh;
-	GL::Texture2D& mTexture;
+	Shaders::Phong mShader;
+	GL::Mesh mMesh;
+	GL::Texture2D mTexture;
 
 	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 };

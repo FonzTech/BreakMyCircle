@@ -10,8 +10,8 @@ class ColoredDrawable : public Object3D, public SceneGraph::Drawable3D
 public:
 	explicit ColoredDrawable(SceneGraph::DrawableGroup3D& group, Shaders::Phong& shader, GL::Mesh& mesh, const Color4& color);
 
-	Shaders::Phong& mShader;
-	GL::Mesh& mMesh;
+	Shaders::Phong mShader;
+	GL::Mesh mMesh;
 	Color4 mColor;
 
 	void setDrawCallback(IDrawCallback* drawCallback);

@@ -5,19 +5,19 @@
 #include <Magnum/Math/Color.h>
 
 #include "GameObject.h"
+#include "ColoredDrawable.h"
 
 class Bubble : public GameObject
 {
 public:
-	Bubble();
+	Bubble(Color3& ambientColor);
 
 	Color3 mAmbientColor;
+	Color3 mDiffuseColor;
 
-protected:
+	std::shared_ptr<ColoredDrawable> cd;
+
+private:
 	void update() override;
 	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
-
-	GL::Mesh mMesh;
-	Shaders::Phong mShader;
-	Color3 mDiffuseColor;
 };
