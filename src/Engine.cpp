@@ -42,7 +42,10 @@ void Engine::tickEvent()
 
 	// RoomManager::singleton->cameraEye += Vector3(0, 0, deltaTime);
 	RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(RoomManager::singleton->mCameraEye, RoomManager::singleton->mCameraTarget, Vector3::yAxis()));
-	RoomManager::singleton->mCamera->setViewport(windowSize());
+
+	auto ws = windowSize();
+	RoomManager::singleton->windowSize = ws;
+	RoomManager::singleton->mCamera->setViewport(ws);
 
 	// Update all game objects
 	for (UnsignedInt i = 0; i < RoomManager::singleton->mGameObjects.size(); ++i)
@@ -138,7 +141,7 @@ void Engine::updateMouseButtonState(const MouseEvent& event, const bool & presse
 void Engine::updateMouseButtonStates(const MouseMoveEvent& event)
 {
 	// Get current mouse position
-	InputManager::singleton->mMousePosition = event.relativePosition();
+	InputManager::singleton->mMousePosition = event.position();
 
 	// Get pressed buttons for this mouse move event
 	const auto& mouseButtons = event.buttons();

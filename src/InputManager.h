@@ -20,8 +20,13 @@ public:
 	static std::shared_ptr<InputManager> singleton;
 
 	Vector2i mMousePosition;
-	std::unordered_map<ImMouseButtons, Sint8> mPreTickMouseStates, mMouseStates;
+	std::unordered_map<ImMouseButtons, Sint8> mMouseStates;
+
+	InputManager();
 
 	void setMouseState(const ImMouseButtons & key, const bool & pressed);
 	void updateMouseStates();
+
+protected:
+	std::unordered_map<ImMouseButtons, Sint8> mPreTickMouseStates;
 };

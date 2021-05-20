@@ -2,6 +2,11 @@
 
 std::shared_ptr<InputManager> InputManager::singleton = nullptr;
 
+InputManager::InputManager()
+{
+	mMousePosition = { 0, 0 };
+}
+
 void InputManager::setMouseState(const ImMouseButtons & key, const bool & pressed)
 {
 	mPreTickMouseStates[key] = pressed;	
