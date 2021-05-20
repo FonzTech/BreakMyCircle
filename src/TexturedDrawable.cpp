@@ -1,6 +1,6 @@
 #include "TexturedDrawable.h"
 
-TexturedDrawable::TexturedDrawable(SceneGraph::DrawableGroup3D& group, Shaders::Phong& shader, GL::Mesh& mesh, GL::Texture2D& texture) : SceneGraph::Drawable3D{ *this, &group }
+TexturedDrawable::TexturedDrawable(SceneGraph::DrawableGroup3D& group, Shaders::Phong& shader, GL::Mesh& mesh, GL::Texture2D& texture) : BaseDrawable{ group }
 {
 	mShader = std::move(shader);
 	mMesh = std::move(mesh);
@@ -22,9 +22,4 @@ void TexturedDrawable::draw(const Matrix4& transformationMatrix, SceneGraph::Cam
 		.setProjectionMatrix(camera.projectionMatrix())
 		.bindDiffuseTexture(mTexture)
 		.draw(mMesh);
-}
-
-void TexturedDrawable::setDrawCallback(IDrawCallback* drawCallback)
-{
-	mDrawCallback = drawCallback;
 }

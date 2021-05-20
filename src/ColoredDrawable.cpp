@@ -1,6 +1,6 @@
 #include "ColoredDrawable.h"
 
-ColoredDrawable::ColoredDrawable(SceneGraph::DrawableGroup3D& group, Shaders::Phong& shader, GL::Mesh& mesh, const Color4& color) : SceneGraph::Drawable3D{ *this, &group }
+ColoredDrawable::ColoredDrawable(SceneGraph::DrawableGroup3D& group, Shaders::Phong& shader, GL::Mesh& mesh, const Color4& color) : BaseDrawable{ group }
 {
 	mShader = std::move(shader);
 	mMesh = std::move(mesh);
@@ -22,9 +22,4 @@ void ColoredDrawable::draw(const Matrix4& transformationMatrix, SceneGraph::Came
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
 		.draw(mMesh);
-}
-
-void ColoredDrawable::setDrawCallback(IDrawCallback* drawCallback)
-{
-	mDrawCallback = drawCallback;
 }

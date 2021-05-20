@@ -11,7 +11,7 @@
 #include <Magnum/SceneGraph/Scene.h>
 
 #include "CommonTypes.h"
-#include "IDrawCallback.h"
+#include "BaseDrawable.h"
 
 using namespace Magnum;
 
@@ -26,7 +26,7 @@ public:
 
 	virtual void update() = 0;
 
-	std::vector<std::shared_ptr<SceneGraph::Drawable3D>> drawables;
+	std::vector<std::shared_ptr<BaseDrawable>> drawables;
 
 	Float deltaTime;
 	Vector3 position;

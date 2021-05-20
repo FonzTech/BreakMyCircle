@@ -23,6 +23,8 @@ Player::Player() : GameObject()
 
 void Player::update()
 {
+	const auto& m = Matrix4::translation(position);
+	// drawables.at(0)->setTransformation(m);
 }
 
 void Player::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
