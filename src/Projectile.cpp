@@ -24,19 +24,19 @@ Projectile::Projectile(const Color3& ambientColor) : GameObject()
 	updateBBox();
 
 	// Create test mesh
-	Trade::MeshData mMeshData = Primitives::icosphereSolid(2);
+	Trade::MeshData meshData = Primitives::icosphereSolid(2U);
 
 	GL::Buffer vertices;
-	vertices.setData(MeshTools::interleave(mMeshData.positions3DAsArray(), mMeshData.normalsAsArray()));
+	vertices.setData(MeshTools::interleave(meshData.positions3DAsArray(), meshData.normalsAsArray()));
 
-	std::pair<Containers::Array<char>, MeshIndexType> compressed = MeshTools::compressIndices(mMeshData.indicesAsArray());
+	std::pair<Containers::Array<char>, MeshIndexType> compressed = MeshTools::compressIndices(meshData.indicesAsArray());
 	GL::Buffer indices;
 	indices.setData(compressed.first);
 
 	GL::Mesh mesh;
 	mesh
-		.setPrimitive(mMeshData.primitive())
-		.setCount(mMeshData.indexCount())
+		.setPrimitive(meshData.primitive())
+		.setCount(meshData.indexCount())
 		.addVertexBuffer(std::move(vertices), 0, Shaders::Phong::Position{}, Shaders::Phong::Normal{})
 		.setIndexBuffer(std::move(indices), 0, compressed.second);
 

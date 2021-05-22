@@ -18,9 +18,6 @@ using namespace Magnum;
 
 class GameObject : public IDrawCallback
 {
-protected:
-	std::shared_ptr<Trade::MeshData> mMeshData;
-
 public:
 	GameObject();
 	~GameObject();
