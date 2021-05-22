@@ -168,6 +168,7 @@
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\InputManager.cpp" />
     <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\Projectile.cpp" />
     <ClCompile Include="src\TexturedDrawable.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +180,7 @@
     <ClInclude Include="src\BaseDrawable.h" />
     <ClInclude Include="src\ColoredDrawable.h" />
     <ClInclude Include="src\IDrawCallback.h" />
+    <ClInclude Include="src\Projectile.h" />
     <ClInclude Include="src\TexturedDrawable.h" />
     <ClInclude Include="src\CommonTypes.h" />
     <ClInclude Include="src\InputManager.h" />

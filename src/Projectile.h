@@ -3,17 +3,20 @@
 #include <Magnum/Math/Color.h>
 
 #include "GameObject.h"
+#include "ColoredDrawable.h"
 
-class Player : public GameObject
+class Projectile : public GameObject
 {
 public:
-	Player();
+	Projectile(Color3& ambientColor);
 
 	Color3 mAmbientColor;
+	Vector3 velocity;
 
 protected:
+	Color3 mDiffuseColor;
+	std::shared_ptr<ColoredDrawable> cd;
+
 	void update() override;
 	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
-
-	Color3 mDiffuseColor;
 };

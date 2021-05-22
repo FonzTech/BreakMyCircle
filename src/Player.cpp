@@ -9,6 +9,7 @@
 #include "AssetManager.h"
 #include "InputManager.h"
 #include "RoomManager.h"
+#include "Projectile.h"
 
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
@@ -29,9 +30,17 @@ void Player::update()
 	Vector2 p1 = Vector2(InputManager::singleton->mMousePosition);
 	Vector2 p2 = Vector2({ RoomManager::singleton->windowSize.x() * 0.5f, Float(RoomManager::singleton->windowSize.y()) });
 	Vector2 pdir = p2 - p1;
-	Math::Unit<Math::Rad, Float> rads(std::atan2(pdir.y(), pdir.x()));
-	Math::Deg<Float> degs(rads);
-	printf("Angle to shoot is %f degrees (OpenGL directions)\n", Float(degs));
+	Math::Unit<Math::Rad, Float> unitRads(std::atan2(pdir.y(), pdir.x()));
+	Float rads(unitRads);
+
+	if (InputManager::singleton->mMouseStates[ImMouseButtons::Left] == IM_STATE_PRESSED)
+	{
+		Color3 bc = 0xff0000_rgbf;
+		std::shared_ptr<Projectile> go = std::make_shared<Projectile>(bc);
+		go->position = position;
+		go->velocity = { -std::cos(rads), std::sin(rads), 0.0f };
+		RoomManager::singleton->mGameObjects.push_back(go);
+	}
 
 	// Apply transformations to all drawables for this instance
 	const auto& m = Matrix4::translation(position);

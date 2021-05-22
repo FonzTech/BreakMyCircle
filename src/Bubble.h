@@ -15,9 +15,9 @@ public:
 	Color3 mAmbientColor;
 	Color3 mDiffuseColor;
 
+private:
 	std::shared_ptr<ColoredDrawable> cd;
 
-private:
 	void update() override;
 	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 };
