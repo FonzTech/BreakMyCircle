@@ -17,7 +17,7 @@ using namespace Magnum;
 class InputManager
 {
 public:
-	static std::shared_ptr<InputManager> singleton;
+	static std::unique_ptr<InputManager> singleton;
 
 	Vector2i mMousePosition;
 	std::unordered_map<ImMouseButtons, Sint8> mMouseStates;

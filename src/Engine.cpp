@@ -23,11 +23,11 @@ Engine::Engine(const Arguments& arguments) :
 	GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
 	GL::Renderer::setClearColor(Color4({ 0.25f, 0.25f, 0.25f, 1.0f }));
 
-	InputManager::singleton = std::make_shared<InputManager>();
+	InputManager::singleton = std::make_unique<InputManager>();
 
-	AssetManager::singleton = std::make_shared<AssetManager>();
+	AssetManager::singleton = std::make_unique<AssetManager>();
 
-	RoomManager::singleton = std::make_shared<RoomManager>();
+	RoomManager::singleton = std::make_unique<RoomManager>();
 	RoomManager::singleton->setupRoom();
 	RoomManager::singleton->createTestRoom();
 }
@@ -47,12 +47,29 @@ void Engine::tickEvent()
 	RoomManager::singleton->windowSize = ws;
 	RoomManager::singleton->mCamera->setViewport(ws);
 
+	// Get vector as reference
+	auto& gos = RoomManager::singleton->mGameObjects;
+
 	// Update all game objects
-	for (UnsignedInt i = 0; i < RoomManager::singleton->mGameObjects.size(); ++i)
+	for (UnsignedInt i = 0; i < gos.size(); ++i)
 	{
-		std::shared_ptr<GameObject> go = RoomManager::singleton->mGameObjects[i];
+		std::shared_ptr<GameObject> go = gos[i];
 		go->deltaTime = mDeltaTime;
 		go->update();
+	}
+
+	// Destroy all marked objects as such
+	for (UnsignedInt i = 0; i < gos.size();)
+	{
+		std::shared_ptr<GameObject> go = gos[i];
+		if (go->destroyMe)
+		{
+			RoomManager::singleton->mGameObjects.erase(gos.begin() + i);
+		}
+		else
+		{
+			++i;
+		}
 	}
 
 	// Trigger draw event
@@ -119,8 +136,8 @@ void Engine::exitEvent(ExitEvent& event)
 	if (RoomManager::singleton != nullptr)
 	{
 		RoomManager::singleton->clear();
-		RoomManager::singleton = nullptr;
 	}
+	RoomManager::singleton = nullptr;
 
 	// Clear input manager
 	InputManager::singleton = nullptr;

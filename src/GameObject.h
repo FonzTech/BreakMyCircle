@@ -5,6 +5,7 @@
 
 #include <Magnum/Trade/MeshData.h>
 #include <Magnum/Math/Matrix4.h>
+#include <Magnum/Math/Range.h>
 #include <Magnum/SceneGraph/Camera.h>
 #include <Magnum/SceneGraph/Drawable.h>
 #include <Magnum/SceneGraph/MatrixTransformation3D.h>
@@ -24,10 +25,13 @@ public:
 	GameObject();
 	~GameObject();
 
-	virtual void update() = 0;
-
+	bool destroyMe;
+	Float deltaTime;
 	std::vector<std::shared_ptr<BaseDrawable>> drawables;
 
-	Float deltaTime;
 	Vector3 position;
+	Range3D bbox;
+
+	virtual void update() = 0;
+	virtual void collidedWith(GameObject* gameObject) = 0;
 };

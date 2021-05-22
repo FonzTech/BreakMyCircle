@@ -10,14 +10,17 @@
 class Bubble : public GameObject
 {
 public:
-	Bubble(Color3& ambientColor);
+	Bubble(const Color3& ambientColor);
+
+	void destroyNearbyBubbles();
 
 	Color3 mAmbientColor;
 	Color3 mDiffuseColor;
 
 private:
-	std::shared_ptr<ColoredDrawable> cd;
+	std::shared_ptr<ColoredDrawable> mColoredDrawable;
 
 	void update() override;
 	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
+	void collidedWith(GameObject* gameObject) override;
 };

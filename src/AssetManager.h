@@ -31,7 +31,7 @@ private:
 	void processChildrenAssets(GameObject& gameObject, ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i);
 
 public:
-	static std::shared_ptr<AssetManager> singleton;
+	static std::unique_ptr<AssetManager> singleton;
 
 	AssetManager();
 

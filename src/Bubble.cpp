@@ -11,7 +11,7 @@
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
 
-Bubble::Bubble(Color3& ambientColor) : GameObject()
+Bubble::Bubble(const Color3& ambientColor) : GameObject()
 {
 	// Assign color
 	mAmbientColor = ambientColor;
@@ -40,10 +40,10 @@ Bubble::Bubble(Color3& ambientColor) : GameObject()
 	Shaders::Phong shader;
 	
 	// Create colored drawable
-	cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, shader, mesh, mAmbientColor);
-	cd->setParent(&RoomManager::singleton->mScene);
-	cd->setDrawCallback(this);
-	drawables.emplace_back(cd);
+	mColoredDrawable = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, shader, mesh, mAmbientColor);
+	mColoredDrawable->setParent(&RoomManager::singleton->mScene);
+	mColoredDrawable->setDrawCallback(this);
+	drawables.emplace_back(mColoredDrawable);
 }
 
 void Bubble::update()
@@ -52,12 +52,23 @@ void Bubble::update()
 
 void Bubble::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	cd->mShader
+	mColoredDrawable->mShader
 		.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
 		.setDiffuseColor(mDiffuseColor)
 		.setAmbientColor(mAmbientColor)
 		.setTransformationMatrix(transformationMatrix * Matrix4::translation(position))
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
-		.draw(cd->mMesh);
+		.draw(mColoredDrawable->mMesh);
+}
+
+void Bubble::collidedWith(GameObject* gameObject)
+{
+}
+
+void Bubble::destroyNearbyBubbles()
+{
+	// Destroy me first
+	destroyMe = true;
+	printf("Not implemented yet\n");
 }

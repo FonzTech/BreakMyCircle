@@ -7,17 +7,22 @@
 
 using namespace Magnum::Math::Literals;
 
-std::shared_ptr<RoomManager> RoomManager::singleton = nullptr;
+std::unique_ptr<RoomManager> RoomManager::singleton = nullptr;
 
 RoomManager::RoomManager()
 {
+	// Initialize camera members
 	mCameraEye = { 0.0f, 0.0f, 20.0f };
 	mCameraTarget = { 0.0f, 0.0f, 0.0f };
+
+	// Create collision manager
+	mCollisionManager = std::make_unique<CollisionManager>();
 }
 
 void RoomManager::clear()
 {
 	mGameObjects.clear();
+	mCollisionManager = nullptr;
 }
 
 void RoomManager::setupRoom()
@@ -41,12 +46,12 @@ void RoomManager::createTestRoom()
 	};
 
 	// Create bubbles
-	const UnsignedInt square = 10;
-	for (UnsignedInt i = 0; i < square; ++i)
+	const Int square = 10;
+	for (Int i = 0; i < square; ++i)
 	{
-		for (UnsignedInt j = 0; j < square; ++j)
+		for (Int j = 0; j < square; ++j)
 		{
-			UnsignedInt index = std::rand() % colors.size();
+			Int index = std::rand() % colors.size();
 
 			Float startX;
 			if (i % 2)
@@ -65,9 +70,13 @@ void RoomManager::createTestRoom()
 			Float y = (Float) i;
 			Float x = (Float) j;
 
+			Vector3 position = { startX + x * 2.0f, y * -2.0f, 0.0f };
+
 			std::shared_ptr<Bubble> b = std::make_shared<Bubble>(colors[index]);
-			b->position = { startX + x * 2.0f, y * -2.0f, 0.0f };
+			b->position = position;
+			b->bbox = Range3D{ position - Vector3(1.0f), position + Vector3(1.0f) };
 			RoomManager::singleton->mGameObjects.push_back(b);
+			RoomManager::singleton->mCollisionManager->addBubbleToRow(i, b);
 		}
 	}
 

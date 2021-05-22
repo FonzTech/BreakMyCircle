@@ -35,10 +35,10 @@ void Player::update()
 
 	if (InputManager::singleton->mMouseStates[ImMouseButtons::Left] == IM_STATE_PRESSED)
 	{
-		Color3 bc = 0xff0000_rgbf;
+		Color3 bc = 0xc00000_rgbf;
 		std::shared_ptr<Projectile> go = std::make_shared<Projectile>(bc);
 		go->position = position;
-		go->velocity = { -std::cos(rads), std::sin(rads), 0.0f };
+		go->mVelocity = { -std::cos(rads), std::sin(rads), 0.0f };
 		RoomManager::singleton->mGameObjects.push_back(go);
 	}
 
@@ -53,4 +53,8 @@ void Player::update()
 void Player::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	CORRADE_ASSERT(false, "The draw method for Player class must not be called.");
+}
+
+void Player::collidedWith(GameObject* gameObject)
+{
 }

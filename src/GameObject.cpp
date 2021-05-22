@@ -2,6 +2,7 @@
 
 GameObject::GameObject() : IDrawCallback()
 {
+	destroyMe = false;
 }
 
 GameObject::~GameObject()

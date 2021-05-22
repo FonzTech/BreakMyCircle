@@ -1,6 +1,6 @@
 #include "InputManager.h"
 
-std::shared_ptr<InputManager> InputManager::singleton = nullptr;
+std::unique_ptr<InputManager> InputManager::singleton = nullptr;
 
 InputManager::InputManager()
 {

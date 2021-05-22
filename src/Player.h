@@ -14,6 +14,7 @@ public:
 protected:
 	void update() override;
 	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
+	void collidedWith(GameObject* gameObject) override;
 
 	Color3 mDiffuseColor;
 };

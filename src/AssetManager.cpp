@@ -19,7 +19,7 @@
 
 using namespace Magnum::Math::Literals;
 
-std::shared_ptr<AssetManager> AssetManager::singleton = nullptr;
+std::unique_ptr<AssetManager> AssetManager::singleton = nullptr;
 
 AssetManager::AssetManager()
 {
