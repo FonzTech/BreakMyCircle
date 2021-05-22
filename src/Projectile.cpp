@@ -19,7 +19,7 @@ Projectile::Projectile(const Color3& ambientColor) : GameObject()
 	mVelocity = { 0.0f };
 	mLeftX = 1.0f;
 	mRightX = 19.0f;
-	mSpeed = 20.0f;
+	mSpeed = 50.0f;
 
 	updateBBox();
 
@@ -74,7 +74,7 @@ void Projectile::update()
 	updateBBox();
 
 	// Check for collision against other bubbles
-	std::shared_ptr<GameObject> bubble = RoomManager::singleton->mCollisionManager->checkBubbleCollision(this);
+	std::shared_ptr<GameObject> bubble = RoomManager::singleton->mCollisionManager->checkCollision(this);
 	if (bubble != nullptr)
 	{
 		collidedWith(bubble.get());
@@ -96,7 +96,7 @@ void Projectile::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D&
 void Projectile::updateBBox()
 {
 	// Update bounding box
-	bbox = Range3D{ position - Vector3(1.0f), position + Vector3(1.0f) };
+	bbox = Range3D{ position - Vector3(0.8f), position + Vector3(0.8f) };
 }
 
 void Projectile::collidedWith(GameObject* gameObject)
@@ -106,31 +106,31 @@ void Projectile::collidedWith(GameObject* gameObject)
 	// Stop this projectile
 	mVelocity = Vector3(0.0f);
 
+	// Get row index
+	const Int thisRowIndex = getRowIndexByBubble();
+
 	// Snap to grid
+	Float nx = thisRowIndex % 2 ? 1.0f : 0.0f;
 	position = {
-		floorf(position.x()) / 8.0f * 8.0f,
-		floorf(position.y()) / 8.0f * 8.0f,
+		round(position.x() / 2.0f) * 2.0f + nx,
+		round(position.y() / 2.0f) * 2.0f,
 		0.0f
 	};
 
-	// Check if bubble is the same color as this projectile
-	if (bubble->mAmbientColor == mAmbientColor)
-	{
-		mAmbientColor = 0xffffff_rgbf;
-		bubble->mAmbientColor = 0xffffff_rgbf;
-		bubble->destroyNearbyBubbles();
-	}
-	else
-	{
-		std::shared_ptr<Bubble> b = std::make_shared<Bubble>(mAmbientColor);
-		b->position = position;
-		b->bbox = Range3D{ position - Vector3(1.0f), position + Vector3(1.0f) };
-		RoomManager::singleton->mGameObjects.push_back(b);
+	// Create new bubbles with the same color
+	std::shared_ptr<Bubble> b = std::make_shared<Bubble>(mAmbientColor);
+	b->position = position;
+	b->updateBBox();
+	RoomManager::singleton->mGameObjects.push_back(b);
 
-		const Int rowIndex = RoomManager::singleton->mCollisionManager->getRowIndexByBubble(b.get());
-		RoomManager::singleton->mCollisionManager->addBubbleToRow(rowIndex, b);
-	}
+	// Destroy nearby bubbles
+	b->destroyNearbyBubbles();
 
 	// Destroy me
 	destroyMe = true;
+}
+
+Int Projectile::getRowIndexByBubble()
+{
+	return Int(std::abs(position.y()) * 0.5f);
 }

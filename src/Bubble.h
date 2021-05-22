@@ -13,6 +13,7 @@ public:
 	Bubble(const Color3& ambientColor);
 
 	void destroyNearbyBubbles();
+	void updateBBox();
 
 	Color3 mAmbientColor;
 	Color3 mDiffuseColor;

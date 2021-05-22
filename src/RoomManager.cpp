@@ -74,9 +74,8 @@ void RoomManager::createTestRoom()
 
 			std::shared_ptr<Bubble> b = std::make_shared<Bubble>(colors[index]);
 			b->position = position;
-			b->bbox = Range3D{ position - Vector3(1.0f), position + Vector3(1.0f) };
+			b->updateBBox();
 			RoomManager::singleton->mGameObjects.push_back(b);
-			RoomManager::singleton->mCollisionManager->addBubbleToRow(i, b);
 		}
 	}
 

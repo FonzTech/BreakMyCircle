@@ -66,9 +66,13 @@ void Bubble::collidedWith(GameObject* gameObject)
 {
 }
 
+void Bubble::updateBBox()
+{
+	bbox = Range3D{ position - Vector3(0.8f), position + Vector3(0.8f) };
+}
+
 void Bubble::destroyNearbyBubbles()
 {
 	// Destroy me first
-	destroyMe = true;
 	printf("Not implemented yet\n");
 }

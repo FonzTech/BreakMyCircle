@@ -19,6 +19,7 @@ protected:
 	void collidedWith(GameObject* gameObject) override;
 
 	void updateBBox();
+	Int getRowIndexByBubble();
 
 	Color3 mDiffuseColor;
 	std::shared_ptr<ColoredDrawable> mColoredDrawable;
