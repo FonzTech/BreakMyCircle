@@ -29,6 +29,7 @@ public:
 	Vector3 position;
 	Range3D bbox;
 
+	virtual Int getType() = 0;
 	virtual void update() = 0;
 	virtual void collidedWith(GameObject* gameObject) = 0;
 };

@@ -54,6 +54,11 @@ Projectile::Projectile(const Color3& ambientColor) : GameObject()
 	drawables.emplace_back(mColoredDrawable);
 }
 
+Int Projectile::getType()
+{
+	return GOT_PROJECTILE;
+}
+
 void Projectile::update()
 {
 	// Affect position by velocity

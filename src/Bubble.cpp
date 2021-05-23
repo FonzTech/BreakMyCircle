@@ -1,5 +1,6 @@
 #include "Bubble.h"
 
+#include <thread>
 #include <Magnum/GL/DefaultFramebuffer.h>
 #include <Magnum/Primitives/Icosphere.h>
 #include <Magnum/MeshTools/Interleave.h>
@@ -46,6 +47,11 @@ Bubble::Bubble(const Color3& ambientColor) : GameObject()
 	drawables.emplace_back(mColoredDrawable);
 }
 
+Int Bubble::getType()
+{
+	return GOT_BUBBLE;
+}
+
 void Bubble::update()
 {
 }
@@ -73,6 +79,63 @@ void Bubble::updateBBox()
 
 void Bubble::destroyNearbyBubbles()
 {
-	// Destroy me first
-	printf("Not implemented yet\n");
+	std::thread tjob([this]() {
+		// Check for nearby collisions
+		BubbleCollisionGroup bg;
+		bg.insert(this);
+		Bubble::destroyNearbyBubblesImpl(&bg);
+
+		// Work on bubble collision group
+		#if DEBUG
+		printf("Collided bubbles of color %d are %d\n", mAmbientColor.value(), bg.size());
+		#endif
+
+		if (bg.size() >= 3)
+		{
+			for (auto& b : bg)
+			{
+				b->destroyMe = true;
+			}
+		}
+	});
+	tjob.join();
+}
+
+/*
+	This algorithm is ugly, since it has an upper-bound of O(n^2).
+	It can be reduced to O(nm) if adjacency matrix, accessible
+	through some key (like an hash-map) is built during the room
+	initialization. When a new bubble is added to the room, this
+	adjacency matrix/list can be updated with a lookup by key,
+	using bubble position (node coordinates).
+*/
+void Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
+{
+	// Cycle through all bubbles in current room
+	for (auto& go : RoomManager::singleton->mGameObjects)
+	{
+		// Check if game object is a bubble
+		if (go.get() == this || go->getType() != GOT_BUBBLE || go->destroyMe)
+		{
+			continue;
+		}
+
+		// Check if the bubble has the same color of this
+		Bubble* bubble = ((Bubble*)go.get());
+		if (bubble->mAmbientColor != mAmbientColor || group->find(bubble) != group->end())
+		{
+			continue;
+		}
+
+		// Check if bubble collides nearby
+		for (auto& item : *group)
+		{
+			Range3D eb{ item->position - Vector3(1.5f), item->position + Vector3(1.5f) };
+			if (Math::intersects(eb, go->bbox))
+			{
+				group->insert(bubble);
+				bubble->destroyNearbyBubblesImpl(group);
+			}
+		}
+	}
 }

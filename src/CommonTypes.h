@@ -1,5 +1,9 @@
 #pragma once
 
+#define GOT_PLAYER 1
+#define GOT_BUBBLE 2
+#define GOT_PROJECTILE 3
+
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>
 #include <Corrade/Containers/Optional.h>

@@ -24,6 +24,11 @@ Player::Player() : GameObject()
 	mAmbientColor = 0xff0000_rgbf;
 }
 
+Int Player::getType()
+{
+	return GOT_PLAYER;
+}
+
 void Player::update()
 {
 	// Check for mouse input
