@@ -31,6 +31,7 @@ find_package(Corrade REQUIRED Main)
 find_package(Magnum REQUIRED
     GL
     MeshTools
+	Primitives
     Shaders
     SceneGraph
     Trade
@@ -61,13 +62,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     Magnum::GL
     Magnum::Magnum
     Magnum::MeshTools
+    Magnum::Primitives
     Magnum::SceneGraph
     Magnum::Shaders
     Magnum::Trade
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
-install(FILES scene/test.glb DESTINATION ${CMAKE_INSTALL_PREFIX}/output)
+install(FILES scenes/test.glb DESTINATION ${CMAKE_INSTALL_PREFIX}/scenes)
 
 # Make the executable a default target to build & run in Visual Studio
 # set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})
