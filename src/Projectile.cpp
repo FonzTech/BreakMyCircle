@@ -1,5 +1,6 @@
 #include "Projectile.h"
 
+#include <thread>
 #include <Magnum/GL/DefaultFramebuffer.h>
 #include <Magnum/Primitives/Icosphere.h>
 #include <Magnum/MeshTools/Interleave.h>
@@ -61,12 +62,12 @@ void Projectile::update()
 	// Bounce against side walls
 	if (position.x() <= mLeftX && mVelocity.x() < 0.0f)
 	{
-		position[0] = mLeftX;
+		position[0] = mLeftX + 0.01f;
 		mVelocity[0] *= -1.0f;
 	}
 	else if (position.x() > mRightX && mVelocity.x() > 0.0f)
 	{
-		position[0] = mRightX;
+		position[0] = mRightX - 0.01f;
 		mVelocity[0] *= -1.0f;
 	}
 
@@ -110,13 +111,17 @@ void Projectile::collidedWith(GameObject* gameObject)
 	const Int thisRowIndex = getRowIndexByBubble();
 
 	// Snap to grid
-	Float nx = thisRowIndex % 2 ? 1.0f : 0.0f;
+	Float offset = thisRowIndex % 2 ? 0.0f : 1.0f;
 	position = {
-		round(position.x() / 2.0f) * 2.0f + nx,
-		round(position.y() / 2.0f) * 2.0f,
+		round((position.x() - offset) / 2.0f) * 2.0f + offset,
+		getSnappedYPos(),
 		0.0f
 	};
 
+	// Correct position to protect against overlaps
+	std::thread tjob(&Projectile::adjustPosition, this);
+	tjob.join();
+	
 	// Create new bubbles with the same color
 	std::shared_ptr<Bubble> b = std::make_shared<Bubble>(mAmbientColor);
 	b->position = position;
@@ -132,5 +137,51 @@ void Projectile::collidedWith(GameObject* gameObject)
 
 Int Projectile::getRowIndexByBubble()
 {
-	return Int(std::abs(position.y()) * 0.5f);
+	return std::abs(Int(getSnappedYPos() * 0.5f));
+}
+
+void Projectile::adjustPosition()
+{
+	bool overlaps = false;
+	Float toLeftX = IMPOSSIBLE_PROJECTILE_XPOS;
+	Float toRightX = IMPOSSIBLE_PROJECTILE_XPOS;
+
+	for (auto& go : RoomManager::singleton->mGameObjects)
+	{
+		if (go.get() == this || go->position.y() != position.y())
+		{
+			continue;
+		}
+		else if (go->position.x() == position.x())
+		{
+			overlaps = true;
+		}
+		else if (go->position.x() == position.x() - 2.0f)
+		{
+			toLeftX = go->position.x();
+		}
+		else if (go->position.x() == position.x() + 2.0f)
+		{
+			toRightX = go->position.x();
+		}
+	}
+
+	if (!overlaps)
+	{
+		return;
+	}
+
+	if (position.x() >= mLeftX + (mRightX - mLeftX) * 0.5f)
+	{
+		position[0] += toLeftX <= IMPOSSIBLE_PROJECTILE_XPOS ? -2.0f : 2.0f;
+	}
+	else
+	{
+		position[0] += toRightX <= IMPOSSIBLE_PROJECTILE_XPOS ? 2.0f : -2.0f;
+	}
+}
+
+Float Projectile::getSnappedYPos()
+{
+	return round(position.y() / 2.0f) * 2.0f;
 }
