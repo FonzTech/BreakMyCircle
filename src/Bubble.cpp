@@ -90,7 +90,7 @@ void Bubble::destroyNearbyBubbles()
 		printf("Collided bubbles of color %d are %d\n", mAmbientColor.value(), bg.size());
 		#endif
 
-		if (bg.size() >= 3)
+		if (bg.size() >= MINIMUM_BUBBLE_TRAIL_SIZE)
 		{
 			for (auto& b : bg)
 			{

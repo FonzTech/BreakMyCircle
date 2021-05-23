@@ -1,5 +1,7 @@
 #pragma once
 
+#define MINIMUM_BUBBLE_TRAIL_SIZE 3
+
 #include <unordered_set>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/Phong.h>
