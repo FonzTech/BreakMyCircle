@@ -77,6 +77,11 @@ void Bubble::updateBBox()
 	bbox = Range3D{ position - Vector3(0.8f), position + Vector3(0.8f) };
 }
 
+void Bubble::applyRippleEffect(const Vector3& center)
+{
+	printf("Not implemented yet ripple for %f %f\n", center.x(), center.y());
+}
+
 void Bubble::destroyNearbyBubbles()
 {
 	std::thread tjob([this]() {

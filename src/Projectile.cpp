@@ -133,6 +133,15 @@ void Projectile::collidedWith(GameObject* gameObject)
 	b->updateBBox();
 	RoomManager::singleton->mGameObjects.push_back(b);
 
+	// Apply ripple effect
+	for (auto& go : RoomManager::singleton->mGameObjects)
+	{
+		if (go->getType() == GOT_BUBBLE)
+		{
+			((Bubble*)go.get())->applyRippleEffect(position);
+		}
+	}
+
 	// Destroy nearby bubbles
 	b->destroyNearbyBubbles();
 

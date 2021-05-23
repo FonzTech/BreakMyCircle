@@ -46,6 +46,7 @@ public:
 	void destroyNearbyBubbles();
 	void destroyNearbyBubblesImpl(BubbleCollisionGroup* group);
 	void updateBBox();
+	void applyRippleEffect(const Vector3& center);
 
 	Color3 mAmbientColor;
 	Color3 mDiffuseColor;
