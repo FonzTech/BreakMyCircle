@@ -5,6 +5,8 @@
 #include <Magnum/Primitives/Icosphere.h>
 #include <Magnum/MeshTools/Interleave.h>
 #include <Magnum/MeshTools/CompressIndices.h>
+#include <Magnum/Math/Math.h>
+#include <Magnum/Math/Bezier.h>
 
 #include "ColoredDrawable.h"
 #include "RoomManager.h"
@@ -14,8 +16,10 @@ using namespace Magnum::Math::Literals;
 
 Bubble::Bubble(const Color3& ambientColor) : GameObject()
 {
-	// Assign color
+	// Assign members
 	mAmbientColor = ambientColor;
+	mShakePos = { 0.0f };
+	mShakeFact = 0.0f;
 
 	// Create test mesh
 	Trade::MeshData meshData = Primitives::icosphereSolid(2U);
@@ -54,15 +58,25 @@ Int Bubble::getType()
 
 void Bubble::update()
 {
+	// Update shake animation
+	if (mShakeFact <= 0.0f)
+	{
+		mShakeFact = 0.0f;
+	}
+	else
+	{
+		mShakeFact -= deltaTime * 2.0f;
+	}
 }
 
 void Bubble::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
+	const Vector3 shakeVect = mShakeFact > 0.001f ? mShakePos * std::sin(mShakeFact * Constants::pi()) : Vector3(0.0f);
 	mColoredDrawable->mShader
 		.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
 		.setDiffuseColor(mDiffuseColor)
 		.setAmbientColor(mAmbientColor)
-		.setTransformationMatrix(transformationMatrix * Matrix4::translation(position))
+		.setTransformationMatrix(transformationMatrix * Matrix4::translation(position + shakeVect))
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
 		.draw(mColoredDrawable->mMesh);
@@ -79,7 +93,14 @@ void Bubble::updateBBox()
 
 void Bubble::applyRippleEffect(const Vector3& center)
 {
-	printf("Not implemented yet ripple for %f %f\n", center.x(), center.y());
+	const Vector3 d = position - center;
+	const Vector3 p = d.normalized();
+	const Math::Unit<Math::Rad, Float> unitRads(std::atan2(p.y(), p.x()));
+	const Float rads(unitRads);
+
+	const Float dist = getShakeSmooth(Math::clamp(0.0f, 1.0f, d.length() / 10.0f));
+	mShakePos = Vector3(std::cos(rads), std::sin(rads), 0.0f) * dist;
+	mShakeFact = 1.0f;
 }
 
 void Bubble::destroyNearbyBubbles()
@@ -144,3 +165,8 @@ void Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
 		}
 	}
 }
+
+Float Bubble::getShakeSmooth(const Float xt)
+{
+	return CubicBezier2D(Vector2(0.0f, 0.0f), Vector2(1.0f, 0.06f), Vector2(1.0f, 0.04f), Vector2(1.0f)).value(xt)[1];
+} 

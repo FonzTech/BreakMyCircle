@@ -136,7 +136,7 @@ void Projectile::collidedWith(GameObject* gameObject)
 	// Apply ripple effect
 	for (auto& go : RoomManager::singleton->mGameObjects)
 	{
-		if (go->getType() == GOT_BUBBLE)
+		if (go != b && go->getType() == GOT_BUBBLE)
 		{
 			((Bubble*)go.get())->applyRippleEffect(position);
 		}

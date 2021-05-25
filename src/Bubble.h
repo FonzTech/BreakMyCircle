@@ -14,7 +14,7 @@ class Bubble : public GameObject
 {
 public:
 	// Equals for sets
-	static struct EqualByColorAndPos
+	struct EqualByColorAndPos
 	{
 	public:
 		bool operator()(const Bubble* b1, const Bubble* b2) const
@@ -24,7 +24,7 @@ public:
 	};
 
 	// Hasher for sets
-	static struct HashByColorAndPos
+	struct HashByColorAndPos
 	{
 	public:
 		std::size_t operator()(const Bubble* b) const
@@ -53,9 +53,13 @@ public:
 
 private:
 	std::shared_ptr<ColoredDrawable> mColoredDrawable;
+	Vector3 mShakePos;
+	Float mShakeFact;
 
 	Int getType() override;
 	void update() override;
 	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(GameObject* gameObject) override;
+
+	Float getShakeSmooth(const Float xt);
 };
