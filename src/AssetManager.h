@@ -28,12 +28,12 @@ private:
 	Shaders::Phong coloredShader;
 	Shaders::Phong texturedShader;
 
-	void processChildrenAssets(GameObject& gameObject, ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i);
+	void processChildrenAssets(GameObject& gameObject, ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i, IDrawCallback* drawCallback);
 
 public:
 	static std::unique_ptr<AssetManager> singleton;
 
 	AssetManager();
 
-	void loadAssets(GameObject& gameObject, const std::string& filename);
+	void loadAssets(GameObject& gameObject, const std::string& filename, IDrawCallback* drawCallback);
 };

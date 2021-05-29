@@ -9,6 +9,7 @@
 #include "ColoredDrawable.h"
 #include "RoomManager.h"
 #include "Bubble.h"
+#include "CommonUtility.h"
 
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
@@ -19,39 +20,17 @@ Projectile::Projectile(const Color3& ambientColor) : GameObject()
 	mAmbientColor = ambientColor;
 	mVelocity = { 0.0f };
 	mLeftX = 1.0f;
-	mRightX = 19.0f;
+	mRightX = 15.0f;
 	mSpeed = 50.0f;
 
 	updateBBox();
 
-	// Create test mesh
-	Trade::MeshData meshData = Primitives::icosphereSolid(2U);
-
-	GL::Buffer vertices;
-	vertices.setData(MeshTools::interleave(meshData.positions3DAsArray(), meshData.normalsAsArray()));
-
-	std::pair<Containers::Array<char>, MeshIndexType> compressed = MeshTools::compressIndices(meshData.indicesAsArray());
-	GL::Buffer indices;
-	indices.setData(compressed.first);
-
-	GL::Mesh mesh;
-	mesh
-		.setPrimitive(meshData.primitive())
-		.setCount(meshData.indexCount())
-		.addVertexBuffer(std::move(vertices), 0, Shaders::Phong::Position{}, Shaders::Phong::Normal{})
-		.setIndexBuffer(std::move(indices), 0, compressed.second);
-
 	// Set diffuse color
 	mDiffuseColor = 0xffffff_rgbf;
 
-	// Create Phong shader
-	Shaders::Phong shader;
-
-	// Create colored drawable
-	mColoredDrawable = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, shader, mesh, mAmbientColor);
-	mColoredDrawable->setParent(&RoomManager::singleton->mScene);
-	mColoredDrawable->setDrawCallback(this);
-	drawables.emplace_back(mColoredDrawable);
+	// Create game bubble
+	std::shared_ptr<ColoredDrawable> cd = CommonUtility::createGameSphere(mAmbientColor, this);
+	drawables.emplace_back(cd);
 }
 
 Int Projectile::getType()
@@ -87,16 +66,16 @@ void Projectile::update()
 	}
 }
 
-void Projectile::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
+void Projectile::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	mColoredDrawable->mShader
-		.setLightPositions({ position + Vector3({ 10.0f, 20.0f, 1.75f }) })
+	baseDrawable->mShader
+		.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
 		.setDiffuseColor(mDiffuseColor)
 		.setAmbientColor(mAmbientColor)
 		.setTransformationMatrix(transformationMatrix * Matrix4::translation(position))
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
-		.draw(mColoredDrawable->mMesh);
+		.draw(baseDrawable->mMesh);
 }
 
 void Projectile::updateBBox()

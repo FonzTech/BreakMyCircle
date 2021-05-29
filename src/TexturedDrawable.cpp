@@ -12,7 +12,7 @@ void TexturedDrawable::draw(const Matrix4& transformationMatrix, SceneGraph::Cam
 {
 	if (mDrawCallback != nullptr)
 	{
-		mDrawCallback->draw(transformationMatrix, camera);
+		mDrawCallback->draw(this, transformationMatrix, camera);
 		return;
 	}
 	mShader

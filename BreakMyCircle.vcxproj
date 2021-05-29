@@ -166,6 +166,7 @@
     <ClCompile Include="src\BaseDrawable.cpp" />
     <ClCompile Include="src\CollisionManager.cpp" />
     <ClCompile Include="src\ColoredDrawable.cpp" />
+    <ClCompile Include="src\CommonUtility.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\InputManager.cpp" />
     <ClCompile Include="src\Player.cpp" />
@@ -181,6 +182,7 @@
     <ClInclude Include="src\BaseDrawable.h" />
     <ClInclude Include="src\CollisionManager.h" />
     <ClInclude Include="src\ColoredDrawable.h" />
+    <ClInclude Include="src\CommonUtility.h" />
     <ClInclude Include="src\IDrawCallback.h" />
     <ClInclude Include="src\Projectile.h" />
     <ClInclude Include="src\TexturedDrawable.h" />

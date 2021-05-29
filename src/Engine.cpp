@@ -7,8 +7,7 @@
 #include "RoomManager.h"
 #include "GameObject.h"
 
-Engine::Engine(const Arguments& arguments) :
-	Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
+Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
 {
 	// Setup window
 	#ifdef MAGNUM_SDL2APPLICATION_MAIN
@@ -22,6 +21,9 @@ Engine::Engine(const Arguments& arguments) :
 	GL::Renderer::enable(GL::Renderer::Feature::DepthTest);
 	GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
 	GL::Renderer::setClearColor(Color4({ 0.25f, 0.25f, 0.25f, 1.0f }));
+	GL::Renderer::setFeature(GL::Renderer::Feature::Blending, true);
+	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+	GL::Renderer::setBlendEquation(GL::Renderer::BlendEquation::Add, GL::Renderer::BlendEquation::Add);
 
 	InputManager::singleton = std::make_unique<InputManager>();
 

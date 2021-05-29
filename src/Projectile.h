@@ -20,7 +20,7 @@ public:
 protected:
 	Int getType() override;
 	void update() override;
-	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
+	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(GameObject* gameObject) override;
 
 	void updateBBox();
@@ -28,7 +28,6 @@ protected:
 	Float getSnappedYPos();
 
 	Color3 mDiffuseColor;
-	std::shared_ptr<ColoredDrawable> mColoredDrawable;
 
 	Float mLeftX, mRightX;
 	Float mSpeed;

@@ -52,13 +52,12 @@ public:
 	Color3 mDiffuseColor;
 
 private:
-	std::shared_ptr<ColoredDrawable> mColoredDrawable;
 	Vector3 mShakePos;
 	Float mShakeFact;
 
 	Int getType() override;
 	void update() override;
-	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
+	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(GameObject* gameObject) override;
 
 	Float getShakeSmooth(const Float xt);

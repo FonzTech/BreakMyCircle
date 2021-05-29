@@ -8,6 +8,7 @@
 #include <Magnum/Math/Math.h>
 #include <Magnum/Math/Bezier.h>
 
+#include "CommonUtility.h"
 #include "ColoredDrawable.h"
 #include "RoomManager.h"
 
@@ -21,34 +22,12 @@ Bubble::Bubble(const Color3& ambientColor) : GameObject()
 	mShakePos = { 0.0f };
 	mShakeFact = 0.0f;
 
-	// Create test mesh
-	Trade::MeshData meshData = Primitives::icosphereSolid(2U);
-
-	GL::Buffer vertices;
-	vertices.setData(MeshTools::interleave(meshData.positions3DAsArray(), meshData.normalsAsArray()));
-
-	std::pair<Containers::Array<char>, MeshIndexType> compressed = MeshTools::compressIndices(meshData.indicesAsArray());
-	GL::Buffer indices;
-	indices.setData(compressed.first);
-
-	GL::Mesh mesh;
-	mesh
-		.setPrimitive(meshData.primitive())
-		.setCount(meshData.indexCount())
-		.addVertexBuffer(std::move(vertices), 0, Shaders::Phong::Position{}, Shaders::Phong::Normal{})
-		.setIndexBuffer(std::move(indices), 0, compressed.second);
-
 	// Set diffuse color
 	mDiffuseColor = 0xffffff_rgbf;
 
-	// Create Phong shader
-	Shaders::Phong shader;
-	
-	// Create colored drawable
-	mColoredDrawable = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, shader, mesh, mAmbientColor);
-	mColoredDrawable->setParent(&RoomManager::singleton->mScene);
-	mColoredDrawable->setDrawCallback(this);
-	drawables.emplace_back(mColoredDrawable);
+	// Create game bubble
+	std::shared_ptr<ColoredDrawable> cd = CommonUtility::createGameSphere(mAmbientColor, this);
+	drawables.emplace_back(cd);
 }
 
 Int Bubble::getType()
@@ -69,17 +48,17 @@ void Bubble::update()
 	}
 }
 
-void Bubble::draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
+void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	const Vector3 shakeVect = mShakeFact > 0.001f ? mShakePos * std::sin(mShakeFact * Constants::pi()) : Vector3(0.0f);
-	mColoredDrawable->mShader
+	baseDrawable->mShader
 		.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
 		.setDiffuseColor(mDiffuseColor)
 		.setAmbientColor(mAmbientColor)
 		.setTransformationMatrix(transformationMatrix * Matrix4::translation(position + shakeVect))
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
-		.draw(mColoredDrawable->mMesh);
+		.draw(baseDrawable->mMesh);
 }
 
 void Bubble::collidedWith(GameObject* gameObject)

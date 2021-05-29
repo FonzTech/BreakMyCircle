@@ -46,7 +46,7 @@ void RoomManager::createTestRoom()
 	};
 
 	// Create bubbles
-	const Int square = 10;
+	const Int square = 8;
 	for (Int i = 0; i < square; ++i)
 	{
 		for (Int j = 0; j < square; ++j)
@@ -56,7 +56,7 @@ void RoomManager::createTestRoom()
 			Float startX;
 			if (i % 2)
 			{
-				if (j == 9)
+				if (j == 7)
 				{
 					break;
 				}
@@ -81,10 +81,10 @@ void RoomManager::createTestRoom()
 
 	// Create player
 	std::shared_ptr<Player> p = std::make_shared<Player>();
-	p->position = { 10.0f, -40.0f, 0.0f };
+	p->position = { 8.0f, -35.0f, 0.0f };
 	RoomManager::singleton->mGameObjects.push_back(p);
 
 	// Camera position
-	mCameraEye = { 10.0f, -20.0f, 50.0f };
-	mCameraTarget = { 10.0f, -20.0f, 0.0f };
+	mCameraEye = { 8.0f, -20.0f, 44.0f };
+	mCameraTarget = { 8.0f, -20.0f, 0.0f };
 }

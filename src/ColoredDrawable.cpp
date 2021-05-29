@@ -12,7 +12,7 @@ void ColoredDrawable::draw(const Matrix4& transformationMatrix, SceneGraph::Came
 {
 	if (mDrawCallback != nullptr)
 	{
-		mDrawCallback->draw(transformationMatrix, camera);
+		mDrawCallback->draw(this, transformationMatrix, camera);
 		return;
 	}
 	mShader
