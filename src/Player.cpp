@@ -17,7 +17,7 @@ using namespace Magnum::Math::Literals;
 Player::Player() : GameObject()
 {
 	// Load asset
-	AssetManager::singleton->loadAssets(*this, "scenes/test.glb");
+	AssetManager::singleton->loadAssets(*this, "scenes/cannon_1.glb");
 
 	// Set diffuse color
 	mDiffuseColor = 0xffffff_rgbf;

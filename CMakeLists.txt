@@ -69,7 +69,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
-install(FILES scenes/test.glb DESTINATION ${CMAKE_INSTALL_PREFIX}/scenes)
+install(FILES scenes/cannon_1.glb DESTINATION ${CMAKE_INSTALL_PREFIX}/scenes)
 
 # Make the executable a default target to build & run in Visual Studio
 # set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})

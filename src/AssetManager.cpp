@@ -105,7 +105,8 @@ void AssetManager::loadAssets(GameObject& gameObject, const std::string& filenam
 		Debug{} << "Importing material" << i << importer->materialName(i);
 
 		Containers::Pointer<Trade::AbstractMaterialData> materialData = importer->material(i);
-		if (!materialData || !(materialData->type() != Trade::MaterialType::Phong))
+		// if (!materialData || !(materialData->type() != Trade::MaterialType::Phong))
+		if (!materialData)
 		{
 			Warning{} << "Cannot load material, skipping";
 			continue;
