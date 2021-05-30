@@ -1,10 +1,11 @@
 #pragma once
 
 #define SHOOT_ANGLE_MIN_RAD -2.79253f
-#define SHOOT_ANGLE_MAX_RAD -0.0349066f
+#define SHOOT_ANGLE_MAX_RAD -0.349066f
 
 #include <vector>
 #include <Magnum/Math/Color.h>
+#include <Magnum/Timeline.h>
 
 #include "GameObject.h"
 #include "BaseDrawable.h"
@@ -20,6 +21,7 @@ protected:
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(GameObject* gameObject) override;
 
+	Float mShootTimeline;
 	Rad mShootAngle;
 
 	Int mAmbientColorIndex;

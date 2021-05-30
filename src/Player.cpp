@@ -47,6 +47,9 @@ Int Player::getType()
 
 void Player::update()
 {
+	// Update shoot timeline for animation
+	mShootTimeline -= deltaTime;
+
 	// Get shooting angle by mouse
 	{
 		Vector2 p1 = Vector2(InputManager::singleton->mMousePosition);
@@ -54,13 +57,26 @@ void Player::update()
 		Vector2 pdir = p2 - p1;
 
 		Float value = std::atan2(-pdir.y(), pdir.x());
-		Rad fact = mShootAngle - Rad(Math::clamp(value, SHOOT_ANGLE_MIN_RAD, SHOOT_ANGLE_MAX_RAD));
-		mShootAngle -= fact / 4.0f;
+
+		Rad finalValue(Math::clamp(value, SHOOT_ANGLE_MIN_RAD, SHOOT_ANGLE_MAX_RAD));
+		if (mShootTimeline >= 0.0f)
+		{
+			Rad fact = mShootAngle - finalValue;
+			mShootAngle -= fact / 4.0f;
+		}
+		else
+		{
+			mShootAngle = finalValue;
+		}
 	}
 
 	// Check for mouse input
 	auto& bs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
-	if (bs == IM_STATE_RELEASED)
+	if (bs == IM_STATE_PRESSED)
+	{
+		mShootTimeline = 1.0f;
+	}
+	else if (bs == IM_STATE_RELEASED)
 	{
 		// Create projectile
 		std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mColors[mAmbientColorIndex]);
