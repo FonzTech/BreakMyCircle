@@ -32,8 +32,12 @@ Player::Player() : GameObject()
 	mShootAngle = Rad(0.0f);
 
 	// Create game bubble
-	std::shared_ptr<ColoredDrawable> cd = CommonUtility::createGameSphere(mColors[mAmbientColorIndex], this);
+	mSphereManipulator = new Object3D{ &RoomManager::singleton->mScene };
+
+	std::shared_ptr<ColoredDrawable> cd = CommonUtility::createGameSphere(*mSphereManipulator, mColors[mAmbientColorIndex], this);
 	drawables.emplace_back(cd);
+
+	mSphereDrawables[0] = cd.get();
 }
 
 Int Player::getType()
@@ -68,34 +72,40 @@ void Player::update()
 		mAmbientColorIndex = std::rand() % mColors.size();
 	}
 
-	// Apply transformations to all drawables for this instance
+	// Compute transformations
+	Matrix4 translation = Matrix4::translation(position);
 	Float finalAngle(Deg(mShootAngle) + Deg(90.0f));
-	const auto& m = Matrix4::translation(position) * Matrix4::rotationZ(Deg(finalAngle)) * Matrix4::rotationX(Deg(90.0f));
-	drawables.at(0)->setTransformation(m);
+
+	// Apply transformations to shooter
+	const auto& m = translation * Matrix4::rotationZ(Deg(finalAngle)) * Matrix4::rotationX(Deg(90.0f));
+	mManipulator->setTransformation(m);
+
+	// Apply transformations to bubbles
+	mSphereManipulator->setTransformation(translation);
 }
 
 void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (baseDrawable == drawables.at(0).get())
+	if (baseDrawable == mSphereDrawables[0])
 	{
-		baseDrawable->mShader
-			.setLightPosition(camera.cameraMatrix().transformPoint({ 0.0f, 0.0f, 20.0f }))
-			.setTransformationMatrix(transformationMatrix)
-			.setNormalMatrix(transformationMatrix.normalMatrix())
-			.setProjectionMatrix(camera.projectionMatrix())
-			.bindDiffuseTexture(baseDrawable->mTexture)
-			.draw(baseDrawable->mMesh);
-	}
-	else
-	{
-		baseDrawable->mShader
+		(*baseDrawable->mShader)
 			.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
 			.setDiffuseColor(mDiffuseColor)
 			.setAmbientColor(mColors[mAmbientColorIndex])
-			.setTransformationMatrix(transformationMatrix * Matrix4::translation(position))
+			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
 			.setProjectionMatrix(camera.projectionMatrix())
-			.draw(baseDrawable->mMesh);
+			.draw(*baseDrawable->mMesh);
+	}
+	else
+	{
+		(*baseDrawable->mShader)
+			.setLightPosition(camera.cameraMatrix().transformPoint(position + Vector3(0.0f, 0.0f, 20.0f)))
+			.setTransformationMatrix(transformationMatrix)
+			.setNormalMatrix(transformationMatrix.normalMatrix())
+			.setProjectionMatrix(camera.projectionMatrix())
+			.bindDiffuseTexture(*baseDrawable->mTexture)
+			.draw(*baseDrawable->mMesh);
 	}
 }
 

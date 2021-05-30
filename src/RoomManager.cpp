@@ -31,7 +31,7 @@ void RoomManager::setupRoom()
 
 	mCamera = std::make_shared<SceneGraph::Camera3D>(mCameraObject);
 	mCamera->setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
-	mCamera->setProjectionMatrix(Matrix4::perspectiveProjection(35.0_degf, 1.0f, 0.01f, 1000.0f));
+	mCamera->setProjectionMatrix(Matrix4::perspectiveProjection(35.0_degf, 1.0f, 0.01f, 10000.0f));
 	mCamera->setViewport(GL::defaultFramebuffer.viewport().size());
 }
 

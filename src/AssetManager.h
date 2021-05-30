@@ -17,16 +17,16 @@ using namespace Magnum;
 
 struct ImportedAssets
 {
-	AssetMeshes meshes;
-	AssetTextures textures;
-	AssetMaterials materials;
+	Containers::Array<std::shared_ptr<GL::Mesh>> meshes;
+	Containers::Array<std::shared_ptr<GL::Texture2D>> textures;
+	Containers::Array<std::shared_ptr<Trade::PhongMaterialData>> materials;
 };
 
 class AssetManager
 {
 private:
-	Shaders::Phong coloredShader;
-	Shaders::Phong texturedShader;
+	std::shared_ptr<Shaders::Phong> coloredShader;
+	std::shared_ptr<Shaders::Phong> texturedShader;
 
 	void processChildrenAssets(GameObject& gameObject, ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i, IDrawCallback* drawCallback);
 

@@ -1,9 +1,9 @@
 #include "ColoredDrawable.h"
 
-ColoredDrawable::ColoredDrawable(SceneGraph::DrawableGroup3D& group, Shaders::Phong& shader, GL::Mesh& mesh, const Color4& color) : BaseDrawable{ group }
+ColoredDrawable::ColoredDrawable(SceneGraph::DrawableGroup3D& group, const std::shared_ptr<Shaders::Phong>& shader, const std::shared_ptr<GL::Mesh>& mesh, const Color4& color) : BaseDrawable{ group }
 {
-	mShader = std::move(shader);
-	mMesh = std::move(mesh);
+	mShader = shader;
+	mMesh = mesh;
 	mColor = color;
 	mDrawCallback = nullptr;
 }
@@ -15,11 +15,11 @@ void ColoredDrawable::draw(const Matrix4& transformationMatrix, SceneGraph::Came
 		mDrawCallback->draw(this, transformationMatrix, camera);
 		return;
 	}
-	mShader
+	(*mShader.get())
 		.setDiffuseColor(mColor)
-		.setLightPosition(camera.cameraMatrix().transformPoint({ -3.0f, 10.0f, 10.0f }))
+		.setLightPosition(camera.cameraMatrix().transformPoint({ -3.0f, 10.0f, 1110.0f }))
 		.setTransformationMatrix(transformationMatrix)
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
-		.draw(mMesh);
+		.draw(*mMesh.get());
 }

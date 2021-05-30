@@ -26,7 +26,7 @@ Bubble::Bubble(const Color3& ambientColor) : GameObject()
 	mDiffuseColor = 0xffffff_rgbf;
 
 	// Create game bubble
-	std::shared_ptr<ColoredDrawable> cd = CommonUtility::createGameSphere(mAmbientColor, this);
+	std::shared_ptr<ColoredDrawable> cd = CommonUtility::createGameSphere(*mManipulator, mAmbientColor, this);
 	drawables.emplace_back(cd);
 }
 
@@ -51,14 +51,14 @@ void Bubble::update()
 void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	const Vector3 shakeVect = mShakeFact > 0.001f ? mShakePos * std::sin(mShakeFact * Constants::pi()) : Vector3(0.0f);
-	baseDrawable->mShader
+	(*baseDrawable->mShader.get())
 		.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
 		.setDiffuseColor(mDiffuseColor)
 		.setAmbientColor(mAmbientColor)
 		.setTransformationMatrix(transformationMatrix * Matrix4::translation(position + shakeVect))
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
-		.draw(baseDrawable->mMesh);
+		.draw(*baseDrawable->mMesh);
 }
 
 void Bubble::collidedWith(GameObject* gameObject)
@@ -91,7 +91,7 @@ void Bubble::destroyNearbyBubbles()
 		Bubble::destroyNearbyBubblesImpl(&bg);
 
 		// Work on bubble collision group
-		#if DEBUG
+		#if NDEBUG or _DEBUG
 		printf("Collided bubbles of color %d are %d\n", mAmbientColor.value(), bg.size());
 		#endif
 

@@ -16,7 +16,7 @@ using namespace Magnum::Math::Literals;
 
 namespace CommonUtility
 {
-	std::shared_ptr<ColoredDrawable>createGameSphere(const Vector3 & ambientColor, IDrawCallback* drawCallback)
+	std::shared_ptr<ColoredDrawable> createGameSphere(Object3D & parent, const Vector3 & ambientColor, IDrawCallback* drawCallback)
 	{
 		// Create test mesh
 		Trade::MeshData meshData = Primitives::icosphereSolid(2U);
@@ -28,19 +28,19 @@ namespace CommonUtility
 		GL::Buffer indices;
 		indices.setData(compressed.first);
 
-		GL::Mesh mesh;
-		mesh
+		std::shared_ptr<GL::Mesh> mesh = std::make_shared<GL::Mesh>();
+		(*mesh.get())
 			.setPrimitive(meshData.primitive())
 			.setCount(meshData.indexCount())
 			.addVertexBuffer(std::move(vertices), 0, Shaders::Phong::Position{}, Shaders::Phong::Normal{})
 			.setIndexBuffer(std::move(indices), 0, compressed.second);
 
 		// Create Phong shader
-		Shaders::Phong shader;
+		std::shared_ptr<Shaders::Phong> shader = std::make_shared<Shaders::Phong>();
 
 		// Create colored drawable
 		std::shared_ptr<ColoredDrawable> cd = std::make_shared<ColoredDrawable>(RoomManager::singleton->mDrawables, shader, mesh, 0xffffff_rgbf);
-		cd->setParent(&RoomManager::singleton->mScene);
+		cd->setParent(&parent);
 		cd->setDrawCallback(drawCallback);
 		return cd;
 	}

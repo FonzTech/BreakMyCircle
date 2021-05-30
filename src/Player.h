@@ -7,6 +7,7 @@
 #include <Magnum/Math/Color.h>
 
 #include "GameObject.h"
+#include "BaseDrawable.h"
 
 class Player : public GameObject
 {
@@ -24,4 +25,7 @@ protected:
 	Int mAmbientColorIndex;
 	Color3 mDiffuseColor;
 	std::vector<Color3> mColors;
+
+	Object3D* mSphereManipulator;
+	BaseDrawable* mSphereDrawables[1];
 };
