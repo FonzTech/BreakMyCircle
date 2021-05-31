@@ -125,6 +125,6 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	}
 }
 
-void Player::collidedWith(GameObject* gameObject)
+void Player::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
 }

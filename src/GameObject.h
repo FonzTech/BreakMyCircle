@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <unordered_set>
 
 #include <Magnum/Trade/MeshData.h>
 #include <Magnum/Math/Matrix4.h>
@@ -32,5 +33,5 @@ public:
 
 	virtual Int getType() = 0;
 	virtual void update() = 0;
-	virtual void collidedWith(GameObject* gameObject) = 0;
+	virtual void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) = 0;
 };

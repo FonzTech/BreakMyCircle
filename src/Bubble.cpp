@@ -61,7 +61,7 @@ void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 		.draw(*baseDrawable->mMesh);
 }
 
-void Bubble::collidedWith(GameObject* gameObject)
+void Bubble::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
 }
 

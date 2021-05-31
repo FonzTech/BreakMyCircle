@@ -1,8 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <vector>
-#include <unordered_map>
+#include <unordered_set>
 
 #include "GameObject.h"
 
@@ -13,5 +12,5 @@ class CollisionManager
 public:
 	explicit CollisionManager();
 
-	std::shared_ptr<GameObject> checkCollision(const GameObject* go);
+	std::unique_ptr<std::unordered_set<GameObject*>> checkCollision(const GameObject* go) const;
 };

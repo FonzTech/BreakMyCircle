@@ -59,10 +59,10 @@ void Projectile::update()
 	updateBBox();
 
 	// Check for collision against other bubbles
-	std::shared_ptr<GameObject> bubble = RoomManager::singleton->mCollisionManager->checkCollision(this);
-	if (bubble != nullptr)
+	const std::unique_ptr<std::unordered_set<GameObject*>> bubbles = RoomManager::singleton->mCollisionManager->checkCollision(this);
+	if (bubbles->size() > 0)
 	{
-		collidedWith(bubble.get());
+		collidedWith(bubbles);
 	}
 }
 
@@ -84,9 +84,9 @@ void Projectile::updateBBox()
 	bbox = Range3D{ position - Vector3(0.8f), position + Vector3(0.8f) };
 }
 
-void Projectile::collidedWith(GameObject* gameObject)
+void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
-	Bubble* bubble = (Bubble*)gameObject;
+	Bubble* bubble = (Bubble*) *gameObjects->begin();
 
 	// Stop this projectile
 	mVelocity = Vector3(0.0f);
