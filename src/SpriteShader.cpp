@@ -7,8 +7,15 @@
 #include <Magnum/GL/Shader.h>
 #include <Magnum/GL/Version.h>
 
-SpriteShader::SpriteShader()
+SpriteShader::SpriteShader(const Float & width, const Float & height, const Float & rows, const Float & columns, const Float & total, const Float & speed, const Color3 & color)
 {
+	// Assign members
+	mTotal = total;
+	mSpeed = speed;
+	mColor = color;
+	mIndex = 0;
+
+	// Setup shader from file
 	MAGNUM_ASSERT_GL_VERSION_SUPPORTED(GL::Version::GL330);
 
 	GL::Shader vert{ GL::Version::GL330, GL::Shader::Type::Vertex };
@@ -23,28 +30,40 @@ SpriteShader::SpriteShader()
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(link());
 
-	mColorUniform = uniformLocation("color");
-	mTransformationMatrix = uniformLocation("transformationMatrix");
-	mProjectionMatrix = uniformLocation("projectionMatrix");
+	mTransformationMatrixUniform = uniformLocation("transformationMatrix");
+	mProjectionMatrixUniform = uniformLocation("projectionMatrix");
+
+	mIndexUniform = uniformLocation("index");
 
 	setUniform(uniformLocation("textureData"), TextureUnit);
+
+	setUniform(uniformLocation("color"), color);
+	setUniform(uniformLocation("texWidth"), width);
+	setUniform(uniformLocation("texHeight"), height);
+	setUniform(uniformLocation("rows"), rows);
+	setUniform(uniformLocation("columns"), columns);
 }
 
-SpriteShader& SpriteShader::setColor(const Color3& color)
+SpriteShader& SpriteShader::update(const Float & deltaTime)
 {
-	setUniform(mColorUniform, color);
+	// Advance animation
+	mIndex += deltaTime * mSpeed;
+
+	// Update uniforms
+	setUniform(mIndexUniform, std::fmodf(mIndex, mTotal));
+
 	return *this;
 }
 
 SpriteShader& SpriteShader::setTransformationMatrix(const Matrix4& transformationMatrix)
 {
-	setUniform(mTransformationMatrix, transformationMatrix);
+	setUniform(mTransformationMatrixUniform, transformationMatrix);
 	return *this;
 }
 
 SpriteShader& SpriteShader::setProjectionMatrix(const Matrix4& projectionMatrix)
 {
-	setUniform(mProjectionMatrix, projectionMatrix);
+	setUniform(mProjectionMatrixUniform, projectionMatrix);
 	return *this;
 }
 

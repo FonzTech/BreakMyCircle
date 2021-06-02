@@ -1,5 +1,10 @@
-uniform vec3 color = vec3(1.0, 1.0, 1.0);
 uniform sampler2D textureData;
+uniform vec3 color;
+uniform float texWidth;
+uniform float texHeight;
+uniform float rows;
+uniform float columns;
+uniform float index;
 
 in vec2 interpolatedTextureCoordinates;
 
@@ -7,7 +12,16 @@ out vec4 fragmentColor;
 
 void main()
 {
-	vec4 t = texture(textureData, interpolatedTextureCoordinates);:
-    fragmentColor.rgb = color * t.rgb;
-    fragmentColor.a = t.a;
+	float xp = texWidth / columns;
+	float yp = texHeight / rows;
+
+	float xs = xp / texWidth;
+	float ys = yp / texHeight;
+
+	vec2 tc;	
+	tc.x = xs * (mod(floor(index), columns) + interpolatedTextureCoordinates.x);
+	tc.y = ys * (floor(index / rows) + interpolatedTextureCoordinates.y);
+	
+	fragmentColor = texture(textureData, tc);
+	fragmentColor.rgb *= color;
 }

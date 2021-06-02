@@ -34,12 +34,6 @@ FallingBubble::FallingBubble(const Color3& ambientColor, const bool spark) : Gam
 	mDiffuseColor = 0xffffff_rgbf;
 	mVelocity = { 0.0f };
 
-	// Create game bubble
-	{
-		std::shared_ptr<ColoredDrawable> cd = CommonUtility::createGameSphere(*mManipulator, mAmbientColor, this);
-		drawables.emplace_back(cd);
-	}
-
 	// Create sparkle plane
 	if (mSpark)
 	{
@@ -68,6 +62,11 @@ FallingBubble::FallingBubble(const Color3& ambientColor, const bool spark) : Gam
 		std::shared_ptr<TexturedDrawable> td = createPlane(*mManipulator, texture);
 		drawables.emplace_back(td);
 	}
+	else
+	{
+		std::shared_ptr<ColoredDrawable> cd = CommonUtility::createGameSphere(*mManipulator, mAmbientColor, this);
+		drawables.emplace_back(cd);
+	}
 }
 
 Int FallingBubble::getType()
@@ -80,6 +79,11 @@ void FallingBubble::update()
 	// Update motion
 	if (mSpark)
 	{
+		SpriteShader* ss = ((SpriteShader*)drawables.at(0)->mShader.get());
+		if (ss->mIndex >= ss->mTotal)
+		{
+			destroyMe = true;
+		}
 	}
 	else
 	{
@@ -103,15 +107,28 @@ void FallingBubble::update()
 	}
 
 	// Update transformations
-	for (auto& d : drawables)
+	if (mSpark)
 	{
-		d->setTransformation(Matrix4::translation(position));
+		drawables.at(0)->setTransformation(Matrix4::translation(position + Vector3(0.0f, 0.0f, 1.5f)) * Matrix4::scaling(Vector3(3.0f)));
+	}
+	else
+	{
+		drawables.at(0)->setTransformation(Matrix4::translation(position));
 	}
 }
 
 void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (baseDrawable == drawables.at(0).get())
+	if (mSpark)
+	{
+		(*(SpriteShader*)baseDrawable->mShader.get())
+			.bindTexture(*baseDrawable->mTexture)
+			.setTransformationMatrix(transformationMatrix)
+			.setProjectionMatrix(camera.projectionMatrix())
+			.update(mDeltaTime)
+			.draw(*baseDrawable->mMesh);
+	}
+	else
 	{
 		(*(Shaders::Phong*) baseDrawable->mShader.get())
 			.setLightPositions({ position + Vector3({ 0.0f, 40.0f, 5.0f }) })
@@ -119,14 +136,6 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 			.setAmbientColor(mAmbientColor)
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
-			.setProjectionMatrix(camera.projectionMatrix())
-			.draw(*baseDrawable->mMesh);
-	}
-	else
-	{
-		(*(SpriteShader*)baseDrawable->mShader.get())
-			.bindTexture(*baseDrawable->mTexture)
-			.setTransformationMatrix(transformationMatrix)
 			.setProjectionMatrix(camera.projectionMatrix())
 			.draw(*baseDrawable->mMesh);
 	}
@@ -139,19 +148,19 @@ void FallingBubble::collidedWith(const std::unique_ptr<std::unordered_set<GameOb
 std::shared_ptr<TexturedDrawable> FallingBubble::createPlane(Object3D & parent, std::shared_ptr<GL::Texture2D> & texture)
 {
 	// Create test mesh
-	Trade::MeshData meshData = Primitives::planeSolid();
+	Trade::MeshData meshData = Primitives::planeSolid(Primitives::PlaneFlag::TextureCoordinates);
 
 	GL::Buffer vertices;
-	vertices.setData(MeshTools::interleave(meshData.positions3DAsArray(), meshData.normalsAsArray()));
+	vertices.setData(MeshTools::interleave(meshData.positions3DAsArray(), meshData.textureCoordinates2DAsArray()));
 
 	std::shared_ptr<GL::Mesh> mesh = std::make_shared<GL::Mesh>();
 	(*mesh.get())
 		.setPrimitive(meshData.primitive())
 		.setCount(meshData.vertexCount())
-		.addVertexBuffer(vertices, 0, Shaders::Phong::Position{}, Shaders::Phong::Normal{});
+		.addVertexBuffer(std::move(vertices), 0, SpriteShader::Position{}, SpriteShader::TextureCoordinates{});
 
-	// Create Phong shader
-	std::shared_ptr<SpriteShader> shader = std::make_shared<SpriteShader>();
+	// Create shader
+	std::shared_ptr<SpriteShader> shader = std::make_shared<SpriteShader>(texture->imageSize(0).x(), texture->imageSize(0).y(), 4, 4, 16, 20.0f, mAmbientColor);
 
 	// Create colored drawable
 	std::shared_ptr<TexturedDrawable> td = std::make_shared<TexturedDrawable>(RoomManager::singleton->mDrawables, shader, mesh, texture);
