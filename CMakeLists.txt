@@ -46,12 +46,15 @@ add_executable(${PROJECT_NAME} WIN32
 	src/Bubble.cpp
 	src/CollisionManager.cpp
 	src/ColoredDrawable.cpp
+	src/CommonUtility.cpp
 	src/Engine.cpp
+	src/FallingBubble.cpp
 	src/GameObject.cpp
 	src/InputManager.cpp
 	src/Player.cpp
 	src/Projectile.cpp
 	src/RoomManager.cpp
+	src/SpriteShader.cpp
 	src/TexturedDrawable.cpp
 	src/main.cpp
 )
@@ -69,7 +72,13 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 )
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
+
 install(FILES scenes/cannon_1.glb DESTINATION ${CMAKE_INSTALL_PREFIX}/scenes)
+
+install(FILES shaders/sprite_shader.vert DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+install(FILES shaders/sprite_shader.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+
+install(FILES textures/sparkles.png DESTINATION ${CMAKE_INSTALL_PREFIX}/textures)
 
 # Make the executable a default target to build & run in Visual Studio
 # set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})

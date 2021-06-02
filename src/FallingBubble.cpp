@@ -2,11 +2,23 @@
 
 #include <thread>
 
-#include <Magnum/Shaders/Flat.h>
+#include <Corrade/PluginManager/Manager.h>
+#include <Corrade/Utility/Resource.h>
+#include <Magnum/ImageView.h>
+#include <Magnum/GL/Buffer.h>
+#include <Magnum/GL/TextureFormat.h>
+#include <Magnum/Trade/AbstractImporter.h>
+#include <Magnum/Trade/AbstractImporter.h>
+#include <Magnum/Trade/ImageData.h>
+#include <Magnum/Primitives/Icosphere.h>
+#include <Magnum/Primitives/Plane.h>
+#include <Magnum/MeshTools/Interleave.h>
+#include <Magnum/MeshTools/CompressIndices.h>
 
 #include "CommonUtility.h"
 #include "ColoredDrawable.h"
 #include "RoomManager.h"
+#include "SpriteShader.h"
 
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
@@ -31,8 +43,30 @@ FallingBubble::FallingBubble(const Color3& ambientColor, const bool spark) : Gam
 	// Create sparkle plane
 	if (mSpark)
 	{
-		std::shared_ptr<ColoredDrawable> cd = CommonUtility::createPlane(*mManipulator, this);
-		drawables.emplace_back(cd);
+		/* Load TGA importer plugin */
+		PluginManager::Manager<Trade::AbstractImporter> manager;
+		Containers::Pointer<Trade::AbstractImporter> importer = manager.loadAndInstantiate("PngImporter");
+
+		if (!importer || !importer->openFile("textures/sparkles.png"))
+		{
+			std::exit(2);
+		}
+
+		// Set texture data and parameters
+		Containers::Optional<Trade::ImageData2D> image = importer->image2D(0);
+		CORRADE_INTERNAL_ASSERT(image);
+
+		std::shared_ptr<GL::Texture2D> texture = std::make_shared<GL::Texture2D>();
+		(*texture.get())
+			.setWrapping(GL::SamplerWrapping::ClampToEdge)
+			.setMagnificationFilter(GL::SamplerFilter::Linear)
+			.setMinificationFilter(GL::SamplerFilter::Linear)
+			.setStorage(1, GL::textureFormat(image->format()), image->size())
+			.setSubImage(0, {}, *image);
+
+		// Create plane
+		std::shared_ptr<TexturedDrawable> td = createPlane(*mManipulator, texture);
+		drawables.emplace_back(td);
 	}
 }
 
@@ -90,12 +124,38 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 	}
 	else
 	{
-		(*(Shaders::Flat3D*) baseDrawable->mShader.get())
-			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+		(*(SpriteShader*)baseDrawable->mShader.get())
+			.bindTexture(*baseDrawable->mTexture)
+			.setTransformationMatrix(transformationMatrix)
+			.setProjectionMatrix(camera.projectionMatrix())
 			.draw(*baseDrawable->mMesh);
 	}
 }
 
 void FallingBubble::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
+}
+
+std::shared_ptr<TexturedDrawable> FallingBubble::createPlane(Object3D & parent, std::shared_ptr<GL::Texture2D> & texture)
+{
+	// Create test mesh
+	Trade::MeshData meshData = Primitives::planeSolid();
+
+	GL::Buffer vertices;
+	vertices.setData(MeshTools::interleave(meshData.positions3DAsArray(), meshData.normalsAsArray()));
+
+	std::shared_ptr<GL::Mesh> mesh = std::make_shared<GL::Mesh>();
+	(*mesh.get())
+		.setPrimitive(meshData.primitive())
+		.setCount(meshData.vertexCount())
+		.addVertexBuffer(vertices, 0, Shaders::Phong::Position{}, Shaders::Phong::Normal{});
+
+	// Create Phong shader
+	std::shared_ptr<SpriteShader> shader = std::make_shared<SpriteShader>();
+
+	// Create colored drawable
+	std::shared_ptr<TexturedDrawable> td = std::make_shared<TexturedDrawable>(RoomManager::singleton->mDrawables, shader, mesh, texture);
+	td->setParent(&parent);
+	td->setDrawCallback(this);
+	return td;
 }

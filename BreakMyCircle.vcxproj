@@ -172,6 +172,7 @@
     <ClCompile Include="src\InputManager.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Projectile.cpp" />
+    <ClCompile Include="src\SpriteShader.cpp" />
     <ClCompile Include="src\TexturedDrawable.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -187,6 +188,7 @@
     <ClInclude Include="src\FallingBubble.h" />
     <ClInclude Include="src\IDrawCallback.h" />
     <ClInclude Include="src\Projectile.h" />
+    <ClInclude Include="src\SpriteShader.h" />
     <ClInclude Include="src\TexturedDrawable.h" />
     <ClInclude Include="src\CommonTypes.h" />
     <ClInclude Include="src\InputManager.h" />

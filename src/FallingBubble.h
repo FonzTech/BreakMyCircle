@@ -6,7 +6,7 @@
 #include <Magnum/Math/Color.h>
 
 #include "GameObject.h"
-#include "ColoredDrawable.h"
+#include "TexturedDrawable.h"
 
 class FallingBubble : public GameObject
 {
@@ -25,4 +25,6 @@ private:
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
+
+	std::shared_ptr<TexturedDrawable> createPlane(Object3D & parent, std::shared_ptr<GL::Texture2D> & texture);
 };
