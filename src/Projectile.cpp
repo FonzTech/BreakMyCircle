@@ -10,6 +10,7 @@
 #include "RoomManager.h"
 #include "Bubble.h"
 #include "CommonUtility.h"
+#include "FallingBubble.h"
 
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
@@ -41,7 +42,7 @@ Int Projectile::getType()
 void Projectile::update()
 {
 	// Affect position by velocity
-	position += mVelocity * deltaTime * mSpeed;
+	position += mVelocity * mDeltaTime * mSpeed;
 
 	// Bounce against side walls
 	if (position.x() <= mLeftX && mVelocity.x() < 0.0f)
@@ -59,7 +60,7 @@ void Projectile::update()
 	updateBBox();
 
 	// Check for collision against other bubbles
-	const std::unique_ptr<std::unordered_set<GameObject*>> bubbles = RoomManager::singleton->mCollisionManager->checkCollision(this);
+	const std::unique_ptr<std::unordered_set<GameObject*>> bubbles = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this);
 	if (bubbles->size() > 0)
 	{
 		collidedWith(bubbles);
@@ -121,8 +122,9 @@ void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObjec
 		}
 	}
 
-	// Destroy nearby bubbles
+	// Destroy nearby bubbles and disjoint bubble groups
 	b->destroyNearbyBubbles();
+	b->destroyDisjointBubbles();
 
 	// Destroy me
 	destroyMe = true;

@@ -24,7 +24,7 @@ public:
 	~GameObject();
 
 	bool destroyMe;
-	Float deltaTime;
+	Float mDeltaTime;
 	std::unique_ptr<Object3D> mManipulator;
 	std::vector<std::shared_ptr<BaseDrawable>> drawables;
 

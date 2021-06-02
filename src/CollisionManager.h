@@ -12,5 +12,5 @@ class CollisionManager
 public:
 	explicit CollisionManager();
 
-	std::unique_ptr<std::unordered_set<GameObject*>> checkCollision(const GameObject* go) const;
+	std::unique_ptr<std::unordered_set<GameObject*>> checkCollision(const Range3D & bbox, const GameObject* go) const;
 };

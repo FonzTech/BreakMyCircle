@@ -53,6 +53,11 @@ void RoomManager::createTestRoom()
 		{
 			Int index = std::rand() % colors.size();
 
+			if (i == 6 && j < 4 || i == 7 && j == 3)
+			{
+				index = 0;
+			}
+
 			Float startX;
 			if (i % 2)
 			{

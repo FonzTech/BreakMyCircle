@@ -5,7 +5,7 @@ CollisionManager::CollisionManager()
 {
 }
 
-std::unique_ptr<std::unordered_set<GameObject*>> CollisionManager::checkCollision(const GameObject* go) const
+std::unique_ptr<std::unordered_set<GameObject*>> CollisionManager::checkCollision(const Range3D & bbox, const GameObject* go) const
 {
 	std::unique_ptr<std::unordered_set<GameObject*>> set = std::make_unique<std::unordered_set<GameObject*>>();
 	auto& gos = RoomManager::singleton->mGameObjects;
@@ -15,7 +15,7 @@ std::unique_ptr<std::unordered_set<GameObject*>> CollisionManager::checkCollisio
 		{
 			continue;
 		}
-		else if (Math::intersects(go->bbox, gos[i]->bbox))
+		else if (Math::intersects(bbox, gos[i]->bbox))
 		{
 			GameObject* p = gos[i].get();
 			if (set->find(p) == set->end())

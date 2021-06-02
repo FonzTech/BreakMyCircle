@@ -1,16 +1,16 @@
 #include "Bubble.h"
 
 #include <thread>
-#include <Magnum/GL/DefaultFramebuffer.h>
-#include <Magnum/Primitives/Icosphere.h>
-#include <Magnum/MeshTools/Interleave.h>
-#include <Magnum/MeshTools/CompressIndices.h>
+#include <future>
+#include <queue>
+
 #include <Magnum/Math/Math.h>
 #include <Magnum/Math/Bezier.h>
 
 #include "CommonUtility.h"
 #include "ColoredDrawable.h"
 #include "RoomManager.h"
+#include "FallingBubble.h"
 
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
@@ -44,18 +44,24 @@ void Bubble::update()
 	}
 	else
 	{
-		mShakeFact -= deltaTime * 2.0f;
+		mShakeFact -= mDeltaTime * 2.0f;
+	}
+
+	// Update transformations
+	const Vector3 shakeVect = mShakeFact > 0.001f ? mShakePos * std::sin(mShakeFact * Constants::pi()) : Vector3(0.0f);
+	for (auto& d : drawables)
+	{
+		d->setTransformation(Matrix4::translation(position + shakeVect));
 	}
 }
 
 void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	const Vector3 shakeVect = mShakeFact > 0.001f ? mShakePos * std::sin(mShakeFact * Constants::pi()) : Vector3(0.0f);
 	(*baseDrawable->mShader.get())
 		.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
 		.setDiffuseColor(mDiffuseColor)
 		.setAmbientColor(mAmbientColor)
-		.setTransformationMatrix(transformationMatrix * Matrix4::translation(position + shakeVect))
+		.setTransformationMatrix(transformationMatrix)
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
 		.draw(*baseDrawable->mMesh);
@@ -84,7 +90,7 @@ void Bubble::applyRippleEffect(const Vector3& center)
 
 void Bubble::destroyNearbyBubbles()
 {
-	std::thread tjob([this]() {
+	auto future = std::async(std::launch::async, [this]() {
 		// Check for nearby collisions
 		BubbleCollisionGroup bg;
 		bg.insert(this);
@@ -103,7 +109,7 @@ void Bubble::destroyNearbyBubbles()
 			}
 		}
 	});
-	tjob.join();
+	future.get();
 }
 
 /*
@@ -133,7 +139,7 @@ void Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
 		}
 
 		// Check if bubble collides nearby
-		for (auto& item : *group)
+		for (const auto& item : *group)
 		{
 			Range3D eb{ item->position - Vector3(1.5f), item->position + Vector3(1.5f) };
 			if (Math::intersects(eb, go->bbox))
@@ -143,6 +149,136 @@ void Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
 			}
 		}
 	}
+}
+
+void Bubble::destroyDisjointBubbles()
+{
+	auto future = std::async(std::launch::async, [this]() {
+		// Create list of bubbles
+		std::unordered_set<Bubble*> group;
+		for (auto& go : RoomManager::singleton->mGameObjects)
+		{
+			if (go->getType() != GOT_BUBBLE || go->destroyMe)
+			{
+				continue;
+			}
+			group.insert((Bubble*)go.get());
+		}
+
+		// Empty list for positions for future falling bubbles
+		std::unique_ptr<std::queue<GraphNode>> fps = std::make_unique<std::queue<GraphNode>>();
+
+		// DFS-like algorithm on all remaining nodes
+		while (!group.empty())
+		{
+			// Pick the first node in list
+			auto it = group.begin();
+			Bubble* bubble = *it;
+			group.erase(it);
+
+			// Perform DFS-like algorithm
+			std::unique_ptr<Graph> graph  = bubble->destroyDisjointBubblesImpl(group);
+			graph->set.insert(bubble);
+
+			// Debug print
+			#if NDEBUG or _DEBUG
+			printf("Graph %s bubbles are %d\n", graph->attached ? "attached" : "not attached", graph->set.size());
+			#endif
+
+			// Destroy all bubbles obtained from the previous function
+			if (!graph->attached)
+			{
+				for (auto& item : graph->set)
+				{
+					{
+						GraphNode gn;
+						gn.position = item->position;
+						gn.color = ((Bubble*)item)->mAmbientColor;
+						fps->push(gn);
+					}
+
+					Bubble* ib = (Bubble*)item;
+					ib->destroyMe = true;
+				}
+			}
+		}
+		
+		// Return list of positions
+		return fps;
+	});
+	auto fps = future.get();
+
+	while (!fps->empty())
+	{
+		auto& gn = fps->front();
+
+		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(gn.color);
+		ib->position = gn.position;
+		RoomManager::singleton->mGameObjects.push_back(ib);
+
+		fps->pop();
+	}
+}
+
+std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered_set<Bubble*> & group)
+{
+	// BBox for adjacent bubbles
+	Range3D bbox(position - Vector3(1.5f), position + Vector3(1.5f));
+
+	// Check for collisions against other game objects (DFS-like graph)
+	std::unique_ptr<std::unordered_set<GameObject*>> collided = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this);
+	std::unique_ptr<Graph> graph = std::make_unique<Graph>();
+	graph->attached = 0;
+
+	// Cycle through all collided game objects
+	for (const auto& item : *collided)
+	{
+		// Check if it's a bubble
+		if (item->getType() != GOT_BUBBLE)
+		{
+			continue;
+		}
+
+		// Check if node of graph (bubble) is marked as "explored" or not
+		Bubble* bi = (Bubble*)item;
+		if (group.find(bi) == group.end())
+		{
+			continue;
+		}
+
+		// Mark it as "explored"
+		group.erase(bi);
+		
+		// Check if node is present in this connected graph
+		if (graph->set.find(bi) == graph->set.end())
+		{
+			// Insert it
+			graph->set.insert(bi);
+
+			// Perform DFS-like algorithm
+			std::unique_ptr<Graph> result = bi->destroyDisjointBubblesImpl(group);
+
+			/*
+				Check if graph is eligible or not for deletion.
+				For example, if it has at least one node, attached
+				to the ceiling, then it's NOT eligible for deletion.
+			*/
+			if (bi->isNotEligibleForGraphDeletion() || result->attached)
+			{
+				graph->attached = 1;
+			}
+
+			// Merge the two lists without repetition
+			graph->set.insert(result->set.begin(), result->set.end());
+		}
+	}
+
+	return graph;
+}
+
+bool Bubble::isNotEligibleForGraphDeletion()
+{
+	return position.y() >= -0.1f;
 }
 
 Float Bubble::getShakeSmooth(const Float xt)

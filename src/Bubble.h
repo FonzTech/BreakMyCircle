@@ -37,21 +37,40 @@ public:
 		}
 	};
 
+	// Struct for aggregate data
+	struct Graph
+	{
+		std::unordered_set<GameObject*> set;
+		Sint8 attached;
+	};
+
 	// Typedef for alias
 	typedef std::unordered_set<Bubble*, Bubble::HashByColorAndPos, Bubble::EqualByColorAndPos> BubbleCollisionGroup;
 
 	// Class members
 	Bubble(const Color3& ambientColor);
 
-	void destroyNearbyBubbles();
-	void destroyNearbyBubblesImpl(BubbleCollisionGroup* group);
 	void updateBBox();
 	void applyRippleEffect(const Vector3& center);
+
+	void destroyNearbyBubbles();
+	void destroyDisjointBubbles();
+
+	void destroyNearbyBubblesImpl(BubbleCollisionGroup* group);
+	std::unique_ptr<Graph> destroyDisjointBubblesImpl(std::unordered_set<Bubble*> & group);
 
 	Color3 mAmbientColor;
 	Color3 mDiffuseColor;
 
 private:
+	// Complex structures
+	struct GraphNode
+	{
+		Vector3 position;
+		Color3 color;
+	};
+
+	// Class members
 	Vector3 mShakePos;
 	Float mShakeFact;
 
@@ -59,6 +78,8 @@ private:
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
+
+	bool isNotEligibleForGraphDeletion();
 
 	Float getShakeSmooth(const Float xt);
 };

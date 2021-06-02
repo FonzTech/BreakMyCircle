@@ -48,7 +48,7 @@ Int Player::getType()
 void Player::update()
 {
 	// Update shoot timeline for animation
-	mShootTimeline -= deltaTime;
+	mShootTimeline -= mDeltaTime;
 
 	// Get shooting angle by mouse
 	{

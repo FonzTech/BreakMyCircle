@@ -56,7 +56,7 @@ void Engine::tickEvent()
 	for (UnsignedInt i = 0; i < gos.size(); ++i)
 	{
 		std::shared_ptr<GameObject> go = gos[i];
-		go->deltaTime = mDeltaTime;
+		go->mDeltaTime = mDeltaTime;
 		go->update();
 	}
 

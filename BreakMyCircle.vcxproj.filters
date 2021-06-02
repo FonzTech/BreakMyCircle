@@ -75,6 +75,9 @@
     <ClCompile Include="src\CommonUtility.cpp">
       <Filter>Source Files\Common</Filter>
     </ClCompile>
+    <ClCompile Include="src\FallingBubble.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src/RoomManager.h">
@@ -121,6 +124,9 @@
     </ClInclude>
     <ClInclude Include="src\CommonUtility.h">
       <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FallingBubble.h">
+      <Filter>Header Files\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
