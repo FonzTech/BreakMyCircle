@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <Magnum/Shaders/Phong.h>
+#include <Magnum/GL/AbstractShaderProgram.h>
 
 #include "CommonTypes.h"
 #include "IDrawCallback.h"
@@ -13,7 +13,7 @@ public:
 
 	std::shared_ptr<GL::Mesh> mMesh;
 	std::shared_ptr<GL::Texture2D> mTexture;
-	std::shared_ptr<Shaders::Phong> mShader;
+	std::shared_ptr<GL::AbstractShaderProgram> mShader;
 	Color4 mColor;
 
 	void setDrawCallback(IDrawCallback* drawCallback);

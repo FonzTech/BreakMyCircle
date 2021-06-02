@@ -11,8 +11,9 @@
 class FallingBubble : public GameObject
 {
 public:
-	FallingBubble(const Color3& ambientColor);
+	FallingBubble(const Color3& ambientColor, const bool spark);
 
+	bool mSpark;
 	Color3 mAmbientColor;
 	Color3 mDiffuseColor;
 

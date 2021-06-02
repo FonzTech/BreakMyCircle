@@ -69,8 +69,8 @@ void Projectile::update()
 
 void Projectile::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	(*baseDrawable->mShader)
-		.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
+	(*(Shaders::Phong*) baseDrawable->mShader.get())
+		.setLightPositions({ position + Vector3({ 0.0f, 40.0f, 5.0f }) })
 		.setDiffuseColor(mDiffuseColor)
 		.setAmbientColor(mAmbientColor)
 		.setTransformationMatrix(transformationMatrix * Matrix4::translation(position))
@@ -123,8 +123,10 @@ void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObjec
 	}
 
 	// Destroy nearby bubbles and disjoint bubble groups
-	b->destroyNearbyBubbles();
-	b->destroyDisjointBubbles();
+	if (b->destroyNearbyBubbles())
+	{
+		b->destroyDisjointBubbles();
+	}
 
 	// Destroy me
 	destroyMe = true;

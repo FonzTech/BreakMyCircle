@@ -104,8 +104,8 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 {
 	if (baseDrawable == mSphereDrawables[0])
 	{
-		(*baseDrawable->mShader)
-			.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
+		(*(Shaders::Phong*) baseDrawable->mShader.get())
+			.setLightPositions({ position + Vector3({ 0.0f, 150.0f, 40.0f }) })
 			.setDiffuseColor(mDiffuseColor)
 			.setAmbientColor(mColors[mAmbientColorIndex])
 			.setTransformationMatrix(transformationMatrix)
@@ -115,7 +115,7 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	}
 	else
 	{
-		(*baseDrawable->mShader)
+		(*(Shaders::Phong*) baseDrawable->mShader.get())
 			.setLightPosition(camera.cameraMatrix().transformPoint(position + Vector3(0.0f, 0.0f, 20.0f)))
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())

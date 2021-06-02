@@ -57,8 +57,8 @@ void Bubble::update()
 
 void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	(*baseDrawable->mShader.get())
-		.setLightPositions({ position + Vector3({ 10.0f, 10.0f, 1.75f }) })
+	(*(Shaders::Phong*) baseDrawable->mShader.get())
+		.setLightPositions({ position + Vector3({ 0.0f, 40.0f, 5.0f }) })
 		.setDiffuseColor(mDiffuseColor)
 		.setAmbientColor(mAmbientColor)
 		.setTransformationMatrix(transformationMatrix)
@@ -88,13 +88,16 @@ void Bubble::applyRippleEffect(const Vector3& center)
 	mShakeFact = 1.0f;
 }
 
-void Bubble::destroyNearbyBubbles()
+bool Bubble::destroyNearbyBubbles()
 {
 	auto future = std::async(std::launch::async, [this]() {
 		// Check for nearby collisions
 		BubbleCollisionGroup bg;
 		bg.insert(this);
 		Bubble::destroyNearbyBubblesImpl(&bg);
+
+		// Empty list for positions for future popping bubbles
+		std::unique_ptr<std::queue<GraphNode>> fps = std::make_unique<std::queue<GraphNode>>();
 
 		// Work on bubble collision group
 		#if NDEBUG or _DEBUG
@@ -105,11 +108,35 @@ void Bubble::destroyNearbyBubbles()
 		{
 			for (auto& b : bg)
 			{
+				{
+					GraphNode gn;
+					gn.position = b->position;
+					gn.color = b->mAmbientColor;
+					fps->push(gn);
+				}
+
 				b->destroyMe = true;
 			}
 		}
+
+		// Return the list
+		return fps;
 	});
-	future.get();
+	auto fps = future.get();
+	bool nonZero = fps->size() > 0;
+
+	while (!fps->empty())
+	{
+		auto& gn = fps->front();
+
+		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(gn.color, true);
+		ib->position = gn.position;
+		RoomManager::singleton->mGameObjects.push_back(ib);
+
+		fps->pop();
+	}
+
+	return nonZero;
 }
 
 /*
@@ -212,7 +239,7 @@ void Bubble::destroyDisjointBubbles()
 	{
 		auto& gn = fps->front();
 
-		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(gn.color);
+		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(gn.color, false);
 		ib->position = gn.position;
 		RoomManager::singleton->mGameObjects.push_back(ib);
 

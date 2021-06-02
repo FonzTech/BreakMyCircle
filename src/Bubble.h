@@ -53,7 +53,7 @@ public:
 	void updateBBox();
 	void applyRippleEffect(const Vector3& center);
 
-	void destroyNearbyBubbles();
+	bool destroyNearbyBubbles();
 	void destroyDisjointBubbles();
 
 	void destroyNearbyBubblesImpl(BubbleCollisionGroup* group);
