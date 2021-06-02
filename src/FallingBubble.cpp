@@ -41,6 +41,13 @@ void FallingBubble::update()
 		position += mVelocity * mDeltaTime;
 	}
 
+	// Check for off-screen position
+	if (position.y() < -300.0f)
+	{
+		destroyMe = true;
+		return;
+	}
+
 	// Update transformations
 	for (auto& d : drawables)
 	{
