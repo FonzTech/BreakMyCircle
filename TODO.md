@@ -5,4 +5,5 @@
 - ~~Create prototype for projectile and collision against other bubbles.~~
 - ~~Fix location for new bubbles, when the static positioning places it in an already occupied spot.~~
 - ~~Destroy nearby bubbles, with the same color, when one is hit by a projectile.~~
-- Make bubble fall, if not supported by one bubble on top, at least.
+- ~~Make bubble fall, if not supported by one bubble on top, at least.~~
+- Add Magnum's resource manager. Fix pending references.
