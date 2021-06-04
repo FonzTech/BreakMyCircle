@@ -37,34 +37,43 @@ FallingBubble::FallingBubble(const Color3& ambientColor, const bool spark) : Gam
 	// Create sparkle plane
 	if (mSpark)
 	{
-		/* Load TGA importer plugin */
-		PluginManager::Manager<Trade::AbstractImporter> manager;
-		Containers::Pointer<Trade::AbstractImporter> importer = manager.loadAndInstantiate("PngImporter");
+		// Get sparkles texture
+		Resource<GL::Texture2D> resTexture{ CommonUtility::singleton->manager.get<GL::Texture2D>(RESOURCE_TEXTURE_SPARKLES) };
 
-		if (!importer || !importer->openFile("textures/sparkles.png"))
+		if (!resTexture)
 		{
-			std::exit(2);
+			// Load TGA importer plugin
+			PluginManager::Manager<Trade::AbstractImporter> manager;
+			Containers::Pointer<Trade::AbstractImporter> importer = manager.loadAndInstantiate("PngImporter");
+
+			if (!importer || !importer->openFile("textures/sparkles.png"))
+			{
+				std::exit(2);
+			}
+
+			// Set texture data and parameters
+			Containers::Optional<Trade::ImageData2D> image = importer->image2D(0);
+			CORRADE_INTERNAL_ASSERT(image);
+
+			GL::Texture2D texture;
+			texture
+				.setWrapping(GL::SamplerWrapping::ClampToEdge)
+				.setMagnificationFilter(GL::SamplerFilter::Linear)
+				.setMinificationFilter(GL::SamplerFilter::Linear)
+				.setStorage(1, GL::textureFormat(image->format()), image->size())
+				.setSubImage(0, {}, *image);
+
+			// Add to resources
+			CommonUtility::singleton->manager.set(resTexture.key(), std::move(texture));
 		}
 
-		// Set texture data and parameters
-		Containers::Optional<Trade::ImageData2D> image = importer->image2D(0);
-		CORRADE_INTERNAL_ASSERT(image);
-
-		std::shared_ptr<GL::Texture2D> texture = std::make_shared<GL::Texture2D>();
-		(*texture.get())
-			.setWrapping(GL::SamplerWrapping::ClampToEdge)
-			.setMagnificationFilter(GL::SamplerFilter::Linear)
-			.setMinificationFilter(GL::SamplerFilter::Linear)
-			.setStorage(1, GL::textureFormat(image->format()), image->size())
-			.setSubImage(0, {}, *image);
-
 		// Create plane
-		std::shared_ptr<TexturedDrawable> td = createPlane(*mManipulator, texture);
+		std::shared_ptr<TexturedDrawable<SpriteShader>> td = createPlane(*mManipulator, resTexture);
 		drawables.emplace_back(td);
 	}
 	else
 	{
-		std::shared_ptr<ColoredDrawable> cd = CommonUtility::createGameSphere(*mManipulator, mAmbientColor, this);
+		std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mManipulator, mAmbientColor, this);
 		drawables.emplace_back(cd);
 	}
 }
@@ -79,7 +88,7 @@ void FallingBubble::update()
 	// Update motion
 	if (mSpark)
 	{
-		SpriteShader* ss = ((SpriteShader*)drawables.at(0)->mShader.get());
+		SpriteShader* ss = &((SpriteShader&)drawables.at(0)->getShader());
 		if (ss->mIndex >= ss->mTotal)
 		{
 			destroyMe = true;
@@ -121,7 +130,7 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 {
 	if (mSpark)
 	{
-		(*(SpriteShader*)baseDrawable->mShader.get())
+		((SpriteShader&) baseDrawable->getShader())
 			.bindTexture(*baseDrawable->mTexture)
 			.setTransformationMatrix(transformationMatrix)
 			.setProjectionMatrix(camera.projectionMatrix())
@@ -130,7 +139,7 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 	}
 	else
 	{
-		(*(Shaders::Phong*) baseDrawable->mShader.get())
+		((Shaders::Phong&) baseDrawable->getShader())
 			.setLightPositions({ position + Vector3({ 0.0f, 40.0f, 5.0f }) })
 			.setDiffuseColor(mDiffuseColor)
 			.setAmbientColor(mAmbientColor)
@@ -145,25 +154,43 @@ void FallingBubble::collidedWith(const std::unique_ptr<std::unordered_set<GameOb
 {
 }
 
-std::shared_ptr<TexturedDrawable> FallingBubble::createPlane(Object3D & parent, std::shared_ptr<GL::Texture2D> & texture)
+std::shared_ptr<TexturedDrawable<SpriteShader>> FallingBubble::createPlane(Object3D & parent, Resource<GL::Texture2D> & texture)
 {
-	// Create test mesh
-	Trade::MeshData meshData = Primitives::planeSolid(Primitives::PlaneFlag::TextureCoordinates);
+	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_PLANE) };
 
-	GL::Buffer vertices;
-	vertices.setData(MeshTools::interleave(meshData.positions3DAsArray(), meshData.textureCoordinates2DAsArray()));
+	if (!resMesh)
+	{
+		// Create test mesh
+		Trade::MeshData meshData = Primitives::planeSolid(Primitives::PlaneFlag::TextureCoordinates);
 
-	std::shared_ptr<GL::Mesh> mesh = std::make_shared<GL::Mesh>();
-	(*mesh.get())
-		.setPrimitive(meshData.primitive())
-		.setCount(meshData.vertexCount())
-		.addVertexBuffer(std::move(vertices), 0, SpriteShader::Position{}, SpriteShader::TextureCoordinates{});
+		GL::Buffer vertices;
+		vertices.setData(MeshTools::interleave(meshData.positions3DAsArray(), meshData.textureCoordinates2DAsArray()));
+
+		GL::Mesh mesh;
+		mesh
+			.setPrimitive(meshData.primitive())
+			.setCount(meshData.vertexCount())
+			.addVertexBuffer(std::move(vertices), 0, SpriteShader::Position{}, SpriteShader::TextureCoordinates{});
+
+		// Add to resources
+		CommonUtility::singleton->manager.set(resMesh.key(), std::move(mesh));
+	}
 
 	// Create shader
-	std::shared_ptr<SpriteShader> shader = std::make_shared<SpriteShader>(texture->imageSize(0).x(), texture->imageSize(0).y(), 4, 4, 16, 20.0f, mAmbientColor);
+	Resource<GL::AbstractShaderProgram, SpriteShader> resShader{ CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, SpriteShader>(RESOURCE_SHADER_SPRITE) };
+	
+	if (!resShader)
+	{
+		// Create shader
+		std::unique_ptr<GL::AbstractShaderProgram> shader = std::make_unique<SpriteShader>(texture->imageSize(0).x(), texture->imageSize(0).y(), 4, 4, 16, 20.0f, mAmbientColor);
+
+		// Add to resources
+		Containers::Pointer<GL::AbstractShaderProgram> p = std::move(shader);
+		CommonUtility::singleton->manager.set(resShader.key(), std::move(p));
+	}
 
 	// Create colored drawable
-	std::shared_ptr<TexturedDrawable> td = std::make_shared<TexturedDrawable>(RoomManager::singleton->mDrawables, shader, mesh, texture);
+	std::shared_ptr<TexturedDrawable<SpriteShader>> td = std::make_shared<TexturedDrawable<SpriteShader>>(RoomManager::singleton->mDrawables, resShader, resMesh, texture);
 	td->setParent(&parent);
 	td->setDrawCallback(this);
 	return td;

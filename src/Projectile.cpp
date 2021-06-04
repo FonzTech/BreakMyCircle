@@ -30,7 +30,7 @@ Projectile::Projectile(const Color3& ambientColor) : GameObject()
 	mDiffuseColor = 0xffffff_rgbf;
 
 	// Create game bubble
-	std::shared_ptr<ColoredDrawable> cd = CommonUtility::createGameSphere(*mManipulator, mAmbientColor, this);
+	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mManipulator, mAmbientColor, this);
 	drawables.emplace_back(cd);
 }
 
@@ -69,7 +69,7 @@ void Projectile::update()
 
 void Projectile::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	(*(Shaders::Phong*) baseDrawable->mShader.get())
+	((Shaders::Phong&) baseDrawable->getShader())
 		.setLightPositions({ position + Vector3({ 0.0f, 40.0f, 5.0f }) })
 		.setDiffuseColor(mDiffuseColor)
 		.setAmbientColor(mAmbientColor)

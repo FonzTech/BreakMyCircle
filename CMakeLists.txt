@@ -45,7 +45,6 @@ add_executable(${PROJECT_NAME} WIN32
 	src/BaseDrawable.cpp
 	src/Bubble.cpp
 	src/CollisionManager.cpp
-	src/ColoredDrawable.cpp
 	src/CommonUtility.cpp
 	src/Engine.cpp
 	src/FallingBubble.cpp
@@ -55,7 +54,6 @@ add_executable(${PROJECT_NAME} WIN32
 	src/Projectile.cpp
 	src/RoomManager.cpp
 	src/SpriteShader.cpp
-	src/TexturedDrawable.cpp
 	src/main.cpp
 )
 

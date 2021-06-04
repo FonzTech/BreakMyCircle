@@ -2,6 +2,7 @@
 #include <Magnum/GL/DefaultFramebuffer.h>
 
 #include "Engine.h"
+#include "CommonUtility.h"
 #include "InputManager.h"
 #include "AssetManager.h"
 #include "RoomManager.h"
@@ -24,6 +25,8 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	GL::Renderer::setFeature(GL::Renderer::Feature::Blending, true);
 	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 	GL::Renderer::setBlendEquation(GL::Renderer::BlendEquation::Add, GL::Renderer::BlendEquation::Add);
+
+	CommonUtility::singleton = std::make_unique<CommonUtility>();
 
 	InputManager::singleton = std::make_unique<InputManager>();
 
@@ -140,6 +143,13 @@ void Engine::exitEvent(ExitEvent& event)
 		RoomManager::singleton->clear();
 	}
 	RoomManager::singleton = nullptr;
+
+	// Clear common utility
+	if (CommonUtility::singleton != nullptr)
+	{
+		CommonUtility::singleton->clear();
+	}
+	CommonUtility::singleton = nullptr;
 
 	// Clear input manager
 	InputManager::singleton = nullptr;

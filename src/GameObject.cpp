@@ -10,4 +10,5 @@ GameObject::GameObject() : IDrawCallback()
 GameObject::~GameObject()
 {
 	drawables.clear();
+	mManipulator = nullptr;
 }

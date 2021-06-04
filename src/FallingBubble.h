@@ -7,6 +7,7 @@
 
 #include "GameObject.h"
 #include "TexturedDrawable.h"
+#include "SpriteShader.h"
 
 class FallingBubble : public GameObject
 {
@@ -26,5 +27,5 @@ private:
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
-	std::shared_ptr<TexturedDrawable> createPlane(Object3D & parent, std::shared_ptr<GL::Texture2D> & texture);
+	std::shared_ptr<TexturedDrawable<SpriteShader>> createPlane(Object3D & parent, Resource<GL::Texture2D> & texture);
 };

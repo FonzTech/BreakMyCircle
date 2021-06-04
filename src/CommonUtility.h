@@ -1,11 +1,44 @@
 #pragma once
 
+#define RESOURCE_MESH_ICOSPHERE "mesh_icosphere"
+#define RESOURCE_MESH_PLANE "mesh_plane"
+
+#define RESOURCE_TEXTURE_SPARKLES "tex_sparkles"
+
+#define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"
+#define RESOURCE_SHADER_TEXTURED_PHONG "shader_textured_phong"
+#define RESOURCE_SHADER_SPRITE "shader_sprite"
+
 #include <memory>
+#include <Magnum/Magnum.h>
+#include <Magnum/Resource.h>
+#include <Magnum/ResourceManager.h>
+#include <Magnum/GL/Mesh.h>
+#include <Magnum/GL/Texture.h>
+#include <Magnum/GL/AbstractShaderProgram.h>
+#include <Magnum/Trade/AbstractMaterialData.h>
 
 #include "CommonTypes.h"
 #include "ColoredDrawable.h"
 
-namespace CommonUtility
+using namespace Magnum;
+
+typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::AbstractShaderProgram, Trade::AbstractMaterialData> MyResourceManager;
+
+class CommonUtility
 {
-	std::shared_ptr<ColoredDrawable> createGameSphere(Object3D & parent, const Vector3 & diffuseColor, IDrawCallback* drawCallback);
-}
+public:
+	static std::unique_ptr<CommonUtility> singleton;
+
+	// Constructor
+	CommonUtility();
+
+	// Clear method
+	void clear();
+
+	// Create game sphere
+	std::shared_ptr<ColoredDrawable<Shaders::Phong>> createGameSphere(Object3D & parent, const Vector3 & diffuseColor, IDrawCallback* drawCallback);
+
+	// Resource maanger holder
+	MyResourceManager manager;
+};

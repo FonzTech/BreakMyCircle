@@ -6,9 +6,7 @@
 #include <Corrade/Containers/Optional.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/GL/Texture.h>
-#include <Magnum/Shaders/Phong.h>
 #include <Magnum/Trade/AbstractImporter.h>
-#include <Magnum/Trade/PhongMaterialData.h>
 
 #include "CommonTypes.h"
 #include "GameObject.h"
@@ -17,16 +15,16 @@ using namespace Magnum;
 
 struct ImportedAssets
 {
-	Containers::Array<std::shared_ptr<GL::Mesh>> meshes;
-	Containers::Array<std::shared_ptr<GL::Texture2D>> textures;
-	Containers::Array<std::shared_ptr<Trade::PhongMaterialData>> materials;
+	Containers::Array<Resource<GL::Mesh>> meshes;
+	Containers::Array<Resource<GL::Texture2D>> textures;
+	Containers::Array<Resource<Trade::AbstractMaterialData>> materials;
 };
 
 class AssetManager
 {
 private:
-	std::shared_ptr<Shaders::Phong> coloredShader;
-	std::shared_ptr<Shaders::Phong> texturedShader;
+	Resource<GL::AbstractShaderProgram, Shaders::Phong> coloredShader;
+	Resource<GL::AbstractShaderProgram, Shaders::Phong> texturedShader;
 
 	void processChildrenAssets(GameObject& gameObject, ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i, IDrawCallback* drawCallback);
 

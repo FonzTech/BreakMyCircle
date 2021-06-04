@@ -34,7 +34,7 @@ Player::Player() : GameObject()
 	// Create game bubble
 	mSphereManipulator = new Object3D{ &RoomManager::singleton->mScene };
 
-	std::shared_ptr<ColoredDrawable> cd = CommonUtility::createGameSphere(*mSphereManipulator, mColors[mAmbientColorIndex], this);
+	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mSphereManipulator, mColors[mAmbientColorIndex], this);
 	drawables.emplace_back(cd);
 
 	mSphereDrawables[0] = cd.get();
@@ -104,7 +104,7 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 {
 	if (baseDrawable == mSphereDrawables[0])
 	{
-		(*(Shaders::Phong*) baseDrawable->mShader.get())
+		((Shaders::Phong&) baseDrawable->getShader())
 			.setLightPositions({ position + Vector3({ 0.0f, 150.0f, 40.0f }) })
 			.setDiffuseColor(mDiffuseColor)
 			.setAmbientColor(mColors[mAmbientColorIndex])
@@ -115,7 +115,7 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	}
 	else
 	{
-		(*(Shaders::Phong*) baseDrawable->mShader.get())
+		((Shaders::Phong&) baseDrawable->getShader())
 			.setLightPosition(camera.cameraMatrix().transformPoint(position + Vector3(0.0f, 0.0f, 20.0f)))
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())

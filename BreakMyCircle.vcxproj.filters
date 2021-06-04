@@ -60,12 +60,6 @@
     <ClCompile Include="src\AssetManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\TexturedDrawable.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="src\ColoredDrawable.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="src\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
