@@ -6,7 +6,7 @@
 #define RESOURCE_TEXTURE_SPARKLES "tex_sparkles"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"
-#define RESOURCE_SHADER_TEXTURED_PHONG "shader_textured_phong"
+#define RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE "shader_textured_phong"
 #define RESOURCE_SHADER_SPRITE "shader_sprite"
 
 #include <memory>

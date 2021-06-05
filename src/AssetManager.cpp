@@ -44,7 +44,7 @@ AssetManager::AssetManager()
 	}
 
 	// Setup textured shader
-	texturedShader = CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, Shaders::Phong>(RESOURCE_SHADER_TEXTURED_PHONG);
+	texturedShader = CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, Shaders::Phong>(RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE);
 	if (!texturedShader)
 	{
 		std::unique_ptr<Shaders::Phong> shader = std::make_unique<Shaders::Phong>(Shaders::Phong::Flag::DiffuseTexture);
