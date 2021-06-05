@@ -137,14 +137,29 @@ void Engine::viewportEvent(ViewportEvent& event)
 
 void Engine::exitEvent(ExitEvent& event)
 {
-	// Clear entire room
+	/*
+		Clear asset manager first, because it has some
+		references about basic colored and textured Phong shader.
+	*/
+	AssetManager::singleton = nullptr;
+
+	/*
+		Then, clear the entire room. Must be done now, because
+		this object holds data about game objects, and so they holds
+		references about meshes, textures, shaders, etc...
+	*/
 	if (RoomManager::singleton != nullptr)
 	{
 		RoomManager::singleton->clear();
 	}
 	RoomManager::singleton = nullptr;
 
-	// Clear common utility
+	/*
+		Now, common utility can be cleared, expecially because
+		it contains the resource manager. It can be cleared now,
+		and only now, because no more references are present
+		for contained resources.
+	*/
 	if (CommonUtility::singleton != nullptr)
 	{
 		CommonUtility::singleton->clear();
@@ -153,9 +168,6 @@ void Engine::exitEvent(ExitEvent& event)
 
 	// Clear input manager
 	InputManager::singleton = nullptr;
-
-	// Clear asset manager
-	AssetManager::singleton = nullptr;
 
 	// Pass default behaviour
 	event.setAccepted();

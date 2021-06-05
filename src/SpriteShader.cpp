@@ -7,14 +7,8 @@
 #include <Magnum/GL/Shader.h>
 #include <Magnum/GL/Version.h>
 
-SpriteShader::SpriteShader(const Float & width, const Float & height, const Float & rows, const Float & columns, const Float & total, const Float & speed, const Color3 & color)
+SpriteShader::SpriteShader()
 {
-	// Assign members
-	mTotal = total;
-	mSpeed = speed;
-	mColor = color;
-	mIndex = 0;
-
 	// Setup shader from file
 	MAGNUM_ASSERT_GL_VERSION_SUPPORTED(GL::Version::GL330);
 
@@ -33,26 +27,14 @@ SpriteShader::SpriteShader(const Float & width, const Float & height, const Floa
 	mTransformationMatrixUniform = uniformLocation("transformationMatrix");
 	mProjectionMatrixUniform = uniformLocation("projectionMatrix");
 
+	mColorUniform = uniformLocation("color");
 	mIndexUniform = uniformLocation("index");
+	mTexWidthUniform = uniformLocation("texWidth");
+	mTexHeightUniform = uniformLocation("texHeight");
+	mRowsUniform = uniformLocation("rows");
+	mColumnsUniform = uniformLocation("columns");
 
 	setUniform(uniformLocation("textureData"), TextureUnit);
-
-	setUniform(uniformLocation("color"), color);
-	setUniform(uniformLocation("texWidth"), width);
-	setUniform(uniformLocation("texHeight"), height);
-	setUniform(uniformLocation("rows"), rows);
-	setUniform(uniformLocation("columns"), columns);
-}
-
-SpriteShader& SpriteShader::update(const Float & deltaTime)
-{
-	// Advance animation
-	mIndex += deltaTime * mSpeed;
-
-	// Update uniforms
-	setUniform(mIndexUniform, std::fmodf(mIndex, mTotal));
-
-	return *this;
 }
 
 SpriteShader& SpriteShader::setTransformationMatrix(const Matrix4& transformationMatrix)
@@ -70,5 +52,41 @@ SpriteShader& SpriteShader::setProjectionMatrix(const Matrix4& projectionMatrix)
 SpriteShader& SpriteShader::bindTexture(GL::Texture2D& texture)
 {
 	texture.bind(TextureUnit);
+	return *this;
+}
+
+SpriteShader& SpriteShader::setColor(const Color4& color)
+{
+	setUniform(mColorUniform, color);
+	return *this;
+}
+
+SpriteShader& SpriteShader::setIndex(const Float index)
+{
+	setUniform(mIndexUniform, index);
+	return *this;
+}
+
+SpriteShader& SpriteShader::setTextureWidth(const Float width)
+{
+	setUniform(mTexWidthUniform, width);
+	return *this;
+}
+
+SpriteShader& SpriteShader::setTextureHeight(const Float height)
+{
+	setUniform(mTexHeightUniform, height);
+	return *this;
+}
+
+SpriteShader& SpriteShader::setRows(const Float rows)
+{
+	setUniform(mRowsUniform, rows);
+	return *this;
+}
+
+SpriteShader& SpriteShader::setColumns(const Float columns)
+{
+	setUniform(mColumnsUniform, columns);
 	return *this;
 }

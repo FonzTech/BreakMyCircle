@@ -12,6 +12,13 @@
 class FallingBubble : public GameObject
 {
 public:
+	struct Wrapper
+	{
+		SpriteShader* shader;
+		SpriteShader::Parameters parameters;
+		Float speed;
+	};
+
 	FallingBubble(const Color3& ambientColor, const bool spark);
 
 	bool mSpark;
@@ -21,6 +28,7 @@ public:
 private:
 	Vector3 mVelocity;
 	Float mDelay;
+	Wrapper wrapper;
 
 	Int getType() override;
 	void update() override;

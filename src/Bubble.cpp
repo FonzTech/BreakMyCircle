@@ -125,15 +125,18 @@ bool Bubble::destroyNearbyBubbles()
 	auto fps = future.get();
 	bool nonZero = fps->size() > 0;
 
+	Float posZ = 1.1f;
 	while (!fps->empty())
 	{
 		auto& gn = fps->front();
 
 		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(gn.color, true);
-		ib->position = gn.position;
+		ib->position = gn.position + Vector3(0.0f, 0.0f, posZ);
 		RoomManager::singleton->mGameObjects.push_back(ib);
 
 		fps->pop();
+
+		posZ += 0.1f;
 	}
 
 	return nonZero;

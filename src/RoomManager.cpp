@@ -24,7 +24,6 @@ void RoomManager::clear()
 	mGameObjects.clear();
 
 	mCamera = nullptr;
-	mCollisionManager = nullptr;
 }
 
 void RoomManager::setupRoom()

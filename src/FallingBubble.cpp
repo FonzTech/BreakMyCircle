@@ -70,6 +70,16 @@ FallingBubble::FallingBubble(const Color3& ambientColor, const bool spark) : Gam
 		// Create plane
 		std::shared_ptr<TexturedDrawable<SpriteShader>> td = createPlane(*mManipulator, resTexture);
 		drawables.emplace_back(td);
+
+		// Create shader data wrapper
+		wrapper.shader = &td->getShader();
+		wrapper.parameters.index = 0.0f;
+		wrapper.parameters.total = 16.0f;
+		wrapper.parameters.texWidth = td->mTexture->imageSize(0).x();
+		wrapper.parameters.texHeight = td->mTexture->imageSize(0).y();
+		wrapper.parameters.rows = 4.0f;
+		wrapper.parameters.columns = 4.0f;
+		wrapper.speed = 16.0f;
 	}
 	else
 	{
@@ -88,10 +98,13 @@ void FallingBubble::update()
 	// Update motion
 	if (mSpark)
 	{
-		SpriteShader* ss = &((SpriteShader&)drawables.at(0)->getShader());
-		if (ss->mIndex >= ss->mTotal)
+		if (wrapper.parameters.index >= wrapper.parameters.total)
 		{
 			destroyMe = true;
+		}
+		else
+		{
+			wrapper.parameters.index += mDeltaTime * wrapper.speed;
 		}
 	}
 	else
@@ -118,11 +131,14 @@ void FallingBubble::update()
 	// Update transformations
 	if (mSpark)
 	{
-		drawables.at(0)->setTransformation(Matrix4::translation(position + Vector3(0.0f, 0.0f, 1.5f)) * Matrix4::scaling(Vector3(3.0f)));
+		// Apply transformations
+		const Matrix4 mat = Matrix4::translation(position) * Matrix4::scaling(Vector3(3.0f));
+		drawables.at(0)->setTransformation(mat);
 	}
 	else
 	{
-		drawables.at(0)->setTransformation(Matrix4::translation(position));
+		const Matrix4 mat = Matrix4::translation(position);
+		drawables.at(0)->setTransformation(mat);
 	}
 }
 
@@ -130,11 +146,16 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 {
 	if (mSpark)
 	{
-		((SpriteShader&) baseDrawable->getShader())
+		((SpriteShader&)baseDrawable->getShader())
 			.bindTexture(*baseDrawable->mTexture)
 			.setTransformationMatrix(transformationMatrix)
 			.setProjectionMatrix(camera.projectionMatrix())
-			.update(mDeltaTime)
+			.setColor(mAmbientColor)
+			.setIndex(wrapper.parameters.index)
+			.setTextureWidth(wrapper.parameters.texWidth)
+			.setTextureHeight(wrapper.parameters.texHeight)
+			.setRows(wrapper.parameters.rows)
+			.setColumns(wrapper.parameters.columns)
 			.draw(*baseDrawable->mMesh);
 	}
 	else
@@ -182,7 +203,7 @@ std::shared_ptr<TexturedDrawable<SpriteShader>> FallingBubble::createPlane(Objec
 	if (!resShader)
 	{
 		// Create shader
-		std::unique_ptr<GL::AbstractShaderProgram> shader = std::make_unique<SpriteShader>(texture->imageSize(0).x(), texture->imageSize(0).y(), 4, 4, 16, 20.0f, mAmbientColor);
+		std::unique_ptr<GL::AbstractShaderProgram> shader = std::make_unique<SpriteShader>();
 
 		// Add to resources
 		Containers::Pointer<GL::AbstractShaderProgram> p = std::move(shader);
