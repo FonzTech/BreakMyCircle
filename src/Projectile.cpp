@@ -106,12 +106,11 @@ void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObjec
 	// Correct position to protect against overlaps
 	std::thread tjob(&Projectile::adjustPosition, this);
 	tjob.join();
-	
+
 	// Create new bubbles with the same color
 	std::shared_ptr<Bubble> b = std::make_shared<Bubble>(mAmbientColor);
 	b->position = position;
 	b->updateBBox();
-	RoomManager::singleton->mGameObjects.push_back(b);
 
 	// Apply ripple effect
 	for (auto& go : RoomManager::singleton->mGameObjects)
@@ -127,6 +126,9 @@ void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObjec
 	{
 		b->destroyDisjointBubbles();
 	}
+
+	// Add to room
+	RoomManager::singleton->mGameObjects.push_back(std::move(b));
 
 	// Destroy me
 	destroyMe = true;

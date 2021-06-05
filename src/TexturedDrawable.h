@@ -33,12 +33,13 @@ protected:
 		}
 
 		((Shaders::Phong&) *mShader)
-			.setAmbientColor(0xffffffff_rgbaf)
+			.setAmbientColor(0x00000ff_rgbaf)
+			.setSpecularColor(0xffffffff_rgbf)
 			.setLightPosition(camera.cameraMatrix().transformPoint({ -3.0f, 10.0f, 10.0f }))
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
 			.setProjectionMatrix(camera.projectionMatrix())
-			.bindDiffuseTexture(*mTexture)
+			.bindTextures(mTexture, mTexture, nullptr, nullptr)
 			.draw(*mMesh);
 	}
 };

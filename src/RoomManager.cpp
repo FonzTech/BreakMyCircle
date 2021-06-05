@@ -81,14 +81,14 @@ void RoomManager::createTestRoom()
 			std::shared_ptr<Bubble> b = std::make_shared<Bubble>(colors[index]);
 			b->position = position;
 			b->updateBBox();
-			RoomManager::singleton->mGameObjects.push_back(b);
+			RoomManager::singleton->mGameObjects.push_back(std::move(b));
 		}
 	}
 
 	// Create player
 	std::shared_ptr<Player> p = std::make_shared<Player>();
 	p->position = { 8.0f, -35.0f, 0.0f };
-	RoomManager::singleton->mGameObjects.push_back(p);
+	RoomManager::singleton->mGameObjects.push_back(std::move(p));
 
 	// Camera position
 	mCameraEye = { 8.0f, -20.0f, 44.0f };

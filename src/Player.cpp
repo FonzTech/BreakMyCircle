@@ -82,7 +82,7 @@ void Player::update()
 		std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mColors[mAmbientColorIndex]);
 		go->position = position;
 		go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
-		RoomManager::singleton->mGameObjects.push_back(go);
+		RoomManager::singleton->mGameObjects.push_back(std::move(go));
 
 		// Update color for next bubble
 		mAmbientColorIndex = std::rand() % mColors.size();
@@ -117,10 +117,12 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	{
 		((Shaders::Phong&) baseDrawable->getShader())
 			.setLightPosition(camera.cameraMatrix().transformPoint(position + Vector3(0.0f, 0.0f, 20.0f)))
+			.setLightColor(0xffffff00_rgbaf)
+			.setSpecularColor(0x00000000_rgbaf)
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
 			.setProjectionMatrix(camera.projectionMatrix())
-			.bindDiffuseTexture(*baseDrawable->mTexture)
+			.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
 			.draw(*baseDrawable->mMesh);
 	}
 }

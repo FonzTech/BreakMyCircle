@@ -132,7 +132,7 @@ bool Bubble::destroyNearbyBubbles()
 
 		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(gn.color, true);
 		ib->position = gn.position + Vector3(0.0f, 0.0f, posZ);
-		RoomManager::singleton->mGameObjects.push_back(ib);
+		RoomManager::singleton->mGameObjects.push_back(std::move(ib));
 
 		fps->pop();
 
@@ -244,7 +244,7 @@ void Bubble::destroyDisjointBubbles()
 
 		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(gn.color, false);
 		ib->position = gn.position;
-		RoomManager::singleton->mGameObjects.push_back(ib);
+		RoomManager::singleton->mGameObjects.push_back(std::move(ib));
 
 		fps->pop();
 	}
