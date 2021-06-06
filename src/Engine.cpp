@@ -90,8 +90,16 @@ void Engine::drawEvent()
 	// Clear buffer
 	GL::defaultFramebuffer.clear(GL::FramebufferClear::Color | GL::FramebufferClear::Depth);
 
+	// Z ordering
+	std::vector<std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>> drawableTransformations = RoomManager::singleton->mCamera->drawableTransformations(RoomManager::singleton->mDrawables);
+	std::sort(drawableTransformations.begin(), drawableTransformations.end(),
+		[](const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& a,
+			const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& b) {
+		return a.second.translation().z() < b.second.translation().z();
+	});
+
 	// Draw scene
-	RoomManager::singleton->mCamera->draw(RoomManager::singleton->mDrawables);
+	RoomManager::singleton->mCamera->draw(drawableTransformations);
 
 	// Swap buffers
 	swapBuffers();
