@@ -88,7 +88,7 @@ FallingBubble::FallingBubble(const Color3& ambientColor, const bool spark) : Gam
 	}
 }
 
-Int FallingBubble::getType()
+const Int FallingBubble::getType() const
 {
 	return GOT_FALLING_BUBBLE;
 }

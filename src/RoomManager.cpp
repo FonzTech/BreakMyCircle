@@ -4,6 +4,7 @@
 #include "RoomManager.h"
 #include "Bubble.h"
 #include "Player.h"
+#include "Scenery.h"
 
 using namespace Magnum::Math::Literals;
 
@@ -86,9 +87,18 @@ void RoomManager::createTestRoom()
 	}
 
 	// Create player
-	std::shared_ptr<Player> p = std::make_shared<Player>();
-	p->position = { 8.0f, -35.0f, 0.0f };
-	RoomManager::singleton->mGameObjects.push_back(std::move(p));
+	{
+		std::shared_ptr<Player> p = std::make_shared<Player>();
+		p->position = { 8.0f, -35.0f, 0.0f };
+		RoomManager::singleton->mGameObjects.push_back(std::move(p));
+	}
+
+	// Create scenery
+	{
+		std::shared_ptr<Scenery> p = std::make_shared<Scenery>();
+		p->position = Vector3(0.0f);
+		RoomManager::singleton->mGameObjects.push_back(std::move(p)); 
+	}
 
 	// Camera position
 	mCameraEye = { 8.0f, -20.0f, 44.0f };

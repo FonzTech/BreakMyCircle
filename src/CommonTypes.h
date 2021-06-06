@@ -4,6 +4,7 @@
 #define GOT_BUBBLE 2
 #define GOT_PROJECTILE 3
 #define GOT_FALLING_BUBBLE 4
+#define GOT_SCENERY 5
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>

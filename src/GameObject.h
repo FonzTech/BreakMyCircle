@@ -31,7 +31,7 @@ public:
 	Vector3 position;
 	Range3D bbox;
 
-	virtual Int getType() = 0;
+	virtual const Int getType() const = 0;
 	virtual void update() = 0;
 	virtual void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) = 0;
 };

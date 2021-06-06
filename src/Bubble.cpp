@@ -30,7 +30,7 @@ Bubble::Bubble(const Color3& ambientColor) : GameObject()
 	drawables.emplace_back(cd);
 }
 
-Int Bubble::getType()
+const Int Bubble::getType() const
 {
 	return GOT_BUBBLE;
 }
@@ -152,32 +152,21 @@ bool Bubble::destroyNearbyBubbles()
 */
 void Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
 {
-	// Cycle through all bubbles in current room
-	for (auto& go : RoomManager::singleton->mGameObjects)
+	// Cycle through all collided game objects
+	Range3D eb = { position - Vector3(1.5f), position + Vector3(1.5f) };
+	std::unique_ptr<std::unordered_set<GameObject*>> collided = RoomManager::singleton->mCollisionManager->checkCollision(eb, this, { GOT_BUBBLE });
+	for (const auto& item : *collided)
 	{
-		// Check if game object is a bubble
-		if (go.get() == this || go->getType() != GOT_BUBBLE || go->destroyMe)
-		{
-			continue;
-		}
-
 		// Check if the bubble has the same color of this
-		Bubble* bubble = ((Bubble*)go.get());
+		Bubble* bubble = ((Bubble*)item);
 		if (bubble->mAmbientColor != mAmbientColor || group->find(bubble) != group->end())
 		{
 			continue;
 		}
 
-		// Check if bubble collides nearby
-		for (const auto& item : *group)
-		{
-			Range3D eb{ item->position - Vector3(1.5f), item->position + Vector3(1.5f) };
-			if (Math::intersects(eb, go->bbox))
-			{
-				group->insert(bubble);
-				bubble->destroyNearbyBubblesImpl(group);
-			}
-		}
+		// Insert into collision group and iterate recursively
+		group->insert(bubble);
+		bubble->destroyNearbyBubblesImpl(group);
 	}
 }
 
@@ -207,8 +196,8 @@ void Bubble::destroyDisjointBubbles()
 			group.erase(it);
 
 			// Perform DFS-like algorithm
-			std::unique_ptr<Graph> graph  = bubble->destroyDisjointBubblesImpl(group);
-			graph->set.insert(bubble);
+			std::unique_ptr<Graph> graph = bubble->destroyDisjointBubblesImpl(group);
+			// graph->set.insert(bubble);
 
 			// Debug print
 			#if NDEBUG or _DEBUG
@@ -256,59 +245,64 @@ std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered
 	Range3D bbox(position - Vector3(1.5f), position + Vector3(1.5f));
 
 	// Check for collisions against other game objects (DFS-like graph)
-	std::unique_ptr<std::unordered_set<GameObject*>> collided = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this);
+	std::unique_ptr<std::unordered_set<GameObject*>> collided = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this, { GOT_BUBBLE });
 	std::unique_ptr<Graph> graph = std::make_unique<Graph>();
 	graph->attached = 0;
 
 	// Cycle through all collided game objects
-	for (const auto& item : *collided)
+	if (collided->size() > 0)
 	{
-		// Check if it's a bubble
-		if (item->getType() != GOT_BUBBLE)
+		for (const auto& item : *collided)
 		{
-			continue;
-		}
-
-		// Check if node of graph (bubble) is marked as "explored" or not
-		Bubble* bi = (Bubble*)item;
-		if (group.find(bi) == group.end())
-		{
-			continue;
-		}
-
-		// Mark it as "explored"
-		group.erase(bi);
-		
-		// Check if node is present in this connected graph
-		if (graph->set.find(bi) == graph->set.end())
-		{
-			// Insert it
-			graph->set.insert(bi);
-
-			// Perform DFS-like algorithm
-			std::unique_ptr<Graph> result = bi->destroyDisjointBubblesImpl(group);
-
-			/*
-				Check if graph is eligible or not for deletion.
-				For example, if it has at least one node, attached
-				to the ceiling, then it's NOT eligible for deletion.
-			*/
-			if (bi->isNotEligibleForGraphDeletion() || result->attached)
+			// Check if node of graph (bubble) is marked as "explored" or not
+			Bubble* bi = (Bubble*)item;
+			if (group.find(bi) == group.end())
 			{
-				graph->attached = 1;
+				continue;
 			}
 
-			// Merge the two lists without repetition
-			graph->set.insert(result->set.begin(), result->set.end());
+			// Mark it as "explored"
+			group.erase(bi);
+
+			// Check if node is present in this connected graph
+			if (graph->set.find(bi) == graph->set.end())
+			{
+				// Check if bubble is attached to the ceiling
+				const bool attachedToCeiling = bi->position.y() >= -0.1f;
+
+				// Insert it, if color is the same or it's not attached to the ceiling
+				graph->set.insert(bi);
+
+				// Perform DFS-like algorithm
+				std::unique_ptr<Graph> result = bi->destroyDisjointBubblesImpl(group);
+
+				/*
+					Check if graph is eligible or not for deletion.
+					For example, if it has at least one node, attached
+					to the ceiling, then it's NOT eligible for deletion.
+				*/
+				if (attachedToCeiling || result->attached)
+				{
+					graph->attached = 1;
+				}
+
+				// Merge the two lists without repetition
+				graph->set.insert(result->set.begin(), result->set.end());
+			}
 		}
+
+		// Add self-bubble, if necessary
+		if (!graph->attached)
+		{
+			graph->set.insert(this);
+		}
+	}
+	else if (position.y() < -0.1f)
+	{
+		graph->set.insert(this);
 	}
 
 	return graph;
-}
-
-bool Bubble::isNotEligibleForGraphDeletion()
-{
-	return position.y() >= -0.1f;
 }
 
 Float Bubble::getShakeSmooth(const Float xt)

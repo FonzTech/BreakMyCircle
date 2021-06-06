@@ -34,7 +34,7 @@ Projectile::Projectile(const Color3& ambientColor) : GameObject()
 	drawables.emplace_back(cd);
 }
 
-Int Projectile::getType()
+const Int Projectile::getType() const
 {
 	return GOT_PROJECTILE;
 }
@@ -60,10 +60,15 @@ void Projectile::update()
 	updateBBox();
 
 	// Check for collision against other bubbles
-	const std::unique_ptr<std::unordered_set<GameObject*>> bubbles = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this);
+	const std::unique_ptr<std::unordered_set<GameObject*>> bubbles = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this, { GOT_BUBBLE });
 	if (bubbles->size() > 0)
 	{
 		collidedWith(bubbles);
+	}
+	// Check if projectile reached the top ceiling
+	else if (position.y() > 0.0f)
+	{
+		snapToGrid();
 	}
 }
 
@@ -79,16 +84,8 @@ void Projectile::draw(BaseDrawable* baseDrawable, const Matrix4& transformationM
 		.draw(*baseDrawable->mMesh);
 }
 
-void Projectile::updateBBox()
+void Projectile::snapToGrid()
 {
-	// Update bounding box
-	bbox = Range3D{ position - Vector3(0.8f), position + Vector3(0.8f) };
-}
-
-void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-	Bubble* bubble = (Bubble*) *gameObjects->begin();
-
 	// Stop this projectile
 	mVelocity = Vector3(0.0f);
 
@@ -132,6 +129,18 @@ void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObjec
 
 	// Destroy me
 	destroyMe = true;
+}
+
+void Projectile::updateBBox()
+{
+	// Update bounding box
+	bbox = Range3D{ position - Vector3(0.8f), position + Vector3(0.8f) };
+}
+
+void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
+{
+	// Bubble* bubble = (Bubble*) *gameObjects->begin();
+	snapToGrid();
 }
 
 Int Projectile::getRowIndexByBubble()

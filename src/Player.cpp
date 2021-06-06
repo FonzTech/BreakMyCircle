@@ -22,6 +22,8 @@ Player::Player() : GameObject()
 
 	// Set diffuse color
 	mDiffuseColor = 0xffffff_rgbf;
+
+	// Set members
 	mColors = {
 		0x0000c0_rgbf,
 		0x00c000_rgbf,
@@ -40,7 +42,7 @@ Player::Player() : GameObject()
 	mSphereDrawables[0] = cd.get();
 }
 
-Int Player::getType()
+const Int Player::getType() const
 {
 	return GOT_PLAYER;
 }
@@ -78,14 +80,20 @@ void Player::update()
 	}
 	else if (bs == IM_STATE_RELEASED)
 	{
-		// Create projectile
-		std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mColors[mAmbientColorIndex]);
-		go->position = position;
-		go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
-		RoomManager::singleton->mGameObjects.push_back(std::move(go));
+		if (mProjectile.expired())
+		{
+			// Create projectile
+			std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mColors[mAmbientColorIndex]);
+			go->position = position;
+			go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
+			RoomManager::singleton->mGameObjects.push_back(std::move(go));
 
-		// Update color for next bubble
-		mAmbientColorIndex = std::rand() % mColors.size();
+			// Update color for next bubble
+			mAmbientColorIndex = std::rand() % mColors.size();
+
+			// Prevent shooting by keeping a reference
+			mProjectile = RoomManager::singleton->mGameObjects.back();
+		}
 	}
 
 	// Compute transformations
@@ -117,8 +125,8 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	{
 		((Shaders::Phong&) baseDrawable->getShader())
 			.setLightPosition(camera.cameraMatrix().transformPoint(position + Vector3(0.0f, 0.0f, 20.0f)))
-			.setLightColor(0xffffff00_rgbaf)
-			.setSpecularColor(0x00000000_rgbaf)
+			.setLightColor(0xffffffff_rgbaf)
+			.setSpecularColor(0xffffff00_rgbaf)
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
 			.setProjectionMatrix(camera.projectionMatrix())
