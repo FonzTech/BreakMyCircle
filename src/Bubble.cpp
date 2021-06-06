@@ -271,7 +271,10 @@ std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered
 				const bool attachedToCeiling = bi->position.y() >= -0.1f;
 
 				// Insert it, if color is the same or it's not attached to the ceiling
-				graph->set.insert(bi);
+				if (!attachedToCeiling || bi->mAmbientColor == mAmbientColor)
+				{
+					graph->set.insert(bi);
+				}
 
 				// Perform DFS-like algorithm
 				std::unique_ptr<Graph> result = bi->destroyDisjointBubblesImpl(group);
