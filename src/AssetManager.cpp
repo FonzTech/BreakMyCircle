@@ -58,7 +58,7 @@ AssetManager::AssetManager()
 	}
 }
 
-void AssetManager::loadAssets(GameObject& gameObject, const std::string& filename, IDrawCallback* drawCallback)
+void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, const std::string& filename, IDrawCallback* drawCallback)
 {
 	// Load a scene importer plugin
 	PluginManager::Manager<Trade::AbstractImporter> manager;
@@ -203,13 +203,13 @@ void AssetManager::loadAssets(GameObject& gameObject, const std::string& filenam
 		// Recursively add all children
 		for (const UnsignedInt & objectId : sceneData->children3D())
 		{
-			processChildrenAssets(gameObject, assets, *importer, *gameObject.mManipulator.get(), objectId, drawCallback);
+			processChildrenAssets(gameObject, assets, *importer, manipulator, objectId, drawCallback);
 		}
 	}
 	else if (!assets.meshes.empty() && assets.meshes[0])
 	{
 		std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = std::make_shared<ColoredDrawable<Shaders::Phong>>(RoomManager::singleton->mDrawables, coloredShader, assets.meshes[0], 0xffffffff_rgbaf);
-		cd->setParent(gameObject.mManipulator.get());
+		cd->setParent(&manipulator);
 		cd->setDrawCallback(drawCallback);
 		gameObject.drawables.emplace_back(cd);
 	}

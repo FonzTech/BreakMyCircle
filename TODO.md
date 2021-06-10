@@ -7,7 +7,10 @@
 - ~~Destroy nearby bubbles, with the same color, when one is hit by a projectile.~~
 - ~~Make bubble fall, if not supported by one bubble on top, at least.~~
 - ~~Add Magnum's resource manager. Fix pending references.~~
-- Fix transparency and Z-Ordering problems.
-- Add scenery to the test room.
-- Add small main menu for game.
+- ~~Fix transparency and Z-Ordering problems.~~
+- Lambda as shader creation facility for complex drawables.
+- Scenery to the test room.
+- Small main menu for game.
+- Level screen with overworld and changing themes.
 - Implement pause/resume system for game. And so the pause menu.
+- Procedural level generation.

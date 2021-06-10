@@ -1,6 +1,7 @@
 #include "Player.h"
 
 #include <Magnum/Math/Angle.h>
+#include <Magnum/Math/Intersection.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
 #include <Magnum/Primitives/Icosphere.h>
 #include <Magnum/MeshTools/Interleave.h>
@@ -18,7 +19,7 @@ using namespace Magnum::Math::Literals;
 Player::Player() : GameObject()
 {
 	// Load asset as first drawable
-	AssetManager::singleton->loadAssets(*this, "scenes/cannon_1.glb", this);
+	AssetManager::singleton->loadAssets(*this, *mManipulator.get(), "scenes/cannon_1.glb", this);
 
 	// Set diffuse color
 	mDiffuseColor = 0xffffff_rgbf;

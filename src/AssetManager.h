@@ -33,5 +33,5 @@ public:
 
 	AssetManager();
 
-	void loadAssets(GameObject& gameObject, const std::string& filename, IDrawCallback* drawCallback);
+	void loadAssets(GameObject& gameObject, Object3D& manipulator, const std::string& filename, IDrawCallback* drawCallback);
 };
