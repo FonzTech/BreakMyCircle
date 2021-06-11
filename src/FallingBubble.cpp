@@ -69,7 +69,7 @@ FallingBubble::FallingBubble(const Color3& ambientColor, const bool spark) : Gam
 
 		// Create plane
 		std::shared_ptr<TexturedDrawable<SpriteShader>> td = createPlane(*mManipulator, resTexture);
-		drawables.emplace_back(td);
+		mDrawables.emplace_back(td);
 
 		// Create shader data wrapper
 		wrapper.shader = &td->getShader();
@@ -84,7 +84,7 @@ FallingBubble::FallingBubble(const Color3& ambientColor, const bool spark) : Gam
 	else
 	{
 		std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mManipulator, mAmbientColor, this);
-		drawables.emplace_back(cd);
+		mDrawables.emplace_back(cd);
 	}
 }
 
@@ -133,12 +133,12 @@ void FallingBubble::update()
 	{
 		// Apply transformations
 		const Matrix4 mat = Matrix4::translation(position) * Matrix4::scaling(Vector3(3.0f));
-		drawables.at(0)->setTransformation(mat);
+		mDrawables.at(0)->setTransformation(mat);
 	}
 	else
 	{
 		const Matrix4 mat = Matrix4::translation(position);
-		drawables.at(0)->setTransformation(mat);
+		mDrawables.at(0)->setTransformation(mat);
 	}
 }
 

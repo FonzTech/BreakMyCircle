@@ -26,7 +26,7 @@ public:
 	bool destroyMe;
 	Float mDeltaTime;
 	std::unique_ptr<Object3D> mManipulator;
-	std::vector<std::shared_ptr<BaseDrawable>> drawables;
+	std::vector<std::shared_ptr<BaseDrawable>> mDrawables;
 
 	Vector3 position;
 	Range3D bbox;

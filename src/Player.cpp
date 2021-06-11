@@ -19,7 +19,10 @@ using namespace Magnum::Math::Literals;
 Player::Player() : GameObject()
 {
 	// Load asset as first drawable
-	AssetManager::singleton->loadAssets(*this, *mManipulator.get(), "scenes/cannon_1.glb", this);
+	{
+		AssetManager am;
+		am.loadAssets(*this, *mManipulator.get(), "scenes/cannon_1.glb", this);
+	}
 
 	// Set diffuse color
 	mDiffuseColor = 0xffffff_rgbf;
@@ -38,7 +41,7 @@ Player::Player() : GameObject()
 	mSphereManipulator = new Object3D{ &RoomManager::singleton->mScene };
 
 	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mSphereManipulator, mColors[mAmbientColorIndex], this);
-	drawables.emplace_back(cd);
+	mDrawables.emplace_back(cd);
 
 	mSphereDrawables[0] = cd.get();
 }

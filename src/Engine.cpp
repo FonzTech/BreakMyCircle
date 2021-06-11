@@ -4,7 +4,6 @@
 #include "Engine.h"
 #include "CommonUtility.h"
 #include "InputManager.h"
-#include "AssetManager.h"
 #include "RoomManager.h"
 #include "GameObject.h"
 
@@ -30,8 +29,6 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	CommonUtility::singleton = std::make_unique<CommonUtility>();
 
 	InputManager::singleton = std::make_unique<InputManager>();
-
-	AssetManager::singleton = std::make_unique<AssetManager>();
 
 	RoomManager::singleton = std::make_unique<RoomManager>();
 	RoomManager::singleton->setupRoom();
@@ -146,12 +143,6 @@ void Engine::viewportEvent(ViewportEvent& event)
 
 void Engine::exitEvent(ExitEvent& event)
 {
-	/*
-		Clear asset manager first, because it has some
-		references about basic colored and textured Phong shader.
-	*/
-	AssetManager::singleton = nullptr;
-
 	/*
 		Then, clear the entire room. Must be done now, because
 		this object holds data about game objects, and so they holds

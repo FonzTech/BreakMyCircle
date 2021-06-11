@@ -22,16 +22,19 @@ struct ImportedAssets
 
 class AssetManager
 {
-private:
+public:
+	AssetManager();
+	AssetManager(const std::string & coloredShaderResourceKey, const std::string & texturedShaderResourceKey, const Int lightCount);
+
+	void loadAssets(GameObject& gameObject, Object3D& manipulator, const std::string& filename, IDrawCallback* drawCallback);
+
+protected:
 	Resource<GL::AbstractShaderProgram, Shaders::Phong> coloredShader;
 	Resource<GL::AbstractShaderProgram, Shaders::Phong> texturedShader;
 
+	Resource<GL::AbstractShaderProgram, Shaders::Phong> getColoredShader(const std::string & resourceKey, const Int lightCount);
+	Resource<GL::AbstractShaderProgram, Shaders::Phong> getTexturedShader(const std::string & resourceKey, const Int lightCount);
+
+
 	void processChildrenAssets(GameObject& gameObject, ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i, IDrawCallback* drawCallback);
-
-public:
-	static std::unique_ptr<AssetManager> singleton;
-
-	AssetManager();
-
-	void loadAssets(GameObject& gameObject, Object3D& manipulator, const std::string& filename, IDrawCallback* drawCallback);
 };

@@ -31,7 +31,7 @@ Projectile::Projectile(const Color3& ambientColor) : GameObject()
 
 	// Create game bubble
 	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mManipulator, mAmbientColor, this);
-	drawables.emplace_back(cd);
+	mDrawables.emplace_back(cd);
 }
 
 const Int Projectile::getType() const

@@ -25,37 +25,51 @@
 
 using namespace Magnum::Math::Literals;
 
-std::unique_ptr<AssetManager> AssetManager::singleton = nullptr;
+AssetManager::AssetManager() : AssetManager(RESOURCE_SHADER_COLORED_PHONG, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE, 1)
+{
+}
 
-AssetManager::AssetManager()
+AssetManager::AssetManager(const std::string & coloredShaderResourceKey, const std::string & texturedShaderResourceKey, const Int lightCount)
 {
 	// Setup colored shader
-	coloredShader = CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, Shaders::Phong>(RESOURCE_SHADER_COLORED_PHONG);
-	if (!coloredShader)
-	{
-		std::unique_ptr<Shaders::Phong> shader = std::make_unique<Shaders::Phong>();
-		(*shader.get())
-			.setAmbientColor(0x000000ff_rgbaf)
-			.setSpecularColor(0xffffffff_rgbaf)
-			.setShininess(80.0f);
-
-		Containers::Pointer<GL::AbstractShaderProgram> p = std::move((std::unique_ptr<GL::AbstractShaderProgram>&) shader);
-		CommonUtility::singleton->manager.set(coloredShader.key(), std::move(p));
-	}
+	coloredShader = getColoredShader(coloredShaderResourceKey, lightCount);
 
 	// Setup textured shader
-	texturedShader = CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, Shaders::Phong>(RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE);
-	if (!texturedShader)
+	texturedShader = getTexturedShader(texturedShaderResourceKey, lightCount);
+}
+
+Resource<GL::AbstractShaderProgram, Shaders::Phong> AssetManager::getColoredShader(const std::string & resourceKey, const Int lightCount)
+{
+	Resource<GL::AbstractShaderProgram, Shaders::Phong> resource = CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, Shaders::Phong>(resourceKey);
+	if (!resource)
 	{
-		std::unique_ptr<Shaders::Phong> shader = std::make_unique<Shaders::Phong>(Shaders::Phong::Flag::AmbientTexture | Shaders::Phong::Flag::DiffuseTexture | Shaders::Phong::Flag::AlphaMask);
+		std::unique_ptr<Shaders::Phong> shader = std::make_unique<Shaders::Phong>(Shaders::Phong::Flags {}, lightCount);
 		(*shader.get())
 			.setAmbientColor(0x000000ff_rgbaf)
 			.setSpecularColor(0xffffffff_rgbaf)
 			.setShininess(80.0f);
 
 		Containers::Pointer<GL::AbstractShaderProgram> p = std::move((std::unique_ptr<GL::AbstractShaderProgram>&) shader);
-		CommonUtility::singleton->manager.set(texturedShader.key(), std::move(p));
+		CommonUtility::singleton->manager.set(resource.key(), std::move(p));
 	}
+	return resource;
+}
+
+Resource<GL::AbstractShaderProgram, Shaders::Phong> AssetManager::getTexturedShader(const std::string & resourceKey, const Int lightCount)
+{
+	Resource<GL::AbstractShaderProgram, Shaders::Phong> resource = CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, Shaders::Phong>(resourceKey);
+	if (!resource)
+	{
+		std::unique_ptr<Shaders::Phong> shader = std::make_unique<Shaders::Phong>(Shaders::Phong::Flag::AmbientTexture | Shaders::Phong::Flag::DiffuseTexture | Shaders::Phong::Flag::AlphaMask, lightCount);
+		(*shader.get())
+			.setAmbientColor(0x000000ff_rgbaf)
+			.setSpecularColor(0xffffffff_rgbaf)
+			.setShininess(80.0f);
+
+		Containers::Pointer<GL::AbstractShaderProgram> p = std::move((std::unique_ptr<GL::AbstractShaderProgram>&) shader);
+		CommonUtility::singleton->manager.set(resource.key(), std::move(p));
+	}
+	return resource;
 }
 
 void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, const std::string& filename, IDrawCallback* drawCallback)
@@ -211,7 +225,7 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 		std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = std::make_shared<ColoredDrawable<Shaders::Phong>>(RoomManager::singleton->mDrawables, coloredShader, assets.meshes[0], 0xffffffff_rgbaf);
 		cd->setParent(&manipulator);
 		cd->setDrawCallback(drawCallback);
-		gameObject.drawables.emplace_back(cd);
+		gameObject.mDrawables.emplace_back(cd);
 	}
 }
 
@@ -240,7 +254,7 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 			std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = std::make_shared<ColoredDrawable<Shaders::Phong>>(RoomManager::singleton->mDrawables, coloredShader, assets.meshes[objectData->instance()], 0xffffffff_rgbaf);
 			cd->setParent(objectNode);
 			cd->setDrawCallback(drawCallback);
-			gameObject.drawables.emplace_back(cd);
+			gameObject.mDrawables.emplace_back(cd);
 		}
 		/*
 			Textured material. If the texture failed to load, again just use a
@@ -254,14 +268,14 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 				std::shared_ptr<TexturedDrawable<Shaders::Phong>> td = std::make_shared<TexturedDrawable<Shaders::Phong>>(RoomManager::singleton->mDrawables, texturedShader, assets.meshes[objectData->instance()], texture);
 				td->setParent(objectNode);
 				td->setDrawCallback(drawCallback);
-				gameObject.drawables.emplace_back(td);
+				gameObject.mDrawables.emplace_back(td);
 			}
 			else
 			{
 				std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = std::make_shared<ColoredDrawable<Shaders::Phong>>(RoomManager::singleton->mDrawables, coloredShader, assets.meshes[objectData->instance()], 0xffffffff_rgbaf);
 				cd->setParent(objectNode);
 				cd->setDrawCallback(drawCallback);
-				gameObject.drawables.emplace_back(cd);
+				gameObject.mDrawables.emplace_back(cd);
 			}
 
 		}
@@ -271,7 +285,7 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 			std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = std::make_shared<ColoredDrawable<Shaders::Phong>>(RoomManager::singleton->mDrawables, coloredShader, assets.meshes[objectData->instance()], ((Trade::PhongMaterialData&) *assets.materials[materialId]).diffuseColor());
 			cd->setParent(objectNode);
 			cd->setDrawCallback(drawCallback);
-			gameObject.drawables.emplace_back(cd);
+			gameObject.mDrawables.emplace_back(cd);
 		}
 		#if NDEBUG or _DEBUG
 		else

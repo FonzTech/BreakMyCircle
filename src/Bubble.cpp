@@ -27,7 +27,7 @@ Bubble::Bubble(const Color3& ambientColor) : GameObject()
 
 	// Create game bubble
 	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mManipulator, mAmbientColor, this);
-	drawables.emplace_back(cd);
+	mDrawables.emplace_back(cd);
 }
 
 const Int Bubble::getType() const
@@ -49,7 +49,7 @@ void Bubble::update()
 
 	// Update transformations
 	const Vector3 shakeVect = mShakeFact > 0.001f ? mShakePos * std::sin(mShakeFact * Constants::pi()) : Vector3(0.0f);
-	for (auto& d : drawables)
+	for (auto& d : mDrawables)
 	{
 		d->setTransformation(Matrix4::translation(position + shakeVect));
 	}
