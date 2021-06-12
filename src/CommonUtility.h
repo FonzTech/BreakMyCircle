@@ -6,8 +6,9 @@
 #define RESOURCE_TEXTURE_SPARKLES "tex_sparkles"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"
+#define RESOURCE_SHADER_COLORED_PHONG_2 "shader_colored_phong_2"
 #define RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE "shader_textured_phong"
-#define RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE_2 "shader_textured_phong_3"
+#define RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE_2 "shader_textured_phong_2"
 #define RESOURCE_SHADER_SPRITE "shader_sprite"
 
 #define RESOURCE_PATH_PREFIX "path_"
