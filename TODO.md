@@ -9,7 +9,7 @@
 - ~~Add Magnum's resource manager. Fix pending references.~~
 - ~~Fix transparency and Z-Ordering problems.~~
 - ~~Lambda as shader creation facility for complex drawables.~~
-- Animation for player shooter, to make the next ball appear with transition.
+- ~~Animation for player shooter, to make the next ball appear with transition.~~
 - Scenery to the test room.
 - Small main menu for game.
 - Level screen with overworld and changing themes.

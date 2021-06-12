@@ -26,5 +26,7 @@ typedef SceneGraph::Scene<SceneGraph::MatrixTransformation3D> Scene3D;
 typedef Platform::Application::MouseEvent::Button ImMouseButtons;
 
 typedef Containers::Array<Containers::Optional<GL::Mesh>> AssetMeshes;
-typedef Containers::Array<Containers::Optional<GL::Texture2D>> AssetTextures;	
+typedef Containers::Array<Containers::Optional<GL::Texture2D>> AssetTextures;
 typedef Containers::Array<Containers::Optional<Trade::PhongMaterialData>> AssetMaterials;
+
+typedef std::vector<Vector3> LinePathAsset;

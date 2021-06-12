@@ -9,6 +9,7 @@
 
 #include "GameObject.h"
 #include "BaseDrawable.h"
+#include "LinePath.h"
 
 class Player : public GameObject
 {
@@ -22,13 +23,16 @@ protected:
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
 	std::weak_ptr<GameObject> mProjectile;
+	std::unique_ptr<LinePath> mProjPath;
 	Float mShootTimeline;
 	Rad mShootAngle;
 
-	Int mAmbientColorIndex;
+	Int mAmbientColorIndex[2];
 	Color3 mDiffuseColor;
 	std::vector<Color3> mColors;
 
+	Object3D* mShooterManipulator;
 	Object3D* mSphereManipulator;
+
 	BaseDrawable* mSphereDrawables[1];
 };

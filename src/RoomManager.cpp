@@ -103,4 +103,9 @@ void RoomManager::createTestRoom()
 	// Camera position
 	mCameraEye = { 8.0f, -20.0f, 44.0f };
 	mCameraTarget = { 8.0f, -20.0f, 0.0f };
+
+	/*
+	mCameraEye = { 20.0f, -35.0f, 20.0f };
+	mCameraTarget = { 8.0f, -35.0f, 0.0f };
+	*/
 }

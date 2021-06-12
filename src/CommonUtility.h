@@ -10,6 +10,9 @@
 #define RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE_2 "shader_textured_phong_3"
 #define RESOURCE_SHADER_SPRITE "shader_sprite"
 
+#define RESOURCE_PATH_PREFIX "path_"
+#define RESOURCE_PATH_NEW_SPHERE "new_sphere"
+
 #include <memory>
 #include <Magnum/Magnum.h>
 #include <Magnum/Resource.h>
@@ -24,7 +27,7 @@
 
 using namespace Magnum;
 
-typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::AbstractShaderProgram, Trade::AbstractMaterialData> MyResourceManager;
+typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::AbstractShaderProgram, Trade::AbstractMaterialData, LinePathAsset> MyResourceManager;
 
 class CommonUtility
 {

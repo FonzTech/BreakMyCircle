@@ -20,8 +20,16 @@ Player::Player() : GameObject()
 {
 	// Load asset as first drawable
 	{
+		mShooterManipulator = new Object3D{ &RoomManager::singleton->mScene };
+
 		AssetManager am;
-		am.loadAssets(*this, *mManipulator.get(), "scenes/cannon_1.glb", this);
+		am.loadAssets(*this, *mShooterManipulator, "scenes/cannon_1.glb", this);
+	}
+
+	// Load path for new sphere animation
+	{
+		mProjPath = std::make_unique<LinePath>(RESOURCE_PATH_NEW_SPHERE);
+		mProjPath->mProgress = Float(mProjPath->getSize());
 	}
 
 	// Set diffuse color
@@ -34,13 +42,14 @@ Player::Player() : GameObject()
 		0xc00000_rgbf,
 		0x00c0c0_rgbf,
 	};
-	mAmbientColorIndex = std::rand() % mColors.size();
+	mAmbientColorIndex[0] = std::rand() % mColors.size();
+	mAmbientColorIndex[1] = std::rand() % mColors.size();
 	mShootAngle = Rad(0.0f);
 
 	// Create game bubble
 	mSphereManipulator = new Object3D{ &RoomManager::singleton->mScene };
 
-	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mSphereManipulator, mColors[mAmbientColorIndex], this);
+	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mSphereManipulator, mColors[mAmbientColorIndex[0]], this);
 	mDrawables.emplace_back(cd);
 
 	mSphereDrawables[0] = cd.get();
@@ -53,6 +62,9 @@ const Int Player::getType() const
 
 void Player::update()
 {
+	// Update new projectile path
+	mProjPath->update(mDeltaTime * Float(-mProjPath->getSize()));
+
 	// Update shoot timeline for animation
 	mShootTimeline -= mDeltaTime;
 
@@ -87,29 +99,44 @@ void Player::update()
 		if (mProjectile.expired())
 		{
 			// Create projectile
-			std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mColors[mAmbientColorIndex]);
+			std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mColors[mAmbientColorIndex[0]]);
 			go->position = position;
 			go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
 			RoomManager::singleton->mGameObjects.push_back(std::move(go));
 
 			// Update color for next bubble
-			mAmbientColorIndex = std::rand() % mColors.size();
+			mAmbientColorIndex[0] = mAmbientColorIndex[1];
+			mAmbientColorIndex[1] = std::rand() % mColors.size();
+
+			// Reset animation for new projectile
+			mProjPath->mProgress = Float(mProjPath->getSize());
 
 			// Prevent shooting by keeping a reference
 			mProjectile = RoomManager::singleton->mGameObjects.back();
 		}
 	}
 
-	// Compute transformations
-	Matrix4 translation = Matrix4::translation(position);
-	Float finalAngle(Deg(mShootAngle) + Deg(90.0f));
+	// Shooter manipulation
+	{
+		// Compute transformations
+		Matrix4 translation = Matrix4::translation(position);
+		Float finalAngle(Deg(mShootAngle) + Deg(90.0f));
 
-	// Apply transformations to shooter
-	const auto& m = translation * Matrix4::rotationZ(Deg(finalAngle)) * Matrix4::rotationX(Deg(90.0f));
-	mManipulator->setTransformation(m);
+		// Apply transformations to shooter
+		mShooterManipulator->setTransformation(Matrix4());
+		mShooterManipulator->transform(Matrix4::rotationX(Deg(90.0f)));
+		mShooterManipulator->transform(Matrix4::rotationZ(Deg(finalAngle)));
+		mShooterManipulator->transform(translation);
+	}
 
-	// Apply transformations to bubbles
-	mSphereManipulator->setTransformation(translation);
+	// Sphere manipulation
+	{
+		// Apply transformations to bubbles
+		mSphereManipulator->setTransformation(Matrix4());
+		mSphereManipulator->transform(Matrix4::translation(mProjPath->getCurrentPosition()));
+		mSphereManipulator->transform(Matrix4::rotationX(Deg(-90.0f)));
+		mSphereManipulator->transform(Matrix4::translation(position + Vector3(0.0f, 0.0f, -1.20f)));
+	}
 }
 
 void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
@@ -119,7 +146,7 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 		((Shaders::Phong&) baseDrawable->getShader())
 			.setLightPositions({ position + Vector3({ 0.0f, 150.0f, 40.0f }) })
 			.setDiffuseColor(mDiffuseColor)
-			.setAmbientColor(mColors[mAmbientColorIndex])
+			.setAmbientColor(mColors[mAmbientColorIndex[0]])
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
 			.setProjectionMatrix(camera.projectionMatrix())
