@@ -10,6 +10,12 @@
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
 
+std::shared_ptr<GameObject> Scenery::getInstance(nlohmann::json params)
+{
+	std::shared_ptr<Scenery> p = std::make_shared<Scenery>();
+	return p;
+}
+
 Scenery::Scenery()
 {
 	// Init members

@@ -3,6 +3,7 @@
 #define MINIMUM_BUBBLE_TRAIL_SIZE 3
 
 #include <unordered_set>
+#include <nlohmann/json.hpp>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/Phong.h>
 #include <Magnum/Math/Color.h>
@@ -13,6 +14,8 @@
 class Bubble : public GameObject
 {
 public:
+	static std::shared_ptr<GameObject> getInstance(nlohmann::json params);
+
 	// Equals for sets
 	struct EqualByColorAndPos
 	{
@@ -48,6 +51,7 @@ public:
 	typedef std::unordered_set<Bubble*, Bubble::HashByColorAndPos, Bubble::EqualByColorAndPos> BubbleCollisionGroup;
 
 	// Class members
+	Bubble();
 	Bubble(const Color3& ambientColor);
 
 	void updateBBox();

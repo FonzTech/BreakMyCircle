@@ -2,6 +2,7 @@
 
 #define IMPOSSIBLE_PROJECTILE_XPOS -100.0f
 
+#include <nlohmann/json.hpp>
 #include <Magnum/Math/Color.h>
 
 #include "GameObject.h"
@@ -10,6 +11,8 @@
 class Projectile : public GameObject
 {
 public:
+	static std::shared_ptr<GameObject> getInstance(nlohmann::json params);
+
 	Projectile(const Color3& ambientColor);
 
 	void adjustPosition();

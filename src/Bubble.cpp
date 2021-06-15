@@ -15,6 +15,20 @@
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
 
+std::shared_ptr<GameObject> Bubble::getInstance(nlohmann::json params)
+{
+	Color3 color;
+	{
+		auto& values = params["color"];
+		values.at("r").get_to(color[0]);
+		values.at("g").get_to(color[1]);
+		values.at("b").get_to(color[2]);
+	}
+
+	std::shared_ptr<Bubble> p = std::make_shared<Bubble>(color);
+	return p;
+}
+
 Bubble::Bubble(const Color3& ambientColor) : GameObject()
 {
 	// Assign members

@@ -23,6 +23,12 @@
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
 
+std::shared_ptr<GameObject> FallingBubble::getInstance(nlohmann::json params)
+{
+	// No default constructor exists for this class!!
+	return nullptr;
+}
+
 FallingBubble::FallingBubble(const Color3& ambientColor, const bool spark) : GameObject()
 {
 	// Assign members
@@ -75,8 +81,8 @@ FallingBubble::FallingBubble(const Color3& ambientColor, const bool spark) : Gam
 		wrapper.shader = &td->getShader();
 		wrapper.parameters.index = 0.0f;
 		wrapper.parameters.total = 16.0f;
-		wrapper.parameters.texWidth = td->mTexture->imageSize(0).x();
-		wrapper.parameters.texHeight = td->mTexture->imageSize(0).y();
+		wrapper.parameters.texWidth = Float(td->mTexture->imageSize(0).x());
+		wrapper.parameters.texHeight = Float(td->mTexture->imageSize(0).y());
 		wrapper.parameters.rows = 4.0f;
 		wrapper.parameters.columns = 4.0f;
 		wrapper.speed = 16.0f;

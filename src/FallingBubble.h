@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_set>
+#include <nlohmann/json.hpp>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/Phong.h>
 #include <Magnum/Math/Color.h>
@@ -12,6 +13,8 @@
 class FallingBubble : public GameObject
 {
 public:
+	static std::shared_ptr<GameObject> getInstance(nlohmann::json params);
+
 	struct Wrapper
 	{
 		SpriteShader* shader;

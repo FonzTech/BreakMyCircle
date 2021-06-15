@@ -2,6 +2,9 @@
 
 #include <memory>
 #include <vector>
+#include <unordered_map>
+#include <functional>
+#include <nlohmann/json.hpp>
 
 #include "GameObject.h"
 #include "CollisionManager.h"
@@ -10,6 +13,9 @@ class RoomManager
 {
 public:
 	static std::unique_ptr<RoomManager> singleton;
+
+	// Function creator mapper for room loader
+	std::unordered_map<Uint8, std::function<std::shared_ptr<GameObject>(nlohmann::json params)>> gameObjectCreators;
 
 	// Scene
 	Scene3D mScene;
@@ -31,6 +37,8 @@ public:
 	explicit RoomManager();
 
 	void clear();
-	void setupRoom();
+	void setup();
+	void prepareRoom();
+	void loadRoom(const std::string & name);
 	void createTestRoom();
 };

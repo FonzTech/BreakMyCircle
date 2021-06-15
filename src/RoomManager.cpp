@@ -2,8 +2,10 @@
 #include <Magnum/GL/DefaultFramebuffer.h>
 
 #include "RoomManager.h"
-#include "Bubble.h"
 #include "Player.h"
+#include "Bubble.h"
+#include "Projectile.h"
+#include "FallingBubble.h"
 #include "Scenery.h"
 
 using namespace Magnum::Math::Literals;
@@ -12,6 +14,13 @@ std::unique_ptr<RoomManager> RoomManager::singleton = nullptr;
 
 RoomManager::RoomManager()
 {
+	// Map every game object to this map
+	gameObjectCreators[GOT_PLAYER] = Player::getInstance;
+	gameObjectCreators[GOT_BUBBLE] = Bubble::getInstance;
+	gameObjectCreators[GOT_PROJECTILE] = Projectile::getInstance;
+	gameObjectCreators[GOT_FALLING_BUBBLE] = FallingBubble::getInstance;
+	gameObjectCreators[GOT_SCENERY] = Scenery::getInstance;
+
 	// Initialize camera members
 	mCameraEye = { 0.0f, 0.0f, 20.0f };
 	mCameraTarget = { 0.0f, 0.0f, 0.0f };
@@ -27,7 +36,7 @@ void RoomManager::clear()
 	mCamera = nullptr;
 }
 
-void RoomManager::setupRoom()
+void RoomManager::setup()
 {
 	mCameraObject.setParent(&mScene);
 
@@ -35,6 +44,56 @@ void RoomManager::setupRoom()
 	mCamera->setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
 	mCamera->setProjectionMatrix(Matrix4::perspectiveProjection(35.0_degf, 1.0f, 0.01f, 1000.0f));
 	mCamera->setViewport(GL::defaultFramebuffer.viewport().size());
+}
+
+void RoomManager::prepareRoom()
+{
+	mGameObjects.clear();
+}
+
+void RoomManager::loadRoom(const std::string & name)
+{
+	// Load room from file
+	auto content = Utility::Directory::readString("rooms/" + name + ".txt");
+	auto list = nlohmann::json::parse(content);
+
+	// Iterate through list
+	for (auto& item : list)
+	{
+		// Get type
+		Sint8 type;
+		item.at("type").get_to(type);
+
+		// Check for type
+		std::shared_ptr<GameObject> gameObject = nullptr;
+		{
+			const auto it = gameObjectCreators.find(type);
+			if (it == gameObjectCreators.end())
+			{
+				printf("Could not find instantiator function for type %u. Skipping it.\n", type);
+				continue;
+			}
+
+			const auto& fx = it->second;
+			gameObject = fx(item);
+		}
+
+		// Read parameters
+		{
+			const auto& it = item.find("position");
+			if (it != item.end())
+			{
+				Float position[3];
+				(*it).at("x").get_to(position[0]);
+				(*it).at("y").get_to(position[1]);
+				(*it).at("z").get_to(position[2]);
+				gameObject->position = Vector3(position[0], position[1], position[2]);
+			}
+		}
+
+		// Push into room
+		mGameObjects.push_back(std::move(gameObject));
+	}
 }
 
 void RoomManager::createTestRoom()

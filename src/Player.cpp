@@ -1,5 +1,7 @@
 #include "Player.h"
 
+#include <memory>
+
 #include <Magnum/Math/Angle.h>
 #include <Magnum/Math/Intersection.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
@@ -15,6 +17,12 @@
 
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
+
+std::shared_ptr<GameObject> Player::getInstance(nlohmann::json params)
+{
+	std::shared_ptr<Player> p = std::make_shared<Player>();
+	return p;
+}
 
 Player::Player() : GameObject()
 {

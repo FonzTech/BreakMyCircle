@@ -4,6 +4,7 @@
 #define SHOOT_ANGLE_MAX_RAD -0.349066f
 
 #include <vector>
+#include <nlohmann/json.hpp>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Timeline.h>
 
@@ -14,6 +15,8 @@
 class Player : public GameObject
 {
 public:
+	static std::shared_ptr<GameObject> getInstance(nlohmann::json params);
+
 	Player();
 
 protected:

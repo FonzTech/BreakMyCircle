@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 
+#include <nlohmann/json.hpp>
 #include <Magnum/Math/Bezier.h>
 
 #include "GameObject.h"
@@ -11,6 +12,8 @@
 class Scenery : public GameObject
 {
 public:
+	static std::shared_ptr<GameObject> getInstance(nlohmann::json params);
+
 	Scenery();
 
 protected:
