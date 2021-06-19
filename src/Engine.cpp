@@ -33,8 +33,8 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	RoomManager::singleton = std::make_unique<RoomManager>();
 	RoomManager::singleton->setup();
 
-	// RoomManager::singleton->createTestRoom();
-	RoomManager::singleton->loadRoom("intro");
+	RoomManager::singleton->createRoom();
+	// RoomManager::singleton->loadRoom("intro");
 }
 
 void Engine::tickEvent()

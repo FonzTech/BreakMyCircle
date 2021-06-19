@@ -12,10 +12,18 @@
 class RoomManager
 {
 public:
+	// Instantiator data holder
+	struct InstantiatorDataHolder
+	{
+		Uint8 key;
+		std::unique_ptr<nlohmann::json> params;
+	};
+
+	// Singleton
 	static std::unique_ptr<RoomManager> singleton;
 
 	// Function creator mapper for room loader
-	std::unordered_map<Uint8, std::function<std::shared_ptr<GameObject>(nlohmann::json params)>> gameObjectCreators;
+	std::unordered_map<Uint8, std::function<std::shared_ptr<GameObject>(const nlohmann::json & params)>> gameObjectCreators;
 
 	// Scene
 	Scene3D mScene;
@@ -32,13 +40,20 @@ public:
 	// Collision Manager
 	std::unique_ptr<CollisionManager> mCollisionManager;
 
+	// Members for randomizer
+	std::uint32_t mSeed;
+	std::vector<Color3> mBubbleColors;
+
+	// Window size
 	Vector2i windowSize;
 
+	// Class methods
 	explicit RoomManager();
 
 	void clear();
 	void setup();
 	void prepareRoom();
 	void loadRoom(const std::string & name);
-	void createTestRoom();
+	void createRoom();
+	InstantiatorDataHolder getGameObjectFromNoiseValue(const double value);
 };

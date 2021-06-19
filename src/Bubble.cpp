@@ -15,7 +15,7 @@
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
 
-std::shared_ptr<GameObject> Bubble::getInstance(nlohmann::json params)
+std::shared_ptr<GameObject> Bubble::getInstance(const nlohmann::json & params)
 {
 	Color3 color;
 	{
@@ -58,7 +58,7 @@ void Bubble::update()
 	}
 	else
 	{
-		mShakeFact -= mDeltaTime * 2.0f;
+		mShakeFact -= mDeltaTime * 3.0f;
 	}
 
 	// Update transformations
@@ -67,6 +67,9 @@ void Bubble::update()
 	{
 		d->setTransformation(Matrix4::translation(position + shakeVect));
 	}
+
+	// Update bounding box
+	updateBBox();
 }
 
 void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)

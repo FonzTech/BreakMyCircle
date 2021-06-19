@@ -1,6 +1,7 @@
 #include <vector>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
+#include "PerlinNoise.hpp"
 #include "RoomManager.h"
 #include "Player.h"
 #include "Bubble.h"
@@ -27,6 +28,13 @@ RoomManager::RoomManager()
 
 	// Create collision manager
 	mCollisionManager = std::make_unique<CollisionManager>();
+
+	// Setup randomizer
+	mBubbleColors.push_back(BUBBLE_COLOR_RED);
+	mBubbleColors.push_back(BUBBLE_COLOR_GREEN);
+	mBubbleColors.push_back(BUBBLE_COLOR_BLUE);
+	mBubbleColors.push_back(BUBBLE_COLOR_YELLOW);
+	mBubbleColors.push_back(BUBBLE_COLOR_PURPLE);
 }
 
 void RoomManager::clear()
@@ -67,7 +75,7 @@ void RoomManager::loadRoom(const std::string & name)
 		// Check for type
 		std::shared_ptr<GameObject> gameObject = nullptr;
 		{
-			const auto it = gameObjectCreators.find(type);
+			const auto& it = gameObjectCreators.find(type);
 			if (it == gameObjectCreators.end())
 			{
 				printf("Could not find instantiator function for type %u. Skipping it.\n", type);
@@ -96,29 +104,40 @@ void RoomManager::loadRoom(const std::string & name)
 	}
 }
 
-void RoomManager::createTestRoom()
+void RoomManager::createRoom()
 {
-	// Available colors
-	std::vector<Color3> colors = {
-		0x0000c0_rgbf,
-		0x00c000_rgbf,
-		0xc00000_rgbf,
-		0x00c0c0_rgbf,
-	};
-
 	// Create bubbles
+	const siv::PerlinNoise perlin(mSeed);
+
 	const Int square = 8;
+	const Float fSquare(square);
+
 	for (Int i = 0; i < square; ++i)
 	{
 		for (Int j = 0; j < square; ++j)
 		{
-			Int index = std::rand() % colors.size();
+			// Working variables
+			Float y = (Float) i;
+			Float x = (Float) j;
 
-			if (i == 6 && j < 4 || i == 7 && j == 3)
+			// Get noise value at this position
+			const double dx(1.0f / fSquare * x);
+			const double dy(1.0f / fSquare * y);
+			const double value = perlin.accumulatedOctaveNoise2D_0_1(dx, dy, 8);
+
+			// Work with noise value to get the actual in-game object
+			const InstantiatorDataHolder d = getGameObjectFromNoiseValue(value);
+			const auto &it = gameObjectCreators.find(d.key);
+			if (it == gameObjectCreators.end())
 			{
-				index = 0;
+				printf("Could not find instantiator function for type %u. Skipping it.\n", d.key);
+				continue;
 			}
 
+			const auto& fx = it->second;
+			const auto& gameObject = fx(*d.params);
+
+			// Get position for object
 			Float startX;
 			if (i % 2)
 			{
@@ -133,15 +152,10 @@ void RoomManager::createTestRoom()
 				startX = 1.0f;
 			}
 
-			Float y = (Float) i;
-			Float x = (Float) j;
-
 			Vector3 position = { startX + x * 2.0f, y * -2.0f, 0.0f };
 
-			std::shared_ptr<Bubble> b = std::make_shared<Bubble>(colors[index]);
-			b->position = position;
-			b->updateBBox();
-			RoomManager::singleton->mGameObjects.push_back(std::move(b));
+			gameObject->position = position;
+			RoomManager::singleton->mGameObjects.push_back(std::move(gameObject));
 		}
 	}
 
@@ -167,4 +181,25 @@ void RoomManager::createTestRoom()
 	mCameraEye = { 20.0f, -35.0f, 20.0f };
 	mCameraTarget = { 8.0f, -35.0f, 0.0f };
 	*/
+}
+
+RoomManager::InstantiatorDataHolder RoomManager::getGameObjectFromNoiseValue(const double value)
+{
+	InstantiatorDataHolder d;
+
+	if (value >= 0.0)
+	{
+		const Int index = Int(Math::floor(value * double(mBubbleColors.size() * 16))) % mBubbleColors.size();
+		const auto& color = mBubbleColors[index];
+
+		nlohmann::json params;
+		params["color"] = {};
+		params["color"]["r"] = color.r();
+		params["color"]["g"] = color.g();
+		params["color"]["b"] = color.b();
+
+		d.key = GOT_BUBBLE;
+		d.params = std::make_unique<nlohmann::json>(params);
+	}
+	return d;
 }

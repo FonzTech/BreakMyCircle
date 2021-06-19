@@ -37,9 +37,6 @@
     <Filter Include="Source Files\Shaders">
       <UniqueIdentifier>{27f35adc-9b5f-49d2-9c9f-ed61b3216f37}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Paths">
-      <UniqueIdentifier>{92cfb2b8-dab3-4552-ba7d-0f7a4836b1c9}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src/main.cpp">
@@ -147,6 +144,9 @@
       <Filter>Header Files\Game</Filter>
     </ClInclude>
     <ClInclude Include="src\LinePath.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PerlinNoise.hpp">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
   </ItemGroup>

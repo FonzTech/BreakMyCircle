@@ -15,7 +15,7 @@
 class Player : public GameObject
 {
 public:
-	static std::shared_ptr<GameObject> getInstance(nlohmann::json params);
+	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	Player();
 
@@ -24,15 +24,16 @@ protected:
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
+	Color4 getRandomEligibleColor();
 
 	std::weak_ptr<GameObject> mProjectile;
 	std::unique_ptr<LinePath> mProjPath;
 	Float mShootTimeline;
 	Rad mShootAngle;
 
-	Int mAmbientColorIndex[2];
+	Color4 mProjColors[2];
 	Color3 mDiffuseColor;
-	std::vector<Color3> mColors;
+	Color4 mColors;
 
 	Object3D* mShooterManipulator;
 	Object3D* mSphereManipulator;

@@ -12,7 +12,7 @@
 class Scenery : public GameObject
 {
 public:
-	static std::shared_ptr<GameObject> getInstance(nlohmann::json params);
+	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	Scenery();
 

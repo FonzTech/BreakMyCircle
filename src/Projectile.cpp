@@ -15,7 +15,7 @@
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
 
-std::shared_ptr<GameObject> Projectile::getInstance(nlohmann::json params)
+std::shared_ptr<GameObject> Projectile::getInstance(const nlohmann::json & params)
 {
 	// No default constructor exists for this class!!
 	return nullptr;

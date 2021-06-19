@@ -14,11 +14,12 @@
 #include "RoomManager.h"
 #include "Projectile.h"
 #include "CommonUtility.h"
+#include "Bubble.h"
 
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
 
-std::shared_ptr<GameObject> Player::getInstance(nlohmann::json params)
+std::shared_ptr<GameObject> Player::getInstance(const nlohmann::json & params)
 {
 	std::shared_ptr<Player> p = std::make_shared<Player>();
 	return p;
@@ -40,24 +41,16 @@ Player::Player() : GameObject()
 		mProjPath->mProgress = Float(mProjPath->getSize());
 	}
 
-	// Set diffuse color
-	mDiffuseColor = 0xffffff_rgbf;
-
 	// Set members
-	mColors = {
-		0x0000c0_rgbf,
-		0x00c000_rgbf,
-		0xc00000_rgbf,
-		0x00c0c0_rgbf,
-	};
-	mAmbientColorIndex[0] = std::rand() % mColors.size();
-	mAmbientColorIndex[1] = std::rand() % mColors.size();
+	mDiffuseColor = 0xffffff_rgbf;
+	mProjColors[0] = getRandomEligibleColor();
+	mProjColors[1] = getRandomEligibleColor();
 	mShootAngle = Rad(0.0f);
 
 	// Create game bubble
 	mSphereManipulator = new Object3D{ &RoomManager::singleton->mScene };
 
-	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mSphereManipulator, mColors[mAmbientColorIndex[0]], this);
+	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mSphereManipulator, mProjColors[0].rgb(), this);
 	mDrawables.emplace_back(cd);
 
 	mSphereDrawables[0] = cd.get();
@@ -107,14 +100,14 @@ void Player::update()
 		if (mProjectile.expired())
 		{
 			// Create projectile
-			std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mColors[mAmbientColorIndex[0]]);
+			std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mProjColors[0].rgb());
 			go->position = position;
 			go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
 			RoomManager::singleton->mGameObjects.push_back(std::move(go));
 
 			// Update color for next bubble
-			mAmbientColorIndex[0] = mAmbientColorIndex[1];
-			mAmbientColorIndex[1] = std::rand() % mColors.size();
+			mProjColors[0] = mProjColors[1];
+			mProjColors[1] = getRandomEligibleColor();
 
 			// Reset animation for new projectile
 			mProjPath->mProgress = Float(mProjPath->getSize());
@@ -154,7 +147,7 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 		((Shaders::Phong&) baseDrawable->getShader())
 			.setLightPositions({ position + Vector3({ 0.0f, 150.0f, 40.0f }) })
 			.setDiffuseColor(mDiffuseColor)
-			.setAmbientColor(mColors[mAmbientColorIndex[0]])
+			.setAmbientColor(mProjColors[0].rgb())
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
 			.setProjectionMatrix(camera.projectionMatrix())
@@ -176,4 +169,28 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 
 void Player::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
+}
+
+Color4 Player::getRandomEligibleColor()
+{
+	// Create array of bubbles
+	std::vector<std::weak_ptr<GameObject>> bubbles;
+	for (const auto& item : RoomManager::singleton->mGameObjects)
+	{
+		if (item->getType() == GOT_BUBBLE)
+		{
+			bubbles.push_back(item);
+		}
+	}
+
+	// Check for array size
+	if (!bubbles.size())
+	{
+		return 0x00000000_rgbaf;
+	}
+
+	// Get random color from one in-game bubble
+	const Int index = std::rand() % bubbles.size();
+	const auto& color = ((Bubble*) bubbles[index].lock().get())->mAmbientColor;
+	return Color4(color.r(), color.g(), color.b());
 }

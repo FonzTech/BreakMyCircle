@@ -188,6 +188,7 @@
     <ClInclude Include="src\FallingBubble.h" />
     <ClInclude Include="src\IDrawCallback.h" />
     <ClInclude Include="src\LinePath.h" />
+    <ClInclude Include="src\PerlinNoise.hpp" />
     <ClInclude Include="src\Projectile.h" />
     <ClInclude Include="src\Scenery.h" />
     <ClInclude Include="src\SpriteShader.h" />
