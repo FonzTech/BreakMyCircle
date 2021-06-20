@@ -21,12 +21,17 @@ public:
 
 	Vector2i mMousePosition;
 	std::unordered_map<ImMouseButtons, Sint8> mMouseStates;
+	std::unordered_map<ImKeyButtons, Sint8> mKeyStates;
 
 	InputManager();
 
 	void setMouseState(const ImMouseButtons & key, const bool & pressed);
+	void setKeyState(const ImKeyButtons & key, const bool & pressed);
+
 	void updateMouseStates();
+	void updateKeyStates();
 
 protected:
 	std::unordered_map<ImMouseButtons, Sint8> mPreTickMouseStates;
+	std::unordered_map<ImKeyButtons, Sint8> mPreTickKeyStates;
 };

@@ -39,8 +39,9 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 
 void Engine::tickEvent()
 {
-	// Update input mouse events
+	// Update input events
 	InputManager::singleton->updateMouseStates();
+	InputManager::singleton->updateKeyStates();
 
 	// Compute delta time
 	mDeltaTime = mTimeline.previousFrameDuration();
@@ -115,7 +116,7 @@ void Engine::mousePressEvent(MouseEvent& event)
 
 void Engine::mouseReleaseEvent(MouseEvent& event)
 {
-	// Update state for pressed mouse button
+	// Update state for released mouse button
 	updateMouseButtonState(event, false);
 
 	// Capture event
@@ -131,6 +132,24 @@ void Engine::mouseMoveEvent(MouseMoveEvent& event)
 
 	// Update state for all mouse buttons
 	updateMouseButtonStates(event);
+
+	// Capture event
+	event.setAccepted();
+}
+
+void Engine::keyPressEvent(KeyEvent& event)
+{
+	// Update state for pressed key button
+	updateKeyButtonState(event, true);
+
+	// Capture event
+	event.setAccepted();
+}
+
+void Engine::keyReleaseEvent(KeyEvent& event)
+{
+	// Update state for released key button
+	updateKeyButtonState(event, false);
 
 	// Capture event
 	event.setAccepted();
@@ -192,4 +211,10 @@ void Engine::updateMouseButtonStates(const MouseMoveEvent& event)
 	// Check if left button is actually pressed
 	const auto& value = mouseButtons & MouseMoveEvent::Button::Left;
 	InputManager::singleton->setMouseState(ImMouseButtons::Left, value ? true : false);
+}
+
+void Engine::updateKeyButtonState(const KeyEvent& event, const bool & pressed)
+{
+	// Update state for the button which triggered the event
+	InputManager::singleton->setKeyState(event.key(), pressed);
 }

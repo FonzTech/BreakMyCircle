@@ -24,6 +24,7 @@ typedef SceneGraph::Object<SceneGraph::MatrixTransformation3D> Object3D;
 typedef SceneGraph::Scene<SceneGraph::MatrixTransformation3D> Scene3D;
 
 typedef Platform::Application::MouseEvent::Button ImMouseButtons;
+typedef Platform::Application::KeyEvent::Key ImKeyButtons;
 
 typedef Containers::Array<Containers::Optional<GL::Mesh>> AssetMeshes;
 typedef Containers::Array<Containers::Optional<GL::Texture2D>> AssetTextures;
