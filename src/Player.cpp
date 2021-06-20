@@ -90,7 +90,7 @@ void Player::update()
 	}
 
 	// Check for mouse input
-	auto& bs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
+	const auto& bs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
 	if (bs == IM_STATE_PRESSED)
 	{
 		mShootTimeline = 1.0f;
