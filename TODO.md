@@ -10,6 +10,7 @@
 - ~~Fix transparency and Z-Ordering problems.~~
 - ~~Lambda as shader creation facility for complex drawables.~~
 - ~~Animation for player shooter, to make the next ball appear with transition.~~
+- Render the bubble-gameplay scene to a separate render target, to avoid clipping and manage scene position independently.
 - Scenery to the test room.
 - Small main menu for game.
 - Level screen with overworld and changing themes.
