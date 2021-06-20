@@ -44,6 +44,45 @@ void Scenery::update()
 	// Update frame
 	mFrame += mDeltaTime;
 
+	// Debug camera move
+#ifdef _DEBUG or NDEBUG
+	{
+		Vector3 delta;
+
+		if (InputManager::singleton->mKeyStates[ImKeyButtons::Left] >= IM_STATE_PRESSED)
+		{
+			delta += Vector3(-1.0f, 0.0f, 0.0f);
+		}
+
+		if (InputManager::singleton->mKeyStates[ImKeyButtons::Right] >= IM_STATE_PRESSED)
+		{
+			delta += Vector3(1.0f, 0.0f, 0.0f);
+		}
+
+		if (InputManager::singleton->mKeyStates[ImKeyButtons::Up] >= IM_STATE_PRESSED)
+		{
+			delta += Vector3(0.0f, 1.0f, 0.0f);
+		}
+
+		if (InputManager::singleton->mKeyStates[ImKeyButtons::Down] >= IM_STATE_PRESSED)
+		{
+			delta += Vector3(0.0f, -1.0f, 0.0f);
+		}
+
+		if (InputManager::singleton->mKeyStates[ImKeyButtons::LeftShift] >= IM_STATE_PRESSED)
+		{
+			delta += Vector3(0.0f, 0.0f, -1.0f);
+		}
+
+		if (InputManager::singleton->mKeyStates[ImKeyButtons::LeftCtrl] >= IM_STATE_PRESSED)
+		{
+			delta += Vector3(0.0f, 0.0f, 1.0f);
+		}
+
+		position += delta * mDeltaTime * 10.0f;
+	}
+	#endif
+
 	// Animation for eye camera
 	{
 		auto* p = &RoomManager::singleton->mCameraEye[2];
@@ -57,25 +96,8 @@ void Scenery::update()
 	}
 
 	{
-		const auto& m = Matrix4::translation(position + Vector3(8.0, -19.0f, 0.0f));
+		const auto& m = Matrix4::translation(position);
 		mManipulatorList[1]->setTransformation(m);
-
-		auto& list = mManipulatorList[1]->children();
-		auto* item = list.first();
-		for (Sint8 i = 0; i < 2; ++i)
-		{
-			item = item->nextSibling();
-		}
-
-		for (Sint8 i = 0; i < 4; ++i)
-		{
-			auto tm = item->transformation();
-			item->transform(tm.inverted());
-			item->rotate(Rad(i % 2 ? -mDeltaTime : mDeltaTime), Vector3::yAxis());
-			item->transform(tm);
-
-			item = item->nextSibling();
-		}
 	}
 }
 
