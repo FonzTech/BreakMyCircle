@@ -21,10 +21,13 @@ class GameObject : public IDrawCallback
 {
 public:
 	GameObject();
+	GameObject(const Sint8 parentIndex);
 	~GameObject();
 
 	bool destroyMe;
 	Float mDeltaTime;
+	Sint8 mParentIndex = std::numeric_limits<Sint8>::min();
+
 	std::unique_ptr<Object3D> mManipulator;
 	std::vector<std::shared_ptr<BaseDrawable>> mDrawables;
 

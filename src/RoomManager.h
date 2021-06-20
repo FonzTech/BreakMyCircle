@@ -1,22 +1,47 @@
 #pragma once
 
+#define GOL_MAIN 0
+#define GOL_LEVEL 1
+
 #include <memory>
 #include <vector>
 #include <unordered_map>
 #include <functional>
 #include <nlohmann/json.hpp>
 
+#include <Magnum/Magnum.h>
+#include <Magnum/GL/Framebuffer.h>
+
 #include "GameObject.h"
 #include "CollisionManager.h"
+
+using namespace Magnum;
+
+typedef std::vector<std::shared_ptr<GameObject>> GameObjectList;
 
 class RoomManager
 {
 public:
 	// Instantiator data holder
-	struct InstantiatorDataHolder
+	struct Instantiator
 	{
 		Uint8 key;
 		std::unique_ptr<nlohmann::json> params;
+	};
+
+	// Game Object layer data holder
+	struct GameObjectsLayer
+	{
+		Sint8 index;
+		std::unique_ptr<GL::Framebuffer> frameBuffer;
+		std::unique_ptr<GameObjectList> list;
+		std::unique_ptr<SceneGraph::DrawableGroup3D> drawables;
+
+		void push_back(const std::shared_ptr<GameObject> & go)
+		{
+			list->push_back(std::move(go));
+			list->back()->mParentIndex = index;
+		}
 	};
 
 	// Singleton
@@ -34,8 +59,7 @@ public:
 	std::shared_ptr<SceneGraph::Camera3D> mCamera;
 
 	// Game Objects and Drawables
-	std::vector<std::shared_ptr<GameObject>> mGameObjects;
-	SceneGraph::DrawableGroup3D mDrawables;
+	std::unordered_map<Sint8, GameObjectsLayer> mGoLayers;
 
 	// Collision Manager
 	std::unique_ptr<CollisionManager> mCollisionManager;
@@ -54,6 +78,6 @@ public:
 	void setup();
 	void prepareRoom();
 	void loadRoom(const std::string & name);
-	void createRoom();
-	InstantiatorDataHolder getGameObjectFromNoiseValue(const double value);
+	void createLevelRoom();
+	Instantiator getGameObjectFromNoiseValue(const double value);
 };

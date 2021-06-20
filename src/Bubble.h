@@ -10,6 +10,7 @@
 
 #include <unordered_set>
 #include <nlohmann/json.hpp>
+#include <Magnum/Magnum.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/Shaders/Phong.h>
 #include <Magnum/Math/Color.h>
@@ -57,7 +58,7 @@ public:
 	typedef std::unordered_set<Bubble*, Bubble::HashByColorAndPos, Bubble::EqualByColorAndPos> BubbleCollisionGroup;
 
 	// Class members
-	Bubble(const Color3& ambientColor);
+	Bubble(const Sint8 parentIndex, const Color3& ambientColor);
 
 	void updateBBox();
 	void applyRippleEffect(const Vector3& center);

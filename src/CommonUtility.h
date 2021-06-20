@@ -42,7 +42,7 @@ public:
 	void clear();
 
 	// Create game sphere
-	std::shared_ptr<ColoredDrawable<Shaders::Phong>> createGameSphere(Object3D & parent, const Vector3 & diffuseColor, IDrawCallback* drawCallback);
+	std::shared_ptr<ColoredDrawable<Shaders::Phong>> createGameSphere(const Sint8 parentIndex, Object3D & parent, const Vector3 & diffuseColor, IDrawCallback* drawCallback);
 
 	// Resource manager holder
 	MyResourceManager manager;

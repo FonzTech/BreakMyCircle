@@ -10,20 +10,21 @@ std::unique_ptr<std::unordered_set<GameObject*>> CollisionManager::checkCollisio
 	const Int type = go->getType();
 	std::unique_ptr<std::unordered_set<GameObject*>> set = std::make_unique<std::unordered_set<GameObject*>>();
 
-	auto& gos = RoomManager::singleton->mGameObjects;
+	auto& gos = RoomManager::singleton->mGoLayers[go->mParentIndex].list;
 
-	for (UnsignedInt i = 0; i < gos.size(); ++i)
+	for (UnsignedInt i = 0; i < gos->size(); ++i)
 	{
-		if (gos[i]->destroyMe || go == gos[i].get() || types.find(gos[i]->getType()) == types.end())
+		const auto& gi = gos->at(i);
+		if (gi->destroyMe || go == gi.get() || types.find(gi->getType()) == types.end())
 		{
 			continue;
 		}
-		else if (Math::intersects(bbox, gos[i]->bbox))
+		else if (Math::intersects(bbox, gos->at(i)->bbox))
 		{
-			GameObject* p = gos[i].get();
+			GameObject* p = gi.get();
 			if (set->find(p) == set->end())
 			{
-				set->insert(gos[i].get());
+				set->insert(p);
 			}
 		}
 	}

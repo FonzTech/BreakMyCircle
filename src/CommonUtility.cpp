@@ -29,7 +29,7 @@ void CommonUtility::clear()
 	manager.clear();
 }
 
-std::shared_ptr<ColoredDrawable<Shaders::Phong>> CommonUtility::createGameSphere(Object3D & parent, const Vector3 & ambientColor, IDrawCallback* drawCallback)
+std::shared_ptr<ColoredDrawable<Shaders::Phong>> CommonUtility::createGameSphere(const Sint8 parentIndex, Object3D & parent, const Vector3 & ambientColor, IDrawCallback* drawCallback)
 {
 	// Check if mesh is already present
 	Resource<GL::Mesh> resMesh = manager.get<GL::Mesh>(RESOURCE_MESH_ICOSPHERE);
@@ -66,7 +66,8 @@ std::shared_ptr<ColoredDrawable<Shaders::Phong>> CommonUtility::createGameSphere
 	}
 
 	// Create colored drawable
-	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = std::make_shared<ColoredDrawable<Shaders::Phong>>(RoomManager::singleton->mDrawables, resShader, resMesh, 0xffffff_rgbf);
+	auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;
+	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = std::make_shared<ColoredDrawable<Shaders::Phong>>(*drawables, resShader, resMesh, 0xffffff_rgbf);
 	cd->setParent(&parent);
 	cd->setDrawCallback(drawCallback);
 	return cd;

@@ -17,7 +17,7 @@ class Player : public GameObject
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	Player();
+	Player(const Sint8 parentIndex);
 
 protected:
 	const Int getType() const override;

@@ -22,7 +22,7 @@ public:
 		Float speed;
 	};
 
-	FallingBubble(const Color3& ambientColor, const bool spark);
+	FallingBubble(const Sint8 parentIndex, const Color3& ambientColor, const bool spark);
 
 	bool mSpark;
 	Color3 mAmbientColor;

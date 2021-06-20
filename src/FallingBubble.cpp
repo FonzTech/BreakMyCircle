@@ -29,7 +29,7 @@ std::shared_ptr<GameObject> FallingBubble::getInstance(const nlohmann::json & pa
 	return nullptr;
 }
 
-FallingBubble::FallingBubble(const Color3& ambientColor, const bool spark) : GameObject()
+FallingBubble::FallingBubble(const Sint8 parentIndex, const Color3& ambientColor, const bool spark) : GameObject(parentIndex)
 {
 	// Assign members
 	mAmbientColor = ambientColor;
@@ -89,7 +89,7 @@ FallingBubble::FallingBubble(const Color3& ambientColor, const bool spark) : Gam
 	}
 	else
 	{
-		std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mManipulator, mAmbientColor, this);
+		std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(mParentIndex, *mManipulator, mAmbientColor, this);
 		mDrawables.emplace_back(cd);
 	}
 }
@@ -217,7 +217,8 @@ std::shared_ptr<TexturedDrawable<SpriteShader>> FallingBubble::createPlane(Objec
 	}
 
 	// Create colored drawable
-	std::shared_ptr<TexturedDrawable<SpriteShader>> td = std::make_shared<TexturedDrawable<SpriteShader>>(RoomManager::singleton->mDrawables, resShader, resMesh, texture);
+	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
+	std::shared_ptr<TexturedDrawable<SpriteShader>> td = std::make_shared<TexturedDrawable<SpriteShader>>(*drawables, resShader, resMesh, texture);
 	td->setParent(&parent);
 	td->setDrawCallback(this);
 	return td;

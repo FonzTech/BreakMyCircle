@@ -12,11 +12,16 @@ using namespace Magnum::Math::Literals;
 
 std::shared_ptr<GameObject> Scenery::getInstance(const nlohmann::json & params)
 {
-	std::shared_ptr<Scenery> p = std::make_shared<Scenery>();
+	// Get parent index
+	Sint8 parent;
+	params.at("parent").get_to(parent);
+
+	// Instantiate scenery object
+	std::shared_ptr<Scenery> p = std::make_shared<Scenery>(parent);
 	return p;
 }
 
-Scenery::Scenery()
+Scenery::Scenery(const Sint8 parentIndex) : GameObject(parentIndex)
 {
 	// Init members
 	mCubicBezier = std::make_unique<CubicBezier2D>(Vector2(0.0f, 0.0f), Vector2(0.11f, -0.02f), Vector2(0.0f, 1.01f), Vector2(1.0f));

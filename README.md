@@ -9,6 +9,7 @@ Puzzle Bobble-like game for PC and Mobile. Currently in development. This projec
 
 ## Technical Notes
 
+- The variable `mParentIndex` is NOT available for use in any of class hierarchy for `GameObject`, unless the index is explicitly passed, if the object is instantiated outside of the in-game room loader. For example, take a look at the `Player` class: it needs the `parentIndex` argument for its constructor (which introduces some redundancy), because it needs to look for other game objects on the same layer where it lies.
 - To get status for a mouse button:
 
   `InputManager::singleton->mouseStates[ImMouseButtons::Left]`

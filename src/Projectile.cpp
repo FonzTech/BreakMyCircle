@@ -21,7 +21,7 @@ std::shared_ptr<GameObject> Projectile::getInstance(const nlohmann::json & param
 	return nullptr;
 }
 
-Projectile::Projectile(const Color3& ambientColor) : GameObject()
+Projectile::Projectile(const Sint8 parentIndex, const Color3& ambientColor) : GameObject(parentIndex)
 {
 	// Initialize members
 	mAmbientColor = ambientColor;
@@ -36,7 +36,7 @@ Projectile::Projectile(const Color3& ambientColor) : GameObject()
 	mDiffuseColor = 0xffffff_rgbf;
 
 	// Create game bubble
-	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mManipulator, mAmbientColor, this);
+	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(mParentIndex, *mManipulator, mAmbientColor, this);
 	mDrawables.emplace_back(cd);
 }
 
@@ -111,12 +111,12 @@ void Projectile::snapToGrid()
 	tjob.join();
 
 	// Create new bubbles with the same color
-	std::shared_ptr<Bubble> b = std::make_shared<Bubble>(mAmbientColor);
+	std::shared_ptr<Bubble> b = std::make_shared<Bubble>(mParentIndex, mAmbientColor);
 	b->position = position;
 	b->updateBBox();
 
 	// Apply ripple effect
-	for (auto& go : RoomManager::singleton->mGameObjects)
+	for (auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
 	{
 		if (go != b && go->getType() == GOT_BUBBLE)
 		{
@@ -131,7 +131,7 @@ void Projectile::snapToGrid()
 	}
 
 	// Add to room
-	RoomManager::singleton->mGameObjects.push_back(std::move(b));
+	RoomManager::singleton->mGoLayers[mParentIndex].push_back(b);
 
 	// Destroy me
 	destroyMe = true;
@@ -160,7 +160,7 @@ void Projectile::adjustPosition()
 	Float toLeftX = IMPOSSIBLE_PROJECTILE_XPOS;
 	Float toRightX = IMPOSSIBLE_PROJECTILE_XPOS;
 
-	for (auto& go : RoomManager::singleton->mGameObjects)
+	for (auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
 	{
 		if (go.get() == this || go->position.y() != position.y())
 		{

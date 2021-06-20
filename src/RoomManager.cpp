@@ -39,15 +39,19 @@ RoomManager::RoomManager()
 
 void RoomManager::clear()
 {
-	mGameObjects.clear();
+	// Clear all layers and their children
+	mGoLayers.clear();
 
+	// De-reference camera
 	mCamera = nullptr;
 }
 
 void RoomManager::setup()
 {
+	// Set parent for camera
 	mCameraObject.setParent(&mScene);
 
+	// Setup camera
 	mCamera = std::make_shared<SceneGraph::Camera3D>(mCameraObject);
 	mCamera->setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
 	mCamera->setProjectionMatrix(Matrix4::perspectiveProjection(35.0_degf, 1.0f, 0.01f, 1000.0f));
@@ -56,7 +60,11 @@ void RoomManager::setup()
 
 void RoomManager::prepareRoom()
 {
-	mGameObjects.clear();
+	// Delete all game objects across all layers
+	for (const auto& layer : mGoLayers)
+	{
+		layer.second.list->clear();
+	}
 }
 
 void RoomManager::loadRoom(const std::string & name)
@@ -69,7 +77,8 @@ void RoomManager::loadRoom(const std::string & name)
 	for (auto& item : list)
 	{
 		// Get type
-		Sint8 type;
+		Sint8 parent, type;
+		item.at("parent").get_to(parent);
 		item.at("type").get_to(type);
 
 		// Check for type
@@ -100,11 +109,11 @@ void RoomManager::loadRoom(const std::string & name)
 		}
 
 		// Push into room
-		mGameObjects.push_back(std::move(gameObject));
+		mGoLayers[parent].push_back(gameObject);
 	}
 }
 
-void RoomManager::createRoom()
+void RoomManager::createLevelRoom()
 {
 	// Create bubbles
 	const siv::PerlinNoise perlin(mSeed);
@@ -126,7 +135,7 @@ void RoomManager::createRoom()
 			const double value = perlin.accumulatedOctaveNoise2D_0_1(dx, dy, 8);
 
 			// Work with noise value to get the actual in-game object
-			const InstantiatorDataHolder d = getGameObjectFromNoiseValue(value);
+			const Instantiator d = getGameObjectFromNoiseValue(value);
 			const auto &it = gameObjectCreators.find(d.key);
 			if (it == gameObjectCreators.end())
 			{
@@ -155,22 +164,22 @@ void RoomManager::createRoom()
 			Vector3 position = { startX + x * 2.0f, y * -2.0f, 0.0f };
 
 			gameObject->position = position;
-			RoomManager::singleton->mGameObjects.push_back(std::move(gameObject));
+			RoomManager::singleton->mGoLayers[GOL_LEVEL].push_back(gameObject);
 		}
 	}
 
 	// Create player
 	{
-		std::shared_ptr<Player> p = std::make_shared<Player>();
+		std::shared_ptr<Player> p = std::make_shared<Player>(GOL_LEVEL);
 		p->position = { 8.0f, -35.0f, 0.0f };
-		RoomManager::singleton->mGameObjects.push_back(std::move(p));
+		RoomManager::singleton->mGoLayers[GOL_LEVEL].push_back(p);
 	}
 
 	// Create scenery
 	{
-		std::shared_ptr<Scenery> p = std::make_shared<Scenery>();
+		std::shared_ptr<Scenery> p = std::make_shared<Scenery>(GOL_MAIN);
 		p->position = Vector3(0.0f);
-		RoomManager::singleton->mGameObjects.push_back(std::move(p)); 
+		RoomManager::singleton->mGoLayers[GOL_MAIN].push_back(p);
 	}
 
 	// Camera position
@@ -183,9 +192,9 @@ void RoomManager::createRoom()
 	*/
 }
 
-RoomManager::InstantiatorDataHolder RoomManager::getGameObjectFromNoiseValue(const double value)
+RoomManager::Instantiator RoomManager::getGameObjectFromNoiseValue(const double value)
 {
-	InstantiatorDataHolder d;
+	Instantiator d;
 
 	if (value >= 0.0)
 	{
@@ -193,6 +202,7 @@ RoomManager::InstantiatorDataHolder RoomManager::getGameObjectFromNoiseValue(con
 		const auto& color = mBubbleColors[index];
 
 		nlohmann::json params;
+		params["parent"] = GOL_LEVEL;
 		params["color"] = {};
 		params["color"]["r"] = color.r();
 		params["color"]["g"] = color.g();

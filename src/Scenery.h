@@ -14,7 +14,7 @@ class Scenery : public GameObject
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	Scenery();
+	Scenery(const Sint8 parentIndex);
 
 protected:
 	const Int getType() const override;

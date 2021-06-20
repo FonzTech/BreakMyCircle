@@ -21,12 +21,20 @@ using namespace Magnum::Math::Literals;
 
 std::shared_ptr<GameObject> Player::getInstance(const nlohmann::json & params)
 {
-	std::shared_ptr<Player> p = std::make_shared<Player>();
+	// Get parent index
+	Sint8 parent;
+	params.at("parent").get_to(parent);
+
+	// Instantiate player object
+	std::shared_ptr<Player> p = std::make_shared<Player>(parent);
 	return p;
 }
 
-Player::Player() : GameObject()
+Player::Player(const Sint8 parentIndex) : GameObject()
 {
+	// Assign parent index
+	mParentIndex = parentIndex;
+
 	// Load asset as first drawable
 	{
 		mShooterManipulator = new Object3D{ &RoomManager::singleton->mScene };
@@ -50,7 +58,7 @@ Player::Player() : GameObject()
 	// Create game bubble
 	mSphereManipulator = new Object3D{ &RoomManager::singleton->mScene };
 
-	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mSphereManipulator, mProjColors[0].rgb(), this);
+	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(mParentIndex, *mSphereManipulator, mProjColors[0].rgb(), this);
 	mDrawables.emplace_back(cd);
 
 	mSphereDrawables[0] = cd.get();
@@ -100,10 +108,10 @@ void Player::update()
 		if (mProjectile.expired())
 		{
 			// Create projectile
-			std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mProjColors[0].rgb());
+			std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mParentIndex, mProjColors[0].rgb());
 			go->position = position;
 			go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
-			RoomManager::singleton->mGameObjects.push_back(std::move(go));
+			RoomManager::singleton->mGoLayers[mParentIndex].push_back(go);
 
 			// Update color for next bubble
 			mProjColors[0] = mProjColors[1];
@@ -113,7 +121,7 @@ void Player::update()
 			mProjPath->mProgress = Float(mProjPath->getSize());
 
 			// Prevent shooting by keeping a reference
-			mProjectile = RoomManager::singleton->mGameObjects.back();
+			(*RoomManager::singleton->mGoLayers[mParentIndex].list).back();
 		}
 	}
 
@@ -175,7 +183,7 @@ Color4 Player::getRandomEligibleColor()
 {
 	// Create array of bubbles
 	std::vector<std::weak_ptr<GameObject>> bubbles;
-	for (const auto& item : RoomManager::singleton->mGameObjects)
+	for (const auto& item : *RoomManager::singleton->mGoLayers[mParentIndex].list)
 	{
 		if (item->getType() == GOT_BUBBLE)
 		{

@@ -1,5 +1,6 @@
 [
   {
+    "parent": 0,
     "type": 6,
 	"position": {
 	  "x": 0.0,

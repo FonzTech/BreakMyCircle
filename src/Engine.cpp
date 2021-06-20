@@ -1,11 +1,21 @@
+#include <memory>
 #include <Magnum/GL/Renderer.h>
+#include <Magnum/GL/Renderbuffer.h>
+#include <Magnum/GL/RenderbufferFormat.h>
+#include <Magnum/GL/Framebuffer.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
+#include <Magnum/GL/TextureFormat.h>
 
 #include "Engine.h"
 #include "CommonUtility.h"
 #include "InputManager.h"
 #include "RoomManager.h"
 #include "GameObject.h"
+
+const Sint8 Engine::GO_LAYERS[] = {
+	GOL_MAIN,
+	GOL_LEVEL
+};
 
 Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
 {
@@ -24,16 +34,25 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 	GL::Renderer::setBlendEquation(GL::Renderer::BlendEquation::Add, GL::Renderer::BlendEquation::Add);
 
-	GL::Renderer::setClearColor(Color4({ 0.25f, 0.25f, 0.25f, 1.0f }));
+	// Set clear color
+	GL::Renderer::setClearColor(Color4(0.0f, 0.0f, 1.0f, 1.0f));
+	GL::Renderer::setColorMask(true, true, true, true);
 
+	// Init common utility
 	CommonUtility::singleton = std::make_unique<CommonUtility>();
 
+	// Init input manager
 	InputManager::singleton = std::make_unique<InputManager>();
 
+	// Init room manager
 	RoomManager::singleton = std::make_unique<RoomManager>();
 	RoomManager::singleton->setup();
 
-	RoomManager::singleton->createRoom();
+	// Setup room manager
+	upsertGameObjectLayers();
+
+	// Build room
+	RoomManager::singleton->createLevelRoom();
 	// RoomManager::singleton->loadRoom("intro");
 }
 
@@ -53,33 +72,58 @@ void Engine::tickEvent()
 	RoomManager::singleton->windowSize = ws;
 	RoomManager::singleton->mCamera->setViewport(ws);
 
-	// Get vector as reference
-	auto& gos = RoomManager::singleton->mGameObjects;
-
-	// Update all game objects
-	for (UnsignedInt i = 0; i < gos.size(); ++i)
+	// Iterate through all layers
+	for (auto& gol : RoomManager::singleton->mGoLayers)
 	{
-		std::shared_ptr<GameObject> go = gos[i];
-		go->mDeltaTime = mDeltaTime;
-		go->update();
+		// Bind layer's framebuffer
+		currentGol = &gol.second;
+		(*currentGol->frameBuffer)
+			.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f))
+			.clear(GL::FramebufferClear::Depth)
+			.bind();
+
+		// Get vector as reference
+		const auto& gos = gol.second.list;
+
+		// Update all game objects on this layer
+		for (UnsignedInt i = 0; i < gos->size(); ++i)
+		{
+			std::shared_ptr<GameObject> go = gos->at(i);
+			go->mDeltaTime = mDeltaTime;
+			go->update();
+		}
+
+		// Destroy all marked objects as such on this layer
+		for (UnsignedInt i = 0; i < gos->size();)
+		{
+			std::shared_ptr<GameObject> go = gos->at(i);
+			if (go->destroyMe)
+			{
+				gos->erase(gos->begin() + i);
+			}
+			else
+			{
+				++i;
+			}
+		}
+
+		// Draw all game objects on this layer
+		drawEvent();
+
+		// De-reference game object layer
+		currentGol = nullptr;
 	}
 
-	// Destroy all marked objects as such
-	for (UnsignedInt i = 0; i < gos.size();)
+	// Redraw main frame buffer
 	{
-		std::shared_ptr<GameObject> go = gos[i];
-		if (go->destroyMe)
-		{
-			RoomManager::singleton->mGameObjects.erase(gos.begin() + i);
-		}
-		else
-		{
-			++i;
-		}
-	}
+		// Bind default window framebuffer
+		GL::defaultFramebuffer
+			.clear(GL::FramebufferClear::Color | GL::FramebufferClear::Depth)
+			.bind();
 
-	// Trigger draw event
-	redraw();
+		// Redraw
+		drawEvent();
+	}
 
 	// Advance timeline
 	mTimeline.nextFrame();
@@ -87,22 +131,44 @@ void Engine::tickEvent()
 
 void Engine::drawEvent()
 {
-	// Clear buffer
-	GL::defaultFramebuffer.clear(GL::FramebufferClear::Color | GL::FramebufferClear::Depth);
+	// Process main frame buffer
+	if (currentGol == nullptr)
+	{
+		// Blit main layer
+		GL::AbstractFramebuffer::blit(
+			*RoomManager::singleton->mGoLayers[GOL_MAIN].frameBuffer,
+			GL::defaultFramebuffer,
+			GL::defaultFramebuffer.viewport(),
+			GL::FramebufferBlit::Color
+		);
 
-	// Z ordering
-	std::vector<std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>> drawableTransformations = RoomManager::singleton->mCamera->drawableTransformations(RoomManager::singleton->mDrawables);
-	std::sort(drawableTransformations.begin(), drawableTransformations.end(),
-		[](const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& a,
-			const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& b) {
-		return a.second.translation().z() < b.second.translation().z();
-	});
+		// Blit level layer
+		if (RoomManager::singleton->mGoLayers[GOL_LEVEL].list->size() > 0)
+		{
+			GL::AbstractFramebuffer::blit(
+				*RoomManager::singleton->mGoLayers[GOL_LEVEL].frameBuffer,
+				GL::defaultFramebuffer,
+				GL::defaultFramebuffer.viewport(),
+				GL::FramebufferBlit::Color
+			);
+		}
 
-	// Draw scene
-	RoomManager::singleton->mCamera->draw(drawableTransformations);
+		// Swap buffers
+		swapBuffers();
+	}
+	else
+	{
+		// Z ordering
+		std::vector<std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>> drawableTransformations = RoomManager::singleton->mCamera->drawableTransformations(*currentGol->drawables);
+		std::sort(drawableTransformations.begin(), drawableTransformations.end(),
+			[](const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& a,
+				const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& b) {
+			return a.second.translation().z() < b.second.translation().z();
+		});
 
-	// Swap buffers
-	swapBuffers();
+		// Draw scene
+		RoomManager::singleton->mCamera->draw(drawableTransformations);
+	}
 }
 
 void Engine::mousePressEvent(MouseEvent& event)
@@ -160,13 +226,14 @@ void Engine::viewportEvent(ViewportEvent& event)
 	// Update viewports
 	GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, event.windowSize()));
 	RoomManager::singleton->mCamera->setViewport(event.windowSize());
+	upsertGameObjectLayers();
 }
 
 void Engine::exitEvent(ExitEvent& event)
 {
 	/*
-		Then, clear the entire room. Must be done now, because
-		this object holds data about game objects, and so they holds
+		Clear the entire room. Must be done now, because this
+		object holds data about game objects, and so they holds
 		references about meshes, textures, shaders, etc...
 	*/
 	if (RoomManager::singleton != nullptr)
@@ -192,6 +259,54 @@ void Engine::exitEvent(ExitEvent& event)
 
 	// Pass default behaviour
 	event.setAccepted();
+}
+
+void Engine::upsertGameObjectLayers()
+{
+	// Cycle through all required layers
+	for (const auto& index : GO_LAYERS)
+	{
+		// Check if layer has been already created
+		RoomManager::GameObjectsLayer* layer;
+		{
+			auto it = RoomManager::singleton->mGoLayers.find(index);
+			if (it != RoomManager::singleton->mGoLayers.end())
+			{
+				// Layer exists
+				layer = &it->second;
+
+				// Clear framebuffer
+				layer->frameBuffer = nullptr;
+			}
+			else
+			{
+				// Create layer
+				RoomManager::singleton->mGoLayers[index] = RoomManager::GameObjectsLayer();
+				layer = &RoomManager::singleton->mGoLayers[index];
+				layer->index = index;
+
+				// Create game object list
+				layer->list = std::make_unique<GameObjectList>();
+
+				// Create drawables holder
+				layer->drawables = std::make_unique<SceneGraph::DrawableGroup3D>();
+			}
+		}
+
+		// Get size for window framebuffer
+		const auto& size = GL::defaultFramebuffer.viewport().size();
+
+		// Create main texture to attach layer
+		GL::Texture2D color;
+		GL::Renderbuffer depthStencil;
+		color.setStorage(1, GL::TextureFormat::RGBA8, size);
+		depthStencil.setStorage(GL::RenderbufferFormat::Depth24Stencil8, size);
+
+		// Create framebuffer and attach color and depth buffers
+		layer->frameBuffer = std::make_unique<GL::Framebuffer>(Range2Di({}, size));
+		layer->frameBuffer->attachTexture(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, color, 0);
+		layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::BufferAttachment::DepthStencil, depthStencil);
+	}
 }
 
 void Engine::updateMouseButtonState(const MouseEvent& event, const bool & pressed)

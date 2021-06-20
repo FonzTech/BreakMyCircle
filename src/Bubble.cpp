@@ -17,6 +17,11 @@ using namespace Magnum::Math::Literals;
 
 std::shared_ptr<GameObject> Bubble::getInstance(const nlohmann::json & params)
 {
+	// Get parent index
+	Sint8 parent;
+	params.at("parent").get_to(parent);
+
+	// Parse color
 	Color3 color;
 	{
 		auto& values = params["color"];
@@ -25,11 +30,12 @@ std::shared_ptr<GameObject> Bubble::getInstance(const nlohmann::json & params)
 		values.at("b").get_to(color[2]);
 	}
 
-	std::shared_ptr<Bubble> p = std::make_shared<Bubble>(color);
+	// Instantiate bubble
+	std::shared_ptr<Bubble> p = std::make_shared<Bubble>(parent, color);
 	return p;
 }
 
-Bubble::Bubble(const Color3& ambientColor) : GameObject()
+Bubble::Bubble(const Sint8 parentIndex, const Color3& ambientColor) : GameObject(parentIndex)
 {
 	// Assign members
 	mAmbientColor = ambientColor;
@@ -40,7 +46,7 @@ Bubble::Bubble(const Color3& ambientColor) : GameObject()
 	mDiffuseColor = 0xffffff_rgbf;
 
 	// Create game bubble
-	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(*mManipulator, mAmbientColor, this);
+	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(mParentIndex, *mManipulator, mAmbientColor, this);
 	mDrawables.emplace_back(cd);
 }
 
@@ -147,9 +153,9 @@ bool Bubble::destroyNearbyBubbles()
 	{
 		auto& gn = fps->front();
 
-		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(gn.color, true);
+		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, true);
 		ib->position = gn.position + Vector3(0.0f, 0.0f, posZ);
-		RoomManager::singleton->mGameObjects.push_back(std::move(ib));
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
 
 		fps->pop();
 
@@ -192,7 +198,7 @@ void Bubble::destroyDisjointBubbles()
 	auto future = std::async(std::launch::async, [this]() {
 		// Create list of bubbles
 		std::unordered_set<Bubble*> group;
-		for (auto& go : RoomManager::singleton->mGameObjects)
+		for (auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
 		{
 			if (go->getType() != GOT_BUBBLE || go->destroyMe)
 			{
@@ -248,9 +254,9 @@ void Bubble::destroyDisjointBubbles()
 	{
 		auto& gn = fps->front();
 
-		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(gn.color, false);
+		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, false);
 		ib->position = gn.position;
-		RoomManager::singleton->mGameObjects.push_back(std::move(ib));
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
 
 		fps->pop();
 	}
