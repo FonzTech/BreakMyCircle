@@ -121,7 +121,7 @@ void Player::update()
 			mProjPath->mProgress = Float(mProjPath->getSize());
 
 			// Prevent shooting by keeping a reference
-			(*RoomManager::singleton->mGoLayers[mParentIndex].list).back();
+			mProjectile = (*RoomManager::singleton->mGoLayers[mParentIndex].list).back();
 		}
 	}
 
