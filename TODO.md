@@ -11,8 +11,10 @@
 - ~~Lambda as shader creation facility for complex drawables.~~
 - ~~Animation for player shooter, to make the next ball appear with transition.~~
 - ~~Render the bubble-gameplay scene to a separate "layer" render target, to avoid clipping and manage scene position independently.~~
-- Separate camera settings for each "layer" render target.
-- Scenery to the test room.
+- ~~Separate camera settings for each "layer" render target.~~
+- ~~Scenery to the test room.~~
+- Improve game bubbles with a "semi-circle" and textures with "nature elements as color"
+- Intro screen with logo and various effects.
 - Small main menu for game.
 - Level screen with overworld and changing themes.
 - Implement pause/resume system for game. And so the pause menu.
