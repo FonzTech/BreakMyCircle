@@ -297,14 +297,15 @@ void Engine::upsertGameObjectLayers()
 		const auto& size = GL::defaultFramebuffer.viewport().size();
 
 		// Create main texture to attach layer
-		GL::Texture2D color;
+		layer->fbTexture = std::make_unique<GL::Texture2D>();
+
 		GL::Renderbuffer depthStencil;
-		color.setStorage(1, GL::TextureFormat::RGBA8, size);
+		layer->fbTexture->setStorage(1, GL::TextureFormat::RGBA8, size);
 		depthStencil.setStorage(GL::RenderbufferFormat::Depth24Stencil8, size);
 
 		// Create framebuffer and attach color and depth buffers
 		layer->frameBuffer = std::make_unique<GL::Framebuffer>(Range2Di({}, size));
-		layer->frameBuffer->attachTexture(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, color, 0);
+		layer->frameBuffer->attachTexture(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, *layer->fbTexture, 0);
 		layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::BufferAttachment::DepthStencil, depthStencil);
 	}
 }

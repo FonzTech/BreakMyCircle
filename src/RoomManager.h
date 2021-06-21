@@ -11,6 +11,7 @@
 
 #include <Magnum/Magnum.h>
 #include <Magnum/GL/Framebuffer.h>
+#include <Magnum/GL/Texture.h>
 
 #include "GameObject.h"
 #include "CollisionManager.h"
@@ -34,6 +35,7 @@ public:
 	{
 		Sint8 index;
 		std::unique_ptr<GL::Framebuffer> frameBuffer;
+		std::unique_ptr<GL::Texture2D> fbTexture;
 		std::unique_ptr<GameObjectList> list;
 		std::unique_ptr<SceneGraph::DrawableGroup3D> drawables;
 
