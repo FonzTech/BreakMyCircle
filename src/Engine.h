@@ -9,6 +9,7 @@
 
 #include "CommonTypes.h"
 #include "RoomManager.h"
+#include "ScreenQuadShader.h"
 
 using namespace Magnum;
 
@@ -18,9 +19,6 @@ public:
 	explicit Engine(const Arguments& arguments);
 
 protected:
-	Timeline mTimeline;
-	Float mDeltaTime;
-
 	void tickEvent() override;
 
 private:
@@ -39,9 +37,14 @@ private:
 
 	// Class methods
 	void upsertGameObjectLayers();
-	RoomManager::GameObjectsLayer* currentGol;
 
 	void updateMouseButtonState(const MouseEvent& event, const bool & pressed);
 	void updateMouseButtonStates(const MouseMoveEvent& event);
 	void updateKeyButtonState(const KeyEvent& event, const bool & pressed);
+
+	// Variables
+	Timeline mTimeline;
+	Float mDeltaTime;
+	ScreenQuadShader mScreenQuadShader;
+	RoomManager::GameObjectsLayer* currentGol;
 };

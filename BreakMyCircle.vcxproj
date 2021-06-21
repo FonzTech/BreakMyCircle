@@ -173,6 +173,7 @@
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Projectile.cpp" />
     <ClCompile Include="src\Scenery.cpp" />
+    <ClCompile Include="src\ScreenQuadShader.cpp" />
     <ClCompile Include="src\SpriteShader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +192,7 @@
     <ClInclude Include="src\PerlinNoise.hpp" />
     <ClInclude Include="src\Projectile.h" />
     <ClInclude Include="src\Scenery.h" />
+    <ClInclude Include="src\ScreenQuadShader.h" />
     <ClInclude Include="src\SpriteShader.h" />
     <ClInclude Include="src\TexturedDrawable.h" />
     <ClInclude Include="src\CommonTypes.h" />

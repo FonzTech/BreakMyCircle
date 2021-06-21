@@ -22,10 +22,6 @@ RoomManager::RoomManager()
 	gameObjectCreators[GOT_FALLING_BUBBLE] = FallingBubble::getInstance;
 	gameObjectCreators[GOT_SCENERY] = Scenery::getInstance;
 
-	// Initialize camera members
-	mCameraEye = { 0.0f, 0.0f, 20.0f };
-	mCameraTarget = { 0.0f, 0.0f, 0.0f };
-
 	// Create collision manager
 	mCollisionManager = std::make_unique<CollisionManager>();
 
@@ -183,8 +179,11 @@ void RoomManager::createLevelRoom()
 	}
 
 	// Camera position
-	mCameraEye = { 8.0f, -20.0f, 1.0f };
-	mCameraTarget = { 8.0f, -20.0f, 0.0f };
+	mGoLayers[GOL_MAIN].mCameraEye = { 8.0f, -20.0f, 44.0f };
+	mGoLayers[GOL_MAIN].mCameraTarget = { 8.0f, -20.0f, 0.0f };
+
+	mGoLayers[GOL_LEVEL].mCameraEye = { 8.0f, -20.0f, 1.0f };
+	mGoLayers[GOL_LEVEL].mCameraTarget = { 8.0f, -20.0f, 0.0f };
 
 	/*
 	mCameraEye = { 20.0f, -35.0f, 20.0f };

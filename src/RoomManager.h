@@ -34,6 +34,7 @@ public:
 	struct GameObjectsLayer
 	{
 		Sint8 index;
+		Vector3 mCameraEye, mCameraTarget;
 		std::unique_ptr<GL::Framebuffer> frameBuffer;
 		std::unique_ptr<GL::Texture2D> fbTexture;
 		std::unique_ptr<GameObjectList> list;
@@ -56,7 +57,6 @@ public:
 	Scene3D mScene;
 
 	// Camera
-	Vector3 mCameraEye, mCameraTarget;
 	Object3D mCameraObject;
 	std::shared_ptr<SceneGraph::Camera3D> mCamera;
 

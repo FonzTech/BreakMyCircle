@@ -35,8 +35,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	GL::Renderer::setBlendEquation(GL::Renderer::BlendEquation::Add, GL::Renderer::BlendEquation::Add);
 
 	// Set clear color
-	GL::Renderer::setClearColor(Color4(0.0f, 0.0f, 1.0f, 1.0f));
-	GL::Renderer::setColorMask(true, true, true, true);
+	GL::Renderer::setClearColor(Color4(0.2f, 0.2f, 0.2f, 1.0f));
 
 	// Init common utility
 	CommonUtility::singleton = std::make_unique<CommonUtility>();
@@ -65,9 +64,6 @@ void Engine::tickEvent()
 	// Compute delta time
 	mDeltaTime = mTimeline.previousFrameDuration();
 
-	// RoomManager::singleton->cameraEye += Vector3(0, 0, deltaTime);
-	RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(RoomManager::singleton->mCameraEye, RoomManager::singleton->mCameraTarget, Vector3::yAxis()));
-
 	auto ws = windowSize();
 	RoomManager::singleton->windowSize = ws;
 	RoomManager::singleton->mCamera->setViewport(ws);
@@ -78,9 +74,12 @@ void Engine::tickEvent()
 		// Bind layer's framebuffer
 		currentGol = &gol.second;
 		(*currentGol->frameBuffer)
-			.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f))
 			.clear(GL::FramebufferClear::Depth)
+			.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f))
 			.bind();
+
+		// Position camera on this layer
+		RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(currentGol->mCameraEye, currentGol->mCameraTarget, Vector3::yAxis()));
 
 		// Get vector as reference
 		const auto& gos = gol.second.list;
@@ -134,24 +133,11 @@ void Engine::drawEvent()
 	// Process main frame buffer
 	if (currentGol == nullptr)
 	{
-		// Blit main layer
-		GL::AbstractFramebuffer::blit(
-			*RoomManager::singleton->mGoLayers[GOL_MAIN].frameBuffer,
-			GL::defaultFramebuffer,
-			GL::defaultFramebuffer.viewport(),
-			GL::FramebufferBlit::Color
-		);
-
-		// Blit level layer
-		if (RoomManager::singleton->mGoLayers[GOL_LEVEL].list->size() > 0)
-		{
-			GL::AbstractFramebuffer::blit(
-				*RoomManager::singleton->mGoLayers[GOL_LEVEL].frameBuffer,
-				GL::defaultFramebuffer,
-				GL::defaultFramebuffer.viewport(),
-				GL::FramebufferBlit::Color
-			);
-		}
+		// Draw screen quad
+		mScreenQuadShader
+			.bindTexture(GOL_MAIN, *RoomManager::singleton->mGoLayers[GOL_MAIN].fbTexture)
+			.bindTexture(GOL_LEVEL, *RoomManager::singleton->mGoLayers[GOL_LEVEL].fbTexture)
+			.draw(mScreenQuadShader.mMesh);
 
 		// Swap buffers
 		swapBuffers();
