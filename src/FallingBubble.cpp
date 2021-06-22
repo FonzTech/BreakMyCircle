@@ -2,14 +2,9 @@
 
 #include <thread>
 
-#include <Corrade/PluginManager/Manager.h>
-#include <Corrade/Utility/Resource.h>
+#include <Corrade/Containers/PointerStl.h>
 #include <Magnum/ImageView.h>
 #include <Magnum/GL/Buffer.h>
-#include <Magnum/GL/TextureFormat.h>
-#include <Magnum/Trade/AbstractImporter.h>
-#include <Magnum/Trade/AbstractImporter.h>
-#include <Magnum/Trade/ImageData.h>
 #include <Magnum/Primitives/Icosphere.h>
 #include <Magnum/Primitives/Plane.h>
 #include <Magnum/MeshTools/Interleave.h>
@@ -44,34 +39,7 @@ FallingBubble::FallingBubble(const Sint8 parentIndex, const Color3& ambientColor
 	if (mSpark)
 	{
 		// Get sparkles texture
-		Resource<GL::Texture2D> resTexture{ CommonUtility::singleton->manager.get<GL::Texture2D>(RESOURCE_TEXTURE_SPARKLES) };
-
-		if (!resTexture)
-		{
-			// Load TGA importer plugin
-			PluginManager::Manager<Trade::AbstractImporter> manager;
-			Containers::Pointer<Trade::AbstractImporter> importer = manager.loadAndInstantiate("PngImporter");
-
-			if (!importer || !importer->openFile("textures/sparkles.png"))
-			{
-				std::exit(2);
-			}
-
-			// Set texture data and parameters
-			Containers::Optional<Trade::ImageData2D> image = importer->image2D(0);
-			CORRADE_INTERNAL_ASSERT(image);
-
-			GL::Texture2D texture;
-			texture
-				.setWrapping(GL::SamplerWrapping::ClampToEdge)
-				.setMagnificationFilter(GL::SamplerFilter::Linear)
-				.setMinificationFilter(GL::SamplerFilter::Linear)
-				.setStorage(1, GL::textureFormat(image->format()), image->size())
-				.setSubImage(0, {}, *image);
-
-			// Add to resources
-			CommonUtility::singleton->manager.set(resTexture.key(), std::move(texture));
-		}
+		Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SPARKLES);
 
 		// Create plane
 		std::shared_ptr<TexturedDrawable<SpriteShader>> td = createPlane(*mManipulator, resTexture);

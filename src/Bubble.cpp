@@ -8,7 +8,7 @@
 #include <Magnum/Math/Bezier.h>
 
 #include "CommonUtility.h"
-#include "ColoredDrawable.h"
+#include "AssetManager.h"
 #include "RoomManager.h"
 #include "FallingBubble.h"
 
@@ -46,8 +46,21 @@ Bubble::Bubble(const Sint8 parentIndex, const Color3& ambientColor) : GameObject
 	mDiffuseColor = 0xffffff_rgbf;
 
 	// Create game bubble
-	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(mParentIndex, *mManipulator, mAmbientColor, this);
-	mDrawables.emplace_back(cd);
+	AssetManager am;
+	am.loadAssets(*this, *mManipulator, "scenes/bubble.glb", this);
+
+	// Load texture based on color
+	Debug{} << "Created bubble with color" << mAmbientColor.toSrgbInt();
+
+	const auto& it = RoomManager::singleton->mBubbleColors.find(mAmbientColor.toSrgbInt());
+	if (it == RoomManager::singleton->mBubbleColors.end())
+	{
+		CORRADE_ASSERT(false, "Color " + std::to_string(mAmbientColor.toSrgbInt()) + " for bubble was invalid");
+	}
+
+	// Load texture
+	Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(it->second.textureKey);
+	mDrawables.at(0)->mTexture = resTexture;
 }
 
 const Int Bubble::getType() const
@@ -81,12 +94,13 @@ void Bubble::update()
 void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPositions({ position + Vector3({ 0.0f, 40.0f, 5.0f }) })
-		.setDiffuseColor(mDiffuseColor)
-		.setAmbientColor(mAmbientColor)
+		.setLightPosition(camera.cameraMatrix().transformPoint(position + Vector3(0.0f, 0.0f, 20.0f)))
+		.setLightColor(0xffffffff_rgbaf)
+		.setSpecularColor(0xffffff00_rgbaf)
 		.setTransformationMatrix(transformationMatrix)
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
+		.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
 		.draw(*baseDrawable->mMesh);
 }
 
@@ -124,7 +138,7 @@ bool Bubble::destroyNearbyBubbles()
 
 		// Work on bubble collision group
 		#if NDEBUG or _DEBUG
-		printf("Collided bubbles of color %d are %d\n", mAmbientColor.value(), bg.size());
+		printf("Collided bubbles of color %d are %d\n", mAmbientColor.toSrgbInt(), bg.size());
 		#endif
 
 		if (bg.size() >= MINIMUM_BUBBLE_TRAIL_SIZE)

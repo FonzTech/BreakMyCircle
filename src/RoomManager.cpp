@@ -1,6 +1,7 @@
 #include <vector>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
+#include "CommonUtility.h"
 #include "PerlinNoise.hpp"
 #include "RoomManager.h"
 #include "Player.h"
@@ -26,11 +27,13 @@ RoomManager::RoomManager()
 	mCollisionManager = std::make_unique<CollisionManager>();
 
 	// Setup randomizer
-	mBubbleColors.push_back(BUBBLE_COLOR_RED);
-	mBubbleColors.push_back(BUBBLE_COLOR_GREEN);
-	mBubbleColors.push_back(BUBBLE_COLOR_BLUE);
-	mBubbleColors.push_back(BUBBLE_COLOR_YELLOW);
-	mBubbleColors.push_back(BUBBLE_COLOR_PURPLE);
+	mBubbleColors[BUBBLE_COLOR_RED.toSrgbInt()] = { BUBBLE_COLOR_RED, RESOURCE_TEXTURE_BUBBLE_RED };
+	mBubbleColors[BUBBLE_COLOR_GREEN.toSrgbInt()] = { BUBBLE_COLOR_GREEN, RESOURCE_TEXTURE_BUBBLE_GREEN };
+	mBubbleColors[BUBBLE_COLOR_BLUE.toSrgbInt()] = { BUBBLE_COLOR_BLUE, RESOURCE_TEXTURE_BUBBLE_RED };
+	mBubbleColors[BUBBLE_COLOR_YELLOW.toSrgbInt()] = { BUBBLE_COLOR_YELLOW, RESOURCE_TEXTURE_BUBBLE_YELLOW };
+	mBubbleColors[BUBBLE_COLOR_PURPLE.toSrgbInt()] = { BUBBLE_COLOR_PURPLE, RESOURCE_TEXTURE_BUBBLE_PURPLE };
+	mBubbleColors[BUBBLE_COLOR_ORANGE.toSrgbInt()] = { BUBBLE_COLOR_ORANGE, RESOURCE_TEXTURE_BUBBLE_ORANGE };
+	mBubbleColors[BUBBLE_COLOR_CYAN.toSrgbInt()] = { BUBBLE_COLOR_CYAN, RESOURCE_TEXTURE_BUBBLE_CYAN };
 }
 
 void RoomManager::clear()
@@ -198,15 +201,15 @@ RoomManager::Instantiator RoomManager::getGameObjectFromNoiseValue(const double 
 	if (value >= 0.0)
 	{
 		const Int index = Int(Math::floor(value * double(mBubbleColors.size() * 16))) % mBubbleColors.size();
-		const auto& color = mBubbleColors[index];
+		const auto& it = std::next(std::begin(mBubbleColors), std::rand() % mBubbleColors.size());
 
 		nlohmann::json params;
 		params["parent"] = GOL_LEVEL;
 		params["color"] = {};
-		params["color"]["r"] = color.r();
-		params["color"]["g"] = color.g();
-		params["color"]["b"] = color.b();
-
+		params["color"]["r"] = it->second.color.r();
+		params["color"]["g"] = it->second.color.g();
+		params["color"]["b"] = it->second.color.b();
+		
 		d.key = GOT_BUBBLE;
 		d.params = std::make_unique<nlohmann::json>(params);
 	}

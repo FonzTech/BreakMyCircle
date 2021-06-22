@@ -47,6 +47,13 @@ public:
 		}
 	};
 
+	// Bubble data holder
+	struct BubbleData
+	{
+		Color3 color;
+		std::string textureKey;
+	};
+
 	// Singleton
 	static std::unique_ptr<RoomManager> singleton;
 
@@ -68,7 +75,7 @@ public:
 
 	// Members for randomizer
 	std::uint32_t mSeed;
-	std::vector<Color3> mBubbleColors;
+	std::unordered_map<UnsignedInt, BubbleData> mBubbleColors;
 
 	// Window size
 	Vector2i windowSize;

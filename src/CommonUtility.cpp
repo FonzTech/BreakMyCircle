@@ -2,11 +2,17 @@
 
 #include <Corrade/Corrade.h>
 #include <Corrade/Containers/PointerStl.h>
+#include <Corrade/PluginManager/Manager.h>
+#include <Corrade/Utility/Resource.h>
 #include <Magnum/Magnum.h>
+#include <Magnum/ImageView.h>
 #include <Magnum/Primitives/Icosphere.h>
 #include <Magnum/MeshTools/Interleave.h>
 #include <Magnum/MeshTools/CompressIndices.h>
+#include <Magnum/Trade/AbstractImporter.h>
+#include <Magnum/Trade/ImageData.h>
 #include <Magnum/GL/Mesh.h>
+#include <Magnum/GL/TextureFormat.h>
 #include <Magnum/Shaders/Flat.h>
 #include <Magnum/Shaders/Phong.h>
 #include <Magnum/Math/Color.h>
@@ -27,6 +33,42 @@ CommonUtility::CommonUtility()
 void CommonUtility::clear()
 {
 	manager.clear();
+}
+
+Resource<GL::Texture2D> CommonUtility::loadTexture(const std::string & filename)
+{
+	// Get sparkles texture
+	Resource<GL::Texture2D> resTexture{ CommonUtility::singleton->manager.get<GL::Texture2D>(filename) };
+
+	if (!resTexture)
+	{
+		// Load TGA importer plugin
+		PluginManager::Manager<Trade::AbstractImporter> manager;
+		Containers::Pointer<Trade::AbstractImporter> importer = manager.loadAndInstantiate("PngImporter");
+
+		if (!importer || !importer->openFile("textures/" + filename.substr(4) + ".png"))
+		{
+			std::exit(2);
+		}
+
+		// Set texture data and parameters
+		Containers::Optional<Trade::ImageData2D> image = importer->image2D(0);
+		CORRADE_INTERNAL_ASSERT(image);
+
+		GL::Texture2D texture;
+		texture
+			.setWrapping(GL::SamplerWrapping::ClampToEdge)
+			.setMagnificationFilter(GL::SamplerFilter::Linear)
+			.setMinificationFilter(GL::SamplerFilter::Linear)
+			.setStorage(1, GL::textureFormat(image->format()), image->size())
+			.setSubImage(0, {}, *image);
+
+		// Add to resources
+		CommonUtility::singleton->manager.set(resTexture.key(), std::move(texture));
+	}
+
+	// Return loaded resources
+	return resTexture;
 }
 
 std::shared_ptr<ColoredDrawable<Shaders::Phong>> CommonUtility::createGameSphere(const Sint8 parentIndex, Object3D & parent, const Vector3 & ambientColor, IDrawCallback* drawCallback)

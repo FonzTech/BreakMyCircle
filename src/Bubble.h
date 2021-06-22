@@ -7,6 +7,8 @@
 #define BUBBLE_COLOR_BLUE 0x0000ff_rgbf
 #define BUBBLE_COLOR_YELLOW 0xffff00_rgbf
 #define BUBBLE_COLOR_PURPLE 0xff00ff_rgbf
+#define BUBBLE_COLOR_ORANGE 0xffff_rgbf
+#define BUBBLE_COLOR_CYAN 0x00ffff_rgbf
 
 #include <unordered_set>
 #include <nlohmann/json.hpp>
@@ -16,7 +18,6 @@
 #include <Magnum/Math/Color.h>
 
 #include "GameObject.h"
-#include "ColoredDrawable.h"
 
 class Bubble : public GameObject
 {
@@ -39,7 +40,7 @@ public:
 	public:
 		std::size_t operator()(const Bubble* b) const
 		{
-			auto h = std::hash<Float>()(b->mAmbientColor.value());
+			auto h = std::hash<Float>()(b->mAmbientColor.toSrgbInt());
 			h ^= std::hash<Float>()(b->position[0]);
 			h ^= std::hash<Float>()(b->position[1]);
 			h ^= std::hash<Float>()(b->position[2]);
