@@ -13,7 +13,8 @@
 - ~~Render the bubble-gameplay scene to a separate "layer" render target, to avoid clipping and manage scene position independently.~~
 - ~~Separate camera settings for each "layer" render target.~~
 - ~~Scenery to the test room.~~
-- Improve game bubbles with a "semi-circle" and textures with "nature elements as color"
+- ~~Improve game bubbles with a "semi-circle" and textures with "nature elements as color"~~
+- Remove the default "createGameSphere" method from "Utility".
 - Intro screen with logo and various effects.
 - Small main menu for game.
 - Level screen with overworld and changing themes.
