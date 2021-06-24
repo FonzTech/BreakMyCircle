@@ -24,7 +24,8 @@ protected:
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
-	Color4 getRandomEligibleColor();
+	std::unique_ptr<std::vector<Color4>> getRandomEligibleColor(const Uint8 times);
+	Resource<GL::Texture2D> getTextureResourceForIndex(const Uint8 index);
 
 	std::weak_ptr<GameObject> mProjectile;
 	std::unique_ptr<LinePath> mProjPath;
@@ -32,8 +33,7 @@ protected:
 	Rad mShootAngle;
 
 	Color4 mProjColors[2];
-	Color3 mDiffuseColor;
-	Color4 mColors;
+	Resource<GL::Texture2D> mProjTextures[2];
 
 	Object3D* mShooterManipulator;
 	Object3D* mSphereManipulator;

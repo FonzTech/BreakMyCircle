@@ -39,8 +39,7 @@ Player::Player(const Sint8 parentIndex) : GameObject()
 	{
 		mShooterManipulator = new Object3D{ &RoomManager::singleton->mScene };
 
-		AssetManager am;
-		am.loadAssets(*this, *mShooterManipulator, "scenes/cannon_1.glb", this);
+		AssetManager().loadAssets(*this, *mShooterManipulator, "scenes/cannon_1.glb", this);
 	}
 
 	// Load path for new sphere animation
@@ -50,18 +49,23 @@ Player::Player(const Sint8 parentIndex) : GameObject()
 	}
 
 	// Set members
-	mDiffuseColor = 0xffffff_rgbf;
-	mProjColors[0] = getRandomEligibleColor();
-	mProjColors[1] = getRandomEligibleColor();
 	mShootAngle = Rad(0.0f);
+
+	{
+		auto list = getRandomEligibleColor(2);
+		mProjColors[0] = list->at(0);
+		mProjColors[1] = list->at(1);
+
+		mProjTextures[0] = getTextureResourceForIndex(0);
+		mProjTextures[1] = getTextureResourceForIndex(1);
+	}
 
 	// Create game bubble
 	mSphereManipulator = new Object3D{ &RoomManager::singleton->mScene };
+	CommonUtility::singleton->createGameSphere(this, *mSphereManipulator, mProjColors[0].rgb());
 
-	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(mParentIndex, *mSphereManipulator, mProjColors[0].rgb(), this);
-	mDrawables.emplace_back(cd);
-
-	mSphereDrawables[0] = cd.get();
+	mSphereDrawables[0] = mDrawables.back().get();
+	mSphereDrawables[0]->mTexture = mProjTextures[0];
 }
 
 const Int Player::getType() const
@@ -115,7 +119,12 @@ void Player::update()
 
 			// Update color for next bubble
 			mProjColors[0] = mProjColors[1];
-			mProjColors[1] = getRandomEligibleColor();
+			mProjColors[1] = getRandomEligibleColor(1)->at(0);
+
+			mProjTextures[0] = mProjTextures[1];
+			mProjTextures[1] = getTextureResourceForIndex(1);
+
+			mSphereDrawables[0]->mTexture = mProjTextures[0];
 
 			// Reset animation for new projectile
 			mProjPath->mProgress = Float(mProjPath->getSize());
@@ -141,45 +150,32 @@ void Player::update()
 	// Sphere manipulation
 	{
 		// Apply transformations to bubbles
-		mSphereManipulator->setTransformation(Matrix4());
-		mSphereManipulator->transform(Matrix4::translation(mProjPath->getCurrentPosition()));
-		mSphereManipulator->transform(Matrix4::rotationX(Deg(-90.0f)));
-		mSphereManipulator->transform(Matrix4::translation(position + Vector3(0.0f, 0.0f, -1.20f)));
+		// const Vector3 pos = position + mProjPath->getCurrentPosition();
+		const Vector3 pos = position;
+		mSphereManipulator->setTransformation(Matrix4::translation(pos));
 	}
 }
 
 void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (baseDrawable == mSphereDrawables[0])
-	{
-		((Shaders::Phong&) baseDrawable->getShader())
-			.setLightPositions({ position + Vector3({ 0.0f, 150.0f, 40.0f }) })
-			.setDiffuseColor(mDiffuseColor)
-			.setAmbientColor(mProjColors[0].rgb())
-			.setTransformationMatrix(transformationMatrix)
-			.setNormalMatrix(transformationMatrix.normalMatrix())
-			.setProjectionMatrix(camera.projectionMatrix())
-			.draw(*baseDrawable->mMesh);
-	}
-	else
-	{
-		((Shaders::Phong&) baseDrawable->getShader())
-			.setLightPosition(camera.cameraMatrix().transformPoint(position + Vector3(0.0f, 0.0f, 20.0f)))
-			.setLightColor(0xffffffff_rgbaf)
-			.setSpecularColor(0xffffff00_rgbaf)
-			.setTransformationMatrix(transformationMatrix)
-			.setNormalMatrix(transformationMatrix.normalMatrix())
-			.setProjectionMatrix(camera.projectionMatrix())
-			.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
-			.draw(*baseDrawable->mMesh);
-	}
+	((Shaders::Phong&) baseDrawable->getShader())
+		.setLightPosition(position + Vector3(-4.0f, 14.0f, 20.0f))
+		.setLightColor(0xffffff60_rgbaf)
+		.setSpecularColor(0xffffff00_rgbaf)
+		.setAmbientColor(0x000000_rgbf)
+		.setDiffuseColor(0xffffff_rgbf)
+		.setTransformationMatrix(transformationMatrix)
+		.setNormalMatrix(transformationMatrix.normalMatrix())
+		.setProjectionMatrix(camera.projectionMatrix())
+		.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
+		.draw(*baseDrawable->mMesh);
 }
 
 void Player::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
 }
 
-Color4 Player::getRandomEligibleColor()
+std::unique_ptr<std::vector<Color4>> Player::getRandomEligibleColor(const Uint8 times)
 {
 	// Create array of bubbles
 	std::vector<std::weak_ptr<GameObject>> bubbles;
@@ -191,14 +187,31 @@ Color4 Player::getRandomEligibleColor()
 		}
 	}
 
+	// Create list
+	std::unique_ptr<std::vector<Color4>> list = std::make_unique<std::vector<Color4>>();
+
 	// Check for array size
-	if (!bubbles.size())
+	if (bubbles.size())
 	{
-		return 0x00000000_rgbaf;
+		// Get random color from one in-game bubble
+		for (Uint8 i = 0; i < times; ++i)
+		{
+			const Int index = std::rand() % bubbles.size();
+			const auto& color = ((Bubble*)bubbles[index].lock().get())->mAmbientColor;
+			list->emplace_back(color.r(), color.g(), color.b());
+		}
+	}
+	else
+	{
+		list->emplace_back(0x00000000_rgbaf);
 	}
 
-	// Get random color from one in-game bubble
-	const Int index = std::rand() % bubbles.size();
-	const auto& color = ((Bubble*) bubbles[index].lock().get())->mAmbientColor;
-	return Color4(color.r(), color.g(), color.b());
+	// Return list
+	return list;
+}
+
+Resource<GL::Texture2D> Player::getTextureResourceForIndex(const Uint8 index)
+{
+	// ALERT: No validity checks are performed!!
+	return CommonUtility::singleton->loadTexture(RoomManager::singleton->mBubbleColors[mProjColors[index].rgb().toSrgbInt()].textureKey);
 }

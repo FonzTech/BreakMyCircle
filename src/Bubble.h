@@ -40,7 +40,7 @@ public:
 	public:
 		std::size_t operator()(const Bubble* b) const
 		{
-			auto h = std::hash<Float>()(b->mAmbientColor.toSrgbInt());
+			auto h = std::hash<Float>()(Float(b->mAmbientColor.toSrgbInt()));
 			h ^= std::hash<Float>()(b->position[0]);
 			h ^= std::hash<Float>()(b->position[1]);
 			h ^= std::hash<Float>()(b->position[2]);
@@ -71,7 +71,6 @@ public:
 	std::unique_ptr<Graph> destroyDisjointBubblesImpl(std::unordered_set<Bubble*> & group);
 
 	Color3 mAmbientColor;
-	Color3 mDiffuseColor;
 
 private:
 	// Complex structures

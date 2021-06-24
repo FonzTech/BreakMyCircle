@@ -32,6 +32,7 @@
 
 #include "CommonTypes.h"
 #include "ColoredDrawable.h"
+#include "GameObject.h"
 
 using namespace Magnum;
 
@@ -52,7 +53,7 @@ public:
 	Resource<GL::Texture2D> loadTexture(const std::string & filename);
 
 	// Create game sphere
-	std::shared_ptr<ColoredDrawable<Shaders::Phong>> createGameSphere(const Sint8 parentIndex, Object3D & parent, const Vector3 & diffuseColor, IDrawCallback* drawCallback);
+	void createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color);
 
 	// Resource manager holder
 	MyResourceManager manager;

@@ -42,25 +42,8 @@ Bubble::Bubble(const Sint8 parentIndex, const Color3& ambientColor) : GameObject
 	mShakePos = { 0.0f };
 	mShakeFact = 0.0f;
 
-	// Set diffuse color
-	mDiffuseColor = 0xffffff_rgbf;
-
 	// Create game bubble
-	AssetManager am;
-	am.loadAssets(*this, *mManipulator, "scenes/bubble.glb", this);
-
-	// Load texture based on color
-	Debug{} << "Created bubble with color" << mAmbientColor.toSrgbInt();
-
-	const auto& it = RoomManager::singleton->mBubbleColors.find(mAmbientColor.toSrgbInt());
-	if (it == RoomManager::singleton->mBubbleColors.end())
-	{
-		CORRADE_ASSERT(false, "Color " + std::to_string(mAmbientColor.toSrgbInt()) + " for bubble was invalid");
-	}
-
-	// Load texture
-	Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(it->second.textureKey);
-	mDrawables.at(0)->mTexture = resTexture;
+	CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
 }
 
 const Int Bubble::getType() const
@@ -94,9 +77,11 @@ void Bubble::update()
 void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPosition(camera.cameraMatrix().transformPoint(position + Vector3(0.0f, 0.0f, 20.0f)))
-		.setLightColor(0xffffffff_rgbaf)
+		.setLightPosition(position + Vector3(0.0f, 0.0f, 1.0f))
+		.setLightColor(0xffffff60_rgbaf)
 		.setSpecularColor(0xffffff00_rgbaf)
+		.setAmbientColor(0x000000_rgbf)
+		.setDiffuseColor(0xffffff_rgbf)
 		.setTransformationMatrix(transformationMatrix)
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
@@ -162,7 +147,7 @@ bool Bubble::destroyNearbyBubbles()
 	auto fps = future.get();
 	bool nonZero = fps->size() > 0;
 
-	Float posZ = 1.1f;
+	Float posZ = 0.15f;
 	while (!fps->empty())
 	{
 		auto& gn = fps->front();

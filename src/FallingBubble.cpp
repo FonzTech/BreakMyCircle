@@ -29,11 +29,9 @@ FallingBubble::FallingBubble(const Sint8 parentIndex, const Color3& ambientColor
 	// Assign members
 	mAmbientColor = ambientColor;
 	mSpark = spark;
+	mVelocity = { 0.0f };
 
 	mDelay = Float(std::rand() % 250) * 0.001f;
-
-	mDiffuseColor = 0xffffff_rgbf;
-	mVelocity = { 0.0f };
 
 	// Create sparkle plane
 	if (mSpark)
@@ -57,8 +55,7 @@ FallingBubble::FallingBubble(const Sint8 parentIndex, const Color3& ambientColor
 	}
 	else
 	{
-		std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(mParentIndex, *mManipulator, mAmbientColor, this);
-		mDrawables.emplace_back(cd);
+		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
 	}
 }
 
@@ -135,12 +132,15 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 	else
 	{
 		((Shaders::Phong&) baseDrawable->getShader())
-			.setLightPositions({ position + Vector3({ 0.0f, 40.0f, 5.0f }) })
-			.setDiffuseColor(mDiffuseColor)
-			.setAmbientColor(mAmbientColor)
+			.setLightPosition(position + Vector3(0.0f, 0.0f, 1.0f))
+			.setLightColor(0xffffff60_rgbaf)
+			.setSpecularColor(0xffffff00_rgbaf)
+			.setAmbientColor(0x000000_rgbf)
+			.setDiffuseColor(0xffffff_rgbf)
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
 			.setProjectionMatrix(camera.projectionMatrix())
+			.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
 			.draw(*baseDrawable->mMesh);
 	}
 }

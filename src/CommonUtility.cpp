@@ -3,6 +3,7 @@
 #include <Corrade/Corrade.h>
 #include <Corrade/Containers/PointerStl.h>
 #include <Corrade/PluginManager/Manager.h>
+#include <Corrade/Utility/Assert.h>
 #include <Corrade/Utility/Resource.h>
 #include <Magnum/Magnum.h>
 #include <Magnum/ImageView.h>
@@ -19,6 +20,7 @@
 #include <Magnum/Math/Math.h>
 
 #include "RoomManager.h"
+#include "AssetManager.h"
 
 using namespace Corrade;
 using namespace Magnum;
@@ -71,46 +73,21 @@ Resource<GL::Texture2D> CommonUtility::loadTexture(const std::string & filename)
 	return resTexture;
 }
 
-std::shared_ptr<ColoredDrawable<Shaders::Phong>> CommonUtility::createGameSphere(const Sint8 parentIndex, Object3D & parent, const Vector3 & ambientColor, IDrawCallback* drawCallback)
+void CommonUtility::createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color)
 {
-	// Check if mesh is already present
-	Resource<GL::Mesh> resMesh = manager.get<GL::Mesh>(RESOURCE_MESH_ICOSPHERE);
-	if (!resMesh)
+	// Create game bubble
+	AssetManager().loadAssets(*gameObject, manipulator, "scenes/bubble.glb", gameObject);
+
+	// Load texture based on color
+	Debug{} << "Created bubble with color" << color.toSrgbInt();
+
+	const auto& it = RoomManager::singleton->mBubbleColors.find(color.toSrgbInt());
+	if (it == RoomManager::singleton->mBubbleColors.end())
 	{
-		// Create test mesh
-		Trade::MeshData meshData = Primitives::icosphereSolid(2U);
-
-		GL::Buffer vertices;
-		vertices.setData(MeshTools::interleave(meshData.positions3DAsArray(), meshData.normalsAsArray()));
-
-		std::pair<Containers::Array<char>, MeshIndexType> compressed = MeshTools::compressIndices(meshData.indicesAsArray());
-		GL::Buffer indices;
-		indices.setData(compressed.first);
-
-		GL::Mesh mesh;
-		mesh
-			.setPrimitive(meshData.primitive())
-			.setCount(meshData.indexCount())
-			.addVertexBuffer(std::move(vertices), 0, Shaders::Phong::Position{}, Shaders::Phong::Normal{})
-			.setIndexBuffer(std::move(indices), 0, compressed.second);
-
-		manager.set(resMesh.key(), std::move(mesh));
+		CORRADE_ASSERT(false, "Color " + std::to_string(color.toSrgbInt()) + " for bubble was invalid");
 	}
 
-	// Create Phong shader
-	Resource<GL::AbstractShaderProgram, Shaders::Phong> resShader = manager.get<GL::AbstractShaderProgram, Shaders::Phong>(RESOURCE_SHADER_COLORED_PHONG);
-	if (!resShader)
-	{
-		std::unique_ptr<GL::AbstractShaderProgram> shader = std::make_unique<Shaders::Phong>();
-
-		Containers::Pointer<GL::AbstractShaderProgram> p = std::move(shader);
-		manager.set(resShader.key(), std::move(p));
-	}
-
-	// Create colored drawable
-	auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;
-	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = std::make_shared<ColoredDrawable<Shaders::Phong>>(*drawables, resShader, resMesh, 0xffffff_rgbf);
-	cd->setParent(&parent);
-	cd->setDrawCallback(drawCallback);
-	return cd;
+	// Load texture
+	Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(it->second.textureKey);
+	gameObject->mDrawables.back()->mTexture = resTexture;
 }

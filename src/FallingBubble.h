@@ -26,7 +26,6 @@ public:
 
 	bool mSpark;
 	Color3 mAmbientColor;
-	Color3 mDiffuseColor;
 
 private:
 	Vector3 mVelocity;

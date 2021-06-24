@@ -36,8 +36,7 @@ Projectile::Projectile(const Sint8 parentIndex, const Color3& ambientColor) : Ga
 	mDiffuseColor = 0xffffff_rgbf;
 
 	// Create game bubble
-	std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = CommonUtility::singleton->createGameSphere(mParentIndex, *mManipulator, mAmbientColor, this);
-	mDrawables.emplace_back(cd);
+	CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
 }
 
 const Int Projectile::getType() const
@@ -76,17 +75,23 @@ void Projectile::update()
 	{
 		snapToGrid();
 	}
+
+	// Upgrade transformations
+	mDrawables.at(0)->setTransformation(Matrix4::translation(position));
 }
 
 void Projectile::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPositions({ position + Vector3({ 0.0f, 40.0f, 5.0f }) })
-		.setDiffuseColor(mDiffuseColor)
-		.setAmbientColor(mAmbientColor)
-		.setTransformationMatrix(transformationMatrix * Matrix4::translation(position))
+		.setLightPosition(position)
+		.setLightColor(0xffffff60_rgbaf)
+		.setSpecularColor(0xffffff00_rgbaf)
+		.setAmbientColor(0x000000_rgbf)
+		.setDiffuseColor(0xffffff_rgbf)
+		.setTransformationMatrix(transformationMatrix)
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
+		.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
 		.draw(*baseDrawable->mMesh);
 }
 
