@@ -90,6 +90,9 @@
     <ClCompile Include="src\ScreenQuadShader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="src\Logo.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src/RoomManager.h">
@@ -154,6 +157,9 @@
     </ClInclude>
     <ClInclude Include="src\ScreenQuadShader.h">
       <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Logo.h">
+      <Filter>Header Files\Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

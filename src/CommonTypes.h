@@ -5,6 +5,7 @@
 #define GOT_PROJECTILE 3
 #define GOT_FALLING_BUBBLE 4
 #define GOT_SCENERY 5
+#define GOT_LOGO 6
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>

@@ -51,8 +51,8 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	upsertGameObjectLayers();
 
 	// Build room
-	RoomManager::singleton->createLevelRoom();
-	// RoomManager::singleton->loadRoom("intro");
+	RoomManager::singleton->loadRoom("intro");
+	// RoomManager::singleton->createLevelRoom();
 }
 
 void Engine::tickEvent()

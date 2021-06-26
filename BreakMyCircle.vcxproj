@@ -170,6 +170,7 @@
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\InputManager.cpp" />
     <ClCompile Include="src\LinePath.cpp" />
+    <ClCompile Include="src\Logo.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Projectile.cpp" />
     <ClCompile Include="src\Scenery.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="src\FallingBubble.h" />
     <ClInclude Include="src\IDrawCallback.h" />
     <ClInclude Include="src\LinePath.h" />
+    <ClInclude Include="src\Logo.h" />
     <ClInclude Include="src\PerlinNoise.hpp" />
     <ClInclude Include="src\Projectile.h" />
     <ClInclude Include="src\Scenery.h" />

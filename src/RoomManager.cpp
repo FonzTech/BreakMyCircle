@@ -9,6 +9,7 @@
 #include "Projectile.h"
 #include "FallingBubble.h"
 #include "Scenery.h"
+#include "Logo.h"
 
 using namespace Magnum::Math::Literals;
 
@@ -22,6 +23,7 @@ RoomManager::RoomManager()
 	gameObjectCreators[GOT_PROJECTILE] = Projectile::getInstance;
 	gameObjectCreators[GOT_FALLING_BUBBLE] = FallingBubble::getInstance;
 	gameObjectCreators[GOT_SCENERY] = Scenery::getInstance;
+	gameObjectCreators[GOT_LOGO] = Logo::getInstance;
 
 	// Create collision manager
 	mCollisionManager = std::make_unique<CollisionManager>();
