@@ -9,20 +9,14 @@
 #include "GameObject.h"
 #include "TexturedDrawable.h"
 #include "SpriteShader.h"
+#include "SpriteShaderDataView.h"
 
 class FallingBubble : public GameObject
 {
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	struct Wrapper
-	{
-		SpriteShader* shader;
-		SpriteShader::Parameters parameters;
-		Float speed;
-	};
-
-	FallingBubble(const Sint8 parentIndex, const Color3& ambientColor, const bool spark);
+	FallingBubble(const Sint8 parentIndex, const Color3& ambientColor, const bool spark, const Float maxVerticalSpeed = 100.0f);
 
 	bool mSpark;
 	Color3 mAmbientColor;
@@ -30,7 +24,8 @@ public:
 private:
 	Vector3 mVelocity;
 	Float mDelay;
-	Wrapper wrapper;
+	Float mMaxVerticalSpeed;
+	SpriteShaderDataView mWrapper;
 
 	const Int getType() const  override;
 	void update() override;

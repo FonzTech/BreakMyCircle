@@ -1,7 +1,7 @@
 #pragma once
 
-#define GOL_MAIN 0
-#define GOL_LEVEL 1
+#define GOL_FIRST 0
+#define GOL_SECOND 1
 
 #include <memory>
 #include <vector>

@@ -162,4 +162,9 @@
       <Filter>Header Files\Game</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="src\SpriteShaderDataView.h">
+      <Filter>Header Files\Common</Filter>
+    </None>
+  </ItemGroup>
 </Project>

@@ -90,7 +90,7 @@ void Scenery::update()
 
 	// Animation for eye camera
 	{
-		auto* p = &RoomManager::singleton->mGoLayers[GOL_LEVEL].mCameraEye[2];
+		auto* p = &RoomManager::singleton->mGoLayers[GOL_SECOND].mCameraEye[2];
 		*p = mCubicBezier->value(Math::min(mFrame * 0.25f, 1.0f))[1] * 44.0f;
 	}
 

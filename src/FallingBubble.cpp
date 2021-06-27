@@ -24,12 +24,13 @@ std::shared_ptr<GameObject> FallingBubble::getInstance(const nlohmann::json & pa
 	return nullptr;
 }
 
-FallingBubble::FallingBubble(const Sint8 parentIndex, const Color3& ambientColor, const bool spark) : GameObject(parentIndex)
+FallingBubble::FallingBubble(const Sint8 parentIndex, const Color3& ambientColor, const bool spark, const Float maxVerticalSpeed) : GameObject(parentIndex)
 {
 	// Assign members
 	mAmbientColor = ambientColor;
 	mSpark = spark;
 	mVelocity = { 0.0f };
+	mMaxVerticalSpeed = maxVerticalSpeed;
 
 	mDelay = Float(std::rand() % 250) * 0.001f;
 
@@ -44,14 +45,14 @@ FallingBubble::FallingBubble(const Sint8 parentIndex, const Color3& ambientColor
 		mDrawables.emplace_back(td);
 
 		// Create shader data wrapper
-		wrapper.shader = &td->getShader();
-		wrapper.parameters.index = 0.0f;
-		wrapper.parameters.total = 16.0f;
-		wrapper.parameters.texWidth = Float(td->mTexture->imageSize(0).x());
-		wrapper.parameters.texHeight = Float(td->mTexture->imageSize(0).y());
-		wrapper.parameters.rows = 4.0f;
-		wrapper.parameters.columns = 4.0f;
-		wrapper.speed = 16.0f;
+		mWrapper.shader = &td->getShader();
+		mWrapper.parameters.index = 0.0f;
+		mWrapper.parameters.total = 16.0f;
+		mWrapper.parameters.texWidth = Float(td->mTexture->imageSize(0).x());
+		mWrapper.parameters.texHeight = Float(td->mTexture->imageSize(0).y());
+		mWrapper.parameters.rows = 4.0f;
+		mWrapper.parameters.columns = 4.0f;
+		mWrapper.speed = 16.0f;
 	}
 	else
 	{
@@ -69,13 +70,13 @@ void FallingBubble::update()
 	// Update motion
 	if (mSpark)
 	{
-		if (wrapper.parameters.index >= wrapper.parameters.total)
+		if (mWrapper.parameters.index >= mWrapper.parameters.total)
 		{
 			destroyMe = true;
 		}
 		else
 		{
-			wrapper.parameters.index += mDeltaTime * wrapper.speed;
+			mWrapper.parameters.index += mDeltaTime * mWrapper.speed;
 		}
 	}
 	else
@@ -87,7 +88,10 @@ void FallingBubble::update()
 		}
 		else
 		{
-			mVelocity += { 0.0f, -2.0f, 0.0f };
+			if (mVelocity.y() > mMaxVerticalSpeed)
+			{
+				mVelocity += { 0.0f, -2.0f, 0.0f };
+			}
 			position += mVelocity * mDeltaTime;
 		}
 
@@ -122,11 +126,11 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 			.setTransformationMatrix(transformationMatrix)
 			.setProjectionMatrix(camera.projectionMatrix())
 			.setColor(mAmbientColor)
-			.setIndex(wrapper.parameters.index)
-			.setTextureWidth(wrapper.parameters.texWidth)
-			.setTextureHeight(wrapper.parameters.texHeight)
-			.setRows(wrapper.parameters.rows)
-			.setColumns(wrapper.parameters.columns)
+			.setIndex(mWrapper.parameters.index)
+			.setTextureWidth(mWrapper.parameters.texWidth)
+			.setTextureHeight(mWrapper.parameters.texHeight)
+			.setRows(mWrapper.parameters.rows)
+			.setColumns(mWrapper.parameters.columns)
 			.draw(*baseDrawable->mMesh);
 	}
 	else

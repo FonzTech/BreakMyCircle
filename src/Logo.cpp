@@ -9,6 +9,7 @@
 #include "AssetManager.h"
 #include "RoomManager.h"
 #include "BaseDrawable.h"
+#include "FallingBubble.h"
 
 using namespace Corrade;
 using namespace Magnum;
@@ -53,6 +54,13 @@ Logo::Logo(const Sint8 parentIndex) : GameObject()
 
 	// Build animations
 	buildAnimations();
+
+	// Init timers
+	mBubbleTimer = 0.0f;
+	mFinishTimer = 6.0f;
+
+	// Set camera parameters
+	setCameraParameters();
 }
 
 const Int Logo::getType() const
@@ -62,14 +70,53 @@ const Int Logo::getType() const
 
 void Logo::update()
 {
-	// Set camera
-	auto& layer = RoomManager::singleton->mGoLayers[GOL_MAIN];
-	layer.mCameraEye = position + Vector3(0.0f, 0.0f, 6.0f);
-	layer.mCameraTarget = position;
-
 	// Advance animation
 	mAnimPlayer->advance(mAnimTimeline.previousFrameTime());
 	mAnimTimeline.nextFrame();
+
+	// Check for bubble timer
+	if (mBubbleTimer > 0.0f)
+	{
+		mBubbleTimer -= mDeltaTime;
+	}
+	else if (mFinishTimer > 0.0f)
+	{
+		// Get random color
+		const auto& bc = RoomManager::singleton->mBubbleColors;
+		const auto& it = std::next(std::begin(bc), std::rand() % bc.size());
+
+		// Get random position
+		Vector3 rp; 
+		rp[0] = -6.0f + 12.0f * (std::rand() % 12) / 12.0f;
+		rp[1] = 20.0f;
+		rp[2] = 0.0f;
+
+		// Create random bubble
+		std::shared_ptr<FallingBubble> fb = std::make_shared<FallingBubble>(GOL_FIRST, it->second.color, false, -25.0f);
+		fb->position = position + rp;
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(fb);
+
+		// Reset timer
+		mBubbleTimer = Float(std::rand() % 100) * 0.001f + 0.25f;
+	}
+
+	// Check for finish timer
+	if (mFinishTimer < 0.0f)
+	{
+		auto* p = &RoomManager::singleton->mGoLayers[GOL_FIRST].mCameraEye;
+		*p -= Vector3(0.0, 0.0f, 19.95f) * mDeltaTime;
+		RoomManager::singleton->mGoLayers[GOL_SECOND].mCameraEye -= Vector3(0.0, 0.0f, 5.95f) * mDeltaTime;
+
+		if (p->z() < 0.1f)
+		{
+			RoomManager::singleton->prepareRoom();
+			RoomManager::singleton->createLevelRoom();
+		}
+	}
+	else
+	{
+		mFinishTimer -= mDeltaTime;
+	}
 }
 
 void Logo::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
@@ -129,34 +176,51 @@ void Logo::buildAnimations()
 			at,
 			Containers::StridedArrayView1D<Vector3>{ mKeyframes, &mKeyframes[i][0].position, as, sizeof(Keyframe) },
 			Animation::ease<Vector3, Math::lerp, Animation::Easing::quadraticOut>()
-		);
+			);
 
 		// Track view for rotations
 		mTrackViewRotations[i] = std::make_unique<AnimRotation>(
 			at,
 			Containers::StridedArrayView1D<Deg>{ mKeyframes, &mKeyframes[i][0].rotation, as, sizeof(Keyframe) },
 			Animation::ease<Deg, Math::lerp, Animation::Easing::quadraticOut>()
-		);
+			);
 
 		// Animations for both positions and rotations
 		mAnimPlayer->addWithCallback(
 			*mTrackViewRotations[i],
 			[](Float, const Deg& tr, Object3D& object) {
-				object.setTransformation(Matrix4());
-				object.rotate(tr, Vector3::yAxis());
-			},
+			object.setTransformation(Matrix4());
+			object.rotate(tr, Vector3::yAxis());
+		},
 			*mLogoObjects[i]
-		);
+			);
 		mAnimPlayer->addWithCallback(
 			*mTrackViewPositions[i],
 			[](Float, const Vector3& tp, Object3D& object) {
-				object.translate(tp);
-			},
+			object.translate(tp);
+		},
 			*mLogoObjects[i]
-		);
+			);
 	}
 
 	// Start animation
 	mAnimTimeline.start();
 	mAnimPlayer->play(mAnimTimeline.previousFrameTime());
+}
+
+void Logo::setCameraParameters()
+{
+	// First layer
+	{
+		auto& layer = RoomManager::singleton->mGoLayers[GOL_FIRST];
+		layer.mCameraEye = position + Vector3(0.0f, 0.0f, 20.0f);
+		layer.mCameraTarget = position;
+	}
+
+	// Second layer
+	{
+		auto& layer = RoomManager::singleton->mGoLayers[GOL_SECOND];
+		layer.mCameraEye = position + Vector3(0.0f, 0.0f, 6.0f);
+		layer.mCameraTarget = position;
+	}
 }

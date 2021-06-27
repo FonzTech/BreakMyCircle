@@ -39,6 +39,7 @@ private:
 
 	// Method
 	void buildAnimations();
+	void setCameraParameters();
 
 	// Logo manipulator
 	Object3D* mLogoManipulator;
@@ -52,4 +53,8 @@ private:
 	std::unique_ptr<AnimRotation> mTrackViewRotations[3];
 	
 	std::unique_ptr<Animation::Player<Float>> mAnimPlayer;
+
+	// Falling Bubbles timer
+	Float mBubbleTimer;
+	Float mFinishTimer;
 };

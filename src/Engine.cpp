@@ -13,8 +13,8 @@
 #include "GameObject.h"
 
 const Sint8 Engine::GO_LAYERS[] = {
-	GOL_MAIN,
-	GOL_LEVEL
+	GOL_FIRST,
+	GOL_SECOND
 };
 
 Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
@@ -135,8 +135,8 @@ void Engine::drawEvent()
 	{
 		// Draw screen quad
 		mScreenQuadShader
-			.bindTexture(GOL_MAIN, *RoomManager::singleton->mGoLayers[GOL_MAIN].fbTexture)
-			.bindTexture(GOL_LEVEL, *RoomManager::singleton->mGoLayers[GOL_LEVEL].fbTexture)
+			.bindTexture(GOL_FIRST, *RoomManager::singleton->mGoLayers[GOL_FIRST].fbTexture)
+			.bindTexture(GOL_SECOND, *RoomManager::singleton->mGoLayers[GOL_SECOND].fbTexture)
 			.draw(mScreenQuadShader.mMesh);
 
 		// Swap buffers

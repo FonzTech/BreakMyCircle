@@ -165,30 +165,30 @@ void RoomManager::createLevelRoom()
 			Vector3 position = { startX + x * 2.0f, y * -2.0f, 0.0f };
 
 			gameObject->position = position;
-			RoomManager::singleton->mGoLayers[GOL_LEVEL].push_back(gameObject);
+			RoomManager::singleton->mGoLayers[GOL_SECOND].push_back(gameObject);
 		}
 	}
 
 	// Create player
 	{
-		std::shared_ptr<Player> p = std::make_shared<Player>(GOL_LEVEL);
+		std::shared_ptr<Player> p = std::make_shared<Player>(GOL_SECOND);
 		p->position = { 8.0f, -35.0f, 0.0f };
-		RoomManager::singleton->mGoLayers[GOL_LEVEL].push_back(p);
+		RoomManager::singleton->mGoLayers[GOL_SECOND].push_back(p);
 	}
 
 	// Create scenery
 	{
-		std::shared_ptr<Scenery> p = std::make_shared<Scenery>(GOL_MAIN);
+		std::shared_ptr<Scenery> p = std::make_shared<Scenery>(GOL_FIRST);
 		p->position = Vector3(0.0f);
-		RoomManager::singleton->mGoLayers[GOL_MAIN].push_back(p);
+		RoomManager::singleton->mGoLayers[GOL_FIRST].push_back(p);
 	}
 
 	// Camera position
-	mGoLayers[GOL_MAIN].mCameraEye = { 8.0f, -20.0f, 44.0f };
-	mGoLayers[GOL_MAIN].mCameraTarget = { 8.0f, -20.0f, 0.0f };
+	mGoLayers[GOL_FIRST].mCameraEye = { 8.0f, -20.0f, 44.0f };
+	mGoLayers[GOL_FIRST].mCameraTarget = { 8.0f, -20.0f, 0.0f };
 
-	mGoLayers[GOL_LEVEL].mCameraEye = { 8.0f, -20.0f, 1.0f };
-	mGoLayers[GOL_LEVEL].mCameraTarget = { 8.0f, -20.0f, 0.0f };
+	mGoLayers[GOL_SECOND].mCameraEye = { 8.0f, -20.0f, 1.0f };
+	mGoLayers[GOL_SECOND].mCameraTarget = { 8.0f, -20.0f, 0.0f };
 
 	/*
 	mCameraEye = { 20.0f, -35.0f, 20.0f };
@@ -206,7 +206,7 @@ RoomManager::Instantiator RoomManager::getGameObjectFromNoiseValue(const double 
 		const auto& it = std::next(std::begin(mBubbleColors), std::rand() % mBubbleColors.size());
 
 		nlohmann::json params;
-		params["parent"] = GOL_LEVEL;
+		params["parent"] = GOL_SECOND;
 		params["color"] = {};
 		params["color"]["r"] = it->second.color.r();
 		params["color"]["g"] = it->second.color.g();
