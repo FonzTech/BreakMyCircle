@@ -37,8 +37,7 @@ Player::Player(const Sint8 parentIndex) : GameObject()
 
 	// Load asset as first drawable
 	{
-		mShooterManipulator = new Object3D{ &RoomManager::singleton->mScene };
-
+		mShooterManipulator = new Object3D{ mManipulator.get() };
 		AssetManager().loadAssets(*this, *mShooterManipulator, "scenes/cannon_1.glb", this);
 	}
 
@@ -61,7 +60,7 @@ Player::Player(const Sint8 parentIndex) : GameObject()
 	}
 
 	// Create game bubble
-	mSphereManipulator = new Object3D{ &RoomManager::singleton->mScene };
+	mSphereManipulator = new Object3D{ mManipulator.get() };
 	CommonUtility::singleton->createGameSphere(this, *mSphereManipulator, mProjColors[0].rgb());
 
 	mSphereDrawables[0] = mDrawables.back().get();

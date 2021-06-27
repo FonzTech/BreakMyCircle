@@ -30,18 +30,26 @@ protected:
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
 private:
+	// Keyframe structure
 	struct Keyframe {
 		Float time;
 		Vector3 position;
 		Deg rotation;
 	};
 
+	// Method
 	void buildAnimations();
 
-	Keyframe mKeyframes[2];
-	std::unique_ptr<AnimPosition> mTrackViewPositions;
-	std::unique_ptr<AnimRotation> mTrackViewRotations;
+	// Logo manipulator
+	Object3D* mLogoManipulator;
+	Object3D* mLogoObjects[3];
+
+	// Animation data structures
+	Timeline mAnimTimeline;
+
+	Keyframe mKeyframes[3][3];
+	std::unique_ptr<AnimPosition> mTrackViewPositions[3];
+	std::unique_ptr<AnimRotation> mTrackViewRotations[3];
 	
 	std::unique_ptr<Animation::Player<Float>> mAnimPlayer;
-	Timeline mAnimTimeline;
 };

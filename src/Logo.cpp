@@ -1,10 +1,14 @@
 #include "Logo.h"
 
 #include <Corrade/Containers/StridedArrayView.h>
+#include <Magnum/Animation/Easing.h>
+#include <Magnum/Resource.h>
 #include <Magnum/Math/Math.h>
+#include <Magnum/GL/Mesh.h>
 
 #include "AssetManager.h"
 #include "RoomManager.h"
+#include "BaseDrawable.h"
 
 using namespace Corrade;
 using namespace Magnum;
@@ -27,7 +31,25 @@ Logo::Logo(const Sint8 parentIndex) : GameObject()
 	mParentIndex = parentIndex;
 
 	// Load assets
-	AssetManager().loadAssets(*this, *mManipulator, "scenes/logo.glb", this);
+	mLogoManipulator = new Object3D(mManipulator.get());
+	AssetManager().loadAssets(*this, *mLogoManipulator, "scenes/logo.glb", this);
+
+	// Filter required meshes
+	const std::unordered_map<std::string, Uint8> indexes{
+		{ "BreakV", 0 },
+		{ "MyV", 1 },
+		{ "CircleV", 2 }
+	};
+
+	for (auto& item : mDrawables)
+	{
+		const auto& label = item->mMesh->label();
+		const auto& it = indexes.find(label);
+		if (it != indexes.end())
+		{
+			mLogoObjects[it->second] = (Object3D*)item.get();
+		}
+	}
 
 	// Build animations
 	buildAnimations();
@@ -71,44 +93,68 @@ void Logo::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> &
 
 void Logo::buildAnimations()
 {
-	// Create raw animation data
-	mKeyframes[0] = { 0.0f, Vector3(3.0f, 3.0f, 0.0f), 360.0_degf };
-	mKeyframes[1] = { 3.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
-
-	auto as = Containers::arraySize(mKeyframes);
-	auto at = Containers::StridedArrayView1D<Float>{ mKeyframes, &mKeyframes[0].time, as, sizeof(Keyframe) };
-
-	// Track view for positions
-	mTrackViewPositions = std::make_unique<AnimPosition>(
-		at,
-		Containers::StridedArrayView1D<Vector3>{ mKeyframes, &mKeyframes[0].position, as, sizeof(Keyframe) },
-		Animation::Interpolation::Linear
-	);
-
-	// Track view for rotations
-	mTrackViewRotations = std::make_unique<AnimRotation>(
-		at,
-		Containers::StridedArrayView1D<Deg>{ mKeyframes, &mKeyframes[0].rotation, as, sizeof(Keyframe) },
-		Animation::Interpolation::Linear
-	);
-
-	// Animations for both positions and rotations
+	// Create animation player
 	mAnimPlayer = std::make_unique<Animation::Player<Float>>();
-	mAnimPlayer->addWithCallback(
-		*mTrackViewRotations,
-		[](Float, const Deg& tr, Object3D& object) {
-			object.setTransformation(Matrix4());
-			object.rotate(tr, Vector3::yAxis());
-		},
-		*((Object3D*)mDrawables.at(0).get())
+
+	// Cycle through all the three meshes
+	for (Uint8 i = 0; i < 3; ++i)
+	{
+		// Create raw animation data
+		switch (i)
+		{
+		case 0:
+			mKeyframes[i][0] = { 0.0f, Vector3(10.0f, 10.0f, 0.0f), 360.0_degf * 4 };
+			mKeyframes[i][1] = { 0.01f, Vector3(10.0f, 10.0f, 0.0f), 360.0_degf * 4 };
+			mKeyframes[i][2] = { 2.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
+			break;
+
+		case 1:
+			mKeyframes[i][0] = { 0.0f, Vector3(0.0f, 10.0f, 0.0f), 360.0_degf * 4 };
+			mKeyframes[i][1] = { 1.5f, Vector3(0.0f, 10.0f, 0.0f), 360.0_degf * 4 };
+			mKeyframes[i][2] = { 3.5f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
+			break;
+
+		case 2:
+			mKeyframes[i][0] = { 0.0f, Vector3(0.0f, 0.0f, -10.0f), 360.0_degf * 2 };
+			mKeyframes[i][1] = { 3.0f, Vector3(0.0f, 0.0f, -10.0f), 360.0_degf * 2 };
+			mKeyframes[i][2] = { 5.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
+			break;
+		}
+
+		auto as = Containers::arraySize(mKeyframes);
+		auto at = Containers::StridedArrayView1D<Float>{ mKeyframes, &mKeyframes[i][0].time, as, sizeof(Keyframe) };
+
+		// Track view for positions
+		mTrackViewPositions[i] = std::make_unique<AnimPosition>(
+			at,
+			Containers::StridedArrayView1D<Vector3>{ mKeyframes, &mKeyframes[i][0].position, as, sizeof(Keyframe) },
+			Animation::ease<Vector3, Math::lerp, Animation::Easing::quadraticOut>()
 		);
-	mAnimPlayer->addWithCallback(
-		*mTrackViewPositions,
-		[](Float, const Vector3& tp, Object3D& object) {
-			object.translate(tp);
-		},
-		*((Object3D*)mDrawables.at(0).get())
-	);
+
+		// Track view for rotations
+		mTrackViewRotations[i] = std::make_unique<AnimRotation>(
+			at,
+			Containers::StridedArrayView1D<Deg>{ mKeyframes, &mKeyframes[i][0].rotation, as, sizeof(Keyframe) },
+			Animation::ease<Deg, Math::lerp, Animation::Easing::quadraticOut>()
+		);
+
+		// Animations for both positions and rotations
+		mAnimPlayer->addWithCallback(
+			*mTrackViewRotations[i],
+			[](Float, const Deg& tr, Object3D& object) {
+				object.setTransformation(Matrix4());
+				object.rotate(tr, Vector3::yAxis());
+			},
+			*mLogoObjects[i]
+		);
+		mAnimPlayer->addWithCallback(
+			*mTrackViewPositions[i],
+			[](Float, const Vector3& tp, Object3D& object) {
+				object.translate(tp);
+			},
+			*mLogoObjects[i]
+		);
+	}
 
 	// Start animation
 	mAnimTimeline.start();
