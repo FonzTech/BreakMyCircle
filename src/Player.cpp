@@ -157,12 +157,27 @@ void Player::update()
 
 void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPosition(position + Vector3(-4.0f, 14.0f, 20.0f))
-		.setLightColor(0xffffff60_rgbaf)
-		.setSpecularColor(0xffffff00_rgbaf)
-		.setAmbientColor(0x000000_rgbf)
-		.setDiffuseColor(0xffffff_rgbf)
+	auto& shader = (Shaders::Phong&) baseDrawable->getShader();
+	if (baseDrawable == mSphereDrawables[0])
+	{
+		shader
+			.setLightPosition(position + Vector3(0.0f, 0.0f, 1.0f))
+			.setLightColor(0xffffff60_rgbaf)
+			.setSpecularColor(0xffffff00_rgbaf)
+			.setAmbientColor(0x808080_rgbf)
+			.setDiffuseColor(0x808080_rgbf);
+	}
+	else
+	{
+		shader
+			.setLightPosition(position + Vector3(-4.0f, 14.0f, 20.0f))
+			.setLightColor(0xffffff60_rgbaf)
+			.setSpecularColor(0xffffff00_rgbaf)
+			.setAmbientColor(0xa0a0a0_rgbf)
+			.setDiffuseColor(0xffffff_rgbf);
+	}
+
+	shader
 		.setTransformationMatrix(transformationMatrix)
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())

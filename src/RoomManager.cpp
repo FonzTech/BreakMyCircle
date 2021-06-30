@@ -184,9 +184,6 @@ void RoomManager::createLevelRoom()
 	}
 
 	// Camera position
-	mGoLayers[GOL_FIRST].mCameraEye = { 8.0f, -20.0f, 44.0f };
-	mGoLayers[GOL_FIRST].mCameraTarget = { 8.0f, -20.0f, 0.0f };
-
 	mGoLayers[GOL_SECOND].mCameraEye = { 8.0f, -20.0f, 1.0f };
 	mGoLayers[GOL_SECOND].mCameraTarget = { 8.0f, -20.0f, 0.0f };
 

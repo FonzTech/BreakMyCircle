@@ -29,7 +29,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 
 	// Enable renderer features
 	GL::Renderer::enable(GL::Renderer::Feature::DepthTest);
-	GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
+	// GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
 	GL::Renderer::enable(GL::Renderer::Feature::Blending);
 	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 	GL::Renderer::setBlendEquation(GL::Renderer::BlendEquation::Add, GL::Renderer::BlendEquation::Add);

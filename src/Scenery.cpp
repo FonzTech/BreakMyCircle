@@ -28,15 +28,20 @@ Scenery::Scenery(const Sint8 parentIndex) : GameObject(parentIndex)
 	mFrame = 0.0f;
 
 	// Create manipulator list
-	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
-	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
+	mManipulatorList.emplace_back(mManipulator.get());
 
 	// Load assets
 	{
 		AssetManager am(RESOURCE_SHADER_COLORED_PHONG_2, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE_2, 2);
-		am.loadAssets(*this, *mManipulatorList[0], "scenes/scenery_pipe.glb", this);
-		am.loadAssets(*this, *mManipulatorList[1], "scenes/world_1.glb", this);
+		am.loadAssets(*this, *mManipulatorList[0], "scenes/world_1.glb", this);
 	}
+
+	// Set camera position for scenery
+	position = Vector3(0.0f);
+
+	auto& p = RoomManager::singleton->mGoLayers[GOL_FIRST];
+	p.mCameraEye = Vector3(7.65094f, 11.6036f, 11.9944f);
+	p.mCameraTarget = Vector3(0.0f, 0.0f, 0.0f);
 }
 
 const Int Scenery::getType() const
@@ -84,9 +89,15 @@ void Scenery::update()
 			delta += Vector3(0.0f, 0.0f, 1.0f);
 		}
 
-		position += delta * mDeltaTime * 10.0f;
+		const bool isEye = InputManager::singleton->mKeyStates[ImKeyButtons::Tab] >= IM_STATE_PRESSED;
+
+		auto& p1 = RoomManager::singleton->mGoLayers[GOL_FIRST];
+		auto* p2 = isEye ? &p1.mCameraEye : &p1.mCameraTarget;
+		*p2 += delta * mDeltaTime * 10.0f;
+
+		printf("%f %f %f - %f %f %f\n", p1.mCameraEye[0], p1.mCameraEye[1], p1.mCameraEye[2], p1.mCameraTarget[0], p1.mCameraTarget[1], p1.mCameraTarget[2]);
 	}
-	#endif
+#endif
 
 	// Animation for eye camera
 	{
@@ -96,13 +107,8 @@ void Scenery::update()
 
 	// Apply transformations
 	{
-		const auto& m = Matrix4::translation(position + Vector3(8.0f, -35.0f, -1.1f));
-		mManipulatorList[0]->setTransformation(m);
-	}
-
-	{
 		const auto& m = Matrix4::translation(position);
-		mManipulatorList[1]->setTransformation(m);
+		mManipulatorList[0]->setTransformation(m);
 	}
 }
 
