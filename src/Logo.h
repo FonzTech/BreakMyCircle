@@ -41,6 +41,10 @@ private:
 	void buildAnimations();
 	void setCameraParameters();
 
+	// Common members
+	bool mLightDirection;
+	Vector3 mLightPosition;
+
 	// Logo manipulator
 	Object3D* mLogoManipulator;
 	Object3D* mLogoObjects[3];

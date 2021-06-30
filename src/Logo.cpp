@@ -34,6 +34,10 @@ Logo::Logo(const Sint8 parentIndex) : GameObject()
 {
 	// Assign parent index
 	mParentIndex = parentIndex;
+	
+	// Init members
+	mLightPosition = Vector3(0.0f, 0.0f, 1.0f);
+	mLightDirection = false;
 
 	// Load assets
 	mLogoManipulator = new Object3D(mManipulator.get());
@@ -105,12 +109,17 @@ void Logo::update()
 	}
 
 	// Check for finish timer
-	if (mFinishTimer < 0.0f)
+	if (mFinishTimer < -1.0f)
 	{
-		if (false)
+		mLightPosition += Vector3(0.0f, mLightDirection ? -4.0f : 4.0f, 0.0f) * mDeltaTime;
+
+		if (mLightPosition.y() > 12.0f)
 		{
-			RoomManager::singleton->prepareRoom();
-			RoomManager::singleton->createLevelRoom();
+			mLightDirection = true;
+		}
+		else if (mLightPosition.y() < -4.0f)
+		{
+			mLightDirection = false;
 		}
 	}
 	else
@@ -130,7 +139,7 @@ void Logo::update()
 void Logo::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPosition(position + Vector3(0.0f, 0.0f, 1.0f))
+		.setLightPosition(position + mLightPosition)
 		.setLightColor(0xffffff60_rgbaf)
 		.setSpecularColor(0xffffff00_rgbaf)
 		.setAmbientColor(0x505050ff_rgbaf)
