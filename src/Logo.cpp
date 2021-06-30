@@ -11,6 +11,10 @@
 #include "BaseDrawable.h"
 #include "FallingBubble.h"
 
+#if NDEBUG or _DEBUG
+#include "InputManager.h"
+#endif
+
 using namespace Corrade;
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
@@ -103,11 +107,7 @@ void Logo::update()
 	// Check for finish timer
 	if (mFinishTimer < 0.0f)
 	{
-		auto* p = &RoomManager::singleton->mGoLayers[GOL_FIRST].mCameraEye;
-		*p -= Vector3(0.0, 0.0f, 19.95f) * mDeltaTime;
-		RoomManager::singleton->mGoLayers[GOL_SECOND].mCameraEye -= Vector3(0.0, 0.0f, 5.95f) * mDeltaTime;
-
-		if (p->z() < 0.1f)
+		if (false)
 		{
 			RoomManager::singleton->prepareRoom();
 			RoomManager::singleton->createLevelRoom();
@@ -117,6 +117,14 @@ void Logo::update()
 	{
 		mFinishTimer -= mDeltaTime;
 	}
+
+#if NDEBUG or _DEBUG
+	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
+	{
+		RoomManager::singleton->prepareRoom();
+		RoomManager::singleton->createLevelRoom();
+	}
+#endif
 }
 
 void Logo::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
@@ -144,7 +152,7 @@ void Logo::buildAnimations()
 	mAnimPlayer = std::make_unique<Animation::Player<Float>>();
 
 	// Cycle through all the three meshes
-	for (Uint8 i = 0; i < 3; ++i)
+	for (Uint8 i = 0; i < 4; ++i)
 	{
 		// Create raw animation data
 		switch (i)
@@ -166,41 +174,68 @@ void Logo::buildAnimations()
 			mKeyframes[i][1] = { 3.0f, Vector3(0.0f, 0.0f, -10.0f), 360.0_degf * 2 };
 			mKeyframes[i][2] = { 5.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
 			break;
+
+		case 3:
+			mKeyframes[i][0] = { 0.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
+			mKeyframes[i][1] = { 6.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
+			mKeyframes[i][2] = { 7.0f, Vector3(0.0f, -2.0f, 0.0f), 0.0_degf };
+			break;
 		}
 
-		auto as = Containers::arraySize(mKeyframes);
+		const bool notLast = i < 3;
+		auto as = Containers::arraySize(mKeyframes[i]);
 		auto at = Containers::StridedArrayView1D<Float>{ mKeyframes, &mKeyframes[i][0].time, as, sizeof(Keyframe) };
+
+		// Track view for rotations
+		if (notLast)
+		{
+			mTrackViewRotations[i] = std::make_unique<AnimRotation>(
+				at,
+				Containers::StridedArrayView1D<Deg>{ mKeyframes, &mKeyframes[i][0].rotation, as, sizeof(Keyframe) },
+				Animation::ease<Deg, Math::lerp, Animation::Easing::quadraticOut>()
+				);
+		}
 
 		// Track view for positions
 		mTrackViewPositions[i] = std::make_unique<AnimPosition>(
 			at,
 			Containers::StridedArrayView1D<Vector3>{ mKeyframes, &mKeyframes[i][0].position, as, sizeof(Keyframe) },
-			Animation::ease<Vector3, Math::lerp, Animation::Easing::quadraticOut>()
-			);
-
-		// Track view for rotations
-		mTrackViewRotations[i] = std::make_unique<AnimRotation>(
-			at,
-			Containers::StridedArrayView1D<Deg>{ mKeyframes, &mKeyframes[i][0].rotation, as, sizeof(Keyframe) },
-			Animation::ease<Deg, Math::lerp, Animation::Easing::quadraticOut>()
+			notLast ? Animation::ease<Vector3, Math::lerp, Animation::Easing::quadraticOut>() : Animation::ease<Vector3, Math::lerp, Animation::Easing::quadraticInOut>()
 			);
 
 		// Animations for both positions and rotations
-		mAnimPlayer->addWithCallback(
-			*mTrackViewRotations[i],
-			[](Float, const Deg& tr, Object3D& object) {
-			object.setTransformation(Matrix4());
-			object.rotate(tr, Vector3::yAxis());
-		},
-			*mLogoObjects[i]
-			);
-		mAnimPlayer->addWithCallback(
-			*mTrackViewPositions[i],
-			[](Float, const Vector3& tp, Object3D& object) {
-			object.translate(tp);
-		},
-			*mLogoObjects[i]
-			);
+		if (notLast)
+		{
+			mAnimPlayer->addWithCallback(
+				*mTrackViewRotations[i],
+				[](Float, const Deg& tr, Object3D& object) {
+				object.setTransformation(Matrix4());
+				object.rotate(tr, Vector3::yAxis());
+			},
+				*mLogoObjects[i]
+				);
+
+			mAnimPlayer->addWithCallback(
+				*mTrackViewPositions[i],
+				[](Float, const Vector3& tp, Object3D& object) {
+				object.translate(tp);
+			},
+				*mLogoObjects[i]
+				);
+		}
+		else
+		{
+			for (Uint8 j = 0; j < 3; ++j)
+			{
+				mAnimPlayer->addWithCallback(
+					*mTrackViewPositions[i],
+					[](Float, const Vector3& tp, Object3D& object) {
+					object.translate(tp);
+				},
+					*mLogoObjects[j]
+					);
+			}
+		}
 	}
 
 	// Start animation

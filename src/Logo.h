@@ -48,8 +48,8 @@ private:
 	// Animation data structures
 	Timeline mAnimTimeline;
 
-	Keyframe mKeyframes[3][3];
-	std::unique_ptr<AnimPosition> mTrackViewPositions[3];
+	Keyframe mKeyframes[4][3];
+	std::unique_ptr<AnimPosition> mTrackViewPositions[4];
 	std::unique_ptr<AnimRotation> mTrackViewRotations[3];
 	
 	std::unique_ptr<Animation::Player<Float>> mAnimPlayer;
