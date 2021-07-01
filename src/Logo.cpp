@@ -10,6 +10,7 @@
 #include "RoomManager.h"
 #include "BaseDrawable.h"
 #include "FallingBubble.h"
+#include "CommonUtility.h"
 
 #if NDEBUG or _DEBUG
 #include "InputManager.h"
@@ -38,6 +39,9 @@ Logo::Logo(const Sint8 parentIndex) : GameObject()
 	// Init members
 	mLightPosition = Vector3(0.0f, 0.0f, 1.0f);
 	mLightDirection = false;
+
+	position = Vector3(0.0f);
+	mManipulator->setTransformation(Matrix4::translation(position));
 
 	// Load assets
 	mLogoManipulator = new Object3D(mManipulator.get());
@@ -69,6 +73,13 @@ Logo::Logo(const Sint8 parentIndex) : GameObject()
 
 	// Set camera parameters
 	setCameraParameters();
+
+	// Load audio
+	Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData("audios/logo.ogg");
+	(new Audio::Playable3D{ *mManipulator, -Vector3::yAxis(), &RoomManager::singleton->mAudioPlayables })->source()
+		.setBuffer(buffer)
+		.setLooping(true)
+		.play();
 }
 
 const Int Logo::getType() const

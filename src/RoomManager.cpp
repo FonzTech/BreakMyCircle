@@ -1,4 +1,5 @@
 #include <vector>
+#include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
 #include "CommonUtility.h"
@@ -17,6 +18,13 @@ std::unique_ptr<RoomManager> RoomManager::singleton = nullptr;
 
 RoomManager::RoomManager()
 {
+	// Create audio manager
+	mAudioContext = std::make_unique<Audio::Context>(
+		Audio::Context::Configuration{}
+		.setHrtf(Audio::Context::Configuration::Hrtf::Enabled)
+		);
+	mAudioListener = std::make_unique<Audio::Listener3D>(mScene);
+
 	// Map every game object to this map
 	gameObjectCreators[GOT_PLAYER] = Player::getInstance;
 	gameObjectCreators[GOT_BUBBLE] = Bubble::getInstance;

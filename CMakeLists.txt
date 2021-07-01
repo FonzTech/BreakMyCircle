@@ -20,6 +20,8 @@ set(SDL2_LIBRARY "D:/Development/C++/SDL2-2.0.14/lib/x64")
 
 set(NLOHMANN_JSON_INCLUDE_DIR "D:/Development/C++/nlohmann-json")
 
+set(OPENAL_BIN_PATH "D:/Development/C++/openal-bin")
+
 list(APPEND CMAKE_MODULE_PATH ${CORRADE_SRC_PATH})
 list(APPEND CMAKE_MODULE_PATH ${MAGNUM_SRC_PATH})
 
@@ -27,7 +29,7 @@ list(APPEND CMAKE_PREFIX_PATH ${CORRADE_BIN_PATH})
 list(APPEND CMAKE_PREFIX_PATH ${MAGNUM_BIN_PATH})
 list(APPEND CMAKE_PREFIX_PATH ${SDL2_INCLUDE_DIR})
 list(APPEND CMAKE_PREFIX_PATH ${SDL2_LIBRARY})
-list(APPEND CMAKE_PREFIX_PATH ${NLOHMANN_JSON_INCLUDE_DIR})
+list(APPEND CMAKE_PREFIX_PATH ${OPENAL_BIN_PATH})
 
 find_package(SDL2 REQUIRED)
 find_package(Corrade REQUIRED Main)
@@ -84,6 +86,8 @@ install(FILES textures/sparkles.png DESTINATION ${CMAKE_INSTALL_PREFIX}/textures
 install(FILES paths/new_sphere.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/paths)
 
 install(FILES rooms/intro.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/rooms)
+
+install(FILES audios/logo.ogg DESTINATION ${CMAKE_INSTALL_PREFIX}/audios)
 
 # Make the executable a default target to build & run in Visual Studio
 # set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})

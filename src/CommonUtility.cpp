@@ -37,9 +37,44 @@ void CommonUtility::clear()
 	manager.clear();
 }
 
+Resource<Audio::Buffer> CommonUtility::loadAudioData(const std::string & filename)
+{
+	// Get required resource
+	Resource<Audio::Buffer> resAudio{ CommonUtility::singleton->manager.get<Audio::Buffer>(filename) };
+
+	if (!resAudio)
+	{
+		// Load importer plugin
+		PluginManager::Manager<Audio::AbstractImporter> manager;
+		Containers::Pointer<Audio::AbstractImporter> importer = manager.loadAndInstantiate("StbVorbisAudioImporter");
+		if (!importer)
+		{
+			std::exit(1);
+		}
+
+		if (!importer->openFile(filename))
+		{
+			std::exit(2);
+		}
+
+		/*
+			Get the data from importer and add them to the buffer. Be sure to
+			keep a copy to avoid dangling reference.
+		*/
+		Containers::Array<char> bufferData = importer->data();
+		Audio::Buffer buffer;
+		buffer.setData(importer->format(), bufferData, importer->frequency());
+
+		// Add to resources
+		CommonUtility::singleton->manager.set(resAudio.key(), std::move(buffer));
+	}
+
+	return resAudio;
+}
+
 Resource<GL::Texture2D> CommonUtility::loadTexture(const std::string & filename)
 {
-	// Get sparkles texture
+	// Get required resource
 	Resource<GL::Texture2D> resTexture{ CommonUtility::singleton->manager.get<GL::Texture2D>(filename) };
 
 	if (!resTexture)

@@ -25,6 +25,10 @@
 #include <Magnum/Magnum.h>
 #include <Magnum/Resource.h>
 #include <Magnum/ResourceManager.h>
+#include <Magnum/Audio/Buffer.h>
+#include <Magnum/Audio/Context.h>
+#include <Magnum/Audio/Listener.h>
+#include <Magnum/Audio/Source.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/GL/Texture.h>
 #include <Magnum/GL/AbstractShaderProgram.h>
@@ -36,7 +40,7 @@
 
 using namespace Magnum;
 
-typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::AbstractShaderProgram, Trade::AbstractMaterialData, LinePathAsset> MyResourceManager;
+typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::AbstractShaderProgram, Trade::AbstractMaterialData, Audio::Buffer, LinePathAsset> MyResourceManager;
 
 class CommonUtility
 {
@@ -48,6 +52,9 @@ public:
 
 	// Clear method
 	void clear();
+
+	// Audio loader
+	Resource<Audio::Buffer> loadAudioData(const std::string & filename);
 
 	// Texture loader
 	Resource<GL::Texture2D> loadTexture(const std::string & filename);

@@ -10,6 +10,13 @@
 #include <nlohmann/json.hpp>
 
 #include <Magnum/Magnum.h>
+#include <Magnum/Audio/AbstractImporter.h>
+#include <Magnum/Audio/Buffer.h>
+#include <Magnum/Audio/Context.h>
+#include <Magnum/Audio/Listener.h>
+#include <Magnum/Audio/Playable.h>
+#include <Magnum/Audio/PlayableGroup.h>
+#include <Magnum/Audio/Source.h>
 #include <Magnum/GL/Framebuffer.h>
 #include <Magnum/GL/Texture.h>
 
@@ -69,6 +76,11 @@ public:
 
 	// Game Objects and Drawables
 	std::unordered_map<Sint8, GameObjectsLayer> mGoLayers;
+
+	// Sound manager
+	std::unique_ptr<Audio::Context> mAudioContext;
+	std::unique_ptr<Audio::Listener3D> mAudioListener;
+	Audio::PlayableGroup3D mAudioPlayables;
 
 	// Collision Manager
 	std::unique_ptr<CollisionManager> mCollisionManager;
