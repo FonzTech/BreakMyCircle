@@ -78,8 +78,11 @@ install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 install(FILES scenes/cannon_1.glb DESTINATION ${CMAKE_INSTALL_PREFIX}/scenes)
 
-install(FILES shaders/sprite_shader.vert DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
-install(FILES shaders/sprite_shader.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+install(FILES shaders/screen_quad.vert DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+install(FILES shaders/screen_quad.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+install(FILES shaders/passthrough.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+install(FILES shaders/sprite.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+install(FILES shaders/water.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
 
 install(FILES textures/sparkles.png DESTINATION ${CMAKE_INSTALL_PREFIX}/textures)
 
