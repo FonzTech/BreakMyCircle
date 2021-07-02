@@ -40,10 +40,10 @@ Logo::Logo(const Sint8 parentIndex) : GameObject()
 	mLightPosition = Vector3(0.0f, 0.0f, 1.0f);
 	mLightDirection = false;
 
+	// Load assets
 	position = Vector3(0.0f);
 	mManipulator->setTransformation(Matrix4::translation(position));
 
-	// Load assets
 	mLogoManipulator = new Object3D(mManipulator.get());
 	AssetManager().loadAssets(*this, *mLogoManipulator, "scenes/logo.glb", this);
 

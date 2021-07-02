@@ -155,7 +155,7 @@ void FallingBubble::collidedWith(const std::unique_ptr<std::unordered_set<GameOb
 
 std::shared_ptr<TexturedDrawable<SpriteShader>> FallingBubble::createPlane(Object3D & parent, Resource<GL::Texture2D> & texture)
 {
-	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_PLANE) };
+	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_PLANE_SPRITE) };
 
 	if (!resMesh)
 	{
@@ -177,7 +177,7 @@ std::shared_ptr<TexturedDrawable<SpriteShader>> FallingBubble::createPlane(Objec
 
 	// Create shader
 	Resource<GL::AbstractShaderProgram, SpriteShader> resShader{ CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, SpriteShader>(RESOURCE_SHADER_SPRITE) };
-	
+
 	if (!resShader)
 	{
 		// Create shader

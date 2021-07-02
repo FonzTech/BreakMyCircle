@@ -1,6 +1,10 @@
 #include "Scenery.h"
 
 #include <Corrade/Containers/LinkedList.h>
+#include <Magnum/Primitives/Icosphere.h>
+#include <Magnum/Primitives/Plane.h>
+#include <Magnum/MeshTools/Interleave.h>
+#include <Magnum/MeshTools/CompressIndices.h>
 
 #include "AssetManager.h"
 #include "RoomManager.h"
@@ -27,14 +31,31 @@ Scenery::Scenery(const Sint8 parentIndex) : GameObject(parentIndex)
 	mCubicBezier = std::make_unique<CubicBezier2D>(Vector2(0.0f, 0.0f), Vector2(0.11f, -0.02f), Vector2(0.0f, 1.01f), Vector2(1.0f));
 	mFrame = 0.0f;
 
-	// Create manipulator list
-	mManipulatorList.emplace_back(mManipulator.get());
+	// Fill manipulator list
+	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
+	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
+
+	// Apply transformations
+	{
+		const auto& m = Matrix4::translation(position);
+		mManipulatorList[0]->setTransformation(m);
+	}
+
+	{
+		const auto& m = Matrix4::scaling(Vector3(100.0f));
+		mManipulatorList[1]->setTransformation(m);
+		mManipulatorList[1]->rotateX(90.0_degf);
+		mManipulatorList[1]->translate(position + Vector3(0.0f, 0.3f, 0.0f));
+	}
 
 	// Load assets
 	{
 		AssetManager am(RESOURCE_SHADER_COLORED_PHONG_2, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE_2, 2);
 		am.loadAssets(*this, *mManipulatorList[0], "scenes/world_1.glb", this);
 	}
+
+	// Create water drawable
+	createWaterDrawable();
 
 	// Set camera position for scenery
 	position = Vector3(0.0f);
@@ -94,8 +115,6 @@ void Scenery::update()
 		auto& p1 = RoomManager::singleton->mGoLayers[GOL_FIRST];
 		auto* p2 = isEye ? &p1.mCameraEye : &p1.mCameraTarget;
 		*p2 += delta * mDeltaTime * 10.0f;
-
-		printf("%f %f %f - %f %f %f\n", p1.mCameraEye[0], p1.mCameraEye[1], p1.mCameraEye[2], p1.mCameraTarget[0], p1.mCameraTarget[1], p1.mCameraTarget[2]);
 	}
 #endif
 
@@ -104,59 +123,107 @@ void Scenery::update()
 		auto* p = &RoomManager::singleton->mGoLayers[GOL_SECOND].mCameraEye[2];
 		*p = mCubicBezier->value(Math::min(mFrame * 0.25f, 1.0f))[1] * 44.0f;
 	}
-
-	// Apply transformations
-	{
-		const auto& m = Matrix4::translation(position);
-		mManipulatorList[0]->setTransformation(m);
-	}
 }
 
 void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	// Create array of transformed light positions
-	std::vector<Vector3> destLightPos;
-	std::vector<Color4> destLightColors;
-
+	if (baseDrawable == mWaterDrawable.get())
 	{
-		// Create array of light positions
-		std::vector<Vector3> source;
+		WaterShader& shader = (WaterShader&) baseDrawable->getShader();
+		shader
+			.setTransformationMatrix(transformationMatrix)
+			.setProjectionMatrix(camera.projectionMatrix())
+			.draw(*baseDrawable->mMesh);
+	}
+	else
+	{
+		// Create array of transformed light positions
+		std::vector<Vector3> destLightPos;
+		std::vector<Color4> destLightColors;
 
-		source.emplace_back(8.0f, 20.0f, 10.0f);
-		source.emplace_back(8.0f, -40.0f, 10.0f);
-
-		destLightColors.emplace_back(0xffffff00_rgbaf);
-		destLightColors.emplace_back(0xffffff00_rgbaf);
-
-		// Create map function
-		auto mapFx = [&](const decltype(source)::value_type & vector)
 		{
-			return camera.cameraMatrix().transformPoint(position + vector);
-		};
+			// Create array of light positions
+			std::vector<Vector3> source;
 
-		// Apply array mapping to all its elements
-		std::transform(source.begin(), source.end(), std::back_inserter(destLightPos), mapFx);
+			source.emplace_back(8.0f, 20.0f, 10.0f);
+			source.emplace_back(8.0f, -40.0f, 10.0f);
+
+			destLightColors.emplace_back(0xffffff00_rgbaf);
+			destLightColors.emplace_back(0xffffff00_rgbaf);
+
+			// Create map function
+			auto mapFx = [&](const decltype(source)::value_type & vector)
+			{
+				return camera.cameraMatrix().transformPoint(position + vector);
+			};
+
+			// Apply array mapping to all its elements
+			std::transform(source.begin(), source.end(), std::back_inserter(destLightPos), mapFx);
+		}
+
+		// Draw through shader
+		Shaders::Phong& shader = (Shaders::Phong&) baseDrawable->getShader();
+		shader
+			.setLightPositions(destLightPos)
+			.setLightColors(destLightColors)
+			.setSpecularColor(0xffffff00_rgbaf)
+			.setAmbientColor(0x444444ff_rgbaf)
+			.setTransformationMatrix(transformationMatrix)
+			.setNormalMatrix(transformationMatrix.normalMatrix())
+			.setProjectionMatrix(camera.projectionMatrix());
+
+		if (baseDrawable->mTexture != nullptr)
+		{
+			shader.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr);
+		}
+
+		shader.draw(*baseDrawable->mMesh);
 	}
-
-	// Shader through shader
-	Shaders::Phong& shader = (Shaders::Phong&) baseDrawable->getShader();
-	shader
-		.setLightPositions(destLightPos)
-		.setLightColors(destLightColors)
-		.setSpecularColor(0xffffff00_rgbaf)
-		.setAmbientColor(0x444444ff_rgbaf)
-		.setTransformationMatrix(transformationMatrix)
-		.setNormalMatrix(transformationMatrix.normalMatrix())
-		.setProjectionMatrix(camera.projectionMatrix());
-
-	if (baseDrawable->mTexture != nullptr)
-	{
-		shader.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr);
-	}
-
-	shader.draw(*baseDrawable->mMesh);
 }
 
 void Scenery::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
+}
+
+void Scenery::createWaterDrawable()
+{
+	// Create plane
+	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_PLANE_WATER) };
+
+	if (!resMesh)
+	{
+		// Create test mesh
+		Trade::MeshData meshData = Primitives::planeSolid(Primitives::PlaneFlag::TextureCoordinates);
+
+		GL::Buffer vertices;
+		vertices.setData(MeshTools::interleave(meshData.positions3DAsArray(), meshData.textureCoordinates2DAsArray()));
+
+		GL::Mesh mesh;
+		mesh
+			.setPrimitive(meshData.primitive())
+			.setCount(meshData.vertexCount())
+			.addVertexBuffer(std::move(vertices), 0, WaterShader::Position{}, WaterShader::TextureCoordinates{});
+
+		// Add to resources
+		CommonUtility::singleton->manager.set(resMesh.key(), std::move(mesh));
+	}
+
+	// Create shader
+	Resource<GL::AbstractShaderProgram, WaterShader> resShader{ CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, WaterShader>(RESOURCE_SHADER_WATER) };
+
+	if (!resShader)
+	{
+		// Create shader
+		std::unique_ptr<GL::AbstractShaderProgram> shader = std::make_unique<WaterShader>();
+
+		// Add to resources
+		Containers::Pointer<GL::AbstractShaderProgram> p = std::move(shader);
+		CommonUtility::singleton->manager.set(resShader.key(), std::move(p));
+	}
+
+	// Create colored drawable
+	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
+	mWaterDrawable = std::make_shared<TexturedDrawable<WaterShader>>(*drawables, resShader, resMesh, mDrawables[0]->mTexture);
+	mWaterDrawable->setParent(mManipulatorList[1]);
+	mWaterDrawable->setDrawCallback(this);
 }

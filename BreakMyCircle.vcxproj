@@ -176,6 +176,7 @@
     <ClCompile Include="src\Scenery.cpp" />
     <ClCompile Include="src\ScreenQuadShader.cpp" />
     <ClCompile Include="src\SpriteShader.cpp" />
+    <ClCompile Include="src\WaterShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src/Bubble.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="src\CommonTypes.h" />
     <ClInclude Include="src\InputManager.h" />
     <ClInclude Include="src\Player.h" />
+    <ClInclude Include="src\WaterShader.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\SpriteShaderDataView.h" />

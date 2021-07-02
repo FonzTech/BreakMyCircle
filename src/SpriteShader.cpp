@@ -15,8 +15,8 @@ SpriteShader::SpriteShader()
 	GL::Shader vert{ GL::Version::GL330, GL::Shader::Type::Vertex };
 	GL::Shader frag{ GL::Version::GL330, GL::Shader::Type::Fragment };
 
-	vert.addFile("shaders/sprite_shader.vert");
-	frag.addFile("shaders/sprite_shader.frag");
+	vert.addFile("shaders/passthrough.vert");
+	frag.addFile("shaders/sprite.frag");
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(GL::Shader::compile({ vert, frag }));
 

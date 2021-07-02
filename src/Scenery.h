@@ -7,7 +7,8 @@
 #include <Magnum/Math/Bezier.h>
 
 #include "GameObject.h"
-#include "BaseDrawable.h"
+#include "TexturedDrawable.h"
+#include "WaterShader.h"
 
 class Scenery : public GameObject
 {
@@ -22,8 +23,15 @@ protected:
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
+	void createWaterDrawable();
+
+	// Manipulator list
 	std::vector<Object3D*> mManipulatorList;
 
+	// Animation
 	Float mFrame;
 	std::unique_ptr<CubicBezier2D> mCubicBezier;
+
+	// Water drawable
+	std::shared_ptr<TexturedDrawable<WaterShader>> mWaterDrawable;
 };

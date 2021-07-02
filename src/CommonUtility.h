@@ -1,7 +1,8 @@
 #pragma once
 
 #define RESOURCE_MESH_ICOSPHERE "mesh_icosphere"
-#define RESOURCE_MESH_PLANE "mesh_plane"
+#define RESOURCE_MESH_PLANE_SPRITE "mesh_plane_sprite"
+#define RESOURCE_MESH_PLANE_WATER "mesh_plane_water"
 
 #define RESOURCE_TEXTURE_SPARKLES "tex_sparkles"
 #define RESOURCE_TEXTURE_BUBBLE_RED "tex_bubble_red"
@@ -17,6 +18,7 @@
 #define RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE "shader_textured_phong"
 #define RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE_2 "shader_textured_phong_2"
 #define RESOURCE_SHADER_SPRITE "shader_sprite"
+#define RESOURCE_SHADER_WATER "shader_water"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"
