@@ -2,6 +2,7 @@
 
 uniform sampler2D displacementData;
 uniform sampler2D textureData;
+uniform sampler2D effectsData;
 
 uniform vec3 waterColor;
 uniform float frame;
@@ -23,15 +24,27 @@ void main()
 
 	// Apply distortion
 	vec4 wm = texture(displacementData, tc);
-	float angle = wm.r + frame;
+	float angle = fract(wm.r + frame * 0.5) * PI * 2.0;
 	
 	vec2 dc;
 	{
-		dc.x = fract(tc.x + cos(angle) * speed * 0.07);
-		dc.y = fract(tc.y + sin(angle) * speed * 0.12);
+		dc.x = fract(tc.x + cos(angle) * speed * 0.01);
+		dc.y = fract(tc.y + sin(angle) * speed * 0.01);
 	}
 	
-	// Color fragment
+	// Water color
 	fragmentColor.rgb = texture(textureData, dc).rgb;
-	fragmentColor.a = texture(displacementData, dc).r;
+	
+	// Effects data
+	vec4 fx = texture(effectsData, interpolatedTextureCoordinates);
+	
+	// Alpha component
+	{
+		float a = fragmentColor.r * fragmentColor.g * fragmentColor.b;
+		float b = clamp(a * 1.5, 0.0, 1.0);
+		fragmentColor.a = mix(b, 1.0, fx.r);
+	}
+	
+	// Seam effect
+	fragmentColor.a = mix(fragmentColor.a, 0.0, fx.g);
 }

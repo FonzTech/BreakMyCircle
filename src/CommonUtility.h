@@ -14,6 +14,7 @@
 #define RESOURCE_TEXTURE_BUBBLE_CYAN "tex_bubble_cyan"
 #define RESOURCE_TEXTURE_WATER_DISPLACEMENT "tex_water_dm"
 #define RESOURCE_TEXTURE_WATER_TEXTURE "tex_water_tm"
+#define RESOURCE_TEXTURE_WORLD_1_WEM "tex_world_1_wem"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"
 #define RESOURCE_SHADER_COLORED_PHONG_2 "shader_colored_phong_2"

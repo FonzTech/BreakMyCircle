@@ -34,7 +34,6 @@ Scenery::Scenery(const Sint8 parentIndex) : GameObject(parentIndex)
 	// Fill manipulator list
 	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
 	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
-	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
 
 	// Apply transformations
 	{
@@ -46,34 +45,17 @@ Scenery::Scenery(const Sint8 parentIndex) : GameObject(parentIndex)
 		const auto& m = Matrix4::scaling(Vector3(100.0f));
 		mManipulatorList[1]->setTransformation(m);
 		mManipulatorList[1]->rotateX(90.0_degf);
-		mManipulatorList[1]->translate(position + Vector3(0.0f, 0.5f, 0.0f));
-	}
-
-	{
-		const auto& m = Matrix4::scaling(Vector3(100.0f));
-		mManipulatorList[2]->setTransformation(m);
-		mManipulatorList[2]->rotateX(90.0_degf);
-		mManipulatorList[2]->translate(position + Vector3(0.0f, 0.3f, 0.0f));
+		mManipulatorList[1]->translate(position + Vector3(0.0f, 0.3f, 0.0f));
 	}
 
 	// Load assets
 	{
 		AssetManager am(RESOURCE_SHADER_COLORED_PHONG_2, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE_2, 2);
 		am.loadAssets(*this, *mManipulatorList[0], "scenes/world_1.glb", this);
-
-		for (const auto& d : mDrawables)
-		{
-			if (d->mMesh->label() == "SandV")
-			{
-				mSandFloorTexture = d->mTexture;
-				break;
-			}
-		}
 	}
 
 	// Create water drawable
 	createWaterDrawable();
-	createSandFloorDrawable();
 
 	// Set camera position for scenery
 	position = Vector3(0.0f);
@@ -152,12 +134,12 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 		shader
 			.setTransformationMatrix(transformationMatrix)
 			.setProjectionMatrix(camera.projectionMatrix())
-			.setWaterColor(mWaterParameters.waterColor)
 			.setFrame(mWaterParameters.frame)
 			.setSpeed(mWaterParameters.speed)
 			.setSize(mWaterParameters.size)
-			.bindDisplacementTexture(*baseDrawable->mTexture)
-			.bindWaterTexture(*baseDrawable->mTexture)
+			.bindDisplacementTexture(*mWaterParameters.displacementTexture)
+			.bindWaterTexture(*mWaterParameters.waterTexture)
+			.bindEffectsTexture(*mWaterParameters.effectsTexture)
 			.draw(*baseDrawable->mMesh);
 	}
 	else
@@ -247,53 +229,19 @@ void Scenery::createWaterDrawable()
 	}
 
 	// Create water drawable
-	mDisplacementTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WATER_DISPLACEMENT);
-	const auto waterTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WATER_TEXTURE);
+	const auto& waterTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WATER_TEXTURE);
 
 	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
 	mWaterDrawable = std::make_shared<TexturedDrawable<WaterShader>>(*drawables, resShader, resMesh, waterTexture);
 	mWaterDrawable->setParent(mManipulatorList[1]);
 	mWaterDrawable->setDrawCallback(this);
 
-	mWaterParameters = { Color3(0.8f, 1.0f, 1.0f), 0.0f, 2.0f, 15.0f };
-}
-
-void Scenery::createSandFloorDrawable()
-{
-	// Create plane
-	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_SAND_FLOOR) };
-
-	if (!resMesh)
-	{
-		// Create test mesh
-		Trade::MeshData meshData = Primitives::grid3DSolid({ 10, 10 }, Primitives::GridFlag::TextureCoordinates | Primitives::GridFlag::Normals);
-
-		GL::Buffer vertices;
-		vertices.setData(MeshTools::interleave(
-			meshData.positions3DAsArray(),
-			meshData.textureCoordinates2DAsArray(),
-			meshData.normalsAsArray()
-		));
-
-		std::pair<Containers::Array<char>, MeshIndexType> compressed = MeshTools::compressIndices(meshData.indicesAsArray());
-		GL::Buffer indices;
-		indices.setData(compressed.first);
-
-		GL::Mesh mesh;
-		mesh
-			.setPrimitive(meshData.primitive())
-			.setCount(meshData.indexCount())
-			.addVertexBuffer(std::move(vertices), 0, Shaders::Phong::Position{}, Shaders::Phong::TextureCoordinates{}, Shaders::Phong::Normal{})
-			.setIndexBuffer(std::move(indices), 0, compressed.second);
-
-		// Add to resources
-		CommonUtility::singleton->manager.set(resMesh.key(), std::move(mesh));
-	}
-
-	// Create sand floor drawable
-	auto shader = AssetManager().getTexturedShader(RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE_2, 2);
-	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
-	mSandFloorDrawable = std::make_shared<TexturedDrawable<Shaders::Phong>>(*drawables, shader, resMesh, mSandFloorTexture);
-	mSandFloorDrawable->setParent(mManipulatorList[2]);
-	mSandFloorDrawable->setDrawCallback(this);
+	mWaterParameters = {
+		CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WATER_DISPLACEMENT),
+		waterTexture,
+		CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WORLD_1_WEM),
+		0.0f,
+		2.0f,
+		15.0f
+	};
 }

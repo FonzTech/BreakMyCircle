@@ -24,7 +24,6 @@ protected:
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
 	void createWaterDrawable();
-	void createSandFloorDrawable();
 
 	// Manipulator list
 	std::vector<Object3D*> mManipulatorList;
@@ -36,8 +35,4 @@ protected:
 	// Drawables data
 	std::shared_ptr<TexturedDrawable<WaterShader>> mWaterDrawable;
 	WaterShader::Parameters mWaterParameters;
-	Resource<GL::Texture2D> mDisplacementTexture;
-
-	std::shared_ptr<TexturedDrawable<Shaders::Phong>> mSandFloorDrawable;
-	Resource<GL::Texture2D> mSandFloorTexture;
 };

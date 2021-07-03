@@ -51,6 +51,9 @@ void RoomManager::clear()
 	// Clear all layers and their children
 	mGoLayers.clear();
 
+	// Clear audio context
+	mAudioContext = nullptr;
+
 	// De-reference camera
 	mCamera = nullptr;
 }

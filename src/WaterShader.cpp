@@ -26,13 +26,13 @@ WaterShader::WaterShader()
 
 	mTransformationMatrixUniform = uniformLocation("transformationMatrix");
 	mProjectionMatrixUniform = uniformLocation("projectionMatrix");
-	mWaterColorUniform = uniformLocation("waterColor");
 	mFrameUniform = uniformLocation("frame");
 	mSpeedUniform = uniformLocation("speed");
 	mSizeUniform = uniformLocation("size");
 
 	setUniform(uniformLocation("displacementData"), DisplacementTextureUnit);
 	setUniform(uniformLocation("textureData"), WaterTextureUnit);
+	setUniform(uniformLocation("effectsData"), EffectsTextureUnit);
 }
 
 WaterShader& WaterShader::setTransformationMatrix(const Matrix4& transformationMatrix)
@@ -44,12 +44,6 @@ WaterShader& WaterShader::setTransformationMatrix(const Matrix4& transformationM
 WaterShader& WaterShader::setProjectionMatrix(const Matrix4& projectionMatrix)
 {
 	setUniform(mProjectionMatrixUniform, projectionMatrix);
-	return *this;
-}
-
-WaterShader& WaterShader::setWaterColor(const Color3& waterColor)
-{
-	setUniform(mWaterColorUniform, waterColor);
 	return *this;
 }
 
@@ -80,5 +74,11 @@ WaterShader& WaterShader::bindDisplacementTexture(GL::Texture2D& texture)
 WaterShader& WaterShader::bindWaterTexture(GL::Texture2D& texture)
 {
 	texture.bind(WaterTextureUnit);
+	return *this;
+}
+
+WaterShader& WaterShader::bindEffectsTexture(GL::Texture2D& texture)
+{
+	texture.bind(EffectsTextureUnit);
 	return *this;
 }
