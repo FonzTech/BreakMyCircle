@@ -159,10 +159,10 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	{
 		shader
 			.setLightPosition(position + Vector3(0.0f, 0.0f, 1.0f))
-			.setLightColor(0xffffff60_rgbaf)
+			.setLightColor(0x202020_rgbf)
 			.setSpecularColor(0xffffff00_rgbaf)
-			.setAmbientColor(0x808080_rgbf)
-			.setDiffuseColor(0x808080_rgbf);
+			.setAmbientColor(0xc0c0c0_rgbf)
+			.setDiffuseColor(0x202020_rgbf);
 	}
 	else
 	{

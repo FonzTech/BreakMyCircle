@@ -41,7 +41,9 @@
 
 #include "CommonTypes.h"
 #include "ColoredDrawable.h"
+#include "TexturedDrawable.h"
 #include "GameObject.h"
+#include "SpriteShader.h"
 
 using namespace Magnum;
 
@@ -51,6 +53,9 @@ class CommonUtility
 {
 public:
 	static std::unique_ptr<CommonUtility> singleton;
+
+	// Resource manager holder
+	MyResourceManager manager;
 
 	// Constructor
 	CommonUtility();
@@ -64,9 +69,8 @@ public:
 	// Texture loader
 	Resource<GL::Texture2D> loadTexture(const std::string & filename);
 
-	// Create game sphere
+	// Utilities
 	void createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color);
+	std::shared_ptr<TexturedDrawable<SpriteShader>> createSpriteDrawable(const Sint8 goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
 
-	// Resource manager holder
-	MyResourceManager manager;
 };

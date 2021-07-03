@@ -78,9 +78,9 @@ void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 {
 	((Shaders::Phong&) baseDrawable->getShader())
 		.setLightPosition(position + Vector3(0.0f, 0.0f, 1.0f))
-		.setLightColor(0xffffff60_rgbaf)
+		.setLightColor(0x808080_rgbf)
 		.setSpecularColor(0xffffff00_rgbaf)
-		.setAmbientColor(0x808080_rgbf)
+		.setAmbientColor(0xc0c0c0_rgbf)
 		.setDiffuseColor(0x808080_rgbf)
 		.setTransformationMatrix(transformationMatrix)
 		.setNormalMatrix(transformationMatrix.normalMatrix())

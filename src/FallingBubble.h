@@ -16,7 +16,7 @@ class FallingBubble : public GameObject
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	FallingBubble(const Sint8 parentIndex, const Color3& ambientColor, const bool spark, const Float maxVerticalSpeed = 100.0f);
+	FallingBubble(const Sint8 parentIndex, const Color3& ambientColor, const bool spark, const Float maxVerticalSpeed = -100.0f);
 
 	bool mSpark;
 	Color3 mAmbientColor;
@@ -31,6 +31,4 @@ private:
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
-
-	std::shared_ptr<TexturedDrawable<SpriteShader>> createPlane(Object3D & parent, Resource<GL::Texture2D> & texture);
 };

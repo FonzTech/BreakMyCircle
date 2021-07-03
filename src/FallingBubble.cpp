@@ -5,9 +5,6 @@
 #include <Corrade/Containers/PointerStl.h>
 #include <Magnum/ImageView.h>
 #include <Magnum/GL/Buffer.h>
-#include <Magnum/Primitives/Plane.h>
-#include <Magnum/MeshTools/Interleave.h>
-#include <Magnum/MeshTools/CompressIndices.h>
 
 #include "CommonUtility.h"
 #include "ColoredDrawable.h"
@@ -40,7 +37,7 @@ FallingBubble::FallingBubble(const Sint8 parentIndex, const Color3& ambientColor
 		Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SPARKLES);
 
 		// Create plane
-		std::shared_ptr<TexturedDrawable<SpriteShader>> td = createPlane(*mManipulator, resTexture);
+		std::shared_ptr<TexturedDrawable<SpriteShader>> td = CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this);
 		mDrawables.emplace_back(td);
 
 		// Create shader data wrapper
@@ -136,9 +133,9 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 	{
 		((Shaders::Phong&) baseDrawable->getShader())
 			.setLightPosition(position + Vector3(0.0f, 0.0f, 1.0f))
-			.setLightColor(0xffffff60_rgbaf)
+			.setLightColor(0x808080_rgbf)
 			.setSpecularColor(0xffffff00_rgbaf)
-			.setAmbientColor(0x808080_rgbf)
+			.setAmbientColor(0xc0c0c0_rgbf)
 			.setDiffuseColor(0x808080_rgbf)
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
@@ -150,47 +147,4 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 
 void FallingBubble::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
-}
-
-std::shared_ptr<TexturedDrawable<SpriteShader>> FallingBubble::createPlane(Object3D & parent, Resource<GL::Texture2D> & texture)
-{
-	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_PLANE_SPRITE) };
-
-	if (!resMesh)
-	{
-		// Create test mesh
-		Trade::MeshData meshData = Primitives::planeSolid(Primitives::PlaneFlag::TextureCoordinates);
-
-		GL::Buffer vertices;
-		vertices.setData(MeshTools::interleave(meshData.positions3DAsArray(), meshData.textureCoordinates2DAsArray()));
-
-		GL::Mesh mesh;
-		mesh
-			.setPrimitive(meshData.primitive())
-			.setCount(meshData.vertexCount())
-			.addVertexBuffer(std::move(vertices), 0, SpriteShader::Position{}, SpriteShader::TextureCoordinates{});
-
-		// Add to resources
-		CommonUtility::singleton->manager.set(resMesh.key(), std::move(mesh));
-	}
-
-	// Create shader
-	Resource<GL::AbstractShaderProgram, SpriteShader> resShader{ CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, SpriteShader>(RESOURCE_SHADER_SPRITE) };
-
-	if (!resShader)
-	{
-		// Create shader
-		std::unique_ptr<GL::AbstractShaderProgram> shader = std::make_unique<SpriteShader>();
-
-		// Add to resources
-		Containers::Pointer<GL::AbstractShaderProgram> p = std::move(shader);
-		CommonUtility::singleton->manager.set(resShader.key(), std::move(p));
-	}
-
-	// Create colored drawable
-	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
-	std::shared_ptr<TexturedDrawable<SpriteShader>> td = std::make_shared<TexturedDrawable<SpriteShader>>(*drawables, resShader, resMesh, texture);
-	td->setParent(&parent);
-	td->setDrawCallback(this);
-	return td;
 }
