@@ -16,5 +16,6 @@ GameObject::GameObject(const Sint8 parentIndex) : GameObject()
 GameObject::~GameObject()
 {
 	mDrawables.clear();
+	mPlayables.clear();
 	mManipulator = nullptr;
 }

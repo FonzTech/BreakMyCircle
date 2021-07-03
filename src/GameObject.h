@@ -4,6 +4,10 @@
 #include <memory>
 #include <unordered_set>
 
+#include <Magnum/Audio/Audio.h>
+#include <Magnum/Audio/Buffer.h>
+#include <Magnum/Audio/Playable.h>
+#include <Magnum/Audio/Source.h>
 #include <Magnum/Trade/MeshData.h>
 #include <Magnum/Math/Matrix4.h>
 #include <Magnum/Math/Range.h>
@@ -30,6 +34,7 @@ public:
 
 	std::unique_ptr<Object3D> mManipulator;
 	std::vector<std::shared_ptr<BaseDrawable>> mDrawables;
+	std::unordered_map<Sint8, std::shared_ptr<Audio::Playable3D>> mPlayables;
 
 	Vector3 position;
 	Range3D bbox;

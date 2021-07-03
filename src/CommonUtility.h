@@ -1,8 +1,8 @@
 #pragma once
 
-#define RESOURCE_MESH_ICOSPHERE "mesh_icosphere"
 #define RESOURCE_MESH_PLANE_SPRITE "mesh_plane_sprite"
 #define RESOURCE_MESH_PLANE_WATER "mesh_plane_water"
+#define RESOURCE_MESH_SAND_FLOOR "mesh_plane_sand_floor"
 
 #define RESOURCE_TEXTURE_SPARKLES "tex_sparkles"
 #define RESOURCE_TEXTURE_BUBBLE_RED "tex_bubble_red"
@@ -12,6 +12,8 @@
 #define RESOURCE_TEXTURE_BUBBLE_ORANGE "tex_bubble_orange"
 #define RESOURCE_TEXTURE_BUBBLE_PURPLE "tex_bubble_purple"
 #define RESOURCE_TEXTURE_BUBBLE_CYAN "tex_bubble_cyan"
+#define RESOURCE_TEXTURE_WATER_DISPLACEMENT "tex_water_dm"
+#define RESOURCE_TEXTURE_WATER_TEXTURE "tex_water_tm"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"
 #define RESOURCE_SHADER_COLORED_PHONG_2 "shader_colored_phong_2"

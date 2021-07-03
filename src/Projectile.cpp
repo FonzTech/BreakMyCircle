@@ -2,9 +2,6 @@
 
 #include <thread>
 #include <Magnum/GL/DefaultFramebuffer.h>
-#include <Magnum/Primitives/Icosphere.h>
-#include <Magnum/MeshTools/Interleave.h>
-#include <Magnum/MeshTools/CompressIndices.h>
 
 #include "ColoredDrawable.h"
 #include "RoomManager.h"

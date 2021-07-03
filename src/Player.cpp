@@ -5,9 +5,6 @@
 #include <Magnum/Math/Angle.h>
 #include <Magnum/Math/Intersection.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
-#include <Magnum/Primitives/Icosphere.h>
-#include <Magnum/MeshTools/Interleave.h>
-#include <Magnum/MeshTools/CompressIndices.h>
 
 #include "AssetManager.h"
 #include "InputManager.h"

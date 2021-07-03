@@ -7,9 +7,6 @@
 #include <Corrade/Utility/Resource.h>
 #include <Magnum/Magnum.h>
 #include <Magnum/ImageView.h>
-#include <Magnum/Primitives/Icosphere.h>
-#include <Magnum/MeshTools/Interleave.h>
-#include <Magnum/MeshTools/CompressIndices.h>
 #include <Magnum/Trade/AbstractImporter.h>
 #include <Magnum/Trade/ImageData.h>
 #include <Magnum/GL/Mesh.h>

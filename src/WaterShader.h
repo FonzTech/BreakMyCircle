@@ -12,7 +12,10 @@ class WaterShader : public GL::AbstractShaderProgram
 public:
 	struct Parameters
 	{
+		Color3 waterColor;
+		Float frame;
 		Float speed;
+		Float size;
 	};
 
 	typedef GL::Attribute<0, Vector3> Position;
@@ -22,14 +25,22 @@ public:
 
 	WaterShader& setTransformationMatrix(const Matrix4& transformationMatrix);
 	WaterShader& setProjectionMatrix(const Matrix4& projectionMatrix);
-	WaterShader& bindTexture(GL::Texture2D& texture);
+	WaterShader& setWaterColor(const Color3& waterColor);
+	WaterShader& setFrame(const Float frame);
+	WaterShader& setSpeed(const Float speed);
+	WaterShader& setSize(const Float size);
+	WaterShader& bindDisplacementTexture(GL::Texture2D& texture);
+	WaterShader& bindWaterTexture(GL::Texture2D& texture);
 
 private:
 	enum : Int
 	{
-		TextureUnit = 0
+		DisplacementTextureUnit = 0,
+		WaterTextureUnit = 1
 	};
 
 	Int mTransformationMatrixUniform;
 	Int mProjectionMatrixUniform;
+	Int mDisplacementColorUniform, mWaterColorUniform;
+	Int mFrameUniform, mSpeedUniform, mSizeUniform;
 };

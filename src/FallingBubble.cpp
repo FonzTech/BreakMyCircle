@@ -5,7 +5,6 @@
 #include <Corrade/Containers/PointerStl.h>
 #include <Magnum/ImageView.h>
 #include <Magnum/GL/Buffer.h>
-#include <Magnum/Primitives/Icosphere.h>
 #include <Magnum/Primitives/Plane.h>
 #include <Magnum/MeshTools/Interleave.h>
 #include <Magnum/MeshTools/CompressIndices.h>
