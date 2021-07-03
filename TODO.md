@@ -16,12 +16,13 @@
 - ~~Improve game bubbles with a "semi-circle" and textures with "nature elements as color"~~
 - ~~Remove the default "createGameSphere" method from "Utility".~~
 - ~~Implement audio engine.~~
+- ~~Refactor code for resource creation. Move them to CommonUtility, like water, sprite, etc...~~
 - Small main menu for game.
 - Level screen with overworld and changing themes.
 - Implement pause/resume system for game. And so the pause menu.
 
 # On-going tasks
 
-- Fix camera for every scenery available in the game.
+- Animate camera for every scenery available in the game.
 - Intro screen with logo and various effects.
 - Procedural level generation.
