@@ -137,6 +137,7 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 			.setFrame(mWaterParameters.frame)
 			.setSpeed(mWaterParameters.speed)
 			.setSize(mWaterParameters.size)
+			.setHorizonColorUniform(mWaterParameters.horizonColor)
 			.bindDisplacementTexture(*mWaterParameters.displacementTexture)
 			.bindWaterTexture(*mWaterParameters.waterTexture)
 			.bindEffectsTexture(*mWaterParameters.effectsTexture)
@@ -242,6 +243,7 @@ void Scenery::createWaterDrawable()
 		CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WORLD_1_WEM),
 		0.0f,
 		2.0f,
-		15.0f
+		15.0f,
+		Color3(1.0f)
 	};
 }

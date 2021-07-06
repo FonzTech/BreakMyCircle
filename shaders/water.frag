@@ -4,10 +4,10 @@ uniform sampler2D displacementData;
 uniform sampler2D textureData;
 uniform sampler2D effectsData;
 
-uniform vec3 waterColor;
 uniform float frame;
 uniform float speed;
 uniform float size;
+uniform vec3 horizonColor;
 
 in vec2 interpolatedTextureCoordinates;
 
@@ -47,4 +47,7 @@ void main()
 	
 	// Seam effect
 	fragmentColor.a = mix(fragmentColor.a, 0.0, fx.g);
+	
+	// Horizon color effect
+	fragmentColor.rgb = mix(fragmentColor.rgb, horizonColor, fx.b);
 }

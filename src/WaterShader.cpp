@@ -29,6 +29,7 @@ WaterShader::WaterShader()
 	mFrameUniform = uniformLocation("frame");
 	mSpeedUniform = uniformLocation("speed");
 	mSizeUniform = uniformLocation("size");
+	mHorizonColorUniform = uniformLocation("horizonColor");
 
 	setUniform(uniformLocation("displacementData"), DisplacementTextureUnit);
 	setUniform(uniformLocation("textureData"), WaterTextureUnit);
@@ -62,6 +63,12 @@ WaterShader& WaterShader::setSpeed(const Float speed)
 WaterShader& WaterShader::setSize(const Float size)
 {
 	setUniform(mSizeUniform, size);
+	return *this;
+}
+
+WaterShader& WaterShader::setHorizonColorUniform(const Color3& color)
+{
+	setUniform(mHorizonColorUniform, color);
 	return *this;
 }
 

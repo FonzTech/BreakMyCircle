@@ -18,6 +18,7 @@ public:
 		Float frame;
 		Float speed;
 		Float size;
+		Color3 horizonColor;
 	};
 
 	typedef GL::Attribute<0, Vector3> Position;
@@ -30,6 +31,7 @@ public:
 	WaterShader& setFrame(const Float frame);
 	WaterShader& setSpeed(const Float speed);
 	WaterShader& setSize(const Float size);
+	WaterShader& setHorizonColorUniform(const Color3& color);
 	WaterShader& bindDisplacementTexture(GL::Texture2D& texture);
 	WaterShader& bindWaterTexture(GL::Texture2D& texture);
 	WaterShader& bindEffectsTexture(GL::Texture2D& texture);
@@ -45,4 +47,5 @@ private:
 	Int mTransformationMatrixUniform;
 	Int mProjectionMatrixUniform;
 	Int mFrameUniform, mSpeedUniform, mSizeUniform;
+	Int mHorizonColorUniform;
 };

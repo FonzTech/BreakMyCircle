@@ -78,7 +78,6 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 	PluginManager::Manager<Trade::AbstractImporter> manager;
 	Containers::Pointer<Trade::AbstractImporter> importer = manager.loadAndInstantiate("AnySceneImporter");
 
-	// Load file
 	if (!importer || !importer->openFile(filename))
 	{
 		std::exit(4);
