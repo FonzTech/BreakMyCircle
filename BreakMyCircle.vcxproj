@@ -166,6 +166,7 @@
     <ClCompile Include="src\BaseDrawable.cpp" />
     <ClCompile Include="src\CollisionManager.cpp" />
     <ClCompile Include="src\CommonUtility.cpp" />
+    <ClCompile Include="src\CubeMapShader.cpp" />
     <ClCompile Include="src\FallingBubble.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\InputManager.cpp" />
@@ -175,6 +176,7 @@
     <ClCompile Include="src\Projectile.cpp" />
     <ClCompile Include="src\Scenery.cpp" />
     <ClCompile Include="src\ScreenQuadShader.cpp" />
+    <ClCompile Include="src\Skybox.cpp" />
     <ClCompile Include="src\SpriteShader.cpp" />
     <ClCompile Include="src\WaterShader.cpp" />
   </ItemGroup>
@@ -188,6 +190,7 @@
     <ClInclude Include="src\CollisionManager.h" />
     <ClInclude Include="src\ColoredDrawable.h" />
     <ClInclude Include="src\CommonUtility.h" />
+    <ClInclude Include="src\CubeMapShader.h" />
     <ClInclude Include="src\FallingBubble.h" />
     <ClInclude Include="src\IDrawCallback.h" />
     <ClInclude Include="src\LinePath.h" />
@@ -196,6 +199,7 @@
     <ClInclude Include="src\Projectile.h" />
     <ClInclude Include="src\Scenery.h" />
     <ClInclude Include="src\ScreenQuadShader.h" />
+    <ClInclude Include="src\Skybox.h" />
     <ClInclude Include="src\SpriteShader.h" />
     <ClInclude Include="src\TexturedDrawable.h" />
     <ClInclude Include="src\CommonTypes.h" />

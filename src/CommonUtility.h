@@ -3,6 +3,7 @@
 #define RESOURCE_MESH_PLANE_SPRITE "mesh_plane_sprite"
 #define RESOURCE_MESH_PLANE_WATER "mesh_plane_water"
 #define RESOURCE_MESH_SAND_FLOOR "mesh_plane_sand_floor"
+#define RESOURCE_MESH_CUBE "mesh_plane_cube"
 
 #define RESOURCE_TEXTURE_SPARKLES "tex_sparkles"
 #define RESOURCE_TEXTURE_BUBBLE_RED "tex_bubble_red"
@@ -15,6 +16,7 @@
 #define RESOURCE_TEXTURE_WATER_DISPLACEMENT "tex_water_dm"
 #define RESOURCE_TEXTURE_WATER_TEXTURE "tex_water_tm"
 #define RESOURCE_TEXTURE_WORLD_1_WEM "tex_world_1_wem"
+#define RESOURCE_TEXTURE_CUBEMAP_SKYBOX_1 "tex_cubemap_skybox_1"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"
 #define RESOURCE_SHADER_COLORED_PHONG_2 "shader_colored_phong_2"
@@ -22,6 +24,7 @@
 #define RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE_2 "shader_textured_phong_2"
 #define RESOURCE_SHADER_SPRITE "shader_sprite"
 #define RESOURCE_SHADER_WATER "shader_water"
+#define RESOURCE_SHADER_CUBEMAP "shader_cubemap"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"
@@ -36,6 +39,7 @@
 #include <Magnum/Audio/Source.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/GL/Texture.h>
+#include <Magnum/GL/CubeMapTexture.h>
 #include <Magnum/GL/AbstractShaderProgram.h>
 #include <Magnum/Trade/AbstractMaterialData.h>
 
@@ -47,7 +51,7 @@
 
 using namespace Magnum;
 
-typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::AbstractShaderProgram, Trade::AbstractMaterialData, Audio::Buffer, LinePathAsset> MyResourceManager;
+typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::CubeMapTexture, GL::AbstractShaderProgram, Trade::AbstractMaterialData, Audio::Buffer, LinePathAsset> MyResourceManager;
 
 class CommonUtility
 {

@@ -11,6 +11,7 @@
 #include "FallingBubble.h"
 #include "Scenery.h"
 #include "Logo.h"
+#include "Skybox.h"
 
 using namespace Magnum::Math::Literals;
 
@@ -32,6 +33,7 @@ RoomManager::RoomManager()
 	gameObjectCreators[GOT_FALLING_BUBBLE] = FallingBubble::getInstance;
 	gameObjectCreators[GOT_SCENERY] = Scenery::getInstance;
 	gameObjectCreators[GOT_LOGO] = Logo::getInstance;
+	gameObjectCreators[GOT_SKYBOX] = Skybox::getInstance;
 
 	// Create collision manager
 	mCollisionManager = std::make_unique<CollisionManager>();
@@ -190,6 +192,13 @@ void RoomManager::createLevelRoom()
 	// Create scenery
 	{
 		std::shared_ptr<Scenery> p = std::make_shared<Scenery>(GOL_FIRST);
+		p->position = Vector3(0.0f);
+		RoomManager::singleton->mGoLayers[GOL_FIRST].push_back(p);
+	}
+
+	// Create skybox
+	{
+		std::shared_ptr<Skybox> p = std::make_shared<Skybox>(GOL_FIRST, "skybox_1");
 		p->position = Vector3(0.0f);
 		RoomManager::singleton->mGoLayers[GOL_FIRST].push_back(p);
 	}

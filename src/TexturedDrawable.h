@@ -3,6 +3,9 @@
 #include "CommonTypes.h"
 #include "BaseDrawable.h"
 
+using namespace Magnum;
+using namespace Magnum::Math::Literals;
+
 template <class ShaderType>
 class TexturedDrawable : public BaseDrawable
 {

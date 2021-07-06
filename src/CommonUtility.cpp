@@ -1,7 +1,6 @@
 #include "CommonUtility.h"
 
 #include <Corrade/Corrade.h>
-#include <Corrade/Containers/PointerStl.h>
 #include <Corrade/PluginManager/Manager.h>
 #include <Corrade/Utility/Assert.h>
 #include <Corrade/Utility/Resource.h>
@@ -79,13 +78,12 @@ Resource<GL::Texture2D> CommonUtility::loadTexture(const std::string & filename)
 
 	if (!resTexture)
 	{
-		// Load TGA importer plugin
 		PluginManager::Manager<Trade::AbstractImporter> manager;
 		Containers::Pointer<Trade::AbstractImporter> importer = manager.loadAndInstantiate("PngImporter");
 
 		if (!importer || !importer->openFile("textures/" + filename.substr(4) + ".png"))
 		{
-			std::exit(2);
+			std::exit(-4);
 		}
 
 		// Set texture data and parameters
@@ -162,7 +160,7 @@ std::shared_ptr<TexturedDrawable<SpriteShader>> CommonUtility::createSpriteDrawa
 		CommonUtility::singleton->manager.set(resShader.key(), std::move(p));
 	}
 
-	// Create colored drawable
+	// Create textured drawable
 	auto& drawables = RoomManager::singleton->mGoLayers[goLayerIndex].drawables;
 	std::shared_ptr<TexturedDrawable<SpriteShader>> td = std::make_shared<TexturedDrawable<SpriteShader>>(*drawables, resShader, resMesh, texture);
 	td->setParent(&parent);

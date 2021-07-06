@@ -6,6 +6,7 @@
 #define GOT_FALLING_BUBBLE 4
 #define GOT_SCENERY 5
 #define GOT_LOGO 6
+#define GOT_SKYBOX 7
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>
