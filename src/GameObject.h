@@ -28,7 +28,7 @@ public:
 	GameObject(const Sint8 parentIndex);
 	~GameObject();
 
-	bool destroyMe;
+	bool mDestroyMe;
 	Float mDeltaTime;
 	Sint8 mParentIndex = std::numeric_limits<Sint8>::min();
 
@@ -36,8 +36,8 @@ public:
 	std::vector<std::shared_ptr<BaseDrawable>> mDrawables;
 	std::unordered_map<Sint8, std::shared_ptr<Audio::Playable3D>> mPlayables;
 
-	Vector3 position;
-	Range3D bbox;
+	Vector3 mPosition;
+	Range3D mBbox;
 
 	virtual const Int getType() const = 0;
 	virtual void update() = 0;

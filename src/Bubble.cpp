@@ -67,7 +67,7 @@ void Bubble::update()
 	const Vector3 shakeVect = mShakeFact > 0.001f ? mShakePos * std::sin(mShakeFact * Constants::pi()) : Vector3(0.0f);
 	for (auto& d : mDrawables)
 	{
-		d->setTransformation(Matrix4::translation(position + shakeVect));
+		d->setTransformation(Matrix4::translation(mPosition + shakeVect));
 	}
 
 	// Update bounding box
@@ -77,7 +77,7 @@ void Bubble::update()
 void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPosition(position + Vector3(0.0f, 0.0f, 1.0f))
+		.setLightPosition(mPosition + Vector3(0.0f, 0.0f, 1.0f))
 		.setLightColor(0x808080_rgbf)
 		.setSpecularColor(0xffffff00_rgbaf)
 		.setAmbientColor(0xc0c0c0_rgbf)
@@ -95,12 +95,12 @@ void Bubble::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>>
 
 void Bubble::updateBBox()
 {
-	bbox = Range3D{ position - Vector3(0.8f), position + Vector3(0.8f) };
+	mBbox = Range3D{ mPosition - Vector3(0.8f), mPosition + Vector3(0.8f) };
 }
 
 void Bubble::applyRippleEffect(const Vector3& center)
 {
-	const Vector3 d = position - center;
+	const Vector3 d = mPosition - center;
 	const Vector3 p = d.normalized();
 	const Math::Unit<Math::Rad, Float> unitRads(std::atan2(p.y(), p.x()));
 	const Float rads(unitRads);
@@ -132,12 +132,12 @@ bool Bubble::destroyNearbyBubbles()
 			{
 				{
 					GraphNode gn;
-					gn.position = b->position;
+					gn.position = b->mPosition;
 					gn.color = b->mAmbientColor;
 					fps->push(gn);
 				}
 
-				b->destroyMe = true;
+				b->mDestroyMe = true;
 			}
 		}
 
@@ -153,7 +153,7 @@ bool Bubble::destroyNearbyBubbles()
 		auto& gn = fps->front();
 
 		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, true);
-		ib->position = gn.position + Vector3(0.0f, 0.0f, posZ);
+		ib->mPosition = gn.position + Vector3(0.0f, 0.0f, posZ);
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
 
 		fps->pop();
@@ -175,7 +175,7 @@ bool Bubble::destroyNearbyBubbles()
 void Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
 {
 	// Cycle through all collided game objects
-	Range3D eb = { position - Vector3(1.5f), position + Vector3(1.5f) };
+	Range3D eb = { mPosition - Vector3(1.5f), mPosition + Vector3(1.5f) };
 	std::unique_ptr<std::unordered_set<GameObject*>> collided = RoomManager::singleton->mCollisionManager->checkCollision(eb, this, { GOT_BUBBLE });
 	for (const auto& item : *collided)
 	{
@@ -199,7 +199,7 @@ void Bubble::destroyDisjointBubbles()
 		std::unordered_set<Bubble*> group;
 		for (auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
 		{
-			if (go->getType() != GOT_BUBBLE || go->destroyMe)
+			if (go->getType() != GOT_BUBBLE || go->mDestroyMe)
 			{
 				continue;
 			}
@@ -233,13 +233,13 @@ void Bubble::destroyDisjointBubbles()
 				{
 					{
 						GraphNode gn;
-						gn.position = item->position;
+						gn.position = item->mPosition;
 						gn.color = ((Bubble*)item)->mAmbientColor;
 						fps->push(gn);
 					}
 
 					Bubble* ib = (Bubble*)item;
-					ib->destroyMe = true;
+					ib->mDestroyMe = true;
 				}
 			}
 		}
@@ -254,7 +254,7 @@ void Bubble::destroyDisjointBubbles()
 		auto& gn = fps->front();
 
 		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, false);
-		ib->position = gn.position;
+		ib->mPosition = gn.position;
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
 
 		fps->pop();
@@ -264,7 +264,7 @@ void Bubble::destroyDisjointBubbles()
 std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered_set<Bubble*> & group)
 {
 	// BBox for adjacent bubbles
-	Range3D bbox(position - Vector3(1.5f), position + Vector3(1.5f));
+	Range3D bbox(mPosition - Vector3(1.5f), mPosition + Vector3(1.5f));
 
 	// Check for collisions against other game objects (DFS-like graph)
 	std::unique_ptr<std::unordered_set<GameObject*>> collided = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this, { GOT_BUBBLE });
@@ -290,7 +290,7 @@ std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered
 			if (graph->set.find(bi) == graph->set.end())
 			{
 				// Check if bubble is attached to the ceiling
-				const bool attachedToCeiling = bi->position.y() >= -0.1f;
+				const bool attachedToCeiling = bi->mPosition.y() >= -0.1f;
 
 				// Insert it, if color is the same or it's not attached to the ceiling
 				if (!attachedToCeiling || bi->mAmbientColor == mAmbientColor)
@@ -322,7 +322,7 @@ std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered
 			graph->set.insert(this);
 		}
 	}
-	else if (position.y() < -0.1f)
+	else if (mPosition.y() < -0.1f)
 	{
 		graph->set.insert(this);
 	}

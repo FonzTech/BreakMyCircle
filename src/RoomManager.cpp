@@ -109,19 +109,6 @@ void RoomManager::loadRoom(const std::string & name)
 			gameObject = fx(item);
 		}
 
-		// Read parameters
-		{
-			const auto& it = item.find("position");
-			if (it != item.end())
-			{
-				Float position[3];
-				(*it).at("x").get_to(position[0]);
-				(*it).at("y").get_to(position[1]);
-				(*it).at("z").get_to(position[2]);
-				gameObject->position = Vector3(position[0], position[1], position[2]);
-			}
-		}
-
 		// Push into room
 		mGoLayers[parent].push_back(gameObject);
 	}
@@ -177,7 +164,7 @@ void RoomManager::createLevelRoom()
 
 			Vector3 position = { startX + x * 2.0f, y * -2.0f, 0.0f };
 
-			gameObject->position = position;
+			gameObject->mPosition = position;
 			RoomManager::singleton->mGoLayers[GOL_SECOND].push_back(gameObject);
 		}
 	}
@@ -185,21 +172,21 @@ void RoomManager::createLevelRoom()
 	// Create player
 	{
 		std::shared_ptr<Player> p = std::make_shared<Player>(GOL_SECOND);
-		p->position = { 8.0f, -35.0f, 0.0f };
+		p->mPosition = { 8.0f, -35.0f, 0.0f };
 		RoomManager::singleton->mGoLayers[GOL_SECOND].push_back(p);
 	}
 
 	// Create scenery
 	{
 		std::shared_ptr<Scenery> p = std::make_shared<Scenery>(GOL_FIRST);
-		p->position = Vector3(0.0f);
+		p->mPosition = Vector3(0.0f);
 		RoomManager::singleton->mGoLayers[GOL_FIRST].push_back(p);
 	}
 
 	// Create skybox
 	{
-		std::shared_ptr<Skybox> p = std::make_shared<Skybox>(GOL_FIRST, "skybox_1");
-		p->position = Vector3(0.0f);
+		std::shared_ptr<Skybox> p = std::make_shared<Skybox>(GOL_FIRST, "skybox_1", Vector3(0.0f));
+		p->mPosition = Vector3(0.0f);
 		RoomManager::singleton->mGoLayers[GOL_FIRST].push_back(p);
 	}
 

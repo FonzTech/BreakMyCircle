@@ -27,6 +27,8 @@ using namespace Magnum::Math::Literals;
 
 std::unique_ptr<CommonUtility> CommonUtility::singleton = nullptr;
 
+const std::string CommonUtility::VECTOR_COMPONENTS[] = { "x", "y", "z", "w" };
+
 CommonUtility::CommonUtility()
 {
 }

@@ -68,7 +68,7 @@ void FallingBubble::update()
 	{
 		if (mWrapper.parameters.index >= mWrapper.parameters.total)
 		{
-			destroyMe = true;
+			mDestroyMe = true;
 		}
 		else
 		{
@@ -88,13 +88,13 @@ void FallingBubble::update()
 			{
 				mVelocity += { 0.0f, -2.0f, 0.0f };
 			}
-			position += mVelocity * mDeltaTime;
+			mPosition += mVelocity * mDeltaTime;
 		}
 
 		// Check for off-screen position
-		if (position.y() < -300.0f)
+		if (mPosition.y() < -300.0f)
 		{
-			destroyMe = true;
+			mDestroyMe = true;
 			return;
 		}
 	}
@@ -103,12 +103,12 @@ void FallingBubble::update()
 	if (mSpark)
 	{
 		// Apply transformations
-		const Matrix4 mat = Matrix4::translation(position) * Matrix4::scaling(Vector3(3.0f));
+		const Matrix4 mat = Matrix4::translation(mPosition) * Matrix4::scaling(Vector3(3.0f));
 		mDrawables.at(0)->setTransformation(mat);
 	}
 	else
 	{
-		const Matrix4 mat = Matrix4::translation(position);
+		const Matrix4 mat = Matrix4::translation(mPosition);
 		mDrawables.at(0)->setTransformation(mat);
 	}
 }
@@ -132,7 +132,7 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 	else
 	{
 		((Shaders::Phong&) baseDrawable->getShader())
-			.setLightPosition(position + Vector3(0.0f, 0.0f, 1.0f))
+			.setLightPosition(mPosition + Vector3(0.0f, 0.0f, 1.0f))
 			.setLightColor(0x808080_rgbf)
 			.setSpecularColor(0xffffff00_rgbaf)
 			.setAmbientColor(0xc0c0c0_rgbf)

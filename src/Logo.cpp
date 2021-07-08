@@ -41,8 +41,8 @@ Logo::Logo(const Sint8 parentIndex) : GameObject()
 	mLightDirection = false;
 
 	// Load assets
-	position = Vector3(0.0f);
-	mManipulator->setTransformation(Matrix4::translation(position));
+	mPosition = Vector3(0.0f);
+	mManipulator->setTransformation(Matrix4::translation(mPosition));
 
 	mLogoManipulator = new Object3D(mManipulator.get());
 	AssetManager().loadAssets(*this, *mLogoManipulator, "scenes/logo.glb", this);
@@ -117,7 +117,7 @@ void Logo::update()
 
 		// Create random bubble
 		std::shared_ptr<FallingBubble> fb = std::make_shared<FallingBubble>(GOL_FIRST, it->second.color, false, -25.0f);
-		fb->position = position + rp;
+		fb->mPosition = mPosition + rp;
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(fb);
 
 		// Reset timer
@@ -155,7 +155,7 @@ void Logo::update()
 void Logo::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPosition(position + mLightPosition)
+		.setLightPosition(mPosition + mLightPosition)
 		.setLightColor(0xffffff60_rgbaf)
 		.setSpecularColor(0xffffff00_rgbaf)
 		.setAmbientColor(0x505050ff_rgbaf)
@@ -273,14 +273,14 @@ void Logo::setCameraParameters()
 	// First layer
 	{
 		auto& layer = RoomManager::singleton->mGoLayers[GOL_FIRST];
-		layer.mCameraEye = position + Vector3(0.0f, 0.0f, 20.0f);
-		layer.mCameraTarget = position;
+		layer.mCameraEye = mPosition + Vector3(0.0f, 0.0f, 20.0f);
+		layer.mCameraTarget = mPosition;
 	}
 
 	// Second layer
 	{
 		auto& layer = RoomManager::singleton->mGoLayers[GOL_SECOND];
-		layer.mCameraEye = position + Vector3(0.0f, 0.0f, 6.0f);
-		layer.mCameraTarget = position;
+		layer.mCameraEye = mPosition + Vector3(0.0f, 0.0f, 6.0f);
+		layer.mCameraTarget = mPosition;
 	}
 }

@@ -21,5 +21,5 @@ private:
 		TextureUnit = 0
 	};
 
-	Int _transformationProjectionMatrixUniform;
+	Int mTransformationProjectionMatrixUniform;
 };

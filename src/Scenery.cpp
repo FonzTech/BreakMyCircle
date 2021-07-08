@@ -37,7 +37,7 @@ Scenery::Scenery(const Sint8 parentIndex) : GameObject(parentIndex)
 
 	// Apply transformations
 	{
-		const auto& m = Matrix4::translation(position);
+		const auto& m = Matrix4::translation(mPosition);
 		mManipulatorList[0]->setTransformation(m);
 	}
 
@@ -45,7 +45,7 @@ Scenery::Scenery(const Sint8 parentIndex) : GameObject(parentIndex)
 		const auto& m = Matrix4::scaling(Vector3(100.0f));
 		mManipulatorList[1]->setTransformation(m);
 		mManipulatorList[1]->rotateX(90.0_degf);
-		mManipulatorList[1]->translate(position + Vector3(0.0f, 0.3f, 0.0f));
+		mManipulatorList[1]->translate(mPosition + Vector3(0.0f, 0.3f, 0.0f));
 	}
 
 	// Load assets
@@ -58,7 +58,7 @@ Scenery::Scenery(const Sint8 parentIndex) : GameObject(parentIndex)
 	createWaterDrawable();
 
 	// Set camera position for scenery
-	position = Vector3(0.0f);
+	mPosition = Vector3(0.0f);
 
 	auto& p = RoomManager::singleton->mGoLayers[GOL_FIRST];
 	p.mCameraEye = Vector3(7.65094f, 11.6036f, 11.9944f);
@@ -162,7 +162,7 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 			// Create map function
 			auto mapFx = [&](const decltype(source)::value_type & vector)
 			{
-				return camera.cameraMatrix().transformPoint(position + vector);
+				return camera.cameraMatrix().transformPoint(mPosition + vector);
 			};
 
 			// Apply array mapping to all its elements

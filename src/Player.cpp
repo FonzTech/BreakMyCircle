@@ -109,7 +109,7 @@ void Player::update()
 		{
 			// Create projectile
 			std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mParentIndex, mProjColors[0].rgb());
-			go->position = position;
+			go->mPosition = mPosition;
 			go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
 			RoomManager::singleton->mGoLayers[mParentIndex].push_back(go);
 
@@ -133,7 +133,7 @@ void Player::update()
 	// Shooter manipulation
 	{
 		// Compute transformations
-		Matrix4 translation = Matrix4::translation(position);
+		Matrix4 translation = Matrix4::translation(mPosition);
 		Float finalAngle(Deg(mShootAngle) + Deg(90.0f));
 
 		// Apply transformations to shooter
@@ -147,7 +147,7 @@ void Player::update()
 	{
 		// Apply transformations to bubbles
 		// const Vector3 pos = position + mProjPath->getCurrentPosition();
-		const Vector3 pos = position;
+		const Vector3 pos = mPosition;
 		mSphereManipulator->setTransformation(Matrix4::translation(pos));
 	}
 }
@@ -158,7 +158,7 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	if (baseDrawable == mSphereDrawables[0])
 	{
 		shader
-			.setLightPosition(position + Vector3(0.0f, 0.0f, 1.0f))
+			.setLightPosition(mPosition + Vector3(0.0f, 0.0f, 1.0f))
 			.setLightColor(0x202020_rgbf)
 			.setSpecularColor(0xffffff00_rgbaf)
 			.setAmbientColor(0xc0c0c0_rgbf)
@@ -167,7 +167,7 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	else
 	{
 		shader
-			.setLightPosition(position + Vector3(-4.0f, 14.0f, 20.0f))
+			.setLightPosition(mPosition + Vector3(-4.0f, 14.0f, 20.0f))
 			.setLightColor(0xffffff60_rgbaf)
 			.setSpecularColor(0xffffff00_rgbaf)
 			.setAmbientColor(0xa0a0a0_rgbf)

@@ -44,17 +44,17 @@ const Int Projectile::getType() const
 void Projectile::update()
 {
 	// Affect position by velocity
-	position += mVelocity * mDeltaTime * mSpeed;
+	mPosition += mVelocity * mDeltaTime * mSpeed;
 
 	// Bounce against side walls
-	if (position.x() <= mLeftX && mVelocity.x() < 0.0f)
+	if (mPosition.x() <= mLeftX && mVelocity.x() < 0.0f)
 	{
-		position[0] = mLeftX + 0.01f;
+		mPosition[0] = mLeftX + 0.01f;
 		mVelocity[0] *= -1.0f;
 	}
-	else if (position.x() > mRightX && mVelocity.x() > 0.0f)
+	else if (mPosition.x() > mRightX && mVelocity.x() > 0.0f)
 	{
-		position[0] = mRightX - 0.01f;
+		mPosition[0] = mRightX - 0.01f;
 		mVelocity[0] *= -1.0f;
 	}
 
@@ -62,25 +62,25 @@ void Projectile::update()
 	updateBBox();
 
 	// Check for collision against other bubbles
-	const std::unique_ptr<std::unordered_set<GameObject*>> bubbles = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this, { GOT_BUBBLE });
+	const std::unique_ptr<std::unordered_set<GameObject*>> bubbles = RoomManager::singleton->mCollisionManager->checkCollision(mBbox, this, { GOT_BUBBLE });
 	if (bubbles->size() > 0)
 	{
 		collidedWith(bubbles);
 	}
 	// Check if projectile reached the top ceiling
-	else if (position.y() > 0.0f)
+	else if (mPosition.y() > 0.0f)
 	{
 		snapToGrid();
 	}
 
 	// Upgrade transformations
-	mDrawables.at(0)->setTransformation(Matrix4::translation(position));
+	mDrawables.at(0)->setTransformation(Matrix4::translation(mPosition));
 }
 
 void Projectile::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPosition(position + Vector3(0.0f, 0.0f, 1.0f))
+		.setLightPosition(mPosition + Vector3(0.0f, 0.0f, 1.0f))
 		.setLightColor(0xffffff60_rgbaf)
 		.setSpecularColor(0xffffff00_rgbaf)
 		.setAmbientColor(0x808080_rgbf)
@@ -102,8 +102,8 @@ void Projectile::snapToGrid()
 
 	// Snap to grid
 	Float offset = thisRowIndex % 2 ? 0.0f : 1.0f;
-	position = {
-		round((position.x() - offset) / 2.0f) * 2.0f + offset,
+	mPosition = {
+		round((mPosition.x() - offset) / 2.0f) * 2.0f + offset,
 		getSnappedYPos(),
 		0.0f
 	};
@@ -114,7 +114,7 @@ void Projectile::snapToGrid()
 
 	// Create new bubbles with the same color
 	std::shared_ptr<Bubble> b = std::make_shared<Bubble>(mParentIndex, mAmbientColor);
-	b->position = position;
+	b->mPosition = mPosition;
 	b->updateBBox();
 
 	// Apply ripple effect
@@ -122,7 +122,7 @@ void Projectile::snapToGrid()
 	{
 		if (go != b && go->getType() == GOT_BUBBLE)
 		{
-			((Bubble*)go.get())->applyRippleEffect(position);
+			((Bubble*)go.get())->applyRippleEffect(mPosition);
 		}
 	}
 
@@ -136,13 +136,13 @@ void Projectile::snapToGrid()
 	RoomManager::singleton->mGoLayers[mParentIndex].push_back(b);
 
 	// Destroy me
-	destroyMe = true;
+	mDestroyMe = true;
 }
 
 void Projectile::updateBBox()
 {
 	// Update bounding box
-	bbox = Range3D{ position - Vector3(0.8f), position + Vector3(0.8f) };
+	mBbox = Range3D{ mPosition - Vector3(0.8f), mPosition + Vector3(0.8f) };
 }
 
 void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
@@ -164,21 +164,21 @@ void Projectile::adjustPosition()
 
 	for (auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
 	{
-		if (go.get() == this || go->position.y() != position.y())
+		if (go.get() == this || go->mPosition.y() != mPosition.y())
 		{
 			continue;
 		}
-		else if (go->position.x() == position.x())
+		else if (go->mPosition.x() == mPosition.x())
 		{
 			overlaps = true;
 		}
-		else if (go->position.x() == position.x() - 2.0f)
+		else if (go->mPosition.x() == mPosition.x() - 2.0f)
 		{
-			toLeftX = go->position.x();
+			toLeftX = go->mPosition.x();
 		}
-		else if (go->position.x() == position.x() + 2.0f)
+		else if (go->mPosition.x() == mPosition.x() + 2.0f)
 		{
-			toRightX = go->position.x();
+			toRightX = go->mPosition.x();
 		}
 	}
 
@@ -187,17 +187,17 @@ void Projectile::adjustPosition()
 		return;
 	}
 
-	if (position.x() >= mLeftX + (mRightX - mLeftX) * 0.5f)
+	if (mPosition.x() >= mLeftX + (mRightX - mLeftX) * 0.5f)
 	{
-		position[0] += toLeftX <= IMPOSSIBLE_PROJECTILE_XPOS ? -2.0f : 2.0f;
+		mPosition[0] += toLeftX <= IMPOSSIBLE_PROJECTILE_XPOS ? -2.0f : 2.0f;
 	}
 	else
 	{
-		position[0] += toRightX <= IMPOSSIBLE_PROJECTILE_XPOS ? 2.0f : -2.0f;
+		mPosition[0] += toRightX <= IMPOSSIBLE_PROJECTILE_XPOS ? 2.0f : -2.0f;
 	}
 }
 
 Float Projectile::getSnappedYPos()
 {
-	return round(position.y() / 2.0f) * 2.0f;
+	return round(mPosition.y() / 2.0f) * 2.0f;
 }

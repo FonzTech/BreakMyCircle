@@ -24,14 +24,14 @@ CubeMapShader::CubeMapShader()
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(link());
 
-	_transformationProjectionMatrixUniform = uniformLocation("transformationProjectionMatrix");
+	mTransformationProjectionMatrixUniform = uniformLocation("transformationProjectionMatrix");
 
 	setUniform(uniformLocation("textureData"), TextureUnit);
 }
 
 CubeMapShader& CubeMapShader::setTransformationProjectionMatrix(const Matrix4& matrix)
 {
-	setUniform(_transformationProjectionMatrixUniform, matrix);
+	setUniform(mTransformationProjectionMatrixUniform, matrix);
 	return *this;
 }
 

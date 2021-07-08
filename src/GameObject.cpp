@@ -3,7 +3,7 @@
 
 GameObject::GameObject() : IDrawCallback()
 {
-	destroyMe = false;
+	mDestroyMe = false;
 	mDeltaTime = 0.0f;
 	mManipulator = std::make_unique<Object3D>(&RoomManager::singleton->mScene);
 }

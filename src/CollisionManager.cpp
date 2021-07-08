@@ -15,11 +15,11 @@ std::unique_ptr<std::unordered_set<GameObject*>> CollisionManager::checkCollisio
 	for (UnsignedInt i = 0; i < gos->size(); ++i)
 	{
 		const auto& gi = gos->at(i);
-		if (gi->destroyMe || go == gi.get() || types.find(gi->getType()) == types.end())
+		if (gi->mDestroyMe || go == gi.get() || types.find(gi->getType()) == types.end())
 		{
 			continue;
 		}
-		else if (Math::intersects(bbox, gos->at(i)->bbox))
+		else if (Math::intersects(bbox, gos->at(i)->mBbox))
 		{
 			GameObject* p = gi.get();
 			if (set->find(p) == set->end())

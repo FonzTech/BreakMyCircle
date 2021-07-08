@@ -30,7 +30,7 @@ public:
 	public:
 		bool operator()(const Bubble* b1, const Bubble* b2) const
 		{
-			return b1->mAmbientColor == b2->mAmbientColor && b1->position == b2->position;
+			return b1->mAmbientColor == b2->mAmbientColor && b1->mPosition == b2->mPosition;
 		}
 	};
 
@@ -41,9 +41,9 @@ public:
 		std::size_t operator()(const Bubble* b) const
 		{
 			auto h = std::hash<Float>()(Float(b->mAmbientColor.toSrgbInt()));
-			h ^= std::hash<Float>()(b->position[0]);
-			h ^= std::hash<Float>()(b->position[1]);
-			h ^= std::hash<Float>()(b->position[2]);
+			h ^= std::hash<Float>()(b->mPosition[0]);
+			h ^= std::hash<Float>()(b->mPosition[1]);
+			h ^= std::hash<Float>()(b->mPosition[2]);
 			return h;
 		}
 	};

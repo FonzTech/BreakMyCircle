@@ -96,7 +96,7 @@ void Engine::tickEvent()
 		for (UnsignedInt i = 0; i < gos->size();)
 		{
 			std::shared_ptr<GameObject> go = gos->at(i);
-			if (go->destroyMe)
+			if (go->mDestroyMe)
 			{
 				gos->erase(gos->begin() + i);
 			}

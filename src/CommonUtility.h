@@ -42,6 +42,7 @@
 #include <Magnum/GL/CubeMapTexture.h>
 #include <Magnum/GL/AbstractShaderProgram.h>
 #include <Magnum/Trade/AbstractMaterialData.h>
+#include <nlohmann/json.hpp>
 
 #include "CommonTypes.h"
 #include "ColoredDrawable.h"
@@ -55,6 +56,9 @@ typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::CubeMapTexture, GL::Abstrac
 
 class CommonUtility
 {
+protected:
+	static const std::string VECTOR_COMPONENTS[];
+
 public:
 	static std::unique_ptr<CommonUtility> singleton;
 
@@ -66,6 +70,23 @@ public:
 
 	// Clear method
 	void clear();
+
+	// Read vector from JSON
+	template <std::size_t S, typename T>
+	const Math::Vector<S, T>& getVectorFromJson(const nlohmann::json & params)
+	{
+		Math::Vector<S, T> vector;
+		const auto& it = params.find("position");
+		if (it != params.end())
+		{
+			Float position[S];
+			for (Uint8 i = 0; i < S; ++i)
+			{
+				(*it).at(VECTOR_COMPONENTS[i]).get_to(vector[i]);
+			}
+		}
+		return vector;
+	};
 
 	// Audio loader
 	Resource<Audio::Buffer> loadAudioData(const std::string & filename);
