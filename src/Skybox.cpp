@@ -28,12 +28,16 @@ std::shared_ptr<GameObject> Skybox::getInstance(const nlohmann::json & params)
 	std::string name;
 	params.at("name").get_to(name);
 
-	std::shared_ptr<Skybox> p = std::make_shared<Skybox>(parent, name);
+	// Read parameters
+	const Vector3& position = CommonUtility::singleton->getVectorFromJson<3, Float>(params);
+
+	std::shared_ptr<Skybox> p = std::make_shared<Skybox>(parent, name, position);
 	return p;
 }
 
-Skybox::Skybox(const Sint8 parentIndex, const std::string & name) : GameObject(parentIndex)
+Skybox::Skybox(const Sint8 parentIndex, const std::string & name, const Vector3 & position) : GameObject(parentIndex)
 {
+	mPosition = position;
 	createDrawable(name);
 }
 
@@ -149,4 +153,5 @@ void Skybox::createDrawable(const std::string & name)
 	// Apply transformation
 	mManipulator->setTransformation(Matrix4::scaling(Vector3(100.0f)));
 	mManipulator->rotateZ(180.0_degf);
+	mManipulator->translate(mPosition);
 }
