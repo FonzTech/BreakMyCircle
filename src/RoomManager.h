@@ -22,6 +22,7 @@
 
 #include "GameObject.h"
 #include "CollisionManager.h"
+#include "StreamedAudioBuffer.h"
 
 using namespace Magnum;
 
@@ -81,6 +82,10 @@ public:
 	std::unique_ptr<Audio::Context> mAudioContext;
 	std::unique_ptr<Audio::Listener3D> mAudioListener;
 	Audio::PlayableGroup3D mAudioPlayables;
+
+	// Background music
+	std::unique_ptr<StreamedAudioBuffer> mBgMusicStream;
+	std::unique_ptr<Audio::Playable3D> mBgMusicPlayable;
 
 	// Collision Manager
 	std::unique_ptr<CollisionManager> mCollisionManager;

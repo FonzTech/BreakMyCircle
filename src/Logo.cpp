@@ -73,18 +73,6 @@ Logo::Logo(const Sint8 parentIndex) : GameObject()
 
 	// Set camera parameters
 	setCameraParameters();
-
-	// Load audio
-	{
-		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData("audios/logo.ogg");
-
-		std::shared_ptr<Audio::Playable3D> playable = std::make_shared<Audio::Playable3D>(*mManipulator, -Vector3::yAxis(), &RoomManager::singleton->mAudioPlayables);
-		playable->source()
-			.setBuffer(buffer)
-			.setLooping(true)
-			.play();
-		mPlayables[0] = playable;
-	}
 }
 
 const Int Logo::getType() const

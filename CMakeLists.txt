@@ -58,6 +58,7 @@ add_executable(${PROJECT_NAME} WIN32
 	src/Player.cpp
 	src/Projectile.cpp
 	src/RoomManager.cpp
+	src/StreamedAudioBuffer.cpp
 	src/SpriteShader.cpp
 	src/main.cpp
 )
@@ -90,7 +91,7 @@ install(FILES paths/new_sphere.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/paths)
 
 install(FILES rooms/intro.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/rooms)
 
-install(FILES audios/logo.ogg DESTINATION ${CMAKE_INSTALL_PREFIX}/audios)
+install(FILES audios/bgmusic.ogg DESTINATION ${CMAKE_INSTALL_PREFIX}/audios)
 
 # Make the executable a default target to build & run in Visual Studio
 # set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})

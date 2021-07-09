@@ -102,6 +102,9 @@
     <ClCompile Include="src\CubeMapShader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="src\StreamedAudioBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src/RoomManager.h">
@@ -178,6 +181,9 @@
     </ClInclude>
     <ClInclude Include="src\CubeMapShader.h">
       <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="src\StreamedAudioBuffer.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

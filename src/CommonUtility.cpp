@@ -53,7 +53,7 @@ Resource<Audio::Buffer> CommonUtility::loadAudioData(const std::string & filenam
 			std::exit(1);
 		}
 
-		if (!importer->openFile(filename))
+		if (!importer->openFile("audios/" + filename + ".ogg"))
 		{
 			std::exit(2);
 		}

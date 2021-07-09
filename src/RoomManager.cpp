@@ -79,15 +79,40 @@ void RoomManager::prepareRoom()
 	{
 		layer.second.list->clear();
 	}
+
+	// Delete background music
+	mBgMusicStream = nullptr;
+	mBgMusicPlayable = nullptr;
 }
 
 void RoomManager::loadRoom(const std::string & name)
 {
 	// Load room from file
 	auto content = Utility::Directory::readString("rooms/" + name + ".txt");
-	auto list = nlohmann::json::parse(content);
+	auto roomData = nlohmann::json::parse(content);
+
+	// Load audio
+	{
+		auto it = roomData.find("bgmusic");
+		if (it != roomData.end())
+		{
+			std::string bgmusic = it->get<std::string>();
+
+			mBgMusicStream = std::make_unique<StreamedAudioBuffer>();
+			mBgMusicStream->openAudio(bgmusic);
+
+			mBgMusicPlayable = std::make_unique<Audio::Playable3D>(mCameraObject, &mAudioPlayables);
+			mBgMusicPlayable->source()
+				.setBuffer(&mBgMusicStream->getBuffer())
+				.setMinGain(1.0f)
+				.setMaxGain(1.0f)
+				.setLooping(true)
+				.play();
+		}
+	}
 
 	// Iterate through list
+	const std::vector<nlohmann::json> list = roomData["objects"].get<std::vector<nlohmann::json>>();
 	for (auto& item : list)
 	{
 		// Get type

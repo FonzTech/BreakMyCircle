@@ -9,6 +9,7 @@
 #include "Engine.h"
 #include "CommonUtility.h"
 #include "InputManager.h"
+#include "StreamedAudioBuffer.h"
 #include "RoomManager.h"
 #include "GameObject.h"
 
