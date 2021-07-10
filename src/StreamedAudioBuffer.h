@@ -25,12 +25,13 @@ public:
 	~StreamedAudioBuffer();
 
 	void openAudio(const std::string & filename);
+	void feed();
+	void swapBuffers();
 
 	Audio::Buffer& getFrontBuffer();
 	const Audio::BufferFormat getBufferFormat() const;
 	const Int getNumberOfChannels() const;
 	const UnsignedInt getSampleRate() const;
-	void feed();
 
 protected:
 
@@ -41,6 +42,9 @@ protected:
 
 	// Magnum audio
 	Audio::Buffer mBuffers[2];
+	UnsignedInt mBackBufferIndex;
+	UnsignedInt mSeek;
+	bool mWasFed;
 
 	Audio::BufferFormat mCachedBufferFormat;
 	Int mCachedNumberOfChannels;

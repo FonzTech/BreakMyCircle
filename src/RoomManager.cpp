@@ -64,12 +64,31 @@ void RoomManager::clear()
 void RoomManager::update()
 {
 	auto& source = mBgMusicPlayable->source();
-	if (source.state() == Audio::Source::State::Stopped)
+	switch (source.state())
 	{
-		source.setBuffer(nullptr);
-		mBgMusicStream->feed();
+	case Audio::Source::State::Stopped:
+		mBgMusicStream->swapBuffers();
 		source.setBuffer(&mBgMusicStream->getFrontBuffer());
 		source.play();
+		break;
+
+	case Audio::Source::State::Playing:
+		if (source.offsetInSamples() >= AS_BUFFER_SIZE / mBgMusicStream->getNumberOfChannels())
+		{
+			// Stop source
+			source.stop();
+
+			// Swap buffers and set source to use the front one
+			mBgMusicStream->swapBuffers();
+			source.setBuffer(&mBgMusicStream->getFrontBuffer());
+
+			// Resume source
+			source.play();
+
+			// Feed back buffer
+			mBgMusicStream->feed();
+		}
+		break;
 	}
 }
 
