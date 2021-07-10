@@ -7,6 +7,7 @@
 #include <vector>
 #include <unordered_map>
 #include <functional>
+#include <thread>
 #include <nlohmann/json.hpp>
 
 #include <Corrade/Containers/Containers.h>
@@ -87,6 +88,7 @@ public:
 	Audio::PlayableGroup3D mAudioPlayables;
 
 	// Background music
+	std::unique_ptr<std::thread> mBgMusicThread;
 	std::unique_ptr<StreamedAudioBuffer> mBgMusicStream;
 	std::unique_ptr<Audio::Playable3D> mBgMusicPlayable;
 
@@ -104,9 +106,8 @@ public:
 	explicit RoomManager();
 
 	void clear();
-	void update();
 	void setup();
-	void prepareRoom();
+	void prepareRoom(const bool stopBgMusic);
 	void loadRoom(const std::string & name);
 	void createLevelRoom();
 	Instantiator getGameObjectFromNoiseValue(const double value);

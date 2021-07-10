@@ -8,9 +8,6 @@ std::unique_ptr<StreamedAudioBuffer> StreamedAudioBuffer::singleton = nullptr;
 
 StreamedAudioBuffer::StreamedAudioBuffer()
 {
-	mBackBufferIndex = 0;
-	mWasFed = false;
-	mSeek = 0;
 }
 
 StreamedAudioBuffer::~StreamedAudioBuffer()
@@ -37,12 +34,6 @@ void StreamedAudioBuffer::clear()
 
 void StreamedAudioBuffer::feed()
 {
-	// Check if back buffer was already fed
-	if (mWasFed)
-	{
-		return;
-	}
-
 	// Check for stream validity
 	if (mStream == nullptr)
 	{
@@ -54,23 +45,25 @@ void StreamedAudioBuffer::feed()
 	stb_vorbis_info* vi = (stb_vorbis_info*)mInfo;
 
 	// Work on back buffer
-	std::size_t dbs = AS_BUFFER_SIZE * 2;
-	const int amount = stb_vorbis_get_samples_short_interleaved(vs, vi->channels, mRawBuffers[mBackBufferIndex], dbs);
-	if (amount > 0)
+	for (UnsignedInt i = 0; i < 2; ++i)
 	{
-		const Containers::ArrayView<const short> av{ mRawBuffers[mBackBufferIndex], dbs };
-		mBuffers[mBackBufferIndex].setData(mCachedBufferFormat, av, mCachedSampleRate);
+		const int amount = stb_vorbis_get_samples_short_interleaved(vs, vi->channels, mRawBuffer, AS_BUFFER_SIZE);
+		if (amount > 0)
+		{
+			const Containers::ArrayView<const short> av{ mRawBuffer, std::size_t(amount * vi->channels) };
+			mBuffer.setData(mCachedBufferFormat, av, mCachedSampleRate);
 
-		mSeek += amount / 2;
-		stb_vorbis_seek(vs, mSeek);
+			break;
+		}
+		else if (i)
+		{
+			Error{} << "Could not read further for streamed audio buffer.";
+		}
+		else
+		{
+			stb_vorbis_seek(vs, 0);
+		}
 	}
-	mWasFed = true;
-}
-
-void StreamedAudioBuffer::swapBuffers()
-{
-	mWasFed = false;
-	mBackBufferIndex = 1 - mBackBufferIndex;
 }
 
 void StreamedAudioBuffer::openAudio(const std::string & filename)
@@ -120,7 +113,7 @@ void StreamedAudioBuffer::openAudio(const std::string & filename)
 
 Audio::Buffer& StreamedAudioBuffer::getFrontBuffer()
 {
-	return mBuffers[1 - mBackBufferIndex];
+	return mBuffer;
 }
 
 const Audio::BufferFormat StreamedAudioBuffer::getBufferFormat() const

@@ -1,4 +1,5 @@
 #include <vector>
+#include <chrono>
 #include <Corrade/Containers/Array.h>
 #include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
@@ -14,6 +15,7 @@
 #include "Logo.h"
 #include "Skybox.h"
 
+using namespace std::chrono_literals;
 using namespace Magnum::Math::Literals;
 
 std::unique_ptr<RoomManager> RoomManager::singleton = nullptr;
@@ -24,6 +26,8 @@ RoomManager::RoomManager()
 	mAudioContext = std::make_unique<Audio::Context>(
 		Audio::Context::Configuration{}
 		.setHrtf(Audio::Context::Configuration::Hrtf::Enabled)
+		.setFrequency(44100)
+		.setRefreshRate(50)
 		);
 	mAudioListener = std::make_unique<Audio::Listener3D>(mScene);
 
@@ -55,41 +59,13 @@ void RoomManager::clear()
 	mGoLayers.clear();
 
 	// Clear audio context
+	mBgMusicPlayable = nullptr;
+	mBgMusicStream = nullptr;
+	mBgMusicThread = nullptr;
 	mAudioContext = nullptr;
 
 	// De-reference camera
 	mCamera = nullptr;
-}
-
-void RoomManager::update()
-{
-	auto& source = mBgMusicPlayable->source();
-	switch (source.state())
-	{
-	case Audio::Source::State::Stopped:
-		mBgMusicStream->swapBuffers();
-		source.setBuffer(&mBgMusicStream->getFrontBuffer());
-		source.play();
-		break;
-
-	case Audio::Source::State::Playing:
-		if (source.offsetInSamples() >= AS_BUFFER_SIZE / mBgMusicStream->getNumberOfChannels())
-		{
-			// Stop source
-			source.stop();
-
-			// Swap buffers and set source to use the front one
-			mBgMusicStream->swapBuffers();
-			source.setBuffer(&mBgMusicStream->getFrontBuffer());
-
-			// Resume source
-			source.play();
-
-			// Feed back buffer
-			mBgMusicStream->feed();
-		}
-		break;
-	}
 }
 
 void RoomManager::setup()
@@ -104,7 +80,7 @@ void RoomManager::setup()
 	mCamera->setViewport(GL::defaultFramebuffer.viewport().size());
 }
 
-void RoomManager::prepareRoom()
+void RoomManager::prepareRoom(const bool stopBgMusic)
 {
 	// Delete all game objects across all layers
 	for (const auto& layer : mGoLayers)
@@ -113,8 +89,11 @@ void RoomManager::prepareRoom()
 	}
 
 	// Delete background music
-	mBgMusicStream = nullptr;
-	mBgMusicPlayable = nullptr;
+	if (stopBgMusic)
+	{
+		mBgMusicStream = nullptr;
+		mBgMusicPlayable = nullptr;
+	}
 }
 
 void RoomManager::loadRoom(const std::string & name)
@@ -133,6 +112,43 @@ void RoomManager::loadRoom(const std::string & name)
 			// Create and load stream
 			mBgMusicStream = std::make_unique<StreamedAudioBuffer>();
 			mBgMusicStream->openAudio(bgmusic);
+
+			// Create and detach thread
+			mBgMusicThread = std::make_unique<std::thread>([&]()
+			{
+				if (mBgMusicStream != nullptr)
+				{
+					const Int limit = AS_BUFFER_SIZE / mBgMusicStream->getNumberOfChannels() - 256;
+					while (mBgMusicStream != nullptr)
+					{
+						if (mBgMusicPlayable != nullptr)
+						{
+							auto& source = mBgMusicPlayable->source();
+							const bool b1 = source.state() == Audio::Source::State::Stopped;
+							const bool b2 = source.state() == Audio::Source::State::Playing && source.offsetInSamples() >= limit;
+							if (b1 || b2)
+							{
+								if (b2)
+								{
+									source.stop();
+								}
+
+								source.setBuffer(nullptr);
+
+								if (mBgMusicPlayable != nullptr)
+								{
+									mBgMusicStream->feed();
+									source.setBuffer(&mBgMusicStream->getFrontBuffer());
+									source.setOffsetInSamples(0);
+									source.play();
+								}
+							}
+						}
+						std::this_thread::sleep_for(20ms);
+					}
+				}
+			});
+			mBgMusicThread->detach();
 
 			// Create playable resource with buffer
 			mBgMusicPlayable = std::make_unique<Audio::Playable3D>(mCameraObject, &mAudioPlayables);

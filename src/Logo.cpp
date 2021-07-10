@@ -134,7 +134,7 @@ void Logo::update()
 #if NDEBUG or _DEBUG
 	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
 	{
-		RoomManager::singleton->prepareRoom();
+		RoomManager::singleton->prepareRoom(false);
 		RoomManager::singleton->createLevelRoom();
 	}
 #endif
