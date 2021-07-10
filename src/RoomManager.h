@@ -9,6 +9,9 @@
 #include <functional>
 #include <nlohmann/json.hpp>
 
+#include <Corrade/Containers/Containers.h>
+#include <Corrade/Containers/ArrayView.h>
+#include <Corrade/Containers/Reference.h>
 #include <Magnum/Magnum.h>
 #include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/Audio/Buffer.h>
@@ -101,6 +104,7 @@ public:
 	explicit RoomManager();
 
 	void clear();
+	void update();
 	void setup();
 	void prepareRoom();
 	void loadRoom(const std::string & name);

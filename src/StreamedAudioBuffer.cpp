@@ -17,12 +17,14 @@ StreamedAudioBuffer::~StreamedAudioBuffer()
 
 void StreamedAudioBuffer::clear()
 {
+	// Close stream
 	if (mStream != nullptr)
 	{
 		stb_vorbis_close((stb_vorbis*)mStream);
 		mStream = nullptr;
 	}
 
+	// Delete info struct
 	if (mInfo != nullptr)
 	{
 		std::free(mInfo);
@@ -32,20 +34,22 @@ void StreamedAudioBuffer::clear()
 
 void StreamedAudioBuffer::feed()
 {
+	// Check for stream validity
 	if (mStream == nullptr)
 	{
 		Error{} << "Feeding is not possible, because stream is NULL.";
 	}
 
-	stb_vorbis* vs = (stb_vorbis*) mStream;
-	stb_vorbis_info* vi = (stb_vorbis_info*) mInfo;
+	// Cast required pointers
+	stb_vorbis* vs = (stb_vorbis*)mStream;
+	stb_vorbis_info* vi = (stb_vorbis_info*)mInfo;
 
-	const int amount = stb_vorbis_get_samples_short_interleaved(vs, vi->channels, mRawBuffer, AS_BUFFER_SIZE);
+	// Work on provided buffer
+	const int amount = stb_vorbis_get_samples_short_interleaved(vs, vi->channels, mRawBuffers[0], AS_BUFFER_SIZE);
 	if (amount > 0)
 	{
-		const Containers::ArrayView<const short> av = mRawBuffer;
-		const Audio::BufferFormat bf = getBufferFormat();
-		mBuffer.setData(bf, av, vi->sample_rate);
+		const Containers::ArrayView<const short> av{ mRawBuffers[0], AS_BUFFER_SIZE };
+		mBuffers[0].setData(mCachedBufferFormat, av, mCachedSampleRate);
 	}
 }
 
@@ -85,16 +89,36 @@ void StreamedAudioBuffer::openAudio(const std::string & filename)
 	Debug{} << "Sample rate:" << vi.sample_rate;
 	Debug{} << "Samples:" << samples;
 	Debug{} << "Duration:" << stb_vorbis_stream_length_in_seconds(vs) << "seconds.";
-	
+
+	mCachedNumberOfChannels = vi.channels;
+	mCachedBufferFormat = computeBufferFormat();
+	mCachedSampleRate = vi.sample_rate;
+
+	// Feed back buffer
 	feed();
 }
 
-Audio::Buffer& StreamedAudioBuffer::getBuffer()
+Audio::Buffer& StreamedAudioBuffer::getFrontBuffer()
 {
-	return mBuffer;
+	return mBuffers[0];
 }
 
-Audio::BufferFormat StreamedAudioBuffer::getBufferFormat()
+const Audio::BufferFormat StreamedAudioBuffer::getBufferFormat() const
+{
+	return mCachedBufferFormat;
+}
+
+const Int StreamedAudioBuffer::getNumberOfChannels() const
+{
+	return mCachedNumberOfChannels;
+}
+
+const UnsignedInt StreamedAudioBuffer::getSampleRate() const
+{
+	return mCachedSampleRate;
+}
+
+const Audio::BufferFormat StreamedAudioBuffer::computeBufferFormat() const
 {
 	stb_vorbis_info* vi = (stb_vorbis_info*) mInfo;
 

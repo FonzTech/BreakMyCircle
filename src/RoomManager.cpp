@@ -1,4 +1,5 @@
 #include <vector>
+#include <Corrade/Containers/Array.h>
 #include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
@@ -60,6 +61,18 @@ void RoomManager::clear()
 	mCamera = nullptr;
 }
 
+void RoomManager::update()
+{
+	auto& source = mBgMusicPlayable->source();
+	if (source.state() == Audio::Source::State::Stopped)
+	{
+		source.setBuffer(nullptr);
+		mBgMusicStream->feed();
+		source.setBuffer(&mBgMusicStream->getFrontBuffer());
+		source.play();
+	}
+}
+
 void RoomManager::setup()
 {
 	// Set parent for camera
@@ -98,15 +111,17 @@ void RoomManager::loadRoom(const std::string & name)
 		{
 			std::string bgmusic = it->get<std::string>();
 
+			// Create and load stream
 			mBgMusicStream = std::make_unique<StreamedAudioBuffer>();
 			mBgMusicStream->openAudio(bgmusic);
 
+			// Create playable resource with buffer
 			mBgMusicPlayable = std::make_unique<Audio::Playable3D>(mCameraObject, &mAudioPlayables);
 			mBgMusicPlayable->source()
-				.setBuffer(&mBgMusicStream->getBuffer())
+				.setBuffer(&mBgMusicStream->getFrontBuffer())
 				.setMinGain(1.0f)
 				.setMaxGain(1.0f)
-				.setLooping(true)
+				.setLooping(false)
 				.play();
 		}
 	}

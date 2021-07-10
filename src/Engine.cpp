@@ -69,6 +69,9 @@ void Engine::tickEvent()
 	RoomManager::singleton->windowSize = ws;
 	RoomManager::singleton->mCamera->setViewport(ws);
 
+	// Update room
+	RoomManager::singleton->update();
+
 	// Iterate through all layers
 	for (auto& gol : RoomManager::singleton->mGoLayers)
 	{

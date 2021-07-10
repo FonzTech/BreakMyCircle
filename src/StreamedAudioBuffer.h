@@ -1,8 +1,10 @@
 #pragma once
 
-#define AS_BUFFER_SIZE 2048
+#define AS_BUFFER_SIZE 4096
+#define AS_BUFFER_SIZE_HALF AS_BUFFER_SIZE / 2
 
 #include <memory>
+#include <Magnum/Magnum.h>
 #include <Magnum/Audio/Buffer.h>
 #include <Magnum/Audio/BufferFormat.h>
 #include <Magnum/Audio/Context.h>
@@ -24,20 +26,27 @@ public:
 
 	void openAudio(const std::string & filename);
 
-	Audio::Buffer& getBuffer();
-	Audio::BufferFormat getBufferFormat();
+	Audio::Buffer& getFrontBuffer();
+	const Audio::BufferFormat getBufferFormat() const;
+	const Int getNumberOfChannels() const;
+	const UnsignedInt getSampleRate() const;
+	void feed();
 
 protected:
 
 	// STB Vorbis
-	short mRawBuffer[AS_BUFFER_SIZE];
+	short mRawBuffers[AS_BUFFER_SIZE][2];
 	void* mStream;
 	void* mInfo;
 
 	// Magnum audio
-	Audio::Buffer mBuffer;
+	Audio::Buffer mBuffers[2];
+
+	Audio::BufferFormat mCachedBufferFormat;
+	Int mCachedNumberOfChannels;
+	UnsignedInt mCachedSampleRate;
 
 	// Methods
 	void clear();
-	void feed();
+	const Audio::BufferFormat computeBufferFormat() const;
 };
