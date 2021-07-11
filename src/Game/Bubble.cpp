@@ -18,7 +18,7 @@ using namespace Magnum::Math::Literals;
 std::shared_ptr<GameObject> Bubble::getInstance(const nlohmann::json & params)
 {
 	// Get parent index
-	Sint8 parent;
+	Int parent;
 	params.at("parent").get_to(parent);
 
 	// Parse color
@@ -35,7 +35,7 @@ std::shared_ptr<GameObject> Bubble::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Bubble::Bubble(const Sint8 parentIndex, const Color3& ambientColor) : GameObject(parentIndex)
+Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(parentIndex)
 {
 	// Assign members
 	mAmbientColor = ambientColor;
@@ -110,6 +110,18 @@ void Bubble::applyRippleEffect(const Vector3& center)
 	mShakeFact = 1.0f;
 }
 
+void Bubble::playStompSound()
+{
+	Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData("bubble_stomp");
+	mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+	mPlayables[0]->source()
+		.setBuffer(buffer)
+		.setMinGain(1.0f)
+		.setMaxGain(1.0f)
+		.setLooping(false)
+		.play();
+}
+
 bool Bubble::destroyNearbyBubbles()
 {
 	auto future = std::async(std::launch::async, [this]() {
@@ -148,17 +160,27 @@ bool Bubble::destroyNearbyBubbles()
 	bool nonZero = fps->size() > 0;
 
 	Float posZ = 0.15f;
-	while (!fps->empty())
+	if (!fps->empty())
 	{
-		auto& gn = fps->front();
+		bool playSound = true;
+		while (!fps->empty())
+		{
+			auto& gn = fps->front();
 
-		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, true);
-		ib->mPosition = gn.position + Vector3(0.0f, 0.0f, posZ);
-		RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
+			std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, true);
+			ib->mPosition = gn.position + Vector3(0.0f, 0.0f, posZ);
+			RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
 
-		fps->pop();
+			fps->pop();
 
-		posZ += 0.1f;
+			posZ += 0.1f;
+
+			if (playSound)
+			{
+				ib->buildBubbleSound()->source().play();
+				playSound = false;
+			}
+		}
 	}
 
 	return nonZero;
@@ -258,6 +280,8 @@ void Bubble::destroyDisjointBubbles()
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
 
 		fps->pop();
+
+		ib->buildBubbleSound();
 	}
 }
 

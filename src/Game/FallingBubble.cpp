@@ -20,7 +20,7 @@ std::shared_ptr<GameObject> FallingBubble::getInstance(const nlohmann::json & pa
 	return nullptr;
 }
 
-FallingBubble::FallingBubble(const Sint8 parentIndex, const Color3& ambientColor, const bool spark, const Float maxVerticalSpeed) : GameObject(parentIndex)
+FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, const bool spark, const Float maxVerticalSpeed) : GameObject(parentIndex)
 {
 	// Assign members
 	mAmbientColor = ambientColor;
@@ -84,6 +84,11 @@ void FallingBubble::update()
 		}
 		else
 		{
+			if (mPlayables.size() > 0 && mPlayables[0]->source().state() == Audio::Source::State::Initial)
+			{
+				mPlayables[0]->source().play();
+			}
+
 			if (mVelocity.y() > mMaxVerticalSpeed)
 			{
 				mVelocity += { 0.0f, -2.0f, 0.0f };
@@ -147,4 +152,16 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 
 void FallingBubble::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
+}
+
+std::shared_ptr<Audio::Playable3D>& FallingBubble::buildBubbleSound()
+{
+	Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(mSpark ? "bubble_pop" : "bubble_fall");
+	mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+	mPlayables[0]->source()
+		.setBuffer(buffer)
+		.setMinGain(1.0f)
+		.setMaxGain(1.0f)
+		.setLooping(false);
+	return mPlayables[0];
 }

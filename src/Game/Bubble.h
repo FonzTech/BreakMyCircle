@@ -52,17 +52,18 @@ public:
 	struct Graph
 	{
 		std::unordered_set<GameObject*> set;
-		Sint8 attached;
+		Int attached;
 	};
 
 	// Typedef for alias
 	typedef std::unordered_set<Bubble*, Bubble::HashByColorAndPos, Bubble::EqualByColorAndPos> BubbleCollisionGroup;
 
 	// Class members
-	Bubble(const Sint8 parentIndex, const Color3& ambientColor);
+	Bubble(const Int parentIndex, const Color3& ambientColor);
 
 	void updateBBox();
 	void applyRippleEffect(const Vector3& center);
+	void playStompSound();
 
 	bool destroyNearbyBubbles();
 	void destroyDisjointBubbles();

@@ -19,7 +19,7 @@ using namespace Magnum::Math::Literals;
 std::shared_ptr<GameObject> Player::getInstance(const nlohmann::json & params)
 {
 	// Get parent index
-	Sint8 parent;
+	Int parent;
 	params.at("parent").get_to(parent);
 
 	// Instantiate player object
@@ -27,7 +27,7 @@ std::shared_ptr<GameObject> Player::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Player::Player(const Sint8 parentIndex) : GameObject()
+Player::Player(const Int parentIndex) : GameObject()
 {
 	// Assign parent index
 	mParentIndex = parentIndex;
@@ -62,6 +62,18 @@ Player::Player(const Sint8 parentIndex) : GameObject()
 
 	mSphereDrawables[0] = mDrawables.back().get();
 	mSphereDrawables[0]->mTexture = mProjTextures[0];
+
+	// Load sound effects
+	for (UnsignedInt i = 0; i < 3; ++i)
+	{
+		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData("shot_" + std::to_string(i + 1));
+		mPlayables[i] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+		mPlayables[i]->source()
+			.setBuffer(buffer)
+			.setMinGain(1.0f)
+			.setMaxGain(1.0f)
+			.setLooping(false);
+	}
 }
 
 const Int Player::getType() const
@@ -127,6 +139,14 @@ void Player::update()
 
 			// Prevent shooting by keeping a reference
 			mProjectile = (*RoomManager::singleton->mGoLayers[mParentIndex].list).back();
+
+			// Play random sound
+			{
+				const UnsignedInt index = std::rand() % 3;
+				mPlayables[index]->source()
+					.setOffsetInSamples(0)
+					.play();
+			}
 		}
 	}
 
@@ -186,7 +206,7 @@ void Player::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>>
 {
 }
 
-std::unique_ptr<std::vector<Color4>> Player::getRandomEligibleColor(const Uint8 times)
+std::unique_ptr<std::vector<Color4>> Player::getRandomEligibleColor(const UnsignedInt times)
 {
 	// Create array of bubbles
 	std::vector<std::weak_ptr<GameObject>> bubbles;
@@ -205,7 +225,7 @@ std::unique_ptr<std::vector<Color4>> Player::getRandomEligibleColor(const Uint8 
 	if (bubbles.size())
 	{
 		// Get random color from one in-game bubble
-		for (Uint8 i = 0; i < times; ++i)
+		for (UnsignedInt i = 0; i < times; ++i)
 		{
 			const Int index = std::rand() % bubbles.size();
 			const auto& color = ((Bubble*)bubbles[index].lock().get())->mAmbientColor;
@@ -221,7 +241,7 @@ std::unique_ptr<std::vector<Color4>> Player::getRandomEligibleColor(const Uint8 
 	return list;
 }
 
-Resource<GL::Texture2D> Player::getTextureResourceForIndex(const Uint8 index)
+Resource<GL::Texture2D> Player::getTextureResourceForIndex(const UnsignedInt index)
 {
 	// ALERT: No validity checks are performed!!
 	return CommonUtility::singleton->loadTexture(RoomManager::singleton->mBubbleColors[mProjColors[index].rgb().toSrgbInt()].textureKey);
