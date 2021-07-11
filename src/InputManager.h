@@ -10,7 +10,7 @@
 #include <Magnum/Magnum.h>
 #include <Magnum/Platform/Sdl2Application.h>
 
-#include "CommonTypes.h"
+#include "Common/CommonTypes.h"
 
 using namespace Magnum;
 

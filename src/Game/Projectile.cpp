@@ -3,10 +3,10 @@
 #include <thread>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
-#include "ColoredDrawable.h"
-#include "RoomManager.h"
+#include "../Graphics/ColoredDrawable.h"
+#include "../RoomManager.h"
+#include "../Common/CommonUtility.h"
 #include "Bubble.h"
-#include "CommonUtility.h"
 #include "FallingBubble.h"
 
 using namespace Magnum;

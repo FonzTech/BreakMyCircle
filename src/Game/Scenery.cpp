@@ -6,10 +6,10 @@
 #include <Magnum/MeshTools/Interleave.h>
 #include <Magnum/MeshTools/CompressIndices.h>
 
-#include "AssetManager.h"
-#include "RoomManager.h"
-#include "CommonUtility.h"
-#include "InputManager.h"
+#include "../Common/CommonUtility.h"
+#include "../AssetManager.h"
+#include "../RoomManager.h"
+#include "../InputManager.h"
 
 using namespace Magnum;
 using namespace Magnum::Math::Literals;

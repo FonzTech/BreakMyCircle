@@ -6,10 +6,10 @@
 #include <Magnum/Shaders/Phong.h>
 #include <Magnum/Math/Color.h>
 
-#include "GameObject.h"
-#include "TexturedDrawable.h"
-#include "SpriteShader.h"
-#include "SpriteShaderDataView.h"
+#include "../GameObject.h"
+#include "../Graphics/TexturedDrawable.h"
+#include "../Shaders/SpriteShader.h"
+#include "../Common/SpriteShaderDataView.h"
 
 class FallingBubble : public GameObject
 {

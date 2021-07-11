@@ -26,7 +26,7 @@
 
 #include "GameObject.h"
 #include "CollisionManager.h"
-#include "StreamedAudioBuffer.h"
+#include "Audio/StreamedAudioBuffer.h"
 
 using namespace Magnum;
 

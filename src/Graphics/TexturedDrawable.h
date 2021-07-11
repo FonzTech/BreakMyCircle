@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CommonTypes.h"
+#include "../Common/CommonTypes.h"
 #include "BaseDrawable.h"
 
 using namespace Magnum;

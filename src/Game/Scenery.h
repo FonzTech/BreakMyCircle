@@ -6,9 +6,9 @@
 #include <nlohmann/json.hpp>
 #include <Magnum/Math/Bezier.h>
 
-#include "GameObject.h"
-#include "TexturedDrawable.h"
-#include "WaterShader.h"
+#include "../GameObject.h"
+#include "../Graphics/TexturedDrawable.h"
+#include "../Shaders/WaterShader.h"
 
 class Scenery : public GameObject
 {

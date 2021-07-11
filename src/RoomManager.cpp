@@ -4,16 +4,16 @@
 #include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
-#include "CommonUtility.h"
-#include "PerlinNoise.hpp"
+#include "Common/CommonUtility.h"
+#include "Common/PerlinNoise.hpp"
+#include "Game/Player.h"
+#include "Game/Bubble.h"
+#include "Game/Projectile.h"
+#include "Game/FallingBubble.h"
+#include "Game/Scenery.h"
+#include "Game/Logo.h"
+#include "Game/Skybox.h"
 #include "RoomManager.h"
-#include "Player.h"
-#include "Bubble.h"
-#include "Projectile.h"
-#include "FallingBubble.h"
-#include "Scenery.h"
-#include "Logo.h"
-#include "Skybox.h"
 
 using namespace std::chrono_literals;
 using namespace Magnum::Math::Literals;

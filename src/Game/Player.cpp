@@ -6,11 +6,11 @@
 #include <Magnum/Math/Intersection.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
-#include "AssetManager.h"
-#include "InputManager.h"
-#include "RoomManager.h"
+#include "../AssetManager.h"
+#include "../InputManager.h"
+#include "../RoomManager.h"
+#include "../Common/CommonUtility.h"
 #include "Projectile.h"
-#include "CommonUtility.h"
 #include "Bubble.h"
 
 using namespace Magnum;

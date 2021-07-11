@@ -37,24 +37,30 @@
     <Filter Include="Source Files\Shaders">
       <UniqueIdentifier>{27f35adc-9b5f-49d2-9c9f-ed61b3216f37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Audio">
+      <UniqueIdentifier>{15ca59ab-e5d1-4a19-b845-f6756a9f36c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Audio">
+      <UniqueIdentifier>{a2d68c6c-edb3-4b84-bf7b-6e36f1335b41}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src/main.cpp">
+    <ClCompile Include="src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src/RoomManager.cpp">
+    <ClCompile Include="src\RoomManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src/Bubble.cpp">
+    <ClCompile Include="src\Game\Bubble.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="src/Engine.cpp">
+    <ClCompile Include="src\Engine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\InputManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Player.cpp">
+    <ClCompile Include="src\Game\Player.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\AssetManager.cpp">
@@ -63,131 +69,131 @@
     <ClCompile Include="src\GameObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\BaseDrawable.cpp">
+    <ClCompile Include="src\Graphics\BaseDrawable.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="src\Projectile.cpp">
+    <ClCompile Include="src\Game\Projectile.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="src\CollisionManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\CommonUtility.cpp">
+    <ClCompile Include="src\Common\CommonUtility.cpp">
       <Filter>Source Files\Common</Filter>
     </ClCompile>
-    <ClCompile Include="src\FallingBubble.cpp">
+    <ClCompile Include="src\Game\FallingBubble.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="src\SpriteShader.cpp">
+    <ClCompile Include="src\Shaders\SpriteShader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="src\Scenery.cpp">
+    <ClCompile Include="src\Game\Scenery.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="src\LinePath.cpp">
+    <ClCompile Include="src\Common\LinePath.cpp">
       <Filter>Source Files\Common</Filter>
     </ClCompile>
-    <ClCompile Include="src\ScreenQuadShader.cpp">
+    <ClCompile Include="src\Shaders\ScreenQuadShader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="src\Logo.cpp">
+    <ClCompile Include="src\Game\Logo.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="src\WaterShader.cpp">
+    <ClCompile Include="src\Shaders\WaterShader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="src\Skybox.cpp">
+    <ClCompile Include="src\Game\Skybox.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
-    <ClCompile Include="src\CubeMapShader.cpp">
+    <ClCompile Include="src\Shaders\CubeMapShader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="src\StreamedAudioBuffer.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\Audio\StreamedAudioBuffer.cpp">
+      <Filter>Source Files\Audio</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src/RoomManager.h">
+    <ClInclude Include="src\RoomManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src/GameObject.h">
+    <ClInclude Include="src\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src/Bubble.h">
+    <ClInclude Include="src\Game\Bubble.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src/Engine.h">
+    <ClInclude Include="src\Engine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\InputManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Player.h">
+    <ClInclude Include="src\Game\Player.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
     <ClInclude Include="src\AssetManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\TexturedDrawable.h">
+    <ClInclude Include="src\Graphics\TextureDrawable.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\ColoredDrawable.h">
+    <ClInclude Include="src\Graphics\ColoredDrawable.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\BaseDrawable.h">
+    <ClInclude Include="src\Graphics\BaseDrawable.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\IDrawCallback.h">
+    <ClInclude Include="src\Graphics\IDrawCallback.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="src\Projectile.h">
+    <ClInclude Include="src\Game\Projectile.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
     <ClInclude Include="src\CollisionManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\CommonTypes.h">
+    <ClInclude Include="src\Common\CommonTypes.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="src\CommonUtility.h">
+    <ClInclude Include="src\Common\CommonUtility.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="src\FallingBubble.h">
+    <ClInclude Include="src\Game\FallingBubble.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\SpriteShader.h">
+    <ClInclude Include="src\Shaders\SpriteShader.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="src\Scenery.h">
+    <ClInclude Include="src\Game\Scenery.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\LinePath.h">
+    <ClInclude Include="src\Common\LinePath.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="src\PerlinNoise.hpp">
+    <ClInclude Include="src\Common\PerlinNoise.hpp">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
-    <ClInclude Include="src\ScreenQuadShader.h">
+    <ClInclude Include="src\Shaders\ScreenQuadShader.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="src\Logo.h">
+    <ClInclude Include="src\Game\Logo.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\WaterShader.h">
+    <ClInclude Include="src\Shaders\WaterShader.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="src\Skybox.h">
+    <ClInclude Include="src\Game\Skybox.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\CubeMapShader.h">
+    <ClInclude Include="src\Shaders\CubeMapShader.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="src\StreamedAudioBuffer.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="src\Audio\StreamedAudioBuffer.h">
+      <Filter>Header Files\Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="src\SpriteShaderDataView.h">
+    <None Include="src\Common\SpriteShaderDataView.h">
       <Filter>Header Files\Common</Filter>
     </None>
   </ItemGroup>

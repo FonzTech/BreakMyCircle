@@ -14,9 +14,9 @@
 #include <Magnum/Trade/ImageData.h>
 #include <Magnum/Trade/MeshData.h>
 
-#include "CommonUtility.h"
-#include "CubeMapShader.h"
-#include "RoomManager.h"
+#include "../Common/CommonUtility.h"
+#include "../Shaders/CubeMapShader.h"
+#include "../RoomManager.h"
 
 std::shared_ptr<GameObject> Skybox::getInstance(const nlohmann::json & params)
 {

@@ -7,9 +7,9 @@
 #include <Magnum/GL/TextureFormat.h>
 
 #include "Engine.h"
-#include "CommonUtility.h"
+#include "Common/CommonUtility.h"
 #include "InputManager.h"
-#include "StreamedAudioBuffer.h"
+#include "Audio/StreamedAudioBuffer.h"
 #include "RoomManager.h"
 #include "GameObject.h"
 

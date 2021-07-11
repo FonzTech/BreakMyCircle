@@ -6,14 +6,14 @@
 #include <Magnum/Math/Math.h>
 #include <Magnum/GL/Mesh.h>
 
-#include "AssetManager.h"
-#include "RoomManager.h"
-#include "BaseDrawable.h"
+#include "../AssetManager.h"
+#include "../RoomManager.h"
+#include "../Common/CommonUtility.h"
+#include "../Graphics/BaseDrawable.h"
 #include "FallingBubble.h"
-#include "CommonUtility.h"
 
 #if NDEBUG or _DEBUG
-#include "InputManager.h"
+#include "../InputManager.h"
 #endif
 
 using namespace Corrade;

@@ -6,10 +6,10 @@
 #include <Magnum/ImageView.h>
 #include <Magnum/GL/Buffer.h>
 
-#include "CommonUtility.h"
-#include "ColoredDrawable.h"
-#include "RoomManager.h"
-#include "SpriteShader.h"
+#include "../Common/CommonUtility.h"
+#include "../Graphics/ColoredDrawable.h"
+#include "../Shaders/SpriteShader.h"
+#include "../RoomManager.h"
 
 using namespace Magnum;
 using namespace Magnum::Math::Literals;

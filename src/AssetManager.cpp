@@ -17,11 +17,11 @@
 #include <Magnum/Trade/PhongMaterialData.h>
 #include <Magnum/Shaders/Phong.h>
 
-#include "CommonTypes.h"
-#include "CommonUtility.h"
+#include "Common/CommonTypes.h"
+#include "Common/CommonUtility.h"
+#include "Graphics/ColoredDrawable.h"
+#include "Graphics/TexturedDrawable.h"
 #include "RoomManager.h"
-#include "ColoredDrawable.h"
-#include "TexturedDrawable.h"
 
 using namespace Magnum::Math::Literals;
 

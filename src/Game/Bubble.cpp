@@ -7,9 +7,9 @@
 #include <Magnum/Math/Math.h>
 #include <Magnum/Math/Bezier.h>
 
-#include "CommonUtility.h"
-#include "AssetManager.h"
-#include "RoomManager.h"
+#include "../Common/CommonUtility.h"
+#include "../AssetManager.h"
+#include "../RoomManager.h"
 #include "FallingBubble.h"
 
 using namespace Magnum;

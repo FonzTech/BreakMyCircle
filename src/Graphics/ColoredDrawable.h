@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CommonTypes.h"
+#include "../Common/CommonTypes.h"
 #include "BaseDrawable.h"
 
 template <class ShaderType>

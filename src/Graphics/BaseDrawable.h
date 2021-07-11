@@ -5,7 +5,7 @@
 #include <Magnum/GL/AbstractShaderProgram.h>
 #include <Magnum/Shaders/Phong.h>
 
-#include "CommonTypes.h"
+#include "../Common/CommonTypes.h"
 #include "IDrawCallback.h"
 
 class BaseDrawable : public Object3D, public SceneGraph::Drawable3D

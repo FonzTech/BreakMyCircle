@@ -17,7 +17,7 @@
 #include <Magnum/Shaders/Phong.h>
 #include <Magnum/Math/Color.h>
 
-#include "GameObject.h"
+#include "../GameObject.h"
 
 class Bubble : public GameObject
 {

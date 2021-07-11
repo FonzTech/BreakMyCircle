@@ -8,7 +8,7 @@
 #include <Magnum/GL/Texture.h>
 #include <Magnum/Trade/AbstractImporter.h>
 
-#include "CommonTypes.h"
+#include "Common/CommonTypes.h"
 #include "GameObject.h"
 
 using namespace Magnum;

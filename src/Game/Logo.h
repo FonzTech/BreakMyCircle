@@ -10,8 +10,8 @@
 #include <Magnum/Animation/Track.h>
 #include <Magnum/Animation/Player.h>
 
-#include "GameObject.h"
-#include "BaseDrawable.h"
+#include "../GameObject.h"
+#include "../Graphics/BaseDrawable.h"
 
 typedef Animation::TrackView<Float, Vector3> AnimPosition;
 typedef Animation::TrackView<Float, Deg> AnimRotation;

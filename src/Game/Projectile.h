@@ -5,8 +5,8 @@
 #include <nlohmann/json.hpp>
 #include <Magnum/Math/Color.h>
 
-#include "GameObject.h"
-#include "ColoredDrawable.h"
+#include "../GameObject.h"
+#include "../Graphics/ColoredDrawable.h"
 
 class Projectile : public GameObject
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SpriteShader.h"
+#include "../Shaders/SpriteShader.h"
 
 struct SpriteShaderDataView
 {

@@ -18,8 +18,8 @@
 #include <Magnum/Math/Color.h>
 #include <Magnum/Math/Math.h>
 
-#include "RoomManager.h"
-#include "AssetManager.h"
+#include "../RoomManager.h"
+#include "../AssetManager.h"
 
 using namespace Corrade;
 using namespace Magnum;

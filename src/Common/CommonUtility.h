@@ -45,10 +45,10 @@
 #include <nlohmann/json.hpp>
 
 #include "CommonTypes.h"
-#include "ColoredDrawable.h"
-#include "TexturedDrawable.h"
-#include "GameObject.h"
-#include "SpriteShader.h"
+#include "../Graphics/ColoredDrawable.h"
+#include "../Graphics/TexturedDrawable.h"
+#include "../GameObject.h"
+#include "../Shaders/SpriteShader.h"
 
 using namespace Magnum;
 

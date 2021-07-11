@@ -7,9 +7,9 @@
 #include <Magnum/Platform/Sdl2Application.h>
 #include <Magnum/Timeline.h>
 
-#include "CommonTypes.h"
+#include "Common/CommonTypes.h"
 #include "RoomManager.h"
-#include "ScreenQuadShader.h"
+#include "Shaders/ScreenQuadShader.h"
 
 using namespace Magnum;
 

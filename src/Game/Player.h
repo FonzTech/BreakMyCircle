@@ -8,9 +8,9 @@
 #include <Magnum/Math/Color.h>
 #include <Magnum/Timeline.h>
 
-#include "GameObject.h"
-#include "BaseDrawable.h"
-#include "LinePath.h"
+#include "../GameObject.h"
+#include "../Graphics/BaseDrawable.h"
+#include "../Common/LinePath.h"
 
 class Player : public GameObject
 {

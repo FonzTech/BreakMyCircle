@@ -16,8 +16,8 @@
 #include <Magnum/SceneGraph/MatrixTransformation3D.h>
 #include <Magnum/SceneGraph/Scene.h>
 
-#include "CommonTypes.h"
-#include "BaseDrawable.h"
+#include "Common/CommonTypes.h"
+#include "Graphics/BaseDrawable.h"
 
 using namespace Magnum;
 

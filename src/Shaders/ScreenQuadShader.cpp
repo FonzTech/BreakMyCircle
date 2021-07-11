@@ -8,7 +8,7 @@
 #include <Magnum/GL/Buffer.h>
 #include <Magnum/Trade/AbstractImporter.h>
 
-#include "RoomManager.h"
+#include "../RoomManager.h"
 
 using namespace Corrade;
 
