@@ -18,6 +18,7 @@ public:
 
 	void clear();
 	void loadAudio(const std::string & filename);
+	std::unique_ptr<Audio::Playable3D>& playable();
 
 protected:
 

@@ -90,3 +90,8 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 		.play();
 
 }
+
+std::unique_ptr<Audio::Playable3D>& StreamedAudioPlayable::playable()
+{
+	return mBgMusicPlayable;
+}
