@@ -111,6 +111,9 @@
     <ClCompile Include="src\Audio\StreamedAudioBuffer.cpp">
       <Filter>Source Files\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="src\Audio\StreamedAudioPlayable.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\RoomManager.h">
@@ -189,6 +192,9 @@
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="src\Audio\StreamedAudioBuffer.h">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Audio\StreamedAudioPlayable.h">
       <Filter>Header Files\Audio</Filter>
     </ClInclude>
   </ItemGroup>

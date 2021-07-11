@@ -6,13 +6,8 @@
 #include <memory>
 #include <vector>
 #include <unordered_map>
-#include <functional>
-#include <thread>
 #include <nlohmann/json.hpp>
 
-#include <Corrade/Containers/Containers.h>
-#include <Corrade/Containers/ArrayView.h>
-#include <Corrade/Containers/Reference.h>
 #include <Magnum/Magnum.h>
 #include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/Audio/Buffer.h>
@@ -26,7 +21,7 @@
 
 #include "GameObject.h"
 #include "CollisionManager.h"
-#include "Audio/StreamedAudioBuffer.h"
+#include "Audio/StreamedAudioPlayable.h"
 
 using namespace Magnum;
 
@@ -88,9 +83,7 @@ public:
 	Audio::PlayableGroup3D mAudioPlayables;
 
 	// Background music
-	std::unique_ptr<std::thread> mBgMusicThread;
-	std::unique_ptr<StreamedAudioBuffer> mBgMusicStream;
-	std::unique_ptr<Audio::Playable3D> mBgMusicPlayable;
+	std::unique_ptr<StreamedAudioPlayable> mBgMusic;
 
 	// Collision Manager
 	std::unique_ptr<CollisionManager> mCollisionManager;
@@ -104,6 +97,7 @@ public:
 
 	// Class methods
 	explicit RoomManager();
+	~RoomManager();
 
 	void clear();
 	void setup();

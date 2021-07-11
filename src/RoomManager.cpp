@@ -1,6 +1,4 @@
 #include <vector>
-#include <chrono>
-#include <Corrade/Containers/Array.h>
 #include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
@@ -15,7 +13,6 @@
 #include "Game/Skybox.h"
 #include "RoomManager.h"
 
-using namespace std::chrono_literals;
 using namespace Magnum::Math::Literals;
 
 std::unique_ptr<RoomManager> RoomManager::singleton = nullptr;
@@ -53,15 +50,22 @@ RoomManager::RoomManager()
 	mBubbleColors[BUBBLE_COLOR_CYAN.toSrgbInt()] = { BUBBLE_COLOR_CYAN, RESOURCE_TEXTURE_BUBBLE_CYAN };
 }
 
+RoomManager::~RoomManager()
+{
+	clear();
+}
+
 void RoomManager::clear()
 {
 	// Clear all layers and their children
 	mGoLayers.clear();
 
 	// Clear audio context
-	mBgMusicPlayable = nullptr;
-	mBgMusicStream = nullptr;
-	mBgMusicThread = nullptr;
+	if (mBgMusic != nullptr)
+	{
+		mBgMusic->clear();
+		mBgMusic = nullptr;
+	}
 	mAudioContext = nullptr;
 
 	// De-reference camera
@@ -91,8 +95,8 @@ void RoomManager::prepareRoom(const bool stopBgMusic)
 	// Delete background music
 	if (stopBgMusic)
 	{
-		mBgMusicStream = nullptr;
-		mBgMusicPlayable = nullptr;
+		mBgMusic->clear();
+		mBgMusic = nullptr;
 	}
 }
 
@@ -109,55 +113,8 @@ void RoomManager::loadRoom(const std::string & name)
 		{
 			std::string bgmusic = it->get<std::string>();
 
-			// Create and load stream
-			mBgMusicStream = std::make_unique<StreamedAudioBuffer>();
-			mBgMusicStream->openAudio(bgmusic);
-
-			// Create and detach thread
-			mBgMusicThread = std::make_unique<std::thread>([&]()
-			{
-				if (mBgMusicStream != nullptr)
-				{
-					const Int limit = AS_BUFFER_SIZE / mBgMusicStream->getNumberOfChannels() - 256;
-					while (mBgMusicStream != nullptr)
-					{
-						if (mBgMusicPlayable != nullptr)
-						{
-							auto& source = mBgMusicPlayable->source();
-							const bool b1 = source.state() == Audio::Source::State::Stopped;
-							const bool b2 = source.state() == Audio::Source::State::Playing && source.offsetInSamples() >= limit;
-							if (b1 || b2)
-							{
-								if (b2)
-								{
-									source.stop();
-								}
-
-								source.setBuffer(nullptr);
-
-								if (mBgMusicPlayable != nullptr)
-								{
-									mBgMusicStream->feed();
-									source.setBuffer(&mBgMusicStream->getFrontBuffer());
-									source.setOffsetInSamples(0);
-									source.play();
-								}
-							}
-						}
-						std::this_thread::sleep_for(20ms);
-					}
-				}
-			});
-			mBgMusicThread->detach();
-
-			// Create playable resource with buffer
-			mBgMusicPlayable = std::make_unique<Audio::Playable3D>(mCameraObject, &mAudioPlayables);
-			mBgMusicPlayable->source()
-				.setBuffer(&mBgMusicStream->getFrontBuffer())
-				.setMinGain(1.0f)
-				.setMaxGain(1.0f)
-				.setLooping(false)
-				.play();
+			mBgMusic = std::make_unique<StreamedAudioPlayable>(&mCameraObject);
+			mBgMusic->loadAudio(bgmusic);
 		}
 	}
 
