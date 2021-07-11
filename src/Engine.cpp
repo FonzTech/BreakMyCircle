@@ -13,7 +13,7 @@
 #include "RoomManager.h"
 #include "GameObject.h"
 
-const Sint8 Engine::GO_LAYERS[] = {
+const Int Engine::GO_LAYERS[] = {
 	GOL_FIRST,
 	GOL_SECOND
 };

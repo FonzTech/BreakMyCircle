@@ -18,7 +18,7 @@ std::shared_ptr<GameObject> Projectile::getInstance(const nlohmann::json & param
 	return nullptr;
 }
 
-Projectile::Projectile(const Sint8 parentIndex, const Color3& ambientColor) : GameObject(parentIndex)
+Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : GameObject(parentIndex)
 {
 	// Initialize members
 	mAmbientColor = ambientColor;
@@ -130,6 +130,10 @@ void Projectile::snapToGrid()
 	if (b->destroyNearbyBubbles())
 	{
 		b->destroyDisjointBubbles();
+	}
+	else
+	{
+		b->playStompSound();
 	}
 
 	// Add to room

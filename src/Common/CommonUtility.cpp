@@ -4,8 +4,10 @@
 #include <Corrade/PluginManager/Manager.h>
 #include <Corrade/Utility/Assert.h>
 #include <Corrade/Utility/Resource.h>
+
 #include <Magnum/Magnum.h>
 #include <Magnum/ImageView.h>
+#include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/Trade/AbstractImporter.h>
 #include <Magnum/Trade/ImageData.h>
 #include <Magnum/GL/Mesh.h>
@@ -127,7 +129,7 @@ void CommonUtility::createGameSphere(GameObject* gameObject, Object3D & manipula
 	gameObject->mDrawables.back()->mTexture = resTexture;
 }
 
-std::shared_ptr<TexturedDrawable<SpriteShader>> CommonUtility::createSpriteDrawable(const Sint8 goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback)
+std::shared_ptr<TexturedDrawable<SpriteShader>> CommonUtility::createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback)
 {
 	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_PLANE_SPRITE) };
 

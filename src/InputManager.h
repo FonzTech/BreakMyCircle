@@ -20,8 +20,8 @@ public:
 	static std::unique_ptr<InputManager> singleton;
 
 	Vector2i mMousePosition;
-	std::unordered_map<ImMouseButtons, Sint8> mMouseStates;
-	std::unordered_map<ImKeyButtons, Sint8> mKeyStates;
+	std::unordered_map<ImMouseButtons, Int> mMouseStates;
+	std::unordered_map<ImKeyButtons, Int> mKeyStates;
 
 	InputManager();
 
@@ -32,6 +32,6 @@ public:
 	void updateKeyStates();
 
 protected:
-	std::unordered_map<ImMouseButtons, Sint8> mPreTickMouseStates;
-	std::unordered_map<ImKeyButtons, Sint8> mPreTickKeyStates;
+	std::unordered_map<ImMouseButtons, Int> mPreTickMouseStates;
+	std::unordered_map<ImKeyButtons, Int> mPreTickKeyStates;
 };

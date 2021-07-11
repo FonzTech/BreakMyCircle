@@ -15,7 +15,7 @@ class Skybox : public GameObject
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	Skybox(const Sint8 parentIndex, const std::string & name, const Vector3 & position);
+	Skybox(const Int parentIndex, const std::string & name, const Vector3 & position);
 
 protected:
 	const Int getType() const override;

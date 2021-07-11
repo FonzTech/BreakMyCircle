@@ -33,14 +33,14 @@ public:
 	// Instantiator data holder
 	struct Instantiator
 	{
-		Uint8 key;
+		UnsignedInt key;
 		std::unique_ptr<nlohmann::json> params;
 	};
 
 	// Game Object layer data holder
 	struct GameObjectsLayer
 	{
-		Sint8 index;
+		Int index;
 		Vector3 mCameraEye, mCameraTarget;
 		std::unique_ptr<GL::Framebuffer> frameBuffer;
 		std::unique_ptr<GL::Texture2D> fbTexture;
@@ -65,7 +65,7 @@ public:
 	static std::unique_ptr<RoomManager> singleton;
 
 	// Function creator mapper for room loader
-	std::unordered_map<Uint8, std::function<std::shared_ptr<GameObject>(const nlohmann::json & params)>> gameObjectCreators;
+	std::unordered_map<UnsignedInt, std::function<std::shared_ptr<GameObject>(const nlohmann::json & params)>> gameObjectCreators;
 
 	// Scene
 	Scene3D mScene;
@@ -75,7 +75,7 @@ public:
 	std::shared_ptr<SceneGraph::Camera3D> mCamera;
 
 	// Game Objects and Drawables
-	std::unordered_map<Sint8, GameObjectsLayer> mGoLayers;
+	std::unordered_map<Int, GameObjectsLayer> mGoLayers;
 
 	// Sound manager
 	std::unique_ptr<Audio::Context> mAudioContext;

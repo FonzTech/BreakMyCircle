@@ -21,7 +21,7 @@ class Logo : public GameObject
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	Logo(const Sint8 parentIndex);
+	Logo(const Int parentIndex);
 
 protected:
 	const Int getType() const override;

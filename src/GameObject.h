@@ -25,16 +25,16 @@ class GameObject : public IDrawCallback
 {
 public:
 	GameObject();
-	GameObject(const Sint8 parentIndex);
+	GameObject(const Int parentIndex);
 	~GameObject();
 
 	bool mDestroyMe;
 	Float mDeltaTime;
-	Sint8 mParentIndex = std::numeric_limits<Sint8>::min();
+	Int mParentIndex = std::numeric_limits<Int>::min();
 
 	std::unique_ptr<Object3D> mManipulator;
 	std::vector<std::shared_ptr<BaseDrawable>> mDrawables;
-	std::unordered_map<Sint8, std::shared_ptr<Audio::Playable3D>> mPlayables;
+	std::unordered_map<Int, std::shared_ptr<Audio::Playable3D>> mPlayables;
 
 	Vector3 mPosition;
 	Range3D mBbox;

@@ -70,7 +70,7 @@ void LinePath::load(const std::string & name)
 			// Read line comma by comma
 			std::istringstream lin(line);
 			std::string cv;
-			Sint8 i = -1;
+			Int i = -1;
 
 			Float values[3];
 

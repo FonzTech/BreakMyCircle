@@ -23,7 +23,7 @@ using namespace Magnum::Math::Literals;
 std::shared_ptr<GameObject> Logo::getInstance(const nlohmann::json & params)
 {
 	// Get parent index
-	Sint8 parent;
+	Int parent;
 	params.at("parent").get_to(parent);
 
 	// Instantiate player object
@@ -31,7 +31,7 @@ std::shared_ptr<GameObject> Logo::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Logo::Logo(const Sint8 parentIndex) : GameObject()
+Logo::Logo(const Int parentIndex) : GameObject()
 {
 	// Assign parent index
 	mParentIndex = parentIndex;
@@ -48,7 +48,7 @@ Logo::Logo(const Sint8 parentIndex) : GameObject()
 	AssetManager().loadAssets(*this, *mLogoManipulator, "scenes/logo.glb", this);
 
 	// Filter required meshes
-	const std::unordered_map<std::string, Uint8> indexes{
+	const std::unordered_map<std::string, UnsignedInt> indexes{
 		{ "BreakV", 0 },
 		{ "MyV", 1 },
 		{ "CircleV", 2 }
@@ -165,7 +165,7 @@ void Logo::buildAnimations()
 	mAnimPlayer = std::make_unique<Animation::Player<Float>>();
 
 	// Cycle through all the three meshes
-	for (Uint8 i = 0; i < 4; ++i)
+	for (UnsignedInt i = 0; i < 4; ++i)
 	{
 		// Create raw animation data
 		switch (i)
@@ -238,7 +238,7 @@ void Logo::buildAnimations()
 		}
 		else
 		{
-			for (Uint8 j = 0; j < 3; ++j)
+			for (UnsignedInt j = 0; j < 3; ++j)
 			{
 				mAnimPlayer->addWithCallback(
 					*mTrackViewPositions[i],

@@ -23,7 +23,7 @@ protected:
 
 private:
 	// List of layers
-	static const Sint8 GO_LAYERS[];
+	static const Int GO_LAYERS[];
 
 	// Application methods
 	void drawEvent() override;

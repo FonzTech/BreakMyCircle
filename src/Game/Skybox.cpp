@@ -21,7 +21,7 @@
 std::shared_ptr<GameObject> Skybox::getInstance(const nlohmann::json & params)
 {
 	// Get parent index
-	Sint8 parent;
+	Int parent;
 	params.at("parent").get_to(parent);
 
 	// Instantiate bubble
@@ -35,7 +35,7 @@ std::shared_ptr<GameObject> Skybox::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Skybox::Skybox(const Sint8 parentIndex, const std::string & name, const Vector3 & position) : GameObject(parentIndex)
+Skybox::Skybox(const Int parentIndex, const std::string & name, const Vector3 & position) : GameObject(parentIndex)
 {
 	mPosition = position;
 	createDrawable(name);

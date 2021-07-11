@@ -115,6 +115,9 @@ void RoomManager::loadRoom(const std::string & name)
 
 			mBgMusic = std::make_unique<StreamedAudioPlayable>(&mCameraObject);
 			mBgMusic->loadAudio(bgmusic);
+			mBgMusic->playable()->source()
+				.setMinGain(0.25f)
+				.setMaxGain(0.25f);
 		}
 	}
 
@@ -123,7 +126,7 @@ void RoomManager::loadRoom(const std::string & name)
 	for (auto& item : list)
 	{
 		// Get type
-		Sint8 parent, type;
+		Int parent, type;
 		item.at("parent").get_to(parent);
 		item.at("type").get_to(type);
 

@@ -13,7 +13,7 @@ class Projectile : public GameObject
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	Projectile(const Sint8 parentIndex, const Color3& ambientColor);
+	Projectile(const Int parentIndex, const Color3& ambientColor);
 
 	void adjustPosition();
 

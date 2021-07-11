@@ -8,7 +8,7 @@ GameObject::GameObject() : IDrawCallback()
 	mManipulator = std::make_unique<Object3D>(&RoomManager::singleton->mScene);
 }
 
-GameObject::GameObject(const Sint8 parentIndex) : GameObject()
+GameObject::GameObject(const Int parentIndex) : GameObject()
 {
 	mParentIndex = parentIndex;
 }

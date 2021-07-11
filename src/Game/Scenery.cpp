@@ -17,7 +17,7 @@ using namespace Magnum::Math::Literals;
 std::shared_ptr<GameObject> Scenery::getInstance(const nlohmann::json & params)
 {
 	// Get parent index
-	Sint8 parent;
+	Int parent;
 	params.at("parent").get_to(parent);
 
 	// Instantiate scenery object
@@ -25,7 +25,7 @@ std::shared_ptr<GameObject> Scenery::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Scenery::Scenery(const Sint8 parentIndex) : GameObject(parentIndex)
+Scenery::Scenery(const Int parentIndex) : GameObject(parentIndex)
 {
 	// Init members
 	mCubicBezier = std::make_unique<CubicBezier2D>(Vector2(0.0f, 0.0f), Vector2(0.11f, -0.02f), Vector2(0.0f, 1.01f), Vector2(1.0f));

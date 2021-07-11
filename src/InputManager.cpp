@@ -19,7 +19,7 @@ void InputManager::setKeyState(const ImKeyButtons & key, const bool & pressed)
 
 void InputManager::updateMouseStates()
 {
-	for (std::unordered_map<ImMouseButtons, Sint8>::iterator it = mPreTickMouseStates.begin(); it != mPreTickMouseStates.end(); ++it)
+	for (std::unordered_map<ImMouseButtons, Int>::iterator it = mPreTickMouseStates.begin(); it != mPreTickMouseStates.end(); ++it)
 	{
 		auto* ms = &mMouseStates[it->first];
 		if (mPreTickMouseStates[it->first])
@@ -38,7 +38,7 @@ void InputManager::updateMouseStates()
 
 void InputManager::updateKeyStates()
 {
-	for (std::unordered_map<ImKeyButtons, Sint8>::iterator it = mPreTickKeyStates.begin(); it != mPreTickKeyStates.end(); ++it)
+	for (std::unordered_map<ImKeyButtons, Int>::iterator it = mPreTickKeyStates.begin(); it != mPreTickKeyStates.end(); ++it)
 	{
 		auto* ms = &mKeyStates[it->first];
 		if (mPreTickKeyStates[it->first])

@@ -80,7 +80,7 @@ public:
 		if (it != params.end())
 		{
 			Float position[S];
-			for (Uint8 i = 0; i < S; ++i)
+			for (UnsignedInt i = 0; i < S; ++i)
 			{
 				(*it).at(VECTOR_COMPONENTS[i]).get_to(vector[i]);
 			}
@@ -96,6 +96,6 @@ public:
 
 	// Utilities
 	void createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color);
-	std::shared_ptr<TexturedDrawable<SpriteShader>> createSpriteDrawable(const Sint8 goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
+	std::shared_ptr<TexturedDrawable<SpriteShader>> createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
 
 };
