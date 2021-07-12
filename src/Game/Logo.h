@@ -23,7 +23,6 @@ public:
 
 	Logo(const Int parentIndex);
 
-protected:
 	const Int getType() const override;
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;

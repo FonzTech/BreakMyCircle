@@ -7,6 +7,7 @@
 #define GOT_SCENERY 5
 #define GOT_LOGO 6
 #define GOT_SKYBOX 7
+#define GOT_OVERLAY_GUI 8
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>

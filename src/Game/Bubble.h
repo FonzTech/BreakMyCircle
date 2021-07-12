@@ -61,6 +61,11 @@ public:
 	// Class members
 	Bubble(const Int parentIndex, const Color3& ambientColor);
 
+	const Int getType() const override;
+	void update() override;
+	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
+	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
+
 	void updateBBox();
 	void applyRippleEffect(const Vector3& center);
 	void playStompSound();
@@ -84,11 +89,6 @@ private:
 	// Class members
 	Vector3 mShakePos;
 	Float mShakeFact;
-
-	const Int getType() const override;
-	void update() override;
-	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
-	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
 	Float getShakeSmooth(const Float xt);
 };

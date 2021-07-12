@@ -14,8 +14,9 @@
 #include "GameObject.h"
 
 const Int Engine::GO_LAYERS[] = {
-	GOL_FIRST,
-	GOL_SECOND
+	GOL_PRESP_FIRST,
+	GOL_PRESP_SECOND,
+	GOL_ORTHO_FIRST
 };
 
 Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
@@ -70,20 +71,23 @@ void Engine::tickEvent()
 	RoomManager::singleton->mCamera->setViewport(ws);
 
 	// Iterate through all layers
-	for (auto& gol : RoomManager::singleton->mGoLayers)
+	for (const auto& index : GO_LAYERS)
 	{
 		// Bind layer's framebuffer
-		currentGol = &gol.second;
+		currentGol = &RoomManager::singleton->mGoLayers[index];
 		(*currentGol->frameBuffer)
 			.clear(GL::FramebufferClear::Depth)
 			.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f))
 			.bind();
 
+		// Set projection for camera on this layer
+		RoomManager::singleton->mCamera->setProjectionMatrix(currentGol->projectionMatrix);
+
 		// Position camera on this layer
-		RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(currentGol->mCameraEye, currentGol->mCameraTarget, Vector3::yAxis()));
+		RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(currentGol->cameraEye, currentGol->cameraTarget, Vector3::yAxis()));
 
 		// Get vector as reference
-		const auto& gos = gol.second.list;
+		const auto& gos = currentGol->list;
 
 		// Update all game objects on this layer
 		for (UnsignedInt i = 0; i < gos->size(); ++i)
@@ -136,8 +140,9 @@ void Engine::drawEvent()
 	{
 		// Draw screen quad
 		mScreenQuadShader
-			.bindTexture(GOL_FIRST, *RoomManager::singleton->mGoLayers[GOL_FIRST].fbTexture)
-			.bindTexture(GOL_SECOND, *RoomManager::singleton->mGoLayers[GOL_SECOND].fbTexture)
+			.bindTexture(GOL_PRESP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PRESP_FIRST].fbTexture)
+			.bindTexture(GOL_PRESP_SECOND, *RoomManager::singleton->mGoLayers[GOL_PRESP_SECOND].fbTexture)
+			.bindTexture(GOL_ORTHO_FIRST, *RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].fbTexture)
 			.draw(mScreenQuadShader.mMesh);
 
 		// Swap buffers
@@ -256,7 +261,8 @@ void Engine::upsertGameObjectLayers()
 		// Check if layer has been already created
 		RoomManager::GameObjectsLayer* layer;
 		{
-			auto it = RoomManager::singleton->mGoLayers.find(index);
+			// Check if layer exists
+			const auto& it = RoomManager::singleton->mGoLayers.find(index);
 			if (it != RoomManager::singleton->mGoLayers.end())
 			{
 				// Layer exists
@@ -277,7 +283,27 @@ void Engine::upsertGameObjectLayers()
 
 				// Create drawables holder
 				layer->drawables = std::make_unique<SceneGraph::DrawableGroup3D>();
+
+				// Set projection matrix
+				if (index == GOL_ORTHO_FIRST)
+				{
+					// Set camera position
+					layer->cameraEye = { 0.0f, 0.0f, 1.0f };
+					layer->cameraTarget = { 0.0f, 0.0f, 0.0f };
+				}
+				else
+				{
+					layer->projectionMatrix = Matrix4::perspectiveProjection(35.0_degf, 1.0f, 0.01f, 1000.0f);
+				}
 			}
+		}
+
+		// Special setup for orthographic layers
+		if (index == GOL_ORTHO_FIRST)
+		{
+			// Set projection matrix
+			Vector2 v(RoomManager::singleton->windowSize);
+			layer->projectionMatrix = Matrix4::orthographicProjection(Vector2(std::max(v.x(), 1.0f), std::max(v.y(), 1.0f)), 0.01f, 1000.0f);
 		}
 
 		// Get size for window framebuffer

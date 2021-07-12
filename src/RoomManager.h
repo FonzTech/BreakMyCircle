@@ -1,7 +1,8 @@
 #pragma once
 
-#define GOL_FIRST 0
-#define GOL_SECOND 1
+#define GOL_PRESP_FIRST 0
+#define GOL_PRESP_SECOND 1
+#define GOL_ORTHO_FIRST 100
 
 #include <memory>
 #include <vector>
@@ -41,7 +42,8 @@ public:
 	struct GameObjectsLayer
 	{
 		Int index;
-		Vector3 mCameraEye, mCameraTarget;
+		Matrix4 projectionMatrix;
+		Vector3 cameraEye, cameraTarget;
 		std::unique_ptr<GL::Framebuffer> frameBuffer;
 		std::unique_ptr<GL::Texture2D> fbTexture;
 		std::unique_ptr<GameObjectList> list;

@@ -60,9 +60,9 @@ Scenery::Scenery(const Int parentIndex) : GameObject(parentIndex)
 	// Set camera position for scenery
 	mPosition = Vector3(0.0f);
 
-	auto& p = RoomManager::singleton->mGoLayers[GOL_FIRST];
-	p.mCameraEye = Vector3(7.65094f, 11.6036f, 11.9944f);
-	p.mCameraTarget = Vector3(0.0f, 0.0f, 0.0f);
+	auto& p = RoomManager::singleton->mGoLayers[GOL_PRESP_FIRST];
+	p.cameraEye = Vector3(7.65094f, 11.6036f, 11.9944f);
+	p.cameraTarget = Vector3(0.0f, 0.0f, 0.0f);
 }
 
 const Int Scenery::getType() const
@@ -113,15 +113,15 @@ void Scenery::update()
 
 		const bool isEye = InputManager::singleton->mKeyStates[ImKeyButtons::Tab] >= IM_STATE_PRESSED;
 
-		auto& p1 = RoomManager::singleton->mGoLayers[GOL_FIRST];
-		auto* p2 = isEye ? &p1.mCameraEye : &p1.mCameraTarget;
+		auto& p1 = RoomManager::singleton->mGoLayers[GOL_PRESP_FIRST];
+		auto* p2 = isEye ? &p1.cameraEye : &p1.cameraTarget;
 		*p2 += delta * mDeltaTime * 10.0f;
 	}
 #endif
 
 	// Animation for eye camera
 	{
-		auto* p = &RoomManager::singleton->mGoLayers[GOL_SECOND].mCameraEye[2];
+		auto* p = &RoomManager::singleton->mGoLayers[GOL_PRESP_SECOND].cameraEye[2];
 		*p = mCubicBezier->value(Math::min(mFrame * 0.25f, 1.0f))[1] * 44.0f;
 	}
 }

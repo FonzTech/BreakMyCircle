@@ -11,6 +11,7 @@
 #include "Game/Scenery.h"
 #include "Game/Logo.h"
 #include "Game/Skybox.h"
+#include "Game/OverlayGui.h"
 #include "RoomManager.h"
 
 using namespace Magnum::Math::Literals;
@@ -36,6 +37,7 @@ RoomManager::RoomManager()
 	gameObjectCreators[GOT_SCENERY] = Scenery::getInstance;
 	gameObjectCreators[GOT_LOGO] = Logo::getInstance;
 	gameObjectCreators[GOT_SKYBOX] = Skybox::getInstance;
+	gameObjectCreators[GOT_OVERLAY_GUI] = OverlayGui::getInstance;
 
 	// Create collision manager
 	mCollisionManager = std::make_unique<CollisionManager>();
@@ -80,7 +82,6 @@ void RoomManager::setup()
 	// Setup camera
 	mCamera = std::make_shared<SceneGraph::Camera3D>(mCameraObject);
 	mCamera->setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
-	mCamera->setProjectionMatrix(Matrix4::perspectiveProjection(35.0_degf, 1.0f, 0.01f, 1000.0f));
 	mCamera->setViewport(GL::defaultFramebuffer.viewport().size());
 }
 
@@ -200,34 +201,37 @@ void RoomManager::createLevelRoom()
 			Vector3 position = { startX + x * 2.0f, y * -2.0f, 0.0f };
 
 			gameObject->mPosition = position;
-			RoomManager::singleton->mGoLayers[GOL_SECOND].push_back(gameObject);
+			RoomManager::singleton->mGoLayers[GOL_PRESP_SECOND].push_back(gameObject);
 		}
 	}
 
 	// Create player
 	{
-		std::shared_ptr<Player> p = std::make_shared<Player>(GOL_SECOND);
+		std::shared_ptr<Player> p = std::make_shared<Player>(GOL_PRESP_SECOND);
 		p->mPosition = { 8.0f, -35.0f, 0.0f };
-		RoomManager::singleton->mGoLayers[GOL_SECOND].push_back(p);
+		RoomManager::singleton->mGoLayers[GOL_PRESP_SECOND].push_back(p);
 	}
 
 	// Create scenery
 	{
-		std::shared_ptr<Scenery> p = std::make_shared<Scenery>(GOL_FIRST);
+		std::shared_ptr<Scenery> p = std::make_shared<Scenery>(GOL_PRESP_FIRST);
 		p->mPosition = Vector3(0.0f);
-		RoomManager::singleton->mGoLayers[GOL_FIRST].push_back(p);
+		RoomManager::singleton->mGoLayers[GOL_PRESP_FIRST].push_back(p);
 	}
 
 	// Create skybox
 	{
-		std::shared_ptr<Skybox> p = std::make_shared<Skybox>(GOL_FIRST, "skybox_1", Vector3(0.0f));
+		std::shared_ptr<Skybox> p = std::make_shared<Skybox>(GOL_PRESP_FIRST, "skybox_1", Vector3(0.0f));
 		p->mPosition = Vector3(0.0f);
-		RoomManager::singleton->mGoLayers[GOL_FIRST].push_back(p);
+		RoomManager::singleton->mGoLayers[GOL_PRESP_FIRST].push_back(p);
 	}
 
-	// Camera position
-	mGoLayers[GOL_SECOND].mCameraEye = { 8.0f, -20.0f, 1.0f };
-	mGoLayers[GOL_SECOND].mCameraTarget = { 8.0f, -20.0f, 0.0f };
+	// Setup camera for game layers
+	{
+		auto& gol = mGoLayers[GOL_PRESP_SECOND];
+		gol.cameraEye = { 8.0f, -20.0f, 1.0f };
+		gol.cameraTarget = { 8.0f, -20.0f, 0.0f };
+	}
 
 	/*
 	mCameraEye = { 20.0f, -35.0f, 20.0f };
@@ -245,7 +249,7 @@ RoomManager::Instantiator RoomManager::getGameObjectFromNoiseValue(const double 
 		const auto& it = std::next(std::begin(mBubbleColors), std::rand() % mBubbleColors.size());
 
 		nlohmann::json params;
-		params["parent"] = GOL_SECOND;
+		params["parent"] = GOL_PRESP_SECOND;
 		params["color"] = {};
 		params["color"]["r"] = it->second.color.r();
 		params["color"]["g"] = it->second.color.g();

@@ -15,16 +15,16 @@ public:
 
 	Projectile(const Int parentIndex, const Color3& ambientColor);
 
+	const Int getType() const override;
+	void update() override;
+	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
+	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 	void adjustPosition();
 
 	Color3 mAmbientColor;
 	Vector3 mVelocity;
 
 protected:
-	const Int getType() const override;
-	void update() override;
-	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
-	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
 	void snapToGrid();
 	void updateBBox();

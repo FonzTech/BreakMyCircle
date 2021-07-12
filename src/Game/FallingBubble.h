@@ -18,6 +18,11 @@ public:
 
 	FallingBubble(const Int parentIndex, const Color3& ambientColor, const bool spark, const Float maxVerticalSpeed = -100.0f);
 
+	const Int getType() const  override;
+	void update() override;
+	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
+	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
+
 	bool mSpark;
 	Color3 mAmbientColor;
 
@@ -28,9 +33,4 @@ private:
 	Float mDelay;
 	Float mMaxVerticalSpeed;
 	SpriteShaderDataView mWrapper;
-
-	const Int getType() const  override;
-	void update() override;
-	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
-	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 };

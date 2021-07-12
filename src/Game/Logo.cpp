@@ -104,7 +104,7 @@ void Logo::update()
 		rp[2] = 0.0f;
 
 		// Create random bubble
-		std::shared_ptr<FallingBubble> fb = std::make_shared<FallingBubble>(GOL_FIRST, it->second.color, false, -25.0f);
+		std::shared_ptr<FallingBubble> fb = std::make_shared<FallingBubble>(GOL_PRESP_FIRST, it->second.color, false, -25.0f);
 		fb->mPosition = mPosition + rp;
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(fb);
 
@@ -260,15 +260,15 @@ void Logo::setCameraParameters()
 {
 	// First layer
 	{
-		auto& layer = RoomManager::singleton->mGoLayers[GOL_FIRST];
-		layer.mCameraEye = mPosition + Vector3(0.0f, 0.0f, 20.0f);
-		layer.mCameraTarget = mPosition;
+		auto& layer = RoomManager::singleton->mGoLayers[GOL_PRESP_FIRST];
+		layer.cameraEye = mPosition + Vector3(0.0f, 0.0f, 20.0f);
+		layer.cameraTarget = mPosition;
 	}
 
 	// Second layer
 	{
-		auto& layer = RoomManager::singleton->mGoLayers[GOL_SECOND];
-		layer.mCameraEye = mPosition + Vector3(0.0f, 0.0f, 6.0f);
-		layer.mCameraTarget = mPosition;
+		auto& layer = RoomManager::singleton->mGoLayers[GOL_PRESP_SECOND];
+		layer.cameraEye = mPosition + Vector3(0.0f, 0.0f, 6.0f);
+		layer.cameraTarget = mPosition;
 	}
 }

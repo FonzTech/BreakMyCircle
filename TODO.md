@@ -24,5 +24,5 @@
 # On-going tasks
 
 - Animate camera for every scenery available in the game.
-- Intro screen with logo and various effects.
+- Intro screen with logo and various effects, to be melt with level screen.
 - Procedural level generation.
