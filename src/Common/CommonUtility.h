@@ -3,6 +3,7 @@
 #define RESOURCE_MESH_PLANE_SPRITE "mesh_plane_sprite"
 #define RESOURCE_MESH_PLANE_WATER "mesh_plane_water"
 #define RESOURCE_MESH_SAND_FLOOR "mesh_plane_sand_floor"
+#define RESOURCE_MESH_PLANE_FLAT "mesh_plane_flat"
 #define RESOURCE_MESH_CUBE "mesh_plane_cube"
 
 #define RESOURCE_TEXTURE_SPARKLES "tex_sparkles"
@@ -25,6 +26,7 @@
 #define RESOURCE_SHADER_SPRITE "shader_sprite"
 #define RESOURCE_SHADER_WATER "shader_water"
 #define RESOURCE_SHADER_CUBEMAP "shader_cubemap"
+#define RESOURCE_SHADER_FLAT3D "shader_flat3d"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"
@@ -42,6 +44,7 @@
 #include <Magnum/GL/CubeMapTexture.h>
 #include <Magnum/GL/AbstractShaderProgram.h>
 #include <Magnum/Trade/AbstractMaterialData.h>
+#include <Magnum/Shaders/Flat.h>
 #include <nlohmann/json.hpp>
 
 #include "CommonTypes.h"
@@ -97,5 +100,6 @@ public:
 	// Utilities
 	void createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color);
 	std::shared_ptr<TexturedDrawable<SpriteShader>> createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
+	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> & getFlat3DShader();
 
 };

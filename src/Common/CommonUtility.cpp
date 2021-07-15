@@ -12,8 +12,6 @@
 #include <Magnum/Trade/ImageData.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/GL/TextureFormat.h>
-#include <Magnum/Shaders/Flat.h>
-#include <Magnum/Shaders/Phong.h>
 #include <Magnum/Primitives/Plane.h>
 #include <Magnum/MeshTools/Interleave.h>
 #include <Magnum/MeshTools/CompressIndices.h>
@@ -170,4 +168,23 @@ std::shared_ptr<TexturedDrawable<SpriteShader>> CommonUtility::createSpriteDrawa
 	td->setParent(&parent);
 	td->setDrawCallback(drawCallback);
 	return td;
+}
+
+Resource<GL::AbstractShaderProgram, Shaders::Flat3D> & CommonUtility::getFlat3DShader()
+{
+	// Get required resource
+	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> resShader{ CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, Shaders::Flat3D>(RESOURCE_SHADER_FLAT3D) };
+
+	if (!resShader)
+	{
+		// Create shader
+		const auto& flags = Shaders::Flat3D::Flag::Textured | Shaders::Flat3D::Flag::AlphaMask;
+		std::unique_ptr<GL::AbstractShaderProgram> shader = std::make_unique<Shaders::Flat3D>(flags);
+
+		// Add to resources
+		Containers::Pointer<GL::AbstractShaderProgram> p = std::move(shader);
+		CommonUtility::singleton->manager.set(resShader.key(), std::move(p));
+	}
+
+	return resShader;
 }
