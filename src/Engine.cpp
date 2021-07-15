@@ -30,7 +30,6 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	mTimeline.start();
 
 	// Enable renderer features
-	GL::Renderer::enable(GL::Renderer::Feature::DepthTest);
 	// GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
 	GL::Renderer::enable(GL::Renderer::Feature::Blending);
 	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
@@ -50,6 +49,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	RoomManager::singleton->setup();
 
 	// Setup room manager
+	RoomManager::singleton->windowSize = windowSize();
 	upsertGameObjectLayers();
 
 	// Build room
@@ -79,6 +79,9 @@ void Engine::tickEvent()
 			.clear(GL::FramebufferClear::Depth)
 			.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f))
 			.bind();
+
+		// Enable renderer features
+		GL::Renderer::setFeature(GL::Renderer::Feature::DepthTest, currentGol->depthTestEnabled);
 
 		// Set projection for camera on this layer
 		RoomManager::singleton->mCamera->setProjectionMatrix(currentGol->projectionMatrix);
@@ -284,26 +287,31 @@ void Engine::upsertGameObjectLayers()
 				// Create drawables holder
 				layer->drawables = std::make_unique<SceneGraph::DrawableGroup3D>();
 
-				// Set projection matrix
+				// Special setup
 				if (index == GOL_ORTHO_FIRST)
 				{
+					// Set renderer features
+					layer->depthTestEnabled = false;
+
 					// Set camera position
 					layer->cameraEye = { 0.0f, 0.0f, 1.0f };
 					layer->cameraTarget = { 0.0f, 0.0f, 0.0f };
 				}
 				else
 				{
-					layer->projectionMatrix = Matrix4::perspectiveProjection(35.0_degf, 1.0f, 0.01f, 1000.0f);
+					// Set renderer features
+					layer->depthTestEnabled = true;
 				}
 			}
 		}
 
-		// Special setup for orthographic layers
-		if (index == GOL_ORTHO_FIRST)
+		// Set projection matrix
 		{
-			// Set projection matrix
-			Vector2 v(RoomManager::singleton->windowSize);
-			layer->projectionMatrix = Matrix4::orthographicProjection(Vector2(std::max(v.x(), 1.0f), std::max(v.y(), 1.0f)), 0.01f, 1000.0f);
+			const Vector2 v(RoomManager::singleton->windowSize);
+			const auto& pm = index == GOL_ORTHO_FIRST ?
+				Matrix4::orthographicProjection(Vector2(1.0f), 0.01f, 1000.0f) :
+				Matrix4::perspectiveProjection(35.0_degf, v.x() / v.y(), 0.01f, 1000.0f);
+			layer->projectionMatrix = pm;
 		}
 
 		// Get size for window framebuffer

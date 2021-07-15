@@ -42,6 +42,7 @@ public:
 	struct GameObjectsLayer
 	{
 		Int index;
+		bool depthTestEnabled;
 		Matrix4 projectionMatrix;
 		Vector3 cameraEye, cameraTarget;
 		std::unique_ptr<GL::Framebuffer> frameBuffer;

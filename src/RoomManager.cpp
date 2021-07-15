@@ -81,7 +81,7 @@ void RoomManager::setup()
 
 	// Setup camera
 	mCamera = std::make_shared<SceneGraph::Camera3D>(mCameraObject);
-	mCamera->setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::Extend);
+	mCamera->setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::NotPreserved);
 	mCamera->setViewport(GL::defaultFramebuffer.viewport().size());
 }
 
