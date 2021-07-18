@@ -14,8 +14,8 @@
 #include "GameObject.h"
 
 const Int Engine::GO_LAYERS[] = {
-	GOL_PRESP_FIRST,
-	GOL_PRESP_SECOND,
+	GOL_PERSP_FIRST,
+	GOL_PERSP_SECOND,
 	GOL_ORTHO_FIRST
 };
 
@@ -143,8 +143,8 @@ void Engine::drawEvent()
 	{
 		// Draw screen quad
 		mScreenQuadShader
-			.bindTexture(GOL_PRESP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PRESP_FIRST].fbTexture)
-			.bindTexture(GOL_PRESP_SECOND, *RoomManager::singleton->mGoLayers[GOL_PRESP_SECOND].fbTexture)
+			.bindTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].fbTexture)
+			.bindTexture(GOL_PERSP_SECOND, *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].fbTexture)
 			.bindTexture(GOL_ORTHO_FIRST, *RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].fbTexture)
 			.draw(mScreenQuadShader.mMesh);
 

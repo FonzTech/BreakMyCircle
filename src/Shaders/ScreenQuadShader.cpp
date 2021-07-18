@@ -34,8 +34,8 @@ void ScreenQuadShader::setupShader()
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(link());
 
-	setUniform(uniformLocation("textureGolPrespFirst"), GOL_PRESP_FIRST);
-	setUniform(uniformLocation("textureGolPrespSecond"), GOL_PRESP_SECOND);
+	setUniform(uniformLocation("textureGolPrespFirst"), GOL_PERSP_FIRST);
+	setUniform(uniformLocation("textureGolPrespSecond"), GOL_PERSP_SECOND);
 	setUniform(uniformLocation("textureGolOrthoFirst"), GOL_ORTHO_FIRST);
 }
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#define GOL_PRESP_FIRST 0
-#define GOL_PRESP_SECOND 1
+#define GOL_PERSP_FIRST 0
+#define GOL_PERSP_SECOND 1
 #define GOL_ORTHO_FIRST 100
 
 #include <memory>

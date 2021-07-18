@@ -27,3 +27,4 @@ Puzzle Bobble-like game for PC and Mobile. Currently in development. This projec
   - `InputManager::singleton->mouseStates[ImMouseButtons::Left] > 0`: the key is down;
 
 - As of now, all materials use Phong shader.
+- The GOL_PERSP_FIRST is the only layer which has the object ID buffer, used for mouse picking.

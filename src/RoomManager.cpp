@@ -203,34 +203,34 @@ void RoomManager::createLevelRoom()
 			Vector3 position = { startX + x * 2.0f, y * -2.0f, 0.0f };
 
 			gameObject->mPosition = position;
-			RoomManager::singleton->mGoLayers[GOL_PRESP_SECOND].push_back(gameObject);
+			RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(gameObject);
 		}
 	}
 
 	// Create player
 	{
-		std::shared_ptr<Player> p = std::make_shared<Player>(GOL_PRESP_SECOND);
+		std::shared_ptr<Player> p = std::make_shared<Player>(GOL_PERSP_SECOND);
 		p->mPosition = { 8.0f, -35.0f, 0.0f };
-		RoomManager::singleton->mGoLayers[GOL_PRESP_SECOND].push_back(p);
+		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
 	}
 
 	// Create scenery
 	{
-		std::shared_ptr<Scenery> p = std::make_shared<Scenery>(GOL_PRESP_FIRST);
+		std::shared_ptr<Scenery> p = std::make_shared<Scenery>(GOL_PERSP_FIRST);
 		p->mPosition = Vector3(0.0f);
-		RoomManager::singleton->mGoLayers[GOL_PRESP_FIRST].push_back(p);
+		RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(p);
 	}
 
 	// Create skybox
 	{
-		std::shared_ptr<Skybox> p = std::make_shared<Skybox>(GOL_PRESP_FIRST, "skybox_1", Vector3(0.0f));
+		std::shared_ptr<Skybox> p = std::make_shared<Skybox>(GOL_PERSP_FIRST, "skybox_1", Vector3(0.0f));
 		p->mPosition = Vector3(0.0f);
-		RoomManager::singleton->mGoLayers[GOL_PRESP_FIRST].push_back(p);
+		RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(p);
 	}
 
 	// Setup camera for game layers
 	{
-		auto& gol = mGoLayers[GOL_PRESP_SECOND];
+		auto& gol = mGoLayers[GOL_PERSP_SECOND];
 		gol.cameraEye = { 8.0f, -20.0f, 1.0f };
 		gol.cameraTarget = { 8.0f, -20.0f, 0.0f };
 	}
@@ -251,7 +251,7 @@ RoomManager::Instantiator RoomManager::getGameObjectFromNoiseValue(const double 
 		const auto& it = std::next(std::begin(mBubbleColors), std::rand() % mBubbleColors.size());
 
 		nlohmann::json params;
-		params["parent"] = GOL_PRESP_SECOND;
+		params["parent"] = GOL_PERSP_SECOND;
 		params["color"] = {};
 		params["color"]["r"] = it->second.color.r();
 		params["color"]["g"] = it->second.color.g();
