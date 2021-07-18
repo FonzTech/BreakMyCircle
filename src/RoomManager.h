@@ -96,7 +96,7 @@ public:
 	std::unordered_map<UnsignedInt, BubbleData> mBubbleColors;
 
 	// Window size
-	Vector2i windowSize;
+	Vector2i mWindowSize;
 
 	// Class methods
 	explicit RoomManager();

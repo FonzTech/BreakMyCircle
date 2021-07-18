@@ -41,7 +41,6 @@ const Int OverlayGui::getType() const
 
 void OverlayGui::update()
 {
-	mDrawables[0]->setTransformation(Matrix4::scaling(Vector3(0.5f)));
 }
 
 void OverlayGui::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
@@ -58,12 +57,16 @@ void OverlayGui::collidedWith(const std::unique_ptr<std::unordered_set<GameObjec
 
 void OverlayGui::setPosition(const Vector2 & position)
 {
-	mPosition = Vector3(position, 0.0f);
+	updateAspectRatioFactors();
+	mPosition = Vector3(position.x(), position.y(), 0.0f);
+	updateTransformations();
 }
 
 void OverlayGui::setSize(const Vector2 & size)
 {
+	updateAspectRatioFactors();
 	mSize = size;
+	updateTransformations();
 }
 
 Resource<GL::Mesh> & OverlayGui::getMesh()
@@ -89,4 +92,24 @@ Resource<GL::Mesh> & OverlayGui::getMesh()
 	}
 
 	return resMesh;
+}
+
+void OverlayGui::updateAspectRatioFactors()
+{
+	if (RoomManager::singleton->mWindowSize.x() < RoomManager::singleton->mWindowSize.y())
+	{
+		mArs[0] = 1.0f;
+		mArs[1] = Float(RoomManager::singleton->mWindowSize.x()) / Float(RoomManager::singleton->mWindowSize.y());
+	}
+	else
+	{
+		mArs[0] = Float(RoomManager::singleton->mWindowSize.y()) / Float(RoomManager::singleton->mWindowSize.x());
+		mArs[1] = 1.0f;
+	}
+}
+
+void OverlayGui::updateTransformations()
+{
+	mDrawables[0]->setTransformation(Matrix4::scaling(Vector3(mSize.x() * mArs[0], mSize.y() * mArs[1], 1.0f)));
+	mDrawables[0]->translate(Vector3((mPosition.x() * mArs[0], mPosition.y() * mArs[1], 0.0f)));
 }

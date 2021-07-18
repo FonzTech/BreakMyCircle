@@ -49,7 +49,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	RoomManager::singleton->setup();
 
 	// Setup room manager
-	RoomManager::singleton->windowSize = windowSize();
+	RoomManager::singleton->mWindowSize = windowSize();
 	upsertGameObjectLayers();
 
 	// Build room
@@ -67,7 +67,7 @@ void Engine::tickEvent()
 	mDeltaTime = mTimeline.previousFrameDuration();
 
 	auto ws = windowSize();
-	RoomManager::singleton->windowSize = ws;
+	RoomManager::singleton->mWindowSize = ws;
 	RoomManager::singleton->mCamera->setViewport(ws);
 
 	// Iterate through all layers
@@ -307,7 +307,7 @@ void Engine::upsertGameObjectLayers()
 
 		// Set projection matrix
 		{
-			const Vector2 v(RoomManager::singleton->windowSize);
+			const Vector2 v(RoomManager::singleton->mWindowSize);
 			const auto& pm = index == GOL_ORTHO_FIRST ?
 				Matrix4::orthographicProjection(Vector2(1.0f), 0.01f, 1000.0f) :
 				Matrix4::perspectiveProjection(35.0_degf, v.x() / v.y(), 0.01f, 1000.0f);

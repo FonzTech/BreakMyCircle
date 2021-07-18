@@ -92,7 +92,7 @@ void Player::update()
 	// Get shooting angle by mouse
 	{
 		Vector2 p1 = Vector2(InputManager::singleton->mMousePosition);
-		Vector2 p2 = Vector2({ RoomManager::singleton->windowSize.x() * 0.5f, Float(RoomManager::singleton->windowSize.y()) });
+		Vector2 p2 = Vector2({ RoomManager::singleton->mWindowSize.x() * 0.5f, Float(RoomManager::singleton->mWindowSize.y()) });
 		Vector2 pdir = p2 - p1;
 
 		Float value = std::atan2(-pdir.y(), pdir.x());

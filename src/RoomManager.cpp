@@ -12,6 +12,7 @@
 #include "Game/Logo.h"
 #include "Game/Skybox.h"
 #include "Game/OverlayGui.h"
+#include "Game/LevelSelector.h"
 #include "RoomManager.h"
 
 using namespace Magnum::Math::Literals;
@@ -38,6 +39,7 @@ RoomManager::RoomManager()
 	gameObjectCreators[GOT_LOGO] = Logo::getInstance;
 	gameObjectCreators[GOT_SKYBOX] = Skybox::getInstance;
 	gameObjectCreators[GOT_OVERLAY_GUI] = OverlayGui::getInstance;
+	gameObjectCreators[GOT_LEVEL_SELECTOR] = LevelSelector::getInstance;
 
 	// Create collision manager
 	mCollisionManager = std::make_unique<CollisionManager>();
