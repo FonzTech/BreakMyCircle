@@ -43,6 +43,7 @@ public:
 	{
 		Int index;
 		bool depthTestEnabled;
+		bool orderingByZ;
 		Matrix4 projectionMatrix;
 		Vector3 cameraEye, cameraTarget;
 		std::unique_ptr<GL::Framebuffer> frameBuffer;

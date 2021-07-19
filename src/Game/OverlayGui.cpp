@@ -26,7 +26,7 @@ OverlayGui::OverlayGui(const Int parentIndex) : GameObject(parentIndex)
 	Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_BUBBLE_BLUE);
 
 	// Create drawable
-	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
+	auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;
 
 	std::shared_ptr<TexturedDrawable<Shaders::Flat3D>> td = std::make_shared<TexturedDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, texture);
 	td->setParent(mManipulator.get());
@@ -66,6 +66,13 @@ void OverlayGui::setSize(const Vector2 & size)
 {
 	updateAspectRatioFactors();
 	mSize = size;
+	updateTransformations();
+}
+
+void OverlayGui::setAnchor(const Vector2 & anchor)
+{
+	updateAspectRatioFactors();
+	mAnchor = anchor;
 	updateTransformations();
 }
 
@@ -110,6 +117,11 @@ void OverlayGui::updateAspectRatioFactors()
 
 void OverlayGui::updateTransformations()
 {
-	mDrawables[0]->setTransformation(Matrix4::scaling(Vector3(mSize.x() * mArs[0], mSize.y() * mArs[1], 1.0f)));
-	mDrawables[0]->translate(Vector3((mPosition.x() * mArs[0], mPosition.y() * mArs[1], 0.0f)));
+	Vector2 tp(mPosition.xy());
+	tp += Vector2(mAnchor.x() * mArs[0], mAnchor.y() * mArs[1]) * mSize;
+
+	(*mManipulator)
+		.resetTransformation()
+		.scale(Vector3(mSize.x() * mArs[0], mSize.y() * mArs[1], 1.0f))
+		.translate(Vector3(tp.x(), tp.y(), 0.0f));
 }

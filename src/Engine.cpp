@@ -153,16 +153,24 @@ void Engine::drawEvent()
 	}
 	else
 	{
-		// Z ordering
-		std::vector<std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>> drawableTransformations = RoomManager::singleton->mCamera->drawableTransformations(*currentGol->drawables);
-		std::sort(drawableTransformations.begin(), drawableTransformations.end(),
-			[](const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& a,
-				const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& b) {
-			return a.second.translation().z() < b.second.translation().z();
-		});
+		if (currentGol->orderingByZ)
+		{
+			// Z ordering
+			std::vector<std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>> drawableTransformations = RoomManager::singleton->mCamera->drawableTransformations(*currentGol->drawables);
+			std::sort(drawableTransformations.begin(), drawableTransformations.end(),
+				[](const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& a,
+					const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& b) {
+				return a.second.translation().z() < b.second.translation().z();
+			});
 
-		// Draw scene
-		RoomManager::singleton->mCamera->draw(drawableTransformations);
+			// Draw scene
+			RoomManager::singleton->mCamera->draw(drawableTransformations);
+		}
+		else
+		{
+			// Draw scene
+			RoomManager::singleton->mCamera->draw(*currentGol->drawables);
+		}
 	}
 }
 
@@ -292,6 +300,7 @@ void Engine::upsertGameObjectLayers()
 				{
 					// Set renderer features
 					layer->depthTestEnabled = false;
+					layer->orderingByZ = false;
 
 					// Set camera position
 					layer->cameraEye = { 0.0f, 0.0f, 1.0f };
@@ -301,6 +310,7 @@ void Engine::upsertGameObjectLayers()
 				{
 					// Set renderer features
 					layer->depthTestEnabled = true;
+					layer->orderingByZ = true;
 				}
 			}
 		}
@@ -309,7 +319,7 @@ void Engine::upsertGameObjectLayers()
 		{
 			const Vector2 v(RoomManager::singleton->mWindowSize);
 			const auto& pm = index == GOL_ORTHO_FIRST ?
-				Matrix4::orthographicProjection(Vector2(1.0f), 0.01f, 1000.0f) :
+				Matrix4::orthographicProjection(Vector2(1.0f), 0.01f, 100.0f) :
 				Matrix4::perspectiveProjection(35.0_degf, v.x() / v.y(), 0.01f, 1000.0f);
 			layer->projectionMatrix = pm;
 		}

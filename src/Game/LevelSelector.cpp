@@ -23,9 +23,10 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 
 	// Create overlays
 	std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST);
-	o->setPosition({ -0.8f, 0.8f });
-	o->setSize({ 0.05f, 0.05f });
-	RoomManager::singleton->mGoLayers[mParentIndex].push_back(o);
+	o->setPosition({ -0.5f, 0.5f });
+	o->setSize({ 0.1f, 0.1f });
+	o->setAnchor({ 1.0f, -1.0f });
+	RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o);
 }
 
 
