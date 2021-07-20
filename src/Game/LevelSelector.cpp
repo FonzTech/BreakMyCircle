@@ -1,6 +1,6 @@
 #include "LevelSelector.h"
-#include "OverlayGui.h"
 #include "../RoomManager.h"
+#include "../InputManager.h"
 
 std::shared_ptr<GameObject> LevelSelector::getInstance(const nlohmann::json & params)
 {
@@ -20,13 +20,21 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 
 	// Init members
 	mScroll = 0.0f;
+	mClickIndex = -1;
 
 	// Create overlays
-	std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST);
-	o->setPosition({ -0.5f, 0.5f });
-	o->setSize({ 0.1f, 0.1f });
-	o->setAnchor({ 1.0f, -1.0f });
-	RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o);
+	{
+		std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST);
+		o->setPosition({ -0.5f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 1.0f, -1.0f });
+
+		mButtons[0] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+
+		mCallbacks[0] = []() {
+			printf("You have clicked settings\n");
+		};
+	}
 }
 
 
@@ -37,6 +45,28 @@ const Int LevelSelector::getType() const
 
 void LevelSelector::update()
 {
+	const auto& lbs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
+
+	const Vector3 p(Float(InputManager::singleton->mMousePosition.x()), Float(InputManager::singleton->mMousePosition.y()), 0.0f);
+	const Vector2 w(Float(RoomManager::singleton->mWindowSize.x()), Float(RoomManager::singleton->mWindowSize.y()));
+
+	for (Int i = 0; i < 1; ++i)
+	{
+		const auto& b = mButtons[i]->getBoundingBox(w);
+		if (b.contains(p))
+		{
+			if (lbs == IM_STATE_PRESSED)
+			{
+				mClickIndex = i;
+				break;
+			}
+			else if (lbs == IM_STATE_RELEASED && mClickIndex == i)
+			{
+				mCallbacks[i]();
+				break;
+			}
+		}
+	}
 }
 
 void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)

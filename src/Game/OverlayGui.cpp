@@ -41,6 +41,7 @@ const Int OverlayGui::getType() const
 
 void OverlayGui::update()
 {
+	updateTransformations();
 }
 
 void OverlayGui::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
@@ -59,21 +60,28 @@ void OverlayGui::setPosition(const Vector2 & position)
 {
 	updateAspectRatioFactors();
 	mPosition = Vector3(position.x(), position.y(), 0.0f);
-	updateTransformations();
 }
 
 void OverlayGui::setSize(const Vector2 & size)
 {
 	updateAspectRatioFactors();
 	mSize = size;
-	updateTransformations();
 }
 
 void OverlayGui::setAnchor(const Vector2 & anchor)
 {
 	updateAspectRatioFactors();
 	mAnchor = anchor;
-	updateTransformations();
+}
+
+Range3D OverlayGui::getBoundingBox(const Vector2 & windowSize)
+{
+	const auto& s = Vector3(windowSize, 1.0f);
+	const auto& o = s * 0.5f;
+	return Range3D{
+		{ mBbox.min().x() * s.x() + o.x(), s.y() - (mBbox.max().y() * s.y() + o.y()), mBbox.min().z() * s.z() + o.z() },
+		{ mBbox.max().x() * s.x() + o.x(), s.y() - (mBbox.min().y() * s.y() + o.y()), mBbox.max().z() * s.z() + o.z() }
+	};
 }
 
 Resource<GL::Mesh> & OverlayGui::getMesh()
@@ -120,8 +128,19 @@ void OverlayGui::updateTransformations()
 	Vector2 tp(mPosition.xy());
 	tp += Vector2(mAnchor.x() * mArs[0], mAnchor.y() * mArs[1]) * mSize;
 
+	Vector2 ts(mSize.x() * mArs[0], mSize.y() * mArs[1]);
+
 	(*mManipulator)
 		.resetTransformation()
-		.scale(Vector3(mSize.x() * mArs[0], mSize.y() * mArs[1], 1.0f))
+		.scale(Vector3(ts.x(), ts.y(), 1.0f))
 		.translate(Vector3(tp.x(), tp.y(), 0.0f));
+
+	const Range2D r = {
+		tp - ts,
+		tp + ts
+	};
+	mBbox = Range3D{
+		{ r.min().x(), r.min().y(), -1.0f },
+		{ r.max().x(), r.max().y(), 1.0f }
+	};
 }

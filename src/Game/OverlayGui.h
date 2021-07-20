@@ -24,6 +24,7 @@ public:
 	void setPosition(const Vector2 & position);
 	void setSize(const Vector2 & size);
 	void setAnchor(const Vector2 & anchor);
+	Range3D getBoundingBox(const Vector2 & windowSize);
 
 protected:
 	Resource<GL::Mesh> & getMesh();

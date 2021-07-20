@@ -7,6 +7,7 @@
 #include <Magnum/Magnum.h>
 
 #include "../GameObject.h"
+#include "OverlayGui.h"
 
 using namespace Magnum;
 
@@ -24,4 +25,7 @@ public:
 
 private:
 	Float mScroll;
+	Int mClickIndex;
+	std::shared_ptr<OverlayGui> mButtons[1];
+	std::function<void()> mCallbacks[1];
 };

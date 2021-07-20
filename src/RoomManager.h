@@ -56,6 +56,12 @@ public:
 			list->push_back(std::move(go));
 			list->back()->mParentIndex = index;
 		}
+
+		std::shared_ptr<GameObject> & push_back(const std::shared_ptr<GameObject> & go, const bool _dummy)
+		{
+			push_back(go);
+			return list->back();
+		}
 	};
 
 	// Bubble data holder
