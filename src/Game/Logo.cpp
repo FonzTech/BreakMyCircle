@@ -37,11 +37,11 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mParentIndex = parentIndex;
 	
 	// Init members
-	mLightPosition = Vector3(0.0f, 0.0f, 1.0f);
+	mLightPosition = Vector3(0.0f);
 	mLightDirection = false;
 
 	// Load assets
-	mPosition = Vector3(0.0f);
+	mPosition = Vector3(0.0f, 10.0f, 0.0f);
 	mManipulator->setTransformation(Matrix4::translation(mPosition));
 
 	mLogoManipulator = new Object3D(mManipulator.get());
@@ -104,7 +104,7 @@ void Logo::update()
 		rp[2] = 0.0f;
 
 		// Create random bubble
-		std::shared_ptr<FallingBubble> fb = std::make_shared<FallingBubble>(GOL_PERSP_FIRST, it->second.color, false, -25.0f);
+		std::shared_ptr<FallingBubble> fb = std::make_shared<FallingBubble>(mParentIndex, it->second.color, false, -25.0f);
 		fb->mPosition = mPosition + rp;
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(fb);
 
@@ -115,7 +115,7 @@ void Logo::update()
 	// Check for finish timer
 	if (mFinishTimer < -1.0f)
 	{
-		mLightPosition += Vector3(0.0f, mLightDirection ? -4.0f : 4.0f, 0.0f) * mDeltaTime;
+		mLightPosition += Vector3(0.0f, mLightDirection ? -4.0f : 4.0f, 2.0f) * mDeltaTime;
 
 		if (mLightPosition.y() > 12.0f)
 		{
@@ -143,7 +143,7 @@ void Logo::update()
 void Logo::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPosition(mPosition + mLightPosition)
+		.setLightPosition(mLightPosition)
 		.setLightColor(0xffffff60_rgbaf)
 		.setSpecularColor(0xffffff00_rgbaf)
 		.setAmbientColor(0x505050ff_rgbaf)
@@ -222,8 +222,9 @@ void Logo::buildAnimations()
 			mAnimPlayer->addWithCallback(
 				*mTrackViewRotations[i],
 				[](Float, const Deg& tr, Object3D& object) {
-				object.setTransformation(Matrix4());
-				object.rotate(tr, Vector3::yAxis());
+				object
+					.resetTransformation()
+					.rotate(tr, Vector3::yAxis());
 			},
 				*mLogoObjects[i]
 				);
@@ -258,17 +259,7 @@ void Logo::buildAnimations()
 
 void Logo::setCameraParameters()
 {
-	// First layer
-	{
-		auto& layer = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
-		layer.cameraEye = mPosition + Vector3(0.0f, 0.0f, 20.0f);
-		layer.cameraTarget = mPosition;
-	}
-
-	// Second layer
-	{
-		auto& layer = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND];
-		layer.cameraEye = mPosition + Vector3(0.0f, 0.0f, 6.0f);
-		layer.cameraTarget = mPosition;
-	}
+	auto& layer = RoomManager::singleton->mGoLayers[mParentIndex];
+	layer.cameraEye = mPosition + Vector3(0.0f, 0.0f, 6.0f);
+	layer.cameraTarget = mPosition;
 }

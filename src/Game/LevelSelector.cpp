@@ -19,7 +19,8 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 	mParentIndex = parentIndex;
 
 	// Init members
-	mScroll = 0.0f;
+	mPosition = Vector3(0.0f);
+	mScrollVelocity = Vector3(0.0f);
 	mClickIndex = -1;
 
 	// Create overlays
@@ -35,6 +36,16 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 			printf("You have clicked settings\n");
 		};
 	}
+
+	// Set camera parameters
+	{
+		auto& layer = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
+		layer.cameraEye = mPosition + Vector3(0.0f, 10.0f, 20.0f);
+		layer.cameraTarget = mPosition;
+	}
+
+	// Trigger scenery creation
+	handleScrollableScenery();
 }
 
 
@@ -45,6 +56,7 @@ const Int LevelSelector::getType() const
 
 void LevelSelector::update()
 {
+	// Handle button clicks
 	const auto& lbs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
 
 	const Vector3 p(Float(InputManager::singleton->mMousePosition.x()), Float(InputManager::singleton->mMousePosition.y()), 0.0f);
@@ -67,6 +79,75 @@ void LevelSelector::update()
 			}
 		}
 	}
+
+	// Handle scrollable scenery
+	if (lbs == IM_STATE_PRESSED)
+	{
+		mPrevMousePos = InputManager::singleton->mMousePosition;
+	}
+	else if (lbs >= IM_STATE_PRESSED)
+	{
+		const Vector2i mouseDelta = InputManager::singleton->mMousePosition - mPrevMousePos;
+		if (mouseDelta.isZero())
+		{
+			mScrollVelocity = { 0.0f };
+		}
+		else
+		{
+			const Vector3 scrollDelta = Vector3(Float(mouseDelta.x()), 0.0f, Float(mouseDelta.y())) * -0.03f;
+			mScrollVelocity = scrollDelta;
+		}
+
+		// Update previous mouse state
+		mPrevMousePos = InputManager::singleton->mMousePosition;
+	}
+	// Reset scrolling behaviour
+	else
+	{
+		mClickIndex = -1;
+
+		if (!mScrollVelocity.isZero())
+		{
+			for (UnsignedInt i = 0; i < 3; ++i)
+			{
+				if (mScrollVelocity[i] < -GO_LS_MAX_SCROLL_VELOCITY_MAX)
+				{
+					mScrollVelocity[i] = -GO_LS_MAX_SCROLL_VELOCITY_MAX;
+				}
+				else if (mScrollVelocity[i] > GO_LS_MAX_SCROLL_VELOCITY_MAX)
+				{
+					mScrollVelocity[i] = GO_LS_MAX_SCROLL_VELOCITY_MAX;
+				}
+			}
+
+			Vector3 scrollDelta = mScrollVelocity;
+			for (UnsignedInt i = 0; i < 3; ++i)
+			{
+				if (scrollDelta[i] < -GO_LS_MAX_SCROLL_VELOCITY)
+				{
+					scrollDelta[i] = -GO_LS_MAX_SCROLL_VELOCITY;
+				}
+				else if (scrollDelta[i] > GO_LS_MAX_SCROLL_VELOCITY)
+				{
+					scrollDelta[i] = GO_LS_MAX_SCROLL_VELOCITY;
+				}
+				else if (std::abs(scrollDelta[i]) < GO_LS_MAX_SCROLL_THRESHOLD)
+				{
+					mScrollVelocity[i] = 0.0f;
+					scrollDelta[i] = 0.0f;
+				}
+			}
+
+			mScrollVelocity -= scrollDelta;
+		}
+	}
+
+	if (!mScrollVelocity.isZero())
+	{
+		mPosition += mScrollVelocity;
+		handleScrollableCameraPosition(mScrollVelocity);
+		handleScrollableScenery();
+	}
 }
 
 void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
@@ -75,4 +156,38 @@ void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 
 void LevelSelector::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
+}
+
+void LevelSelector::handleScrollableCameraPosition(const Vector3 & delta)
+{
+	auto& p = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
+	p.cameraEye += delta;
+	p.cameraTarget += delta;
+}
+
+void LevelSelector::handleScrollableScenery()
+{
+	const Int modelIndexes[] = {
+		Int(Math::floor((mPosition.y() - 50.0f) / 50.0f)),
+		Int(Math::floor(mPosition.y() / 50.0f)),
+		Int(Math::floor((mPosition.y() + 50.0f) / 50.0f))
+	};
+
+	for (Int i = 0; i < 3; ++i)
+	{
+		// const Int modelIndex = (modelIndexes[i] % 1) + 1;
+		const Int modelIndex = 0;
+
+		const auto& it = mSceneries.find(modelIndexes[i]);
+		if (it != mSceneries.end())
+		{
+			if (it->second->getModelIndex() == modelIndex)
+			{
+				continue;
+			}
+		}
+
+		std::shared_ptr<Scenery> go = std::make_unique<Scenery>(GOL_PERSP_FIRST, modelIndex);
+		mSceneries[modelIndexes[i]] = (std::shared_ptr<Scenery>&) RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(go, true);
+	}
 }

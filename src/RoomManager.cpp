@@ -216,7 +216,7 @@ void RoomManager::createLevelRoom()
 
 	// Create scenery
 	{
-		std::shared_ptr<Scenery> p = std::make_shared<Scenery>(GOL_PERSP_FIRST);
+		std::shared_ptr<Scenery> p = std::make_shared<Scenery>(GOL_PERSP_FIRST, 1);
 		p->mPosition = Vector3(0.0f);
 		RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(p);
 	}
@@ -231,7 +231,7 @@ void RoomManager::createLevelRoom()
 	// Setup camera for game layers
 	{
 		auto& gol = mGoLayers[GOL_PERSP_SECOND];
-		gol.cameraEye = { 8.0f, -20.0f, 1.0f };
+		gol.cameraEye = { 8.0f, -20.0f, 44.0f };
 		gol.cameraTarget = { 8.0f, -20.0f, 0.0f };
 	}
 

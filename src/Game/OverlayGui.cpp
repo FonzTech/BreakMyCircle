@@ -23,7 +23,7 @@ OverlayGui::OverlayGui(const Int parentIndex) : GameObject(parentIndex)
 	// Get assets
 	Resource<GL::Mesh> mesh = getMesh();
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> shader = CommonUtility::singleton->getFlat3DShader();
-	Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_BUBBLE_BLUE);
+	Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_GUI_SETTINGS);
 
 	// Create drawable
 	auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;

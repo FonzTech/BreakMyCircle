@@ -20,15 +20,20 @@ std::shared_ptr<GameObject> Scenery::getInstance(const nlohmann::json & params)
 	Int parent;
 	params.at("parent").get_to(parent);
 
+	// Get required data
+	Int modelIndex;
+	params.at("modelIndex").get_to(modelIndex);
+
 	// Instantiate scenery object
-	std::shared_ptr<Scenery> p = std::make_shared<Scenery>(parent);
+	std::shared_ptr<Scenery> p = std::make_shared<Scenery>(parent, modelIndex);
 	return p;
 }
 
-Scenery::Scenery(const Int parentIndex) : GameObject(parentIndex)
+Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(parentIndex)
 {
 	// Init members
-	mCubicBezier = std::make_unique<CubicBezier2D>(Vector2(0.0f, 0.0f), Vector2(0.11f, -0.02f), Vector2(0.0f, 1.01f), Vector2(1.0f));
+	// mCubicBezier = std::make_unique<CubicBezier2D>(Vector2(0.0f, 0.0f), Vector2(0.11f, -0.02f), Vector2(0.0f, 1.01f), Vector2(1.0f));
+	mModelIndex = modelIndex;
 	mFrame = 0.0f;
 
 	// Fill manipulator list
@@ -60,9 +65,13 @@ Scenery::Scenery(const Int parentIndex) : GameObject(parentIndex)
 	// Set camera position for scenery
 	mPosition = Vector3(0.0f);
 
-	auto& p = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
-	p.cameraEye = Vector3(7.65094f, 11.6036f, 11.9944f);
-	p.cameraTarget = Vector3(0.0f, 0.0f, 0.0f);
+	/*
+	{
+		auto& p = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
+		p.cameraEye = Vector3(7.65094f, 11.6036f, 11.9944f);
+		p.cameraTarget = Vector3(0.0f, 0.0f, 0.0f);
+	}
+	*/
 }
 
 const Int Scenery::getType() const
@@ -119,11 +128,14 @@ void Scenery::update()
 	}
 #endif
 
+	/*
 	// Animation for eye camera
+	if (mAnimateInGameCamera)
 	{
 		auto* p = &RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].cameraEye[2];
 		*p = mCubicBezier->value(Math::min(mFrame * 0.25f, 1.0f))[1] * 44.0f;
 	}
+	*/
 }
 
 void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
@@ -246,4 +258,14 @@ void Scenery::createWaterDrawable()
 		15.0f,
 		Color3(1.0f)
 	};
+}
+
+const Int Scenery::getModelIndex() const
+{
+	return mModelIndex;
+}
+
+const void Scenery::animateInGameCamera()
+{
+	mAnimateInGameCamera = true;
 }
