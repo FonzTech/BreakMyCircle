@@ -117,7 +117,7 @@ void Logo::update()
 	{
 		mLightPosition += Vector3(0.0f, mLightDirection ? -4.0f : 4.0f, 2.0f) * mDeltaTime;
 
-		if (mLightPosition.y() > 12.0f)
+		if (mLightPosition.y() > 16.0f)
 		{
 			mLightDirection = true;
 		}
