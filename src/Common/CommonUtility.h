@@ -36,6 +36,7 @@
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"
 
 #include <memory>
+#include <Corrade/PluginManager/Manager.h>
 #include <Magnum/Magnum.h>
 #include <Magnum/Resource.h>
 #include <Magnum/ResourceManager.h>
@@ -82,20 +83,7 @@ public:
 
 	// Read vector from JSON
 	template <std::size_t S, typename T>
-	const Math::Vector<S, T>& getVectorFromJson(const nlohmann::json & params)
-	{
-		Math::Vector<S, T> vector;
-		const auto& it = params.find("position");
-		if (it != params.end())
-		{
-			Float position[S];
-			for (UnsignedInt i = 0; i < S; ++i)
-			{
-				(*it).at(VECTOR_COMPONENTS[i]).get_to(vector[i]);
-			}
-		}
-		return vector;
-	};
+	const Math::Vector<S, T>& getVectorFromJson(const nlohmann::json & params);
 
 	// Audio loader
 	Resource<Audio::Buffer> loadAudioData(const std::string & filename);
@@ -105,31 +93,10 @@ public:
 
 	// Font loader
 	template<typename T>
-	Resource<Text::AbstractFont, T> loadFont(const std::string & filename)
-	{
-		// Get required resource
-		Resource<Text::AbstractFont, T> resFont{ CommonUtility::singleton->manager.get<Text::AbstractFont, T>(filename) };
-
-		if (!resFont)
-		{
-			PluginManager::Manager<Text::AbstractFont> manager;
-			Containers::Pointer<Text::AbstractFont> importer = manager.loadAndInstantiate("TrueTypeFont");
-			if (!importer || !importer->openFile("fonts/" + filename + ".ttf", 180.0f))
-			{
-				Fatal{} << "Cannot open font file";
-				std::exit(1);
-			}
-
-			// Add to resources
-			Containers::Pointer<Text::AbstractFont> p = std::move(importer);
-			CommonUtility::singleton->manager.set(resFont.key(), std::move(p));
-		}
-
-		return resFont;
-	};
+	Resource<Text::AbstractFont, T> loadFont(const std::string & filename);
 
 	// Utilities
 	void createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color);
 	std::shared_ptr<TexturedDrawable<SpriteShader>> createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
-	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> & getFlat3DShader();
+	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> getFlat3DShader();
 };

@@ -92,7 +92,7 @@ Range3D OverlayGui::getBoundingBox(const Vector2 & windowSize)
 	};
 }
 
-Resource<GL::Mesh> & OverlayGui::getMesh()
+Resource<GL::Mesh> OverlayGui::getMesh()
 {
 	// Get required resource
 	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_PLANE_FLAT) };
