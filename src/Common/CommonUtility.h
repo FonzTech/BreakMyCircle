@@ -64,7 +64,7 @@ using namespace Magnum;
 
 struct FontHolder
 {
-	std::unique_ptr<PluginManager::Manager<Text::AbstractFont>> manager;
+	PluginManager::Manager<Text::AbstractFont> manager;
 	Containers::Pointer<Text::AbstractFont> font;
 };
 

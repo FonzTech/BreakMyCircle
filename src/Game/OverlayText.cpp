@@ -74,7 +74,7 @@ void OverlayText::setText(const std::string & text)
 
 void OverlayText::updateTransformation()
 {
-	mTransformationMatrix = Matrix3::translation(mCurrentFloatWindowSize * mPosition.xy()) * Matrix3::scaling(Vector2(0.005f));
+	mTransformationMatrix = Matrix3::translation(mCurrentFloatWindowSize * mPosition.xy());
 }
 
 Resource<GL::AbstractShaderProgram, Shaders::DistanceFieldVector2D> OverlayText::getShader()
