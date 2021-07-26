@@ -28,6 +28,9 @@
 #define RESOURCE_SHADER_WATER "shader_water"
 #define RESOURCE_SHADER_CUBEMAP "shader_cubemap"
 #define RESOURCE_SHADER_FLAT3D "shader_flat3d"
+#define RESOURCE_SHADER_DISTANCE_FIELD_VECTOR "shader_distance_field_vector"
+
+#define RESOURCE_FONT_UBUNTU_TITLE "ubuntu-title"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"
@@ -45,6 +48,8 @@
 #include <Magnum/GL/CubeMapTexture.h>
 #include <Magnum/GL/AbstractShaderProgram.h>
 #include <Magnum/Trade/AbstractMaterialData.h>
+#include <Magnum/Text/Text.h>
+#include <Magnum/Text/AbstractFont.h>
 #include <Magnum/Shaders/Flat.h>
 #include <nlohmann/json.hpp>
 
@@ -56,7 +61,7 @@
 
 using namespace Magnum;
 
-typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::CubeMapTexture, GL::AbstractShaderProgram, Trade::AbstractMaterialData, Audio::Buffer, LinePathAsset> MyResourceManager;
+typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::CubeMapTexture, GL::AbstractShaderProgram, Trade::AbstractMaterialData, Audio::Buffer, Text::AbstractFont> MyResourceManager;
 
 class CommonUtility
 {
@@ -98,9 +103,33 @@ public:
 	// Texture loader
 	Resource<GL::Texture2D> loadTexture(const std::string & filename);
 
+	// Font loader
+	template<typename T>
+	Resource<Text::AbstractFont, T> loadFont(const std::string & filename)
+	{
+		// Get required resource
+		Resource<Text::AbstractFont, T> resFont{ CommonUtility::singleton->manager.get<Text::AbstractFont, T>(filename) };
+
+		if (!resFont)
+		{
+			PluginManager::Manager<Text::AbstractFont> manager;
+			Containers::Pointer<Text::AbstractFont> importer = manager.loadAndInstantiate("TrueTypeFont");
+			if (!importer || !importer->openFile("fonts/" + filename + ".ttf", 180.0f))
+			{
+				Fatal{} << "Cannot open font file";
+				std::exit(1);
+			}
+
+			// Add to resources
+			Containers::Pointer<Text::AbstractFont> p = std::move(importer);
+			CommonUtility::singleton->manager.set(resFont.key(), std::move(p));
+		}
+
+		return resFont;
+	};
+
 	// Utilities
 	void createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color);
 	std::shared_ptr<TexturedDrawable<SpriteShader>> createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> & getFlat3DShader();
-
 };

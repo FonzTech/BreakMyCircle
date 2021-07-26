@@ -9,6 +9,7 @@
 #include "../AssetManager.h"
 #include "../RoomManager.h"
 #include "../Common/CommonUtility.h"
+#include "../Game/OverlayText.h"
 #include "../Graphics/BaseDrawable.h"
 #include "FallingBubble.h"
 
@@ -73,6 +74,13 @@ Logo::Logo(const Int parentIndex) : GameObject()
 
 	// Set camera parameters
 	setCameraParameters();
+
+	// Create overlay text
+	{
+		std::shared_ptr<OverlayText> text = std::make_shared<OverlayText>();
+		text->mPosition = Vector3(0.5f, 0.5f, 0.0f);
+		text->setText("Tap here to begin");
+	}
 }
 
 const Int Logo::getType() const

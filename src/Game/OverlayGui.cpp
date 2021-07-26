@@ -20,6 +20,9 @@ std::shared_ptr<GameObject> OverlayGui::getInstance(const nlohmann::json & param
 
 OverlayGui::OverlayGui(const Int parentIndex) : GameObject(parentIndex)
 {
+	// Assign member
+	mParentIndex = parentIndex;
+
 	// Get assets
 	Resource<GL::Mesh> mesh = getMesh();
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> shader = CommonUtility::singleton->getFlat3DShader();
