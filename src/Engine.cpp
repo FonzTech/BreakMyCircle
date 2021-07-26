@@ -19,6 +19,12 @@ const Int Engine::GO_LAYERS[] = {
 	GOL_ORTHO_FIRST
 };
 
+const std::unordered_set<Int> Engine::INTRINSIC_GAME_OBJECTS = {
+	GOT_OVERLAY_TEXT
+};
+
+const Matrix4 Engine::_dummyMatrix = Matrix4();
+
 Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
 {
 	// Setup window
@@ -89,6 +95,9 @@ void Engine::tickEvent()
 		// Position camera on this layer
 		RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(currentGol->cameraEye, currentGol->cameraTarget, Vector3::yAxis()));
 
+		// Check for special actions
+		const auto isOrthoFirst = index == GOL_ORTHO_FIRST;
+
 		// Get vector as reference
 		const auto& gos = currentGol->list;
 
@@ -98,6 +107,11 @@ void Engine::tickEvent()
 			std::shared_ptr<GameObject> go = gos->at(i);
 			go->mDeltaTime = mDeltaTime;
 			go->update();
+
+			if (isOrthoFirst && INTRINSIC_GAME_OBJECTS.find(go->getType()) != INTRINSIC_GAME_OBJECTS.end())
+			{
+				go->draw(nullptr, _dummyMatrix, *RoomManager::singleton->mCamera);
+			}
 		}
 
 		// Destroy all marked objects as such on this layer

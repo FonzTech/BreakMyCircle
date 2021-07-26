@@ -26,9 +26,9 @@ OverlayText::OverlayText(const Int parentIndex) : GameObject(parentIndex), mCach
 	mOutlineRange = Vector2(0.45f, 0.35f);
 
 	// Load assets
-	mFont = CommonUtility::singleton->loadFont<Text::StbTrueTypeFont>(RESOURCE_FONT_UBUNTU_TITLE);
+	mFont = CommonUtility::singleton->loadFont(RESOURCE_FONT_UBUNTU_TITLE)->font.get();
 
-	mText.reset(new Text::Renderer2D(*mFont, mCache, 32.0f, Text::Alignment::TopRight));
+	mText.reset(new Text::Renderer2D(*mFont, mCache, 32.0f, Text::Alignment::MiddleCenter));
 	mText->reserve(40, GL::BufferUsage::DynamicDraw, GL::BufferUsage::StaticDraw);
 
 	mShader = getShader();
@@ -36,7 +36,7 @@ OverlayText::OverlayText(const Int parentIndex) : GameObject(parentIndex), mCach
 
 const Int OverlayText::getType() const
 {
-	return GOT_OVERLAY_GUI;
+	return GOT_OVERLAY_TEXT;
 }
 
 void OverlayText::update()
@@ -60,7 +60,6 @@ void OverlayText::draw(BaseDrawable* baseDrawable, const Matrix4& transformation
 		.setOutlineRange(mOutlineRange.x(), mOutlineRange.y())
 		.setSmoothness(0.025f / mTransformationMatrix.uniformScaling())
 		.draw(mText->mesh());
-
 }
 
 void OverlayText::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
@@ -69,12 +68,13 @@ void OverlayText::collidedWith(const std::unique_ptr<std::unordered_set<GameObje
 
 void OverlayText::setText(const std::string & text)
 {
+	mFont->fillGlyphCache(mCache, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:-+,.!");
 	mText->render(text);
 }
 
 void OverlayText::updateTransformation()
 {
-	mTransformationMatrix = Matrix3::translation(mCurrentFloatWindowSize * mPosition.xy());
+	mTransformationMatrix = Matrix3::translation(mCurrentFloatWindowSize * mPosition.xy()) * Matrix3::scaling(Vector2(0.005f));
 }
 
 Resource<GL::AbstractShaderProgram, Shaders::DistanceFieldVector2D> OverlayText::getShader()

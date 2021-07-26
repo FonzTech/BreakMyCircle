@@ -2,6 +2,7 @@
 
 #define GLF_COLOR_ATTACHMENT_INDEX 0
 
+#include <unordered_set>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Math/Matrix4.h>
 #include <Magnum/Platform/Sdl2Application.h>
@@ -24,6 +25,12 @@ protected:
 private:
 	// List of layers
 	static const Int GO_LAYERS[];
+
+	// List of intrinstic game objects
+	static const std::unordered_set<Int> INTRINSIC_GAME_OBJECTS;
+
+	// Constant dummy matrix
+	static const Matrix4 _dummyMatrix;
 
 	// Application methods
 	void drawEvent() override;

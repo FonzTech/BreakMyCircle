@@ -62,7 +62,13 @@
 
 using namespace Magnum;
 
-typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::CubeMapTexture, GL::AbstractShaderProgram, Trade::AbstractMaterialData, Audio::Buffer, Text::AbstractFont> MyResourceManager;
+struct FontHolder
+{
+	std::unique_ptr<PluginManager::Manager<Text::AbstractFont>> manager;
+	Containers::Pointer<Text::AbstractFont> font;
+};
+
+typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::CubeMapTexture, GL::AbstractShaderProgram, Trade::AbstractMaterialData, Audio::Buffer, FontHolder, LinePathAsset> MyResourceManager;
 
 class CommonUtility
 {
@@ -82,8 +88,21 @@ public:
 	void clear();
 
 	// Read vector from JSON
-	template <std::size_t S, typename T>
-	const Math::Vector<S, T>& getVectorFromJson(const nlohmann::json & params);
+	template <std::size_t S, class T>
+	const Math::Vector<S, T>& getVectorFromJson(const nlohmann::json & params)
+	{
+		Math::Vector<S, T> vector;
+		const auto& it = params.find("position");
+		if (it != params.end())
+		{
+			Float position[S];
+			for (UnsignedInt i = 0; i < S; ++i)
+			{
+				(*it).at(VECTOR_COMPONENTS[i]).get_to(vector[i]);
+			}
+		}
+		return vector;
+	}
 
 	// Audio loader
 	Resource<Audio::Buffer> loadAudioData(const std::string & filename);
@@ -92,8 +111,7 @@ public:
 	Resource<GL::Texture2D> loadTexture(const std::string & filename);
 
 	// Font loader
-	template<typename T>
-	Resource<Text::AbstractFont, T> loadFont(const std::string & filename);
+	Resource<FontHolder> loadFont(const std::string & filename);
 
 	// Utilities
 	void createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color);

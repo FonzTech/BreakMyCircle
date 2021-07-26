@@ -39,22 +39,6 @@ void CommonUtility::clear()
 	manager.clear();
 }
 
-template <std::size_t S, typename T>
-const Math::Vector<S, T>& CommonUtility::getVectorFromJson(const nlohmann::json & params)
-{
-	Math::Vector<S, T> vector;
-	const auto& it = params.find("position");
-	if (it != params.end())
-	{
-		Float position[S];
-		for (UnsignedInt i = 0; i < S; ++i)
-		{
-			(*it).at(VECTOR_COMPONENTS[i]).get_to(vector[i]);
-		}
-	}
-	return vector;
-}
-
 Resource<Audio::Buffer> CommonUtility::loadAudioData(const std::string & filename)
 {
 	// Get required resource
@@ -125,28 +109,28 @@ Resource<GL::Texture2D> CommonUtility::loadTexture(const std::string & filename)
 	return resTexture;
 }
 
-template<typename T>
-Resource<Text::AbstractFont, T> CommonUtility::loadFont(const std::string & filename)
+Resource<FontHolder> CommonUtility::loadFont(const std::string & filename)
 {
 	// Get required resource
-	Resource<Text::AbstractFont, T> resFont{ CommonUtility::singleton->manager.get<Text::AbstractFont, T>(filename) };
+	Resource<FontHolder> resFont{ CommonUtility::singleton->manager.get<FontHolder>(filename) };;
 
 	if (!resFont)
 	{
-		PluginManager::Manager<Text::AbstractFont> manager;
-		Containers::Pointer<Text::AbstractFont> importer = manager.loadAndInstantiate("TrueTypeFont");
-		if (!importer || !importer->openFile("fonts/" + filename + ".ttf", 180.0f))
+		FontHolder fh;
+		fh.manager = std::make_unique<PluginManager::Manager<Text::AbstractFont>>();
+		fh.font = fh.manager->loadAndInstantiate("TrueTypeFont");
+		if (!fh.font || !fh.font->openFile("fonts/" + filename + ".ttf", 18.0f))
 		{
 			Fatal{} << "Cannot open font file";
 			std::exit(1);
 		}
 
 		// Add to resources
-		CommonUtility::singleton->manager.set(resFont.key(), std::move(importer));
+		CommonUtility::singleton->manager.set(resFont.key(), std::move(fh));
 	}
 
 	return resFont;
-};
+}
 
 void CommonUtility::createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color)
 {

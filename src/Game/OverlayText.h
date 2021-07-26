@@ -9,7 +9,6 @@
 #include <Magnum/Text/Renderer.h>
 #include <Magnum/GL/AbstractShaderProgram.h>
 #include <Magnum/Shaders/DistanceFieldVector.h>
-#include <MagnumPlugins/StbTrueTypeFont/StbTrueTypeFont.h>
 #include "../GameObject.h"
 
 using namespace Magnum;
@@ -38,7 +37,7 @@ protected:
 	Resource<GL::AbstractShaderProgram, Shaders::DistanceFieldVector2D> getShader();
 
 	Text::DistanceFieldGlyphCache mCache;
-	Resource<Text::AbstractFont, Text::StbTrueTypeFont> mFont;
+	Text::AbstractFont* mFont;
 	Containers::Pointer<Text::Renderer2D> mText;
 
 	Resource<GL::AbstractShaderProgram, Shaders::DistanceFieldVector2D> mShader;

@@ -77,9 +77,10 @@ Logo::Logo(const Int parentIndex) : GameObject()
 
 	// Create overlay text
 	{
-		std::shared_ptr<OverlayText> text = std::make_shared<OverlayText>();
-		text->mPosition = Vector3(0.5f, 0.5f, 0.0f);
-		text->setText("Tap here to begin");
+		std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST);
+		go->mPosition = Vector3(0.5f, 0.5f, 0.0f);
+		go->setText("Tap here to begin");
+		RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go);
 	}
 }
 

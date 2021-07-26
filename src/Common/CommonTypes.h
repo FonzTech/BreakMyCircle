@@ -9,6 +9,7 @@
 #define GOT_SKYBOX 7
 #define GOT_OVERLAY_GUI 8
 #define GOT_LEVEL_SELECTOR 9
+#define GOT_OVERLAY_TEXT 10
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>
