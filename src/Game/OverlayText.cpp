@@ -27,6 +27,7 @@ OverlayText::OverlayText(const Int parentIndex) : GameObject(parentIndex), mCach
 
 	// Load assets
 	mFont = CommonUtility::singleton->loadFont(RESOURCE_FONT_UBUNTU_TITLE)->font.get();
+	mFont->fillGlyphCache(mCache, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:-+,.! ");
 
 	mText.reset(new Text::Renderer2D(*mFont, mCache, 32.0f, Text::Alignment::MiddleCenter));
 	mText->reserve(40, GL::BufferUsage::DynamicDraw, GL::BufferUsage::StaticDraw);
@@ -68,7 +69,6 @@ void OverlayText::collidedWith(const std::unique_ptr<std::unordered_set<GameObje
 
 void OverlayText::setText(const std::string & text)
 {
-	mFont->fillGlyphCache(mCache, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:-+,.!");
 	mText->render(text);
 }
 
