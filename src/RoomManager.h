@@ -6,7 +6,6 @@
 
 #include <memory>
 #include <vector>
-#include <unordered_map>
 #include <nlohmann/json.hpp>
 
 #include <Magnum/Magnum.h>

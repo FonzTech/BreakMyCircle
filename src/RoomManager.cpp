@@ -1,4 +1,5 @@
 #include <vector>
+#include <unordered_set>
 #include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
@@ -154,6 +155,9 @@ void RoomManager::loadRoom(const std::string & name)
 
 void RoomManager::createLevelRoom()
 {
+	// Delete game level layer
+	mGoLayers[GOL_PERSP_SECOND].list->clear();
+
 	// Create bubbles
 	const siv::PerlinNoise perlin(mSeed);
 
@@ -212,20 +216,6 @@ void RoomManager::createLevelRoom()
 		std::shared_ptr<Player> p = std::make_shared<Player>(GOL_PERSP_SECOND);
 		p->mPosition = { 8.0f, -35.0f, 0.0f };
 		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
-	}
-
-	// Create scenery
-	{
-		std::shared_ptr<Scenery> p = std::make_shared<Scenery>(GOL_PERSP_FIRST, 1);
-		p->mPosition = Vector3(0.0f);
-		RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(p);
-	}
-
-	// Create skybox
-	{
-		std::shared_ptr<Skybox> p = std::make_shared<Skybox>(GOL_PERSP_FIRST, "skybox_1", Vector3(0.0f));
-		p->mPosition = Vector3(0.0f);
-		RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(p);
 	}
 
 	// Setup camera for game layers

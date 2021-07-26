@@ -97,15 +97,11 @@ void Logo::update()
 		const auto& bc = RoomManager::singleton->mBubbleColors;
 		const auto& it = std::next(std::begin(bc), std::rand() % bc.size());
 
-		// Get random position
-		Vector3 rp; 
-		rp[0] = -6.0f + 12.0f * (std::rand() % 12) / 12.0f;
-		rp[1] = 20.0f;
-		rp[2] = 0.0f;
-
 		// Create random bubble
 		std::shared_ptr<FallingBubble> fb = std::make_shared<FallingBubble>(mParentIndex, it->second.color, false, -25.0f);
-		fb->mPosition = mPosition + rp;
+		fb->mPosition = mPosition;
+		fb->mPosition -= RoomManager::singleton->mGoLayers[mParentIndex].cameraEye;
+		fb->mPosition += Vector3(-6.0f + 12.0f * (std::rand() % 12) / 12.0f, 20.0, 0.0f);
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(fb);
 
 		// Reset timer
@@ -134,7 +130,7 @@ void Logo::update()
 #if NDEBUG or _DEBUG
 	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
 	{
-		RoomManager::singleton->prepareRoom(false);
+		// RoomManager::singleton->prepareRoom(false);
 		RoomManager::singleton->createLevelRoom();
 	}
 #endif

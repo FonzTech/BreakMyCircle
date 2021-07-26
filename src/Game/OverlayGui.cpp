@@ -74,6 +74,11 @@ void OverlayGui::setAnchor(const Vector2 & anchor)
 	mAnchor = anchor;
 }
 
+void OverlayGui::setOpacity(const Float opacity)
+{
+	Debug{} << "OverlayGui::setOpacity - Method not implemented yet";
+}
+
 Range3D OverlayGui::getBoundingBox(const Vector2 & windowSize)
 {
 	const auto& s = Vector3(windowSize, 1.0f);

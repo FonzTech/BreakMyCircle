@@ -56,6 +56,12 @@ const Int LevelSelector::getType() const
 
 void LevelSelector::update()
 {
+	// Check if there is any on-going action on top
+	if (RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->size() > 0)
+	{
+		return;
+	}
+
 	// Handle button clicks
 	const auto& lbs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
 

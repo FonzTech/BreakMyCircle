@@ -24,6 +24,7 @@ public:
 	void setPosition(const Vector2 & position);
 	void setSize(const Vector2 & size);
 	void setAnchor(const Vector2 & anchor);
+	void setOpacity(const Float opacity);
 	Range3D getBoundingBox(const Vector2 & windowSize);
 
 protected:
@@ -32,6 +33,7 @@ protected:
 	void updateTransformations();
 
 	Float mArs[2];
+	Float mOpacity;
 	Vector2 mSize;
 	Vector2 mAnchor;
 };
