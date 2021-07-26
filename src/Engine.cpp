@@ -104,7 +104,7 @@ void Engine::tickEvent()
 		// Update all game objects on this layer
 		for (UnsignedInt i = 0; i < gos->size(); ++i)
 		{
-			std::shared_ptr<GameObject> go = gos->at(i);
+			std::shared_ptr<GameObject> & go = gos->at(i);
 			go->mDeltaTime = mDeltaTime;
 			go->update();
 
@@ -117,7 +117,7 @@ void Engine::tickEvent()
 		// Destroy all marked objects as such on this layer
 		for (UnsignedInt i = 0; i < gos->size();)
 		{
-			std::shared_ptr<GameObject> go = gos->at(i);
+			std::shared_ptr<GameObject> & go = gos->at(i);
 			if (go->mDestroyMe)
 			{
 				gos->erase(gos->begin() + i);

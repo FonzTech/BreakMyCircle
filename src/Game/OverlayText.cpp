@@ -52,7 +52,7 @@ void OverlayText::update()
 
 void OverlayText::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	((Shaders::DistanceFieldVector2D&) mShader)
+	(*mShader)
 		.bindVectorTexture(mCache.texture())
 		.setTransformationProjectionMatrix(mProjectionMatrix * mTransformationMatrix)
 		.setColor(mColor)
