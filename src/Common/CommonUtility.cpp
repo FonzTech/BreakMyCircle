@@ -116,16 +116,17 @@ Resource<FontHolder> CommonUtility::loadFont(const std::string & filename)
 
 	if (!resFont)
 	{
-		FontHolder fh;
-		fh.font = fh.manager.loadAndInstantiate("TrueTypeFont");
-		if (!fh.font || !fh.font->openFile("fonts/" + filename + ".ttf", 180.0f))
+		std::unique_ptr<FontHolder> fh = std::make_unique<FontHolder>();
+		fh->font = fh->manager.loadAndInstantiate("TrueTypeFont");
+		if (!fh->font || !fh->font->openFile("fonts/" + filename + ".ttf", 180.0f))
 		{
 			Fatal{} << "Cannot open font file";
 			std::exit(1);
 		}
 
 		// Add to resources
-		CommonUtility::singleton->manager.set(resFont.key(), std::move(fh));
+		Containers::Pointer<FontHolder> p = std::move(fh);
+		CommonUtility::singleton->manager.set(resFont.key(), std::move(p));
 	}
 
 	return resFont;
