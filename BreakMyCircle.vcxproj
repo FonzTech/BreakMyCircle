@@ -194,6 +194,7 @@ _CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="src\Game\LevelSelector.h" />
     <ClInclude Include="src\Game\OverlayGui.h" />
     <ClInclude Include="src\Game\OverlayText.h" />
+    <ClInclude Include="src\Graphics\TexturedDrawable.h" />
     <ClInclude Include="src\RoomManager.h" />
     <ClInclude Include="src\AssetManager.h" />
     <ClInclude Include="src\Audio\StreamedAudioBuffer.h" />
@@ -212,7 +213,6 @@ _CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="src\Shaders\ScreenQuadShader.h" />
     <ClInclude Include="src\Game\Skybox.h" />
     <ClInclude Include="src\Shaders\SpriteShader.h" />
-    <ClInclude Include="src\Graphics\TextureDrawable.h" />
     <ClInclude Include="src\Common\CommonTypes.h" />
     <ClInclude Include="src\InputManager.h" />
     <ClInclude Include="src\Game\Player.h" />

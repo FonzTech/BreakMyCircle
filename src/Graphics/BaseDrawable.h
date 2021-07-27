@@ -26,9 +26,8 @@ public:
 	void setDrawCallback(IDrawCallback* drawCallback);
 
 	virtual GL::AbstractShaderProgram& getShader() = 0;
+	virtual void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) = 0;
 
 protected:
 	IDrawCallback* mDrawCallback;
-
-	virtual void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) = 0;
 };

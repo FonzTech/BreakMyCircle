@@ -21,9 +21,6 @@ public:
 		return *mShader;
 	}
 
-protected:
-	Resource<GL::AbstractShaderProgram, ShaderType> mShader;
-
 	void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override
 	{
 		if (mDrawCallback != nullptr)
@@ -41,4 +38,7 @@ protected:
 			.setProjectionMatrix(camera.projectionMatrix())
 			.draw(*mMesh);
 	}
+
+protected:
+	Resource<GL::AbstractShaderProgram, ShaderType> mShader;
 };
