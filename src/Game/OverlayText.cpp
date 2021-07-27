@@ -6,6 +6,7 @@
 
 #include "../Common/CommonUtility.h"
 #include "../RoomManager.h"
+#include "../InputManager.h"
 
 std::shared_ptr<GameObject> OverlayText::getInstance(const nlohmann::json & params)
 {
@@ -23,7 +24,7 @@ OverlayText::OverlayText(const Int parentIndex) : GameObject(parentIndex), mCach
 	// Init members
 	mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 	mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-	mOutlineRange = Vector2(0.45f, 0.35f);
+	mOutlineRange = Vector2(0.5f, 0.3f);
 
 	// Load assets
 	mFont = CommonUtility::singleton->loadFont(RESOURCE_FONT_UBUNTU_TITLE)->font.get();

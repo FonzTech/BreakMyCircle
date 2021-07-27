@@ -118,7 +118,7 @@ Resource<FontHolder> CommonUtility::loadFont(const std::string & filename)
 	{
 		std::unique_ptr<FontHolder> fh = std::make_unique<FontHolder>();
 		fh->font = fh->manager.loadAndInstantiate("TrueTypeFont");
-		if (!fh->font || !fh->font->openFile("fonts/" + filename + ".ttf", 180.0f))
+		if (!fh->font || !fh->font->openFile("fonts/" + filename + ".ttf", 100.0f))
 		{
 			Fatal{} << "Cannot open font file";
 			std::exit(1);

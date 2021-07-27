@@ -9,7 +9,6 @@
 #include "../AssetManager.h"
 #include "../RoomManager.h"
 #include "../Common/CommonUtility.h"
-#include "../Game/OverlayText.h"
 #include "../Graphics/BaseDrawable.h"
 #include "FallingBubble.h"
 
@@ -40,6 +39,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	// Init members
 	mLightPosition = Vector3(0.0f);
 	mLightDirection = false;
+	mIntroBubbles = true;
 
 	// Load assets
 	mPosition = Vector3(0.0f, 10.0f, 0.0f);
@@ -78,9 +78,11 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	// Create overlay text
 	{
 		std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST);
-		go->mPosition = Vector3(0.5f, 0.5f, 0.0f);
+		go->mPosition = Vector3(0.0f, -0.25f, 0.0f);
+		go->mColor.data()[3] = 0.0f;
+		go->mOutlineColor.data()[3] = 0.0f;
 		go->setText("Tap here to begin");
-		RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go);
+		mTexts[0] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 	}
 }
 
@@ -100,7 +102,7 @@ void Logo::update()
 	{
 		mBubbleTimer -= mDeltaTime;
 	}
-	else if (mFinishTimer > 0.0f)
+	else if (mIntroBubbles)
 	{
 		// Get random color
 		const auto& bc = RoomManager::singleton->mBubbleColors;
@@ -120,6 +122,26 @@ void Logo::update()
 	// Check for finish timer
 	if (mFinishTimer < -1.0f)
 	{
+		// Handle "tap here"
+		{
+			if (InputManager::singleton->mMouseStates[ImMouseButtons::Left] == IM_STATE_RELEASED)
+			{
+				mIntroBubbles = false;
+			}
+
+			// Handle its text
+			for (UnsignedInt i = 0; i < 2; ++i)
+			{
+				auto* p = &(i ? mTexts[0]->mOutlineColor : mTexts[0]->mColor).data()[3];
+				*p += mDeltaTime;
+				if (*p > 1.0f)
+				{
+					*p = 1.0f;
+				}
+			}
+		}
+
+		// Handle logo light effect
 		mLightPosition += Vector3(0.0f, mLightDirection ? -4.0f : 4.0f, 2.0f) * mDeltaTime;
 
 		if (mLightPosition.y() > 16.0f)

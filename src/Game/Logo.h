@@ -11,6 +11,7 @@
 #include <Magnum/Animation/Player.h>
 
 #include "../GameObject.h"
+#include "../Game/OverlayText.h"
 #include "../Graphics/BaseDrawable.h"
 
 typedef Animation::TrackView<Float, Vector3> AnimPosition;
@@ -60,4 +61,8 @@ private:
 	// Falling Bubbles timer
 	Float mBubbleTimer;
 	Float mFinishTimer;
+	bool mIntroBubbles;
+
+	// Texts
+	std::shared_ptr<OverlayText> mTexts[1];
 };

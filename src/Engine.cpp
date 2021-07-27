@@ -38,7 +38,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	// Enable renderer features
 	// GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
 	GL::Renderer::enable(GL::Renderer::Feature::Blending);
-	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+	// GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 	GL::Renderer::setBlendEquation(GL::Renderer::BlendEquation::Add, GL::Renderer::BlendEquation::Add);
 
 	// Set clear color
@@ -95,9 +95,6 @@ void Engine::tickEvent()
 		// Position camera on this layer
 		RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(currentGol->cameraEye, currentGol->cameraTarget, Vector3::yAxis()));
 
-		// Check for special actions
-		const auto isOrthoFirst = index == GOL_ORTHO_FIRST;
-
 		// Get vector as reference
 		const auto& gos = currentGol->list;
 
@@ -107,11 +104,6 @@ void Engine::tickEvent()
 			std::shared_ptr<GameObject> & go = gos->at(i);
 			go->mDeltaTime = mDeltaTime;
 			go->update();
-
-			if (isOrthoFirst && INTRINSIC_GAME_OBJECTS.find(go->getType()) != INTRINSIC_GAME_OBJECTS.end())
-			{
-				go->draw(nullptr, _dummyMatrix, *RoomManager::singleton->mCamera);
-			}
 		}
 
 		// Destroy all marked objects as such on this layer
@@ -129,7 +121,28 @@ void Engine::tickEvent()
 		}
 
 		// Draw all game objects on this layer
+		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 		drawEvent();
+
+		// Check for special actions
+		if (index == GOL_ORTHO_FIRST)
+		{
+			// Set specific blend function for text
+			GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+
+			// Get vector as reference
+			const auto& gos = currentGol->list;
+
+			// Update all game objects on this layer
+			for (UnsignedInt i = 0; i < gos->size(); ++i)
+			{
+				std::shared_ptr<GameObject> & go = gos->at(i);
+				if (INTRINSIC_GAME_OBJECTS.find(go->getType()) != INTRINSIC_GAME_OBJECTS.end())
+				{
+					go->draw(nullptr, _dummyMatrix, *RoomManager::singleton->mCamera);
+				}
+			}
+		}
 
 		// De-reference game object layer
 		currentGol = nullptr;
@@ -143,6 +156,7 @@ void Engine::tickEvent()
 			.bind();
 
 		// Redraw
+		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 		drawEvent();
 	}
 
