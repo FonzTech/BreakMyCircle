@@ -16,6 +16,15 @@ public:
 		mDrawCallback = nullptr;
 	}
 
+	template <class ShaderType>
+	explicit ColoredDrawable(const ColoredDrawable & cd) : BaseDrawable{ cd }
+	{
+		mShader = cd.shader;
+		mMesh = cd.mesh;
+		mColor = cd.color;
+		mDrawCallback = nullptr;
+	}
+
 	ShaderType& getShader()
 	{
 		return *mShader;

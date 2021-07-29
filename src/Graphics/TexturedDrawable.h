@@ -19,6 +19,15 @@ public:
 		mDrawCallback = nullptr;
 	}
 
+	template <class ShaderType>
+	explicit TexturedDrawable(const TexturedDrawable & td) : BaseDrawable{ td }
+	{
+		mShader = td.mShader;
+		mMesh = td.mMesh;
+		mTexture = td.texture;
+		mDrawCallback = td.mDrawCallback;
+	}
+
 	ShaderType& getShader()
 	{
 		return *mShader;
@@ -43,6 +52,6 @@ public:
 			.draw(*mMesh);
 	}
 
-protected:
+	// Members
 	Resource<GL::AbstractShaderProgram, ShaderType> mShader;
 };

@@ -11,6 +11,7 @@
 #include <Magnum/Magnum.h>
 
 #include "../GameObject.h"
+#include "../Graphics/BaseDrawable.h"
 #include "OverlayGui.h"
 #include "Scenery.h"
 
@@ -22,6 +23,7 @@ public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	LevelSelector(const Int parentIndex);
+	~LevelSelector();
 
 	const Int getType() const override;
 	void update() override;
@@ -29,14 +31,29 @@ public:
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
 private:
+	struct LS_ButtonSelector
+	{
+		std::shared_ptr<TexturedDrawable<Shaders::Phong>> drawables;
+		Vector3 position;
+		Int index;
+	};
+
+	struct LS_ScenerySelector
+	{
+		std::shared_ptr<Scenery> scenery;
+		std::vector<LS_ButtonSelector> buttons;
+	};
+
 	void handleScrollableCameraPosition(const Vector3 & delta);
 	void handleScrollableScenery();
 
 	Vector2i mPrevMousePos;
 	Vector3 mScrollVelocity;
+	Float mButtonAnim[1];
 
 	Int mClickIndex;
-	std::shared_ptr<OverlayGui> mButtons[1];
+	std::shared_ptr<OverlayGui> mScreenButtons[1];
+	std::unordered_set<BaseDrawable*> mButtonDrawables;
 	std::function<void()> mCallbacks[1];
-	std::unordered_map<Int, std::shared_ptr<Scenery>> mSceneries;
+	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
 };

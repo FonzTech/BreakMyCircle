@@ -40,6 +40,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mLightPosition = Vector3(0.0f);
 	mLightDirection = false;
 	mIntroBubbles = true;
+	mLogoZoom = 0.0f;
 
 	// Load assets
 	mPosition = Vector3(0.0f, 10.0f, 0.0f);
@@ -133,10 +134,33 @@ void Logo::update()
 			for (UnsignedInt i = 0; i < 2; ++i)
 			{
 				auto* p = &(i ? mTexts[0]->mOutlineColor : mTexts[0]->mColor).data()[3];
-				*p += mDeltaTime;
+
+				if (mIntroBubbles)
+				{
+					*p += mDeltaTime;
+				}
+				else
+				{
+					*p -= mDeltaTime;
+					mLogoZoom += mDeltaTime;
+
+					for (UnsignedInt i = 0; i < 3; ++i)
+					{
+						mLogoObjects[i]->translate(Vector3(0.0f, 0.0f, Math::sin(Rad(mLogoZoom)) * -0.06f));
+					}
+				}
+
 				if (*p > 1.0f)
 				{
 					*p = 1.0f;
+				}
+				else if (*p < -0.15f)
+				{
+					for (auto& item : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+					{
+						item->mDestroyMe = true;
+					}
+					return;
 				}
 			}
 		}

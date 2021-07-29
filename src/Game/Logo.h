@@ -61,6 +61,7 @@ private:
 	// Falling Bubbles timer
 	Float mBubbleTimer;
 	Float mFinishTimer;
+	Float mLogoZoom;
 	bool mIntroBubbles;
 
 	// Texts

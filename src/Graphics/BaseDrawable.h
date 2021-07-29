@@ -12,6 +12,7 @@ class BaseDrawable : public Object3D, public SceneGraph::Drawable3D
 {
 public:
 	explicit BaseDrawable(SceneGraph::DrawableGroup3D& group);
+	explicit BaseDrawable(const BaseDrawable & d);
 
 	~BaseDrawable()
 	{
