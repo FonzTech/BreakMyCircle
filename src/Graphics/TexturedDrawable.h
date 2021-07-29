@@ -20,12 +20,12 @@ public:
 	}
 
 	template <class ShaderType>
-	explicit TexturedDrawable(const TexturedDrawable & td) : BaseDrawable{ td }
+	explicit TexturedDrawable(const TexturedDrawable<ShaderType> * td) : BaseDrawable{ *td }
 	{
-		mShader = td.mShader;
-		mMesh = td.mMesh;
-		mTexture = td.texture;
-		mDrawCallback = td.mDrawCallback;
+		mShader = CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, ShaderType>(td->mShader.key());
+		mMesh = CommonUtility::singleton->manager.get<GL::Mesh>(td->mMesh.key());
+		mTexture = CommonUtility::singleton->manager.get<GL::Texture2D>(td->mTexture.key());
+		mDrawCallback = td->mDrawCallback;
 	}
 
 	ShaderType& getShader()

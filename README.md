@@ -29,4 +29,4 @@ Puzzle Bobble-like game for PC and Mobile. Currently in development. This projec
 - As of now, all materials use Phong shader.
 - The GOL_PERSP_FIRST is the only layer which has the object ID buffer, used for mouse picking.
 - The GOL_ORTHO_FIRST is the only layer which draws its objects right after update (such as `OverlayText`).
-- Regarding `BaseDrawable` and its subclasses, their copy constructor does NOT copy all of the properties.
+- Regarding `BaseDrawable` and its subclasses, their copy constructor (kind-of, please see their implementation) does NOT copy all of the properties.

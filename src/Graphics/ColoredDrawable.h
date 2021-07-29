@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Common/CommonTypes.h"
+#include "../Common/CommonUtility.h"
 #include "BaseDrawable.h"
 
 template <class ShaderType>
@@ -17,11 +18,11 @@ public:
 	}
 
 	template <class ShaderType>
-	explicit ColoredDrawable(const ColoredDrawable & cd) : BaseDrawable{ cd }
+	explicit ColoredDrawable(const ColoredDrawable * cd) : BaseDrawable{ *cd }
 	{
-		mShader = cd.shader;
-		mMesh = cd.mesh;
-		mColor = cd.color;
+		mShader = CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, ShaderType>(cd->mShader.key());
+		mMesh = CommonUtility::singleton->manager.get<GL::Mesh>(cd->mMesh.key());
+		mColor = cd->mColor;
 		mDrawCallback = nullptr;
 	}
 

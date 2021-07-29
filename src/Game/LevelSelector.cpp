@@ -47,7 +47,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 	// Load required scenes
 	{
 		AssetManager am(RESOURCE_SHADER_COLORED_PHONG, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE, 1);
-		am.loadAssets(*this, *mManipulator, "scenes/level_button.glb", nullptr);
+		am.loadAssets(*this, *mManipulator, "scenes/level_button.glb", this);
 
 		for (UnsignedInt i = 0; i < mDrawables.size(); ++i)
 		{
@@ -199,9 +199,9 @@ void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 	{
 		return;
 	}
-
+	
 	((Shaders::Phong&)baseDrawable->getShader())
-		.setLightPosition(camera.cameraMatrix().transformPoint(mPosition))
+		.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(0.0f, 6.0f, 0.0f)))
 		.setLightColor(0xffffffff_rgbaf)
 		.setSpecularColor(0xffffff00_rgbaf)
 		.setAmbientColor(0x444444ff_rgbaf)
@@ -272,23 +272,30 @@ void LevelSelector::handleScrollableScenery()
 		}
 #endif
 
+		// Create four drawables
 		for (Int i = 0; i < 4; ++i)
 		{
 			mSceneries[yp].buttons.push_back(LS_ButtonSelector());
 			auto& bs = mSceneries[yp].buttons.back();
 
+			// Replicate all button drawables
+			Vector3 dpos(1.0f * Float(i) * 4.0f, 2.0f, 0.0f);
+
 			for (const auto& bd : mButtonDrawables)
 			{
-				std::shared_ptr<TexturedDrawable<Shaders::Phong>> td = std::make_shared<TexturedDrawable<Shaders::Phong>>(*((TexturedDrawable<Shaders::Phong>*)bd));
+				// Replicate single drawable
+				std::shared_ptr<TexturedDrawable<Shaders::Phong>> td = std::make_shared<TexturedDrawable<Shaders::Phong>>((TexturedDrawable<Shaders::Phong>*)bd);
 				td->setParent(bd->parent());
-				td->setDrawCallback(nullptr);
+				td->setDrawCallback(this);
 
+				// Apply the same transformations
 				bs.drawables = td;
-				bs.position = Vector3(0.0f, 0.0f, 1.0f);
+				bs.position = dpos;
 				bs.index = i;
 
 				td->setTransformation(Matrix4::translation(bs.position));
 
+				// Make parent object the owner for these drawables
 				mDrawables.emplace_back(td);
 			}
 		}
