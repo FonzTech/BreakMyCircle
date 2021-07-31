@@ -1,6 +1,7 @@
 #pragma once
 
 #define GLF_COLOR_ATTACHMENT_INDEX 0
+#define GLF_OBJECTID_ATTACHMENT_INDEX 1
 
 #include <unordered_set>
 #include <Magnum/Math/Color.h>

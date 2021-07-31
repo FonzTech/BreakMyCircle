@@ -3,7 +3,9 @@
 #define GO_LS_MAX_SCROLL_THRESHOLD 0.01f
 #define GO_LS_MAX_SCROLL_VELOCITY 0.025f
 #define GO_LS_MAX_SCROLL_VELOCITY_MAX (GO_LS_MAX_SCROLL_VELOCITY * 50.0f)
+#define GO_LS_RESET_MOUSE_VALUE -10000
 
+#include <array>
 #include <vector>
 #include <memory>
 
@@ -31,6 +33,8 @@ public:
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
 private:
+	static std::unordered_map<Int, std::array<Vector3, 6>> sLevelButtonPositions;
+
 	struct LS_ButtonSelector
 	{
 		std::shared_ptr<TexturedDrawable<Shaders::Phong>> drawables;

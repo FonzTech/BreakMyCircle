@@ -43,11 +43,13 @@ Resource<GL::AbstractShaderProgram, Shaders::Phong> AssetManager::getColoredShad
 	Resource<GL::AbstractShaderProgram, Shaders::Phong> resource = CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, Shaders::Phong>(resourceKey);
 	if (!resource)
 	{
-		std::unique_ptr<Shaders::Phong> shader = std::make_unique<Shaders::Phong>(Shaders::Phong::Flags {}, lightCount);
+		Shaders::Phong::Flags flags = Shaders::Phong::Flag::ObjectId;
+		std::unique_ptr<Shaders::Phong> shader = std::make_unique<Shaders::Phong>(flags, lightCount);
 		(*shader.get())
 			.setAmbientColor(0x000000ff_rgbaf)
 			.setSpecularColor(0xffffffff_rgbaf)
-			.setShininess(80.0f);
+			.setShininess(80.0f)
+			.setObjectId(0);
 
 		Containers::Pointer<GL::AbstractShaderProgram> p = std::move((std::unique_ptr<GL::AbstractShaderProgram>&) shader);
 		CommonUtility::singleton->manager.set(resource.key(), std::move(p));
@@ -60,11 +62,13 @@ Resource<GL::AbstractShaderProgram, Shaders::Phong> AssetManager::getTexturedSha
 	Resource<GL::AbstractShaderProgram, Shaders::Phong> resource = CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, Shaders::Phong>(resourceKey);
 	if (!resource)
 	{
-		std::unique_ptr<Shaders::Phong> shader = std::make_unique<Shaders::Phong>(Shaders::Phong::Flag::AmbientTexture | Shaders::Phong::Flag::DiffuseTexture | Shaders::Phong::Flag::AlphaMask, lightCount);
+		Shaders::Phong::Flags flags = Shaders::Phong::Flag::AmbientTexture | Shaders::Phong::Flag::DiffuseTexture | Shaders::Phong::Flag::AlphaMask | Shaders::Phong::Flag::ObjectId;
+		std::unique_ptr<Shaders::Phong> shader = std::make_unique<Shaders::Phong>(flags, lightCount);
 		(*shader.get())
 			.setAmbientColor(0x000000ff_rgbaf)
 			.setSpecularColor(0xffffffff_rgbaf)
-			.setShininess(80.0f);
+			.setShininess(80.0f)
+			.setObjectId(0);
 
 		Containers::Pointer<GL::AbstractShaderProgram> p = std::move((std::unique_ptr<GL::AbstractShaderProgram>&) shader);
 		CommonUtility::singleton->manager.set(resource.key(), std::move(p));

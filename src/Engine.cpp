@@ -1,4 +1,6 @@
 #include <memory>
+#include <Magnum/Image.h>
+#include <Magnum/PixelFormat.h>
 #include <Magnum/GL/Renderer.h>
 #include <Magnum/GL/Renderbuffer.h>
 #include <Magnum/GL/RenderbufferFormat.h>
@@ -68,6 +70,7 @@ void Engine::tickEvent()
 	// Update input events
 	InputManager::singleton->updateMouseStates();
 	InputManager::singleton->updateKeyStates();
+	InputManager::singleton->mClickedObjectId = 0;
 
 	// Compute delta time
 	mDeltaTime = mTimeline.previousFrameDuration();
@@ -79,8 +82,34 @@ void Engine::tickEvent()
 	// Iterate through all layers
 	for (const auto& index : GO_LAYERS)
 	{
-		// Bind layer's framebuffer
+		// Get layer's framebuffer
 		currentGol = &RoomManager::singleton->mGoLayers[index];
+
+		if (index == GOL_PERSP_FIRST)
+		{
+			// Get clicked Object ID
+			currentGol->frameBuffer->mapForRead(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX });
+
+			{
+				const Vector2i position(Vector2(InputManager::singleton->mMousePosition) * Vector2 { framebufferSize() } / Vector2{ windowSize() });
+				const Vector2i fbPosition{ position.x(), GL::defaultFramebuffer.viewport().sizeY() - position.y() - 1 };
+
+				const Image2D data = currentGol->frameBuffer->read(
+					Range2Di::fromSize(fbPosition, { 1, 1 }),
+					{ PixelFormat::R32UI }
+				);
+
+				InputManager::singleton->mClickedObjectId = data.pixels<UnsignedInt>()[0][0];
+			}
+
+			// Restore old color attachment
+			currentGol->frameBuffer->mapForRead(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX });
+
+			// Clear object ID buffer
+			(*currentGol->frameBuffer)
+				.clearColor(GLF_OBJECTID_ATTACHMENT_INDEX, Vector4ui{});
+		}
+
 		(*currentGol->frameBuffer)
 			.clear(GL::FramebufferClear::Depth)
 			.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f))
@@ -255,8 +284,8 @@ void Engine::keyReleaseEvent(KeyEvent& event)
 void Engine::viewportEvent(ViewportEvent& event)
 {
 	// Update viewports
-	GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, event.windowSize()));
-	RoomManager::singleton->mCamera->setViewport(event.windowSize());
+	GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, event.framebufferSize()));
+	RoomManager::singleton->mCamera->setViewport(event.framebufferSize());
 	upsertGameObjectLayers();
 }
 
@@ -358,14 +387,34 @@ void Engine::upsertGameObjectLayers()
 		// Create main texture to attach layer
 		layer->fbTexture = std::make_unique<GL::Texture2D>();
 
-		GL::Renderbuffer depthStencil;
+		GL::Renderbuffer colorBuffer;
+		colorBuffer.setStorage(GL::RenderbufferFormat::RGBA8, size);
+
+		GL::Renderbuffer depthStencilBuffer;
 		layer->fbTexture->setStorage(1, GL::TextureFormat::RGBA8, size);
-		depthStencil.setStorage(GL::RenderbufferFormat::Depth24Stencil8, size);
+		depthStencilBuffer.setStorage(GL::RenderbufferFormat::Depth24Stencil8, size);
 
 		// Create framebuffer and attach color and depth buffers
 		layer->frameBuffer = std::make_unique<GL::Framebuffer>(Range2Di({}, size));
 		layer->frameBuffer->attachTexture(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, *layer->fbTexture, 0);
-		layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::BufferAttachment::DepthStencil, depthStencil);
+		// layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, colorBuffer);
+		layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::BufferAttachment::DepthStencil, depthStencilBuffer);
+
+		// Attach Object ID buffer, but only for "Perspective First"
+		if (index == GOL_PERSP_FIRST)
+		{
+			GL::Renderbuffer objectIdBuffer;
+			objectIdBuffer.setStorage(GL::RenderbufferFormat::R32UI, size);
+
+			layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX }, objectIdBuffer);
+			layer->frameBuffer->mapForDraw({
+				{ Shaders::Phong::ColorOutput, GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX } },
+				{ Shaders::Phong::ObjectIdOutput, GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX } }
+				});
+		}
+
+		// Check for framebuffer status
+		CORRADE_INTERNAL_ASSERT(layer->frameBuffer->checkStatus(GL::FramebufferTarget::Draw) == GL::Framebuffer::Status::Complete);
 	}
 }
 

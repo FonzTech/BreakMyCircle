@@ -1,5 +1,6 @@
 #include "LevelSelector.h"
 
+#include <utility>
 #include <Magnum/Math/Constants.h>
 
 #include "../RoomManager.h"
@@ -19,6 +20,17 @@ std::shared_ptr<GameObject> LevelSelector::getInstance(const nlohmann::json & pa
 	return p;
 }
 
+std::unordered_map<Int, std::array<Vector3, 6>> LevelSelector::sLevelButtonPositions = {
+	std::make_pair(0, std::array<Vector3, 6>{
+		Vector3(0.516384f, 1.2582f, -9.61229f),
+		Vector3(4.63997f, 1.28248f, 8.91989f),
+		Vector3(5.58304f, 1.2582f, -4.80427f),
+		Vector3(-4.66971f, 1.2582f, -1.63549f),
+		Vector3(5.58304f, 1.42328f, 1.26542f),
+		Vector3(-3.12115f, 1.28248f, 8.91989f)
+	})
+};
+
 LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 {
 	// Assign parent index
@@ -26,6 +38,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 
 	// Init members
 	mPosition = Vector3(0.0f);
+	mPrevMousePos = Vector2i(GO_LS_RESET_MOUSE_VALUE, -1);
 	mScrollVelocity = Vector3(0.0f);
 	mClickIndex = -1;
 
@@ -130,25 +143,34 @@ void LevelSelector::update()
 	}
 	else if (lbs >= IM_STATE_PRESSED)
 	{
-		const Vector2i mouseDelta = InputManager::singleton->mMousePosition - mPrevMousePos;
-		if (mouseDelta.isZero())
+		// Update mouse delta
+		if (mPrevMousePos.x() > GO_LS_RESET_MOUSE_VALUE)
 		{
-			mScrollVelocity = { 0.0f };
-		}
-		else
-		{
-			const Vector3 scrollDelta = Vector3(Float(mouseDelta.x()), 0.0f, Float(mouseDelta.y())) * -0.03f;
-			mScrollVelocity = scrollDelta;
-		}
+			const Vector2i mouseDelta = InputManager::singleton->mMousePosition - mPrevMousePos;
+			if (mouseDelta.isZero())
+			{
+				mScrollVelocity = { 0.0f };
+			}
+			else
+			{
+				const Vector3 scrollDelta = Vector3(Float(mouseDelta.x()), 0.0f, Float(mouseDelta.y())) * -0.03f;
+				mScrollVelocity = scrollDelta;
+			}
 
-		// Update previous mouse state
-		mPrevMousePos = InputManager::singleton->mMousePosition;
+			// Update previous mouse state
+			mPrevMousePos = InputManager::singleton->mMousePosition;
+		}
 	}
 	// Reset scrolling behaviour
 	else
 	{
+		// Reset mouse value
+		mPrevMousePos.data()[0] = GO_LS_RESET_MOUSE_VALUE;
+
+		// Reset click index
 		mClickIndex = -1;
 
+		// Handle scroll inertia
 		if (!mScrollVelocity.isZero())
 		{
 			for (UnsignedInt i = 0; i < 3; ++i)
@@ -209,6 +231,7 @@ void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
 		.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
+		.setObjectId(100)
 		.draw(*baseDrawable->mMesh);
 }
 
@@ -273,13 +296,10 @@ void LevelSelector::handleScrollableScenery()
 #endif
 
 		// Create four drawables
-		for (Int i = 0; i < 4; ++i)
+		for (Int i = 0; i < 6; ++i)
 		{
 			mSceneries[yp].buttons.push_back(LS_ButtonSelector());
 			auto& bs = mSceneries[yp].buttons.back();
-
-			// Replicate all button drawables
-			Vector3 dpos(1.0f * Float(i) * 4.0f, 2.0f, 0.0f);
 
 			for (const auto& bd : mButtonDrawables)
 			{
@@ -290,7 +310,7 @@ void LevelSelector::handleScrollableScenery()
 
 				// Apply the same transformations
 				bs.drawables = td;
-				bs.position = dpos;
+				bs.position = sLevelButtonPositions[modelIndex][i];
 				bs.index = i;
 
 				td->setTransformation(Matrix4::translation(bs.position));

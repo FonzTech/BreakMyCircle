@@ -23,6 +23,8 @@ public:
 	std::unordered_map<ImMouseButtons, Int> mMouseStates;
 	std::unordered_map<ImKeyButtons, Int> mKeyStates;
 
+	UnsignedInt mClickedObjectId;
+
 	InputManager();
 
 	void setMouseState(const ImMouseButtons & key, const bool & pressed);
