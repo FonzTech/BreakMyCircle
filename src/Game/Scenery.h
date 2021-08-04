@@ -26,7 +26,14 @@ public:
 
 protected:
 
+	struct WaterDrawableHolder
+	{
+		std::shared_ptr<TexturedDrawable<WaterShader>> drawable;
+		WaterShader::Parameters parameters;
+	};
+
 	void createWaterDrawable();
+	void createWaterDrawable(const WaterDrawableHolder & fromWdh);
 
 	// Manipulator list
 	std::vector<Object3D*> mManipulatorList;
@@ -39,7 +46,6 @@ protected:
 	Float mFrame;
 	// std::unique_ptr<CubicBezier2D> mCubicBezier;
 
-	// Drawables data
-	std::shared_ptr<TexturedDrawable<WaterShader>> mWaterDrawable;
-	WaterShader::Parameters mWaterParameters;
+	// Water objects
+	std::unordered_map<BaseDrawable*, WaterDrawableHolder> mWaterHolders;
 };

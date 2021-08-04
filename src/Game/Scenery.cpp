@@ -47,7 +47,7 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 	}
 
 	{
-		const auto& m = Matrix4::scaling(Vector3(100.0f));
+		const auto& m = Matrix4::scaling(Vector3(50.0f, 25.0f, 1.0f));
 		mManipulatorList[1]->setTransformation(m);
 		mManipulatorList[1]->rotateX(90.0_degf);
 		mManipulatorList[1]->translate(mPosition + Vector3(0.0f, 0.3f, 0.0f));
@@ -83,7 +83,11 @@ void Scenery::update()
 {
 	// Update frame
 	mFrame += mDeltaTime;
-	mWaterParameters.frame = mFrame;
+
+	for (auto& wh : mWaterHolders)
+	{
+		wh.second.parameters.frame = mFrame;
+	}
 
 	// Debug camera move
 #ifdef _DEBUG or NDEBUG
@@ -140,19 +144,20 @@ void Scenery::update()
 
 void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (baseDrawable == mWaterDrawable.get())
+	const auto& it = mWaterHolders.find(baseDrawable);
+	if (it != mWaterHolders.end())
 	{
 		WaterShader& shader = (WaterShader&) baseDrawable->getShader();
 		shader
 			.setTransformationMatrix(transformationMatrix)
 			.setProjectionMatrix(camera.projectionMatrix())
-			.setFrame(mWaterParameters.frame)
-			.setSpeed(mWaterParameters.speed)
-			.setSize(mWaterParameters.size)
-			.setHorizonColorUniform(mWaterParameters.horizonColor)
-			.bindDisplacementTexture(*mWaterParameters.displacementTexture)
-			.bindWaterTexture(*mWaterParameters.waterTexture)
-			.bindEffectsTexture(*mWaterParameters.effectsTexture)
+			.setFrame(it->second.parameters.frame)
+			.setSpeed(it->second.parameters.speed)
+			.setSize(it->second.parameters.size)
+			.setHorizonColorUniform(it->second.parameters.horizonColor)
+			.bindDisplacementTexture(*it->second.parameters.displacementTexture)
+			.bindWaterTexture(*it->second.parameters.waterTexture)
+			.bindEffectsTexture(*it->second.parameters.effectsTexture)
 			.draw(*baseDrawable->mMesh);
 	}
 	else
@@ -241,23 +246,43 @@ void Scenery::createWaterDrawable()
 		CommonUtility::singleton->manager.set(resShader.key(), std::move(p));
 	}
 
-	// Create water drawable
+	// Create new water object
+	auto wdh = WaterDrawableHolder();
+
+	// Common texture
 	const auto& waterTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WATER_TEXTURE);
 
 	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
-	mWaterDrawable = std::make_shared<TexturedDrawable<WaterShader>>(*drawables, resShader, resMesh, waterTexture);
-	mWaterDrawable->setParent(mManipulatorList[1]);
-	mWaterDrawable->setDrawCallback(this);
+	wdh.drawable = std::make_shared<TexturedDrawable<WaterShader>>(*drawables, resShader, resMesh, waterTexture);
+	wdh.drawable->setParent(mManipulatorList[1]);
+	wdh.drawable->setDrawCallback(this);
 
-	mWaterParameters = {
+	wdh.parameters = {
 		CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WATER_DISPLACEMENT),
 		waterTexture,
 		CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WORLD_1_WEM),
 		0.0f,
 		2.0f,
-		15.0f,
+		Vector2(6.0f, 3.0f),
 		Color3(1.0f)
 	};
+
+	mWaterHolders[wdh.drawable.get()] = std::move(wdh);
+}
+
+void Scenery::createWaterDrawable(const WaterDrawableHolder & fromWdh)
+{
+	// Create new water object
+	auto wdh = WaterDrawableHolder();
+
+	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
+	wdh.drawable = std::make_shared<TexturedDrawable<WaterShader>>(*drawables, fromWdh.drawable->mShader, fromWdh.drawable->mMesh, fromWdh.drawable->mTexture);
+	wdh.drawable->setParent(mManipulatorList[1]);
+	wdh.drawable->setDrawCallback(this);
+
+	wdh.parameters = fromWdh.parameters;
+
+	mWaterHolders[wdh.drawable.get()] = std::move(wdh);
 }
 
 const Int Scenery::getModelIndex() const

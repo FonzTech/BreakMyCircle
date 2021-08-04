@@ -60,7 +60,7 @@ WaterShader& WaterShader::setSpeed(const Float speed)
 	return *this;
 }
 
-WaterShader& WaterShader::setSize(const Float size)
+WaterShader& WaterShader::setSize(const Vector2 & size)
 {
 	setUniform(mSizeUniform, size);
 	return *this;

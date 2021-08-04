@@ -5,6 +5,7 @@ std::unique_ptr<InputManager> InputManager::singleton = nullptr;
 InputManager::InputManager()
 {
 	mMousePosition = { 0, 0 };
+	mClickedObjectId = 0U;
 }
 
 void InputManager::setMouseState(const ImMouseButtons & key, const bool & pressed)

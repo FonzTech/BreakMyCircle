@@ -14,6 +14,7 @@
 #define RESOURCE_TEXTURE_BUBBLE_ORANGE "tex_bubble_orange"
 #define RESOURCE_TEXTURE_BUBBLE_PURPLE "tex_bubble_purple"
 #define RESOURCE_TEXTURE_BUBBLE_CYAN "tex_bubble_cyan"
+#define RESOURCE_TEXTURE_SKYBOX_1_PX "tex_skybox_1_px"
 #define RESOURCE_TEXTURE_WATER_DISPLACEMENT "tex_water_dm"
 #define RESOURCE_TEXTURE_WATER_TEXTURE "tex_water_tm"
 #define RESOURCE_TEXTURE_WORLD_1_WEM "tex_world_1_wem"
@@ -114,7 +115,9 @@ public:
 	Resource<FontHolder> loadFont(const std::string & filename);
 
 	// Utilities
+	bool stringEndsWith(const std::string& data, const std::string& suffix);
 	void createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color);
+	Resource<GL::Mesh> getPlaneMeshForFlatShader();
 	std::shared_ptr<TexturedDrawable<SpriteShader>> createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> getFlat3DShader();
 };

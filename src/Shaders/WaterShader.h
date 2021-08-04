@@ -17,7 +17,7 @@ public:
 		Resource<GL::Texture2D> effectsTexture;
 		Float frame;
 		Float speed;
-		Float size;
+		Vector2 size;
 		Color3 horizonColor;
 	};
 
@@ -30,7 +30,7 @@ public:
 	WaterShader& setProjectionMatrix(const Matrix4& projectionMatrix);
 	WaterShader& setFrame(const Float frame);
 	WaterShader& setSpeed(const Float speed);
-	WaterShader& setSize(const Float size);
+	WaterShader& setSize(const Vector2 & size);
 	WaterShader& setHorizonColorUniform(const Color3& color);
 	WaterShader& bindDisplacementTexture(GL::Texture2D& texture);
 	WaterShader& bindWaterTexture(GL::Texture2D& texture);

@@ -8,6 +8,7 @@
 #include <array>
 #include <vector>
 #include <memory>
+#include <chrono>
 
 #include <nlohmann/json.hpp>
 #include <Magnum/Magnum.h>
@@ -35,29 +36,38 @@ public:
 private:
 	static std::unordered_map<Int, std::array<Vector3, 6>> sLevelButtonPositions;
 
-	struct LS_ButtonSelector
+	struct LS_PickableObject
 	{
-		std::shared_ptr<TexturedDrawable<Shaders::Phong>> drawables;
+		std::vector<std::weak_ptr<BaseDrawable>> drawables;
 		Vector3 position;
-		Int index;
+		UnsignedInt levelIndex;
 	};
 
 	struct LS_ScenerySelector
 	{
 		std::shared_ptr<Scenery> scenery;
-		std::vector<LS_ButtonSelector> buttons;
+		std::vector<LS_PickableObject> buttons;
+		Object3D* manipulator;
 	};
 
+	void createSkyPlane();
 	void handleScrollableCameraPosition(const Vector3 & delta);
 	void handleScrollableScenery();
+	void clickLevelButton(const UnsignedInt id);
+
+	std::shared_ptr<TexturedDrawable<Shaders::Flat3D>> mSkyPlane;
+	Object3D* mSkyManipulator;
 
 	Vector2i mPrevMousePos;
 	Vector3 mScrollVelocity;
-	Float mButtonAnim[1];
+	Float mScreenButtonAnim[1];
+	Float mLevelButtonScaleAnim;
 
 	Int mClickIndex;
 	std::shared_ptr<OverlayGui> mScreenButtons[1];
-	std::unordered_set<BaseDrawable*> mButtonDrawables;
 	std::function<void()> mCallbacks[1];
 	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
+
+	std::chrono::system_clock::time_point mClickStartTime;
+	std::unordered_map<Int, LS_PickableObject*> mPickableObjectPointers;
 };

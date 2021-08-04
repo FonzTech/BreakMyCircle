@@ -12,3 +12,13 @@ void BaseDrawable::setDrawCallback(IDrawCallback* drawCallback)
 {
 	mDrawCallback = drawCallback;
 }
+
+UnsignedInt BaseDrawable::getObjectId() const
+{
+	return mObjectId;
+}
+
+const void BaseDrawable::setObjectId(const UnsignedInt objectId)
+{
+	mObjectId = objectId;
+}

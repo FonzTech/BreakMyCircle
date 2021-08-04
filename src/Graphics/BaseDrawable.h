@@ -18,6 +18,7 @@ public:
 	{
 		mDrawCallback = nullptr;
 		setParent(nullptr);
+		mObjectId = 0U;
 	}
 
 	Resource<GL::Mesh> mMesh;
@@ -25,10 +26,13 @@ public:
 	Color4 mColor;
 
 	void setDrawCallback(IDrawCallback* drawCallback);
+	UnsignedInt getObjectId() const;
+	const void setObjectId(const UnsignedInt objectId);
 
 	virtual GL::AbstractShaderProgram& getShader() = 0;
 	virtual void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) = 0;
 
 protected:
 	IDrawCallback* mDrawCallback;
+	UnsignedInt mObjectId;
 };

@@ -6,7 +6,7 @@ uniform sampler2D effectsData;
 
 uniform float frame;
 uniform float speed;
-uniform float size;
+uniform vec2 size;
 uniform vec3 horizonColor;
 
 in vec2 interpolatedTextureCoordinates;

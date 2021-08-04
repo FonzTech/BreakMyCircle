@@ -237,7 +237,16 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 
 void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i, IDrawCallback* drawCallback)
 {
-	Debug{} << "Importing object" << i << importer.object3DName(i);
+	{
+		const std::string name = importer.object3DName(i);
+		Debug{} << "Importing object" << i << name;
+		if (CommonUtility::singleton->stringEndsWith(name, "_AvoidMe"))
+		{
+			Debug{} << "This object is skipped by request";
+			return;
+		}
+	}
+
 	Containers::Pointer<Trade::ObjectData3D> objectData = importer.object3D(i);
 	if (!objectData)
 	{
@@ -253,11 +262,11 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 	if (objectData->instanceType() == Trade::ObjectInstanceType3D::Mesh && objectData->instance() != -1 && assets.meshes[objectData->instance()])
 	{
 		const Int materialId = static_cast<Trade::MeshObjectData3D*>(objectData.get())->material();
+		auto& drawables = RoomManager::singleton->mGoLayers[gameObject.mParentIndex].drawables;
 
 		// Material not available / not loaded, use a default material
 		if (materialId == -1 || !assets.materials[materialId])
 		{
-			auto& drawables = RoomManager::singleton->mGoLayers[gameObject.mParentIndex].drawables;
 			std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = std::make_shared<ColoredDrawable<Shaders::Phong>>(*drawables, coloredShader, assets.meshes[objectData->instance()], 0xffffffff_rgbaf);
 			cd->setParent(objectNode);
 			cd->setDrawCallback(drawCallback);
@@ -272,7 +281,6 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 			Resource<GL::Texture2D>& texture = assets.textures[((Trade::PhongMaterialData&) *assets.materials[materialId]).diffuseTexture()];
 			if (texture)
 			{
-				auto& drawables = RoomManager::singleton->mGoLayers[gameObject.mParentIndex].drawables;
 				std::shared_ptr<TexturedDrawable<Shaders::Phong>> td = std::make_shared<TexturedDrawable<Shaders::Phong>>(*drawables, texturedShader, assets.meshes[objectData->instance()], texture);
 				td->setParent(objectNode);
 				td->setDrawCallback(drawCallback);
@@ -280,7 +288,6 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 			}
 			else
 			{
-				auto& drawables = RoomManager::singleton->mGoLayers[gameObject.mParentIndex].drawables;
 				std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = std::make_shared<ColoredDrawable<Shaders::Phong>>(*drawables, coloredShader, assets.meshes[objectData->instance()], 0xffffffff_rgbaf);
 				cd->setParent(objectNode);
 				cd->setDrawCallback(drawCallback);
@@ -291,7 +298,6 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 		// Color-only material
 		else if (assets.meshes[objectData->instance()]->count() > 0)
 		{
-			auto& drawables = RoomManager::singleton->mGoLayers[gameObject.mParentIndex].drawables;
 			std::shared_ptr<ColoredDrawable<Shaders::Phong>> cd = std::make_shared<ColoredDrawable<Shaders::Phong>>(*drawables, coloredShader, assets.meshes[objectData->instance()], ((Trade::PhongMaterialData&) *assets.materials[materialId]).diffuseColor());
 			cd->setParent(objectNode);
 			cd->setDrawCallback(drawCallback);

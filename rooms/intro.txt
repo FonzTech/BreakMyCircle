@@ -2,16 +2,6 @@
   "bgmusic": "bgmusic",
   "objects": [
     {
-      "parent": 0,
-      "type": 7,
-      "position": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0
-      },
-      "name": "skybox_1"
-    },
-    {
       "parent": 1,
       "type": 6,
       "position": {

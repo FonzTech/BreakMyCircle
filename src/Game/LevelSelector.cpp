@@ -7,7 +7,6 @@
 #include "../InputManager.h"
 #include "../AssetManager.h"
 #include "../Common/CommonUtility.h"
-#include "../Graphics/TexturedDrawable.h"
 
 std::shared_ptr<GameObject> LevelSelector::getInstance(const nlohmann::json & params)
 {
@@ -41,6 +40,10 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 	mPrevMousePos = Vector2i(GO_LS_RESET_MOUSE_VALUE, -1);
 	mScrollVelocity = Vector3(0.0f);
 	mClickIndex = -1;
+	mLevelButtonScaleAnim = 0.0f;
+
+	// Create sky plane
+	createSkyPlane();
 
 	// Create overlays
 	{
@@ -49,23 +52,12 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 1.0f, -1.0f });
 
-		mButtonAnim[0] = Constants::piHalf();
+		mScreenButtonAnim[0] = Constants::piHalf();
 		mScreenButtons[0] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 
 		mCallbacks[0] = []() {
 			printf("You have clicked settings\n");
 		};
-	}
-
-	// Load required scenes
-	{
-		AssetManager am(RESOURCE_SHADER_COLORED_PHONG, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE, 1);
-		am.loadAssets(*this, *mManipulator, "scenes/level_button.glb", this);
-
-		for (UnsignedInt i = 0; i < mDrawables.size(); ++i)
-		{
-			mButtonDrawables.insert(mDrawables[i].get());
-		}
 	}
 
 	// Set camera parameters
@@ -82,7 +74,6 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 LevelSelector::~LevelSelector()
 {
 	mScreenButtons[0] = nullptr;
-	mButtonDrawables.clear();
 	mSceneries.clear();
 }
 
@@ -103,13 +94,13 @@ void LevelSelector::update()
 	// Animation for overlay buttons
 	for (UnsignedInt i = 0; i < 1; ++i)
 	{
-		mButtonAnim[0] -= mDeltaTime;
-		if (mButtonAnim[0] < 0.0f)
+		mScreenButtonAnim[0] -= mDeltaTime;
+		if (mScreenButtonAnim[0] < 0.0f)
 		{
-			mButtonAnim[0] = 0.0f;
+			mScreenButtonAnim[0] = 0.0f;
 		}
 
-		mScreenButtons[i]->setPosition(Vector2(-0.5f, 0.5f) - Vector2(Math::sin(Rad(mButtonAnim[0])), 0.0f));
+		mScreenButtons[i]->setPosition(Vector2(-0.5f, 0.5f) - Vector2(Math::sin(Rad(mScreenButtonAnim[0])), 0.0f));
 	}
 
 	// Handle button clicks
@@ -136,10 +127,42 @@ void LevelSelector::update()
 		}
 	}
 
+	// Handle button scale animation 
+	{
+		mLevelButtonScaleAnim += mDeltaTime;
+		if (mLevelButtonScaleAnim > 1.0f)
+		{
+			mLevelButtonScaleAnim = 1.0f;
+		}
+
+		mLevelButtonScaleAnim = 1.0f;
+		const Vector3 sv(mLevelButtonScaleAnim);
+
+		for (auto it = mSceneries.begin(); it != mSceneries.end(); ++it)
+		{
+			for (auto it2 = it->second.buttons.begin(); it2 != it->second.buttons.end(); ++it2)
+			{
+				for (auto dp : it2->drawables)
+				{
+					if (dp.expired())
+					{
+						Error{} << "weak_ptr for" << it2->levelIndex << " has expired. This should not happen";
+						continue;
+					}
+
+					(*dp.lock())
+						.resetTransformation()
+						.scale(sv);
+				}
+			}
+		}
+	}
+
 	// Handle scrollable scenery
 	if (lbs == IM_STATE_PRESSED)
 	{
 		mPrevMousePos = InputManager::singleton->mMousePosition;
+		mClickStartTime = std::chrono::system_clock::now();
 	}
 	else if (lbs >= IM_STATE_PRESSED)
 	{
@@ -205,6 +228,24 @@ void LevelSelector::update()
 
 			mScrollVelocity -= scrollDelta;
 		}
+
+		// Check for click release
+		if (lbs == IM_STATE_RELEASED)
+		{
+			const auto& oid = InputManager::singleton->mClickedObjectId;
+			if (oid != 0U)
+			{
+				const std::chrono::duration<double> diff = std::chrono::system_clock::now() - mClickStartTime;
+				if (diff.count() < 0.3)
+				{
+					const auto& it = mPickableObjectPointers.find(oid);
+					if (it != mPickableObjectPointers.end())
+					{
+						clickLevelButton(it->second->levelIndex);
+					}
+				}
+			}
+		}
 	}
 
 	if (!mScrollVelocity.isZero())
@@ -217,26 +258,48 @@ void LevelSelector::update()
 
 void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (mButtonDrawables.find(baseDrawable) != mButtonDrawables.end())
+	if (baseDrawable == mSkyPlane.get())
 	{
-		return;
+		((Shaders::Flat3D&)baseDrawable->getShader())
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+			.bindTexture(*baseDrawable->mTexture)
+			.draw(*baseDrawable->mMesh);
 	}
-	
-	((Shaders::Phong&)baseDrawable->getShader())
-		.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(0.0f, 6.0f, 0.0f)))
-		.setLightColor(0xffffffff_rgbaf)
-		.setSpecularColor(0xffffff00_rgbaf)
-		.setAmbientColor(0x444444ff_rgbaf)
-		.setTransformationMatrix(transformationMatrix)
-		.setNormalMatrix(transformationMatrix.normalMatrix())
-		.setProjectionMatrix(camera.projectionMatrix())
-		.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
-		.setObjectId(100)
-		.draw(*baseDrawable->mMesh);
+	else
+	{
+		((Shaders::Phong&)baseDrawable->getShader())
+			.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(0.0f, 6.0f, 0.0f)))
+			.setLightColor(0xffffffff_rgbaf)
+			.setSpecularColor(0xffffff00_rgbaf)
+			.setAmbientColor(0x444444ff_rgbaf)
+			.setTransformationMatrix(transformationMatrix)
+			.setNormalMatrix(transformationMatrix.normalMatrix())
+			.setProjectionMatrix(camera.projectionMatrix())
+			.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
+			.setObjectId(baseDrawable->getObjectId())
+			.draw(*baseDrawable->mMesh);
+	}
 }
 
 void LevelSelector::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
+}
+
+void LevelSelector::createSkyPlane()
+{
+	Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForFlatShader();
+	Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SKYBOX_1_PX);
+	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> resShader = CommonUtility::singleton->getFlat3DShader();
+
+	mSkyManipulator = new Object3D{ mManipulator.get() };
+	mSkyManipulator->scale(Vector3(50.0f, 50.0f, 1.0f));
+	mSkyManipulator->translate(Vector3(0.0f, 0.0f, -100.0f));
+
+	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
+	mSkyPlane = std::make_shared<TexturedDrawable<Shaders::Flat3D>>(*drawables, resShader, resMesh, resTexture);
+	mSkyPlane->setParent(mSkyManipulator);
+	mSkyPlane->setDrawCallback(this);
+	mDrawables.emplace_back(mSkyPlane);
 }
 
 void LevelSelector::handleScrollableCameraPosition(const Vector3 & delta)
@@ -260,13 +323,40 @@ void LevelSelector::handleScrollableScenery()
 	{
 		if (yps.find(it->first) == yps.end())
 		{
+			// Erase this scenery
 			mSceneries.erase(it->first);
+
+			// Erase pickable objects
+			mPickableObjectPointers.erase(it->first);
+
+			// Delete drawable references for this scenery
+			for (auto it2 = it->second.buttons.begin(); it2 != it->second.buttons.end(); ++it2)
+			{
+				for (auto it3 = it2->drawables.begin(); it3 != it2->drawables.end(); ++it3)
+				{
+					if (!(*it3).expired())
+					{
+						const auto& itd = std::find(mDrawables.begin(), mDrawables.end(), (*it3).lock());
+						if (itd != mDrawables.end())
+						{
+							Debug{} << "Drawable at", &(*itd), "was erased";
+							mDrawables.erase(itd);
+						}
+					}
+				}
+			}
 		}
 	}
 
 	// Create visible sceneries
 	for (const Int yp : yps)
 	{
+		// Avoid negative positions
+		if (yp < 0.0f)
+		{
+			continue;
+		}
+
 		// Avoid scenes which are already what they should be (island, forest, desert, etc...)
 		// const Int modelIndex = (yp[i] % 1) + 1;
 		const Int modelIndex = 0;
@@ -283,41 +373,65 @@ void LevelSelector::handleScrollableScenery()
 		// Create new data structure scenery with level selectors
 		mSceneries[yp] = LS_ScenerySelector();
 
+		// Create manipulator (avoid putting this object's drawables into another object's manipulator)
+		const Vector3 tp = Vector3(0.0f, 0.0f, -50.0f * Float(yp));
+
+		mSceneries[yp].manipulator = new Object3D(mManipulator.get());
+		mSceneries[yp].manipulator->translate(tp);
+
 		// Create scenery
-		std::shared_ptr<Scenery> go = std::make_unique<Scenery>(GOL_PERSP_FIRST, modelIndex);
-		mSceneries[yp].scenery = (std::shared_ptr<Scenery>&) RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(go, true);
+		{
+			std::shared_ptr<Scenery> go = std::make_unique<Scenery>(GOL_PERSP_FIRST, modelIndex);
+			go->mManipulator->transform(mSceneries[yp].manipulator->transformation());
+			go->mPosition = tp;
+			mSceneries[yp].scenery = (std::shared_ptr<Scenery>&) RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(go, true);
+		}
 
 		// Create level selectors
 #if NDEBUG or _DEBUG
 		if (mSceneries[yp].buttons.size())
 		{
-			Fatal{} << "Buttons vector for position" << yp << "should be empty, but it was not.";
+			Error{} << "Buttons vector for position" << yp << "should be empty, but it was not.";
 		}
 #endif
 
 		// Create four drawables
 		for (Int i = 0; i < 6; ++i)
 		{
-			mSceneries[yp].buttons.push_back(LS_ButtonSelector());
+			// Create button selector
+			mSceneries[yp].buttons.push_back(LS_PickableObject());
 			auto& bs = mSceneries[yp].buttons.back();
 
-			for (const auto& bd : mButtonDrawables)
+			// Keep this button pointer for fast lookup
+			const UnsignedInt objectId = UnsignedInt(yp) * 6U + UnsignedInt(i);
+			mPickableObjectPointers[objectId] = &bs;
+
+			// Load drawables
+			AssetManager am(RESOURCE_SHADER_COLORED_PHONG, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE, 1);
+			am.loadAssets(*this, *mSceneries[yp].manipulator, "scenes/level_button.glb", this);
+
+			for (UnsignedInt i = 0; i < 3; ++i)
 			{
-				// Replicate single drawable
-				std::shared_ptr<TexturedDrawable<Shaders::Phong>> td = std::make_shared<TexturedDrawable<Shaders::Phong>>((TexturedDrawable<Shaders::Phong>*)bd);
-				td->setParent(bd->parent());
-				td->setDrawCallback(this);
-
-				// Apply the same transformations
-				bs.drawables = td;
-				bs.position = sLevelButtonPositions[modelIndex][i];
-				bs.index = i;
-
-				td->setTransformation(Matrix4::translation(bs.position));
-
-				// Make parent object the owner for these drawables
-				mDrawables.emplace_back(td);
+				const std::shared_ptr<BaseDrawable>& bd = mDrawables[mDrawables.size() - 1];
+				bd->setObjectId(objectId);
+				bs.drawables.emplace_back(bd);
 			}
+
+			// Apply the same transformations
+			bs.position = sLevelButtonPositions[modelIndex][i];
+			bs.levelIndex = objectId;
+
+			/*
+			(*td)
+				.resetTransformation()
+				.translate(bs.position)
+				.scale(Vector3(mLevelButtonScaleAnim));
+			*/
 		}
 	}
+}
+
+void LevelSelector::clickLevelButton(const UnsignedInt id)
+{
+	Debug{} << "You have clicked level" << id;
 }

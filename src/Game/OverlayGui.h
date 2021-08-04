@@ -28,7 +28,6 @@ public:
 	Range3D getBoundingBox(const Vector2 & windowSize);
 
 protected:
-	Resource<GL::Mesh> getMesh();
 	void updateAspectRatioFactors();
 	void updateTransformations();
 

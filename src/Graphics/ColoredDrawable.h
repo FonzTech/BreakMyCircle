@@ -49,6 +49,5 @@ public:
 			.draw(*mMesh);
 	}
 
-protected:
 	Resource<GL::AbstractShaderProgram, ShaderType> mShader;
 };

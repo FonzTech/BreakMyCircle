@@ -31,3 +31,5 @@ Puzzle Bobble-like game for PC and Mobile. Currently in development. This projec
 - The GOL_ORTHO_FIRST is the only layer which draws its objects right after update (such as `OverlayText`).
 - Regarding `BaseDrawable` and its subclasses, their copy constructor (kind-of, please see their implementation) does NOT copy all of the properties.
 - It's advised to use the `AssetManager` to load a resource of type `Shaders::Phong`, otherwise the `Object ID` property will seem to be randomized due to an undefined value.
+- Objects, whose name ends with `_AvoidMe`, are NOT imported by `AssetManager`.
+- It's highly advised to use `WaterShader` for "square" drawables.

@@ -24,7 +24,7 @@ OverlayGui::OverlayGui(const Int parentIndex) : GameObject(parentIndex)
 	mParentIndex = parentIndex;
 
 	// Get assets
-	Resource<GL::Mesh> mesh = getMesh();
+	Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForFlatShader();
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> shader = CommonUtility::singleton->getFlat3DShader();
 	Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_GUI_SETTINGS);
 
@@ -90,31 +90,6 @@ Range3D OverlayGui::getBoundingBox(const Vector2 & windowSize)
 		{ mBbox.min().x() * s.x() + o.x(), s.y() - (mBbox.max().y() * s.y() + o.y()), mBbox.min().z() * s.z() + o.z() },
 		{ mBbox.max().x() * s.x() + o.x(), s.y() - (mBbox.min().y() * s.y() + o.y()), mBbox.max().z() * s.z() + o.z() }
 	};
-}
-
-Resource<GL::Mesh> OverlayGui::getMesh()
-{
-	// Get required resource
-	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_PLANE_FLAT) };
-
-	if (!resMesh)
-	{
-		// Create flat plane
-		Trade::MeshData plane = Primitives::planeSolid(Primitives::PlaneFlag::TextureCoordinates);
-
-		GL::Buffer vertices;
-		vertices.setData(MeshTools::interleave(plane.positions3DAsArray(), plane.textureCoordinates2DAsArray()));
-
-		GL::Mesh mesh;
-		mesh.setPrimitive(plane.primitive())
-			.setCount(plane.vertexCount())
-			.addVertexBuffer(std::move(vertices), 0, Shaders::Flat3D::Position{}, Shaders::Flat3D::TextureCoordinates{});
-
-		// Add to resources
-		CommonUtility::singleton->manager.set(resMesh.key(), std::move(mesh));
-	}
-
-	return resMesh;
 }
 
 void OverlayGui::updateAspectRatioFactors()
