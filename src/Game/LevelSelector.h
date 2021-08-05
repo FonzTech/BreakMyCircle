@@ -4,6 +4,7 @@
 #define GO_LS_MAX_SCROLL_VELOCITY 0.025f
 #define GO_LS_MAX_SCROLL_VELOCITY_MAX (GO_LS_MAX_SCROLL_VELOCITY * 50.0f)
 #define GO_LS_RESET_MOUSE_VALUE -10000
+#define GO_CLICK_TAP_MAX_DELAY 0.3
 
 #include <array>
 #include <vector>
@@ -41,6 +42,7 @@ private:
 		std::vector<std::weak_ptr<BaseDrawable>> drawables;
 		Vector3 position;
 		UnsignedInt levelIndex;
+		UnsignedInt objectId;
 	};
 
 	struct LS_ScenerySelector
@@ -54,6 +56,7 @@ private:
 	void handleScrollableCameraPosition(const Vector3 & delta);
 	void handleScrollableScenery();
 	void clickLevelButton(const UnsignedInt id);
+	void currentLevelView();
 
 	std::shared_ptr<TexturedDrawable<Shaders::Flat3D>> mSkyPlane;
 	Object3D* mSkyManipulator;
@@ -69,5 +72,7 @@ private:
 	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
 
 	std::chrono::system_clock::time_point mClickStartTime;
-	std::unordered_map<Int, LS_PickableObject*> mPickableObjectPointers;
+	std::unordered_map<UnsignedInt, Int> mPickableObjectRefs;
+
+	UnsignedInt mCurrentViewingLevelId;
 };
