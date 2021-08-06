@@ -54,14 +54,17 @@ void OverlayText::update()
 
 void OverlayText::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	(*mShader)
-		.bindVectorTexture(mCache.texture())
-		.setTransformationProjectionMatrix(mProjectionMatrix * mTransformationMatrix)
-		.setColor(mColor)
-		.setOutlineColor(mOutlineColor)
-		.setOutlineRange(mOutlineRange.x(), mOutlineRange.y())
-		.setSmoothness(0.025f / mTransformationMatrix.uniformScaling())
-		.draw(mText->mesh());
+	if (mColor.a() > 0.0f || mOutlineColor.a() > 0.0f)
+	{
+		(*mShader)
+			.bindVectorTexture(mCache.texture())
+			.setTransformationProjectionMatrix(mProjectionMatrix * mTransformationMatrix)
+			.setColor(mColor)
+			.setOutlineColor(mOutlineColor)
+			.setOutlineRange(mOutlineRange.x(), mOutlineRange.y())
+			.setSmoothness(0.025f / mTransformationMatrix.uniformScaling())
+			.draw(mText->mesh());
+	}
 }
 
 void OverlayText::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)

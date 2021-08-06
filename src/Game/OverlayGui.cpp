@@ -14,11 +14,11 @@ std::shared_ptr<GameObject> OverlayGui::getInstance(const nlohmann::json & param
 	params.at("parent").get_to(parent);
 
 	// Instantiate scenery object
-	std::shared_ptr<OverlayGui> p = std::make_shared<OverlayGui>(parent);
+	std::shared_ptr<OverlayGui> p = std::make_shared<OverlayGui>(parent, RESOURCE_TEXTURE_GUI_SETTINGS);
 	return p;
 }
 
-OverlayGui::OverlayGui(const Int parentIndex) : GameObject(parentIndex)
+OverlayGui::OverlayGui(const Int parentIndex, const std::string & textureName) : GameObject(parentIndex)
 {
 	// Assign member
 	mParentIndex = parentIndex;
@@ -26,7 +26,7 @@ OverlayGui::OverlayGui(const Int parentIndex) : GameObject(parentIndex)
 	// Get assets
 	Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForFlatShader();
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> shader = CommonUtility::singleton->getFlat3DShader();
-	Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_GUI_SETTINGS);
+	Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(textureName);
 
 	// Create drawable
 	auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;

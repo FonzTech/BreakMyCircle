@@ -71,6 +71,9 @@ private:
 	std::function<void()> mCallbacks[1];
 	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
 
+	std::shared_ptr<OverlayGui> mLevelDrawables[1];
+	Float mLevelAnim;
+
 	std::chrono::system_clock::time_point mClickStartTime;
 	std::unordered_map<UnsignedInt, Int> mPickableObjectRefs;
 

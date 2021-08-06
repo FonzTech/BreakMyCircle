@@ -14,7 +14,7 @@ public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	// Class members
-	OverlayGui(const Int parentIndex);
+	OverlayGui(const Int parentIndex, const std::string & textureName);
 
 	const Int getType() const override;
 	void update() override;

@@ -20,6 +20,7 @@
 #define RESOURCE_TEXTURE_WORLD_1_WEM "tex_world_1_wem"
 #define RESOURCE_TEXTURE_CUBEMAP_SKYBOX_1 "tex_cubemap_skybox_1"
 #define RESOURCE_TEXTURE_GUI_SETTINGS "tex_gui_settings"
+#define RESOURCE_TEXTURE_GUI_LEVEL_PANEL "tex_gui_level_panel"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"
 #define RESOURCE_SHADER_COLORED_PHONG_2 "shader_colored_phong_2"

@@ -1,6 +1,7 @@
 #include "LevelSelector.h"
 
 #include <utility>
+#include <Magnum/Math/Math.h>
 #include <Magnum/Math/Constants.h>
 
 #include "../RoomManager.h"
@@ -46,9 +47,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 	// Create sky plane
 	createSkyPlane();
 
-	// Create overlays
+	// Create button overlays
 	{
-		std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST);
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SETTINGS);
 		o->setPosition({ -2.0f, 0.5f });
 		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 1.0f, -1.0f });
@@ -59,6 +60,18 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 		mCallbacks[0] = []() {
 			printf("You have clicked settings\n");
 		};
+	}
+
+	// Create overlay eye-candy drawables
+	{
+		mLevelAnim = 0.0f;
+
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_LEVEL_PANEL);
+		o->setPosition({ 0.0f, 1.0f });
+		o->setSize({ 0.5f, 0.5f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mLevelDrawables[0] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 	}
 
 	// Set camera parameters
@@ -102,8 +115,25 @@ void LevelSelector::update()
 	const bool isViewing = mCurrentViewingLevelId != 0U;
 	if (isViewing)
 	{
-		currentLevelView();
+		// Advance animation
+		mLevelAnim += 0.8f * mDeltaTime;
+		if (mLevelAnim > 1.0f)
+		{
+			mLevelAnim = 1.0f;
+		}
 	}
+	else
+	{
+		// Reduce animation
+		mLevelAnim -= 0.8f * mDeltaTime;
+		if (mLevelAnim < 0.0f)
+		{
+			mLevelAnim = 0.0f;
+		}
+	}
+
+	// Current level view
+	currentLevelView();
 
 	// Animation for overlay buttons
 	for (UnsignedInt i = 0; i < 1; ++i)
@@ -510,5 +540,5 @@ void LevelSelector::clickLevelButton(const UnsignedInt id)
 
 void LevelSelector::currentLevelView()
 {
-	Debug{} << "Show level details for" << mCurrentViewingLevelId;
+	mLevelDrawables[0]->setPosition({ 0.0f, 1.0f - Math::sin(Deg(mLevelAnim * 90.0f)) });
 }
