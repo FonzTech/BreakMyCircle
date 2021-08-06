@@ -33,3 +33,4 @@ Puzzle Bobble-like game for PC and Mobile. Currently in development. This projec
 - It's advised to use the `AssetManager` to load a resource of type `Shaders::Phong`, otherwise the `Object ID` property will seem to be randomized due to an undefined value.
 - Objects, whose name ends with `_AvoidMe`, are NOT imported by `AssetManager`.
 - It's highly advised to use `WaterShader` for "square" drawables.
+- ~~Blending between `OverlayText` and `OverlayGui` is incorrect due to the blending function used. This can be fixed, but it's a time consuming task. Please, avoid this.~~

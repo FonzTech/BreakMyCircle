@@ -44,7 +44,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	GL::Renderer::setBlendEquation(GL::Renderer::BlendEquation::Add, GL::Renderer::BlendEquation::Add);
 
 	// Set clear color
-	GL::Renderer::setClearColor(Color4(0.2f, 0.2f, 0.2f, 1.0f));
+	GL::Renderer::setClearColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
 
 	// Init common utility
 	CommonUtility::singleton = std::make_unique<CommonUtility>();
@@ -158,6 +158,7 @@ void Engine::tickEvent()
 		{
 			// Set specific blend function for text
 			GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+			GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 
 			// Get vector as reference
 			const auto& gos = currentGol->list;
