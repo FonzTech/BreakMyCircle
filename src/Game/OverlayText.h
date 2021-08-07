@@ -27,6 +27,7 @@ public:
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
 	void setText(const std::string & text);
+	void setPosition(const Vector3 & position);
 
 	Color4 mColor;
 	Color4 mOutlineColor;

@@ -76,6 +76,12 @@ void OverlayText::setText(const std::string & text)
 	mText->render(text);
 }
 
+void OverlayText::setPosition(const Vector3 & position)
+{
+	mPosition = position;
+	updateTransformation();
+}
+
 void OverlayText::updateTransformation()
 {
 	mTransformationMatrix = Matrix3::translation(mCurrentFloatWindowSize * mPosition.xy());
