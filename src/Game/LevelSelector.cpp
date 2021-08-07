@@ -575,5 +575,5 @@ void LevelSelector::currentLevelView()
 	}
 
 	// Level texts
-	mLevelTexts[0]->setPosition({ 0.0f, 1.05f - d, 0.0f });
+	mLevelTexts[0]->setPosition({ 0.0f, 1.15f - d, 0.0f });
 }
