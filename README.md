@@ -34,3 +34,4 @@ Puzzle Bobble-like game for PC and Mobile. Currently in development. This projec
 - Objects, whose name ends with `_AvoidMe`, are NOT imported by `AssetManager`.
 - It's highly advised to use `WaterShader` for "square" drawables.
 - ~~Blending between `OverlayText` and `OverlayGui` is incorrect due to the blending function used. This can be fixed, but it's a time consuming task. Please, avoid this.~~
+- Transformations for `OverlayText` is only computed automatically on the first update. Later times, the method `setPosition` must be called to trigger transformations update. Otherwise the object will be rendered with out-of-date transformations.

@@ -41,6 +41,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mLightDirection = false;
 	mIntroBubbles = true;
 	mLogoZoom = 0.0f;
+	mAnimElapsed = -1.0f;
 
 	// Load assets
 	mPosition = Vector3(0.0f, 10.0f, 0.0f);
@@ -66,25 +67,26 @@ Logo::Logo(const Int parentIndex) : GameObject()
 		}
 	}
 
-	// Build animations
-	buildAnimations();
-
 	// Init timers
 	mBubbleTimer = 0.0f;
-	mFinishTimer = 6.0f;
+	mFinishTimer = FINISH_TIMER_STARTING_VALUE;
 
 	// Set camera parameters
 	setCameraParameters();
 
 	// Create overlay text
 	{
-		std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST);
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST);
 		go->mPosition = Vector3(0.0f, -0.25f, 0.0f);
 		go->mColor.data()[3] = 0.0f;
 		go->mOutlineColor.data()[3] = 0.0f;
 		go->setText("Tap here to begin");
+
 		mTexts[0] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 	}
+
+	// Build animations
+	buildAnimations();
 }
 
 const Int Logo::getType() const
@@ -95,8 +97,15 @@ const Int Logo::getType() const
 void Logo::update()
 {
 	// Advance animation
-	mAnimPlayer->advance(mAnimTimeline.previousFrameTime());
-	mAnimTimeline.nextFrame();
+	if (mAnimElapsed < 0.0f)
+	{
+		mAnimElapsed = 0.001f;
+	}
+	else
+	{
+		mAnimElapsed += mDeltaTime;
+		mAnimPlayer->advance(mAnimElapsed);
+	}
 
 	// Check for bubble timer
 	if (mBubbleTimer > 0.0f)
@@ -304,8 +313,7 @@ void Logo::buildAnimations()
 	}
 
 	// Start animation
-	mAnimTimeline.start();
-	mAnimPlayer->play(mAnimTimeline.previousFrameTime());
+	mAnimPlayer->play(0.001f);
 }
 
 void Logo::setCameraParameters()

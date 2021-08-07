@@ -63,15 +63,36 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 	}
 
 	// Create overlay eye-candy drawables
-	{
-		mLevelAnim = 0.0f;
+	mLevelAnim = 0.0f;
 
+	{
 		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_LEVEL_PANEL);
-		o->setPosition({ 0.0f, 1.0f });
-		o->setSize({ 0.5f, 0.5f });
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.45f, 0.45f });
 		o->setAnchor({ 0.0f, 0.0f });
 
 		mLevelDrawables[0] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+
+	for (UnsignedInt i = 0; i < 3; ++i)
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_STAR_GRAY);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mLevelDrawables[i + 1U] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+
+	// Create overlay text
+	{
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST);
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setText("Level X");
+
+		mLevelTexts[0] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 	}
 
 	// Set camera parameters
@@ -536,9 +557,23 @@ void LevelSelector::clickLevelButton(const UnsignedInt id)
 {
 	Debug{} << "You have clicked level" << id;
 	mCurrentViewingLevelId = id;
+
+	mLevelTexts[0]->setText("Level " + std::to_string(id));
 }
 
 void LevelSelector::currentLevelView()
 {
-	mLevelDrawables[0]->setPosition({ 0.0f, 1.0f - Math::sin(Deg(mLevelAnim * 90.0f)) });
+	const auto& d = Math::sin(Deg(mLevelAnim * 90.0f));
+
+	// Main panel
+	mLevelDrawables[0]->setPosition({ 0.0f, 1.0f - d });
+
+	// Score stars
+	for (UnsignedInt i = 0; i < 3; ++i)
+	{
+		mLevelDrawables[i + 1U]->setPosition({ -0.2f + 0.2f * Float(i), 1.25f - d });
+	}
+
+	// Level texts
+	mLevelTexts[0]->setPosition({ 0.0f, 1.05f - d, 0.0f });
 }

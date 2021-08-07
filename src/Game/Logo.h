@@ -1,5 +1,7 @@
 #pragma once
 
+#define FINISH_TIMER_STARTING_VALUE 6.0f
+
 #include <vector>
 #include <memory>
 
@@ -50,7 +52,7 @@ private:
 	Object3D* mLogoObjects[3];
 
 	// Animation data structures
-	Timeline mAnimTimeline;
+	Float mAnimElapsed;
 
 	Keyframe mKeyframes[4][3];
 	std::unique_ptr<AnimPosition> mTrackViewPositions[4];

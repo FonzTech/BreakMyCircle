@@ -17,6 +17,7 @@
 #include "../GameObject.h"
 #include "../Graphics/BaseDrawable.h"
 #include "OverlayGui.h"
+#include "OverlayText.h"
 #include "Scenery.h"
 
 using namespace Magnum;
@@ -67,11 +68,12 @@ private:
 	Float mLevelButtonScaleAnim;
 
 	Int mClickIndex;
-	std::shared_ptr<OverlayGui> mScreenButtons[1];
+	std::unordered_map<Int, std::shared_ptr<OverlayGui>> mScreenButtons;
 	std::function<void()> mCallbacks[1];
 	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
 
-	std::shared_ptr<OverlayGui> mLevelDrawables[1];
+	std::unordered_map<Int, std::shared_ptr<OverlayGui>> mLevelDrawables;
+	std::unordered_map<Int, std::shared_ptr<OverlayText>> mLevelTexts;
 	Float mLevelAnim;
 
 	std::chrono::system_clock::time_point mClickStartTime;
