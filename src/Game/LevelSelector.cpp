@@ -108,8 +108,11 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 
 LevelSelector::~LevelSelector()
 {
-	mScreenButtons[0] = nullptr;
+	mScreenButtons.clear();
+	mLevelDrawables.clear();
+	mLevelTexts.clear();
 	mSceneries.clear();
+	mPickableObjectRefs.clear();
 }
 
 
@@ -123,8 +126,8 @@ void LevelSelector::update()
 	// Update sky plane
 	(*mSkyManipulator)
 		.resetTransformation()
-		.scale(Vector3(50.0f, 50.0f, 1.0f))
-		.translate(mPosition + Vector3(0.0f, 0.0f, -100.0f));
+		.scale(Vector3(GO_LS_SCENERY_LENGTH, GO_LS_SCENERY_LENGTH, 1.0f))
+		.translate(mPosition + Vector3(0.0f, 0.0f, -GO_LS_SCENERY_LENGTH_DOUBLE));
 
 	// Check if there is any on-going action on top
 	if (RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->size() > 0)
@@ -435,18 +438,19 @@ void LevelSelector::handleScrollableScenery()
 {
 	// Get visible positions
 	const std::unordered_set<Int> yps = {
-		Int(Math::floor((mPosition.y() - 50.0f) / 50.0f)),
-		Int(Math::floor(mPosition.y() / 50.0f)),
-		Int(Math::floor((mPosition.y() + 50.0f) / 50.0f))
+		Int(Math::floor((mPosition.z() - GO_LS_SCENERY_LENGTH) / GO_LS_SCENERY_LENGTH)),
+		Int(Math::floor(mPosition.z() / GO_LS_SCENERY_LENGTH)),
+		Int(Math::floor((mPosition.z() + GO_LS_SCENERY_LENGTH) / GO_LS_SCENERY_LENGTH))
 	};
 
 	// Erase scenes out of view
-	for (auto it = mSceneries.begin(); it != mSceneries.end(); ++it)
+	for (auto it = mSceneries.begin(); it != mSceneries.end();)
 	{
+		bool erase = false;
+
 		if (yps.find(it->first) == yps.end())
 		{
-			// Erase this scenery
-			mSceneries.erase(it->first);
+			Debug{} << "Erasing scenery" << it->first;
 
 			// Erase pickable objects
 			for (UnsignedInt i = 0; i < 6; ++i)
@@ -458,27 +462,41 @@ void LevelSelector::handleScrollableScenery()
 			// Delete drawable references for this scenery
 			for (auto it2 = it->second.buttons.begin(); it2 != it->second.buttons.end(); ++it2)
 			{
-				for (auto it3 = it2->drawables.begin(); it3 != it2->drawables.end(); ++it3)
+				for (auto it3 = it2->drawables.begin(); it3 != it2->drawables.end(); ++it3) 
 				{
 					if (!(*it3).expired())
 					{
 						const auto& itd = std::find(mDrawables.begin(), mDrawables.end(), (*it3).lock());
 						if (itd != mDrawables.end())
 						{
-							Debug{} << "Drawable at", &(*itd), "was erased";
+							Debug{} << "A drawable for scenery" << it->first << "is going to be freed";
 							mDrawables.erase(itd);
 						}
 					}
 				}
 			}
+
+			// Mark scene as "to be erased"
+			erase = true;
+		}
+
+		// Erase this scenery AT THE END
+		if (erase)
+		{
+			it->second.scenery->mDestroyMe = true;
+			it = mSceneries.erase(it);
+		}
+		else
+		{
+			++it;
 		}
 	}
 
 	// Create visible sceneries
 	for (const Int yp : yps)
 	{
-		// Avoid negative positions
-		if (yp < 0.0f)
+		// Avoid backward positions
+		if (yp > 0)
 		{
 			continue;
 		}
@@ -500,7 +518,7 @@ void LevelSelector::handleScrollableScenery()
 		mSceneries[yp] = LS_ScenerySelector();
 
 		// Create manipulator (avoid putting this object's drawables into another object's manipulator)
-		const Vector3 tp = Vector3(0.0f, 0.0f, -50.0f * Float(yp));
+		const Vector3 tp = Vector3(0.0f, 0.0f, GO_LS_SCENERY_LENGTH * Float(yp));
 
 		mSceneries[yp].manipulator = new Object3D(mManipulator.get());
 		mSceneries[yp].manipulator->translate(tp);
@@ -511,6 +529,8 @@ void LevelSelector::handleScrollableScenery()
 			go->mManipulator->transform(mSceneries[yp].manipulator->transformation());
 			go->mPosition = tp;
 			mSceneries[yp].scenery = (std::shared_ptr<Scenery>&) RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(go, true);
+
+			Debug{} << "Scenery with model index" << modelIndex << "is created at position" << yp;
 		}
 
 		// Create level selectors

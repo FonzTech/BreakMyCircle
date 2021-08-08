@@ -15,6 +15,7 @@ public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	Scenery(const Int parentIndex, const Int modelIndex);
+	~Scenery();
 
 	const Int getType() const override;
 	void update() override;

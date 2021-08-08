@@ -33,6 +33,7 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 {
 	// Init members
 	// mCubicBezier = std::make_unique<CubicBezier2D>(Vector2(0.0f, 0.0f), Vector2(0.11f, -0.02f), Vector2(0.0f, 1.01f), Vector2(1.0f));
+	mParentIndex = parentIndex;
 	mModelIndex = modelIndex;
 	mFrame = 0.0f;
 
@@ -72,6 +73,11 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 		p.cameraTarget = Vector3(0.0f, 0.0f, 0.0f);
 	}
 	*/
+}
+
+Scenery::~Scenery()
+{
+	Debug{} << "Scenery with model index" << mModelIndex << "is destructed";
 }
 
 const Int Scenery::getType() const

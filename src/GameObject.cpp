@@ -15,7 +15,18 @@ GameObject::GameObject(const Int parentIndex) : GameObject()
 
 GameObject::~GameObject()
 {
+	/*
+	// Remove all drawables from its layer
+	for (const auto& d : mDrawables)
+	{
+		RoomManager::singleton->mGoLayers[mParentIndex].drawables->remove(*d);
+	}
+	*/
+
+	// Clear references
 	mDrawables.clear();
 	mPlayables.clear();
+
+	// De-reference manipulator
 	mManipulator = nullptr;
 }
