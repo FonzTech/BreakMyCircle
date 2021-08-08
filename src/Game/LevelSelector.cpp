@@ -71,7 +71,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 		o->setSize({ 0.45f, 0.45f });
 		o->setAnchor({ 0.0f, 0.0f });
 
-		mLevelDrawables[0] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+		mLevelGuis[GO_LS_GUI_LEVEL_PANEL] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 	}
 
 	for (UnsignedInt i = 0; i < 3; ++i)
@@ -81,7 +81,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 0.0f, 0.0f });
 
-		mLevelDrawables[i + 1U] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+		mLevelGuis[GO_LS_GUI_STAR + i] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 	}
 
 	// Create overlay text
@@ -92,7 +92,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
 		go->setText("Level X");
 
-		mLevelTexts[0] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+		mLevelTexts[GO_LS_TEXT_LEVEL] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 	}
 
 	// Set camera parameters
@@ -109,7 +109,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 LevelSelector::~LevelSelector()
 {
 	mScreenButtons.clear();
-	mLevelDrawables.clear();
+	mLevelGuis.clear();
 	mLevelTexts.clear();
 	mSceneries.clear();
 	mPickableObjectRefs.clear();
@@ -310,7 +310,7 @@ void LevelSelector::update()
 			if (oid != 0U)
 			{
 				const std::chrono::duration<double> diff = std::chrono::system_clock::now() - mClickStartTime;
-				if (diff.count() < GO_CLICK_TAP_MAX_DELAY)
+				if (diff.count() < GO_LS_CLICK_TAP_MAX_DELAY)
 				{
 					const auto& it = mPickableObjectRefs.find(oid);
 					if (it != mPickableObjectRefs.end())
@@ -578,7 +578,7 @@ void LevelSelector::clickLevelButton(const UnsignedInt id)
 	Debug{} << "You have clicked level" << id;
 	mCurrentViewingLevelId = id;
 
-	mLevelTexts[0]->setText("Level " + std::to_string(id));
+	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(id));
 }
 
 void LevelSelector::currentLevelView()
@@ -586,14 +586,14 @@ void LevelSelector::currentLevelView()
 	const auto& d = Math::sin(Deg(mLevelAnim * 90.0f));
 
 	// Main panel
-	mLevelDrawables[0]->setPosition({ 0.0f, 1.0f - d });
+	mLevelGuis[GO_LS_GUI_LEVEL_PANEL]->setPosition({ 0.0f, 1.0f - d });
 
 	// Score stars
 	for (UnsignedInt i = 0; i < 3; ++i)
 	{
-		mLevelDrawables[i + 1U]->setPosition({ -0.2f + 0.2f * Float(i), 1.25f - d });
+		mLevelGuis[GO_LS_GUI_STAR + i]->setPosition({ -0.2f + 0.2f * Float(i), 1.25f - d });
 	}
 
 	// Level texts
-	mLevelTexts[0]->setPosition({ 0.0f, 1.15f - d, 0.0f });
+	mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.15f - d, 0.0f });
 }

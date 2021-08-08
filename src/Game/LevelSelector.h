@@ -6,7 +6,12 @@
 #define GO_LS_MAX_SCROLL_VELOCITY 0.025f
 #define GO_LS_MAX_SCROLL_VELOCITY_MAX (GO_LS_MAX_SCROLL_VELOCITY * GO_LS_SCENERY_LENGTH)
 #define GO_LS_RESET_MOUSE_VALUE -10000
-#define GO_CLICK_TAP_MAX_DELAY 0.3
+#define GO_LS_CLICK_TAP_MAX_DELAY 0.3
+
+#define GO_LS_TEXT_LEVEL 0U
+
+#define GO_LS_GUI_LEVEL_PANEL 0U
+#define GO_LS_GUI_STAR 1U
 
 #include <array>
 #include <vector>
@@ -74,7 +79,7 @@ private:
 	std::function<void()> mCallbacks[1];
 	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
 
-	std::unordered_map<Int, std::shared_ptr<OverlayGui>> mLevelDrawables;
+	std::unordered_map<Int, std::shared_ptr<OverlayGui>> mLevelGuis;
 	std::unordered_map<Int, std::shared_ptr<OverlayText>> mLevelTexts;
 	Float mLevelAnim;
 
