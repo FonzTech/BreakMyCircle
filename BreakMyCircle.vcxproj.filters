@@ -123,6 +123,9 @@
     <ClCompile Include="src\Game\OverlayText.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
+    <ClCompile Include="src\Common\AbstractCustomRenderer.cpp">
+      <Filter>Source Files\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\RoomManager.h">
@@ -214,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="src\Graphics\TexturedDrawable.h">
       <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Common\AbstractCustomRenderer.h">
+      <Filter>Header Files\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -160,6 +160,7 @@ _CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Audio\StreamedAudioPlayable.cpp" />
+    <ClCompile Include="src\Common\AbstractCustomRenderer.cpp" />
     <ClCompile Include="src\Game\Bubble.cpp" />
     <ClCompile Include="src\Game\LevelSelector.cpp" />
     <ClCompile Include="src\Game\OverlayGui.cpp" />
@@ -188,6 +189,7 @@ _CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Audio\StreamedAudioPlayable.h" />
+    <ClInclude Include="src\Common\AbstractCustomRenderer.h" />
     <ClInclude Include="src\Game\Bubble.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\GameObject.h" />
