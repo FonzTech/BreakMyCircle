@@ -387,19 +387,24 @@ void Engine::upsertGameObjectLayers()
 
 		// Create main texture to attach layer
 		layer->fbTexture = std::make_unique<GL::Texture2D>();
+		layer->fbTexture->setStorage(1, GL::TextureFormat::RGBA8, size);
 
 		GL::Renderbuffer colorBuffer;
 		colorBuffer.setStorage(GL::RenderbufferFormat::RGBA8, size);
 
-		GL::Renderbuffer depthStencilBuffer;
-		layer->fbTexture->setStorage(1, GL::TextureFormat::RGBA8, size);
-		depthStencilBuffer.setStorage(GL::RenderbufferFormat::Depth24Stencil8, size);
-
-		// Create framebuffer and attach color and depth buffers
+		// Create framebuffer and attach color buffers
 		layer->frameBuffer = std::make_unique<GL::Framebuffer>(Range2Di({}, size));
 		layer->frameBuffer->attachTexture(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, *layer->fbTexture, 0);
 		// layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, colorBuffer);
-		layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::BufferAttachment::DepthStencil, depthStencilBuffer);
+
+		// Attach depth buffers only for 3D layers
+		if (layer->depthTestEnabled)
+		{
+			GL::Renderbuffer depthStencilBuffer;
+			depthStencilBuffer.setStorage(GL::RenderbufferFormat::Depth24Stencil8, size);
+
+			layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::BufferAttachment::DepthStencil, depthStencilBuffer);
+		}
 
 		// Attach Object ID buffer, but only for "Perspective First"
 		if (index == GOL_PERSP_FIRST)
