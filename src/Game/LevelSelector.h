@@ -8,6 +8,8 @@
 #define GO_LS_RESET_MOUSE_VALUE -10000
 #define GO_LS_CLICK_TAP_MAX_DELAY 0.3
 
+#define GO_LS_MESH_PLATFORM "PlatformV"
+
 #define GO_LS_GUI_SETTINGS 0U
 
 #define GO_LS_TEXT_LEVEL 0U
@@ -54,6 +56,7 @@ private:
 		Vector3 position;
 		UnsignedInt levelIndex;
 		UnsignedInt objectId;
+		Resource<GL::Texture2D> texture;
 	};
 
 	struct LS_ScenerySelector

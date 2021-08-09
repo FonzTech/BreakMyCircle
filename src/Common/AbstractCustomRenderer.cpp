@@ -5,10 +5,9 @@
 
 #include "../RoomManager.h"
 
-AbstractCustomRenderer::AbstractCustomRenderer(const Int parentIndex, const Vector2i & size) : mFramebuffer(Range2Di({}, size))
+AbstractCustomRenderer::AbstractCustomRenderer(const Int parentIndex, const Vector2i & size, const Color4 & clearColor) : mParentIndex(parentIndex), mSize(size), mClearColor(clearColor), mFramebuffer(Range2Di({}, size))
 {
-	mParentIndex = parentIndex;
-	mSize = size;
+	setup();
 }
 
 GL::Texture2D &AbstractCustomRenderer::getRenderedTexture(const bool forceRender)
@@ -17,7 +16,7 @@ GL::Texture2D &AbstractCustomRenderer::getRenderedTexture(const bool forceRender
 	{
 		// Bind custom framebuffer
 		mFramebuffer
-			.clear(GL::FramebufferClear::Color)
+			.clearColor(0, mClearColor)
 			.bind();
 
 		// Custom draw

@@ -55,6 +55,7 @@
 #include <Magnum/Trade/AbstractMaterialData.h>
 #include <Magnum/Text/Text.h>
 #include <Magnum/Text/AbstractFont.h>
+#include <Magnum/Text/DistanceFieldGlyphCache.h>
 #include <Magnum/Shaders/Flat.h>
 #include <nlohmann/json.hpp>
 
@@ -70,6 +71,7 @@ struct FontHolder
 {
 	PluginManager::Manager<Text::AbstractFont> manager;
 	Containers::Pointer<Text::AbstractFont> font;
+	std::unique_ptr<Text::DistanceFieldGlyphCache> cache;
 };
 
 typedef ResourceManager<GL::Mesh, GL::Texture2D, GL::CubeMapTexture, GL::AbstractShaderProgram, Trade::AbstractMaterialData, Audio::Buffer, FontHolder, LinePathAsset> MyResourceManager;

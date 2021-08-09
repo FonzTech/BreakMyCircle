@@ -5,11 +5,12 @@
 
 #include <Magnum/Text/Text.h>
 #include <Magnum/Text/AbstractFont.h>
-#include <Magnum/Text/DistanceFieldGlyphCache.h>
 #include <Magnum/Text/Renderer.h>
 #include <Magnum/GL/AbstractShaderProgram.h>
 #include <Magnum/Shaders/DistanceFieldVector.h>
+
 #include "../GameObject.h"
+#include "../Common/CommonUtility.h"
 
 using namespace Magnum;
 
@@ -28,6 +29,7 @@ public:
 
 	void setText(const std::string & text);
 	void setPosition(const Vector3 & position);
+	void setScale(const Vector2 & scale);
 
 	Color4 mColor;
 	Color4 mOutlineColor;
@@ -37,14 +39,15 @@ protected:
 	void updateTransformation();
 	Resource<GL::AbstractShaderProgram, Shaders::DistanceFieldVector2D> getShader();
 
-	Text::DistanceFieldGlyphCache mCache;
-	Text::AbstractFont* mFont;
+	Resource<FontHolder> mFontHolder;
 	Containers::Pointer<Text::Renderer2D> mText;
 
 	Resource<GL::AbstractShaderProgram, Shaders::DistanceFieldVector2D> mShader;
 
 	Vector2i mCurrentWindowSize;
 	Vector2 mCurrentFloatWindowSize;
+
+	Vector2 mScale;
 	Matrix3 mProjectionMatrix;
 	Matrix3 mTransformationMatrix;
 };

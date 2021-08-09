@@ -3,11 +3,13 @@
 #include <utility>
 #include <Magnum/Math/Math.h>
 #include <Magnum/Math/Constants.h>
+#include <Magnum/GL/Renderer.h>
 
 #include "../RoomManager.h"
 #include "../InputManager.h"
 #include "../AssetManager.h"
 #include "../Common/CommonUtility.h"
+#include "../Common/CustomRenderers/LSNumberRenderer.h"
 
 std::shared_ptr<GameObject> LevelSelector::getInstance(const nlohmann::json & params)
 {
@@ -396,9 +398,10 @@ void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 	{
 		((Shaders::Phong&)baseDrawable->getShader())
 			.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(0.0f, 6.0f, 0.0f)))
-			.setLightColor(0xffffffff_rgbaf)
-			.setSpecularColor(0xffffff00_rgbaf)
-			.setAmbientColor(0x444444ff_rgbaf)
+			.setLightColor(0xc0c0c0_rgbf)
+			.setSpecularColor(0x000000_rgbf)
+			.setDiffuseColor(0xc0c0c0_rgbf)
+			.setAmbientColor(0xc0c0c0_rgbf)
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
 			.setProjectionMatrix(camera.projectionMatrix())
@@ -577,6 +580,27 @@ void LevelSelector::handleScrollableScenery()
 			bs.levelIndex = objectId;
 			bs.objectId = objectId;
 
+			// Create and save texture
+			{
+				const auto& nt = std::to_string(objectId);
+				const auto& key = "tex_ls_" + nt;
+
+				bs.texture = CommonUtility::singleton->manager.get<GL::Texture2D>(key);
+				if (!bs.texture)
+				{
+					// Create renderer
+					LSNumberRenderer nr(mParentIndex, Vector2i(64, 64), nt);
+
+					// Render to texture
+					GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceColor, GL::Renderer::BlendFunction::OneMinusSourceColor);
+					GL::Texture2D & texture = nr.getRenderedTexture(true);
+					GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+
+					// Save to resource manager
+					CommonUtility::singleton->manager.set(key, std::move(texture));
+				}
+			}
+
 			// Load drawables
 			AssetManager am(RESOURCE_SHADER_COLORED_PHONG, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE, 1);
 			am.loadAssets(*this, *mSceneries[yp].manipulator, "scenes/level_button.glb", this);
@@ -587,8 +611,19 @@ void LevelSelector::handleScrollableScenery()
 			// Create all required drawables
 			for (UnsignedInt j = 0; j < 3; ++j)
 			{
+				// Get drawable from the last three ones
 				const std::shared_ptr<BaseDrawable>& bd = mDrawables[mDrawables.size() - j - 1];
+
+				// Set the correct texture for the "platform" mesh
+				if (bd->mMesh->label() == GO_LS_MESH_PLATFORM)
+				{
+					bd->mTexture = bs.texture;
+				}
+
+				// Set various properties
 				bd->setObjectId(objectId);
+
+				// Save reference for later handling
 				bs.drawables.emplace_back(bd);
 			}
 		}

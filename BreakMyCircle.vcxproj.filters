@@ -43,6 +43,12 @@
     <Filter Include="Source Files\Audio">
       <UniqueIdentifier>{a2d68c6c-edb3-4b84-bf7b-6e36f1335b41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Common\CustomRenderers">
+      <UniqueIdentifier>{a26031ea-b113-4b92-b24c-6726a661df00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Common\CustomRenderers">
+      <UniqueIdentifier>{7e35a17b-d0c1-4ad7-a86b-9150664f62f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -125,6 +131,9 @@
     </ClCompile>
     <ClCompile Include="src\Common\AbstractCustomRenderer.cpp">
       <Filter>Source Files\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Common\CustomRenderers\LSNumberRenderer.cpp">
+      <Filter>Source Files\Common\CustomRenderers</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -220,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="src\Common\AbstractCustomRenderer.h">
       <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Common\CustomRenderers\LSNumberRenderer.h">
+      <Filter>Header Files\Common\CustomRenderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

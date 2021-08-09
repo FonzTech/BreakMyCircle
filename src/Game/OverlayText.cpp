@@ -4,7 +4,6 @@
 #include <Magnum/MeshTools/Interleave.h>
 #include <Magnum/MeshTools/CompressIndices.h>
 
-#include "../Common/CommonUtility.h"
 #include "../RoomManager.h"
 #include "../InputManager.h"
 
@@ -19,7 +18,7 @@ std::shared_ptr<GameObject> OverlayText::getInstance(const nlohmann::json & para
 	return p;
 }
 
-OverlayText::OverlayText(const Int parentIndex) : GameObject(parentIndex), mCache{ Vector2i{2048}, Vector2i{512}, 22 }, mCurrentWindowSize{ 0, 0 }
+OverlayText::OverlayText(const Int parentIndex) : GameObject(parentIndex), mScale{1.0f}, mCurrentWindowSize{ 0, 0 }
 {
 	// Init members
 	mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -27,10 +26,9 @@ OverlayText::OverlayText(const Int parentIndex) : GameObject(parentIndex), mCach
 	mOutlineRange = Vector2(0.5f, 0.3f);
 
 	// Load assets
-	mFont = CommonUtility::singleton->loadFont(RESOURCE_FONT_UBUNTU_TITLE)->font.get();
-	mFont->fillGlyphCache(mCache, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:-+,.! ");
+	mFontHolder = CommonUtility::singleton->loadFont(RESOURCE_FONT_UBUNTU_TITLE);
 
-	mText.reset(new Text::Renderer2D(*mFont, mCache, 32.0f, Text::Alignment::MiddleCenter));
+	mText.reset(new Text::Renderer2D(*mFontHolder->font, *mFontHolder->cache, 32.0f, Text::Alignment::MiddleCenter));
 	mText->reserve(40, GL::BufferUsage::DynamicDraw, GL::BufferUsage::StaticDraw);
 
 	mShader = getShader();
@@ -57,7 +55,7 @@ void OverlayText::draw(BaseDrawable* baseDrawable, const Matrix4& transformation
 	if (mColor.a() > 0.0f || mOutlineColor.a() > 0.0f)
 	{
 		(*mShader)
-			.bindVectorTexture(mCache.texture())
+			.bindVectorTexture(mFontHolder->cache->texture())
 			.setTransformationProjectionMatrix(mProjectionMatrix * mTransformationMatrix)
 			.setColor(mColor)
 			.setOutlineColor(mOutlineColor)
@@ -82,9 +80,15 @@ void OverlayText::setPosition(const Vector3 & position)
 	updateTransformation();
 }
 
+void OverlayText::setScale(const Vector2 & scale)
+{
+	mScale = scale;
+	updateTransformation();
+}
+
 void OverlayText::updateTransformation()
 {
-	mTransformationMatrix = Matrix3::translation(mCurrentFloatWindowSize * mPosition.xy());
+	mTransformationMatrix = Matrix3::translation(mCurrentFloatWindowSize * mPosition.xy()) * Matrix3::scaling(mScale);
 }
 
 Resource<GL::AbstractShaderProgram, Shaders::DistanceFieldVector2D> OverlayText::getShader()

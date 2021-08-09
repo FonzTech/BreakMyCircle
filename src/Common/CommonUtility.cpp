@@ -124,6 +124,10 @@ Resource<FontHolder> CommonUtility::loadFont(const std::string & filename)
 			std::exit(1);
 		}
 
+		// Fill glyph cache
+		fh->cache = std::make_unique<Text::DistanceFieldGlyphCache>(Vector2i{2048}, Vector2i{512}, 22);
+		fh->font->fillGlyphCache(*fh->cache, "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:-+,.! ");
+
 		// Add to resources
 		Containers::Pointer<FontHolder> p = std::move(fh);
 		CommonUtility::singleton->manager.set(resFont.key(), std::move(p));
