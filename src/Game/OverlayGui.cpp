@@ -31,7 +31,7 @@ OverlayGui::OverlayGui(const Int parentIndex, const std::string & textureName) :
 	// Create drawable
 	auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;
 
-	std::shared_ptr<TexturedDrawable<Shaders::Flat3D>> td = std::make_shared<TexturedDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, texture);
+	const std::shared_ptr<TexturedDrawable<Shaders::Flat3D>> td = std::make_shared<TexturedDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, texture);
 	td->setParent(mManipulator.get());
 	td->setDrawCallback(this);
 	mDrawables.emplace_back(td);
@@ -71,6 +71,12 @@ void OverlayGui::setSize(const Vector2 & size)
 	mSize = size;
 }
 
+void OverlayGui::setRotationInDegrees(const Float rotation)
+{
+	updateAspectRatioFactors();
+	mRotation = Rad(Deg(rotation));
+}
+
 void OverlayGui::setAnchor(const Vector2 & anchor)
 {
 	updateAspectRatioFactors();
@@ -90,6 +96,16 @@ Range3D OverlayGui::getBoundingBox(const Vector2 & windowSize)
 		{ mBbox.min().x() * s.x() + o.x(), s.y() - (mBbox.max().y() * s.y() + o.y()), mBbox.min().z() * s.z() + o.z() },
 		{ mBbox.max().x() * s.x() + o.x(), s.y() - (mBbox.min().y() * s.y() + o.y()), mBbox.max().z() * s.z() + o.z() }
 	};
+}
+
+const Resource<GL::Texture2D> & OverlayGui::getTextureResource() const
+{
+	return mDrawables[0]->mTexture;
+}
+
+const void OverlayGui::setTexture(const std::string & textureName)
+{
+	mDrawables[0]->mTexture = CommonUtility::singleton->loadTexture(textureName);
 }
 
 void OverlayGui::updateAspectRatioFactors()
@@ -115,6 +131,7 @@ void OverlayGui::updateTransformations()
 
 	(*mManipulator)
 		.resetTransformation()
+		.rotate(mRotation, Vector3::zAxis())
 		.scale(Vector3(ts.x(), ts.y(), 1.0f))
 		.translate(Vector3(tp.x(), tp.y(), 0.0f));
 

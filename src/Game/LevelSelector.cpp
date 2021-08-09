@@ -31,17 +31,22 @@ std::unordered_map<Int, std::array<Vector3, 6>> LevelSelector::sLevelButtonPosit
 	})
 };
 
-LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
+LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut(Vector2(0.0f, 0.0f), Vector2(0.42f, 0.0f), Vector2(0.58f, 1.0f), Vector2(1.0f, 1.0f))
 {
 	// Assign parent index
 	mParentIndex = parentIndex;
 
 	// Init members
 	mPosition = Vector3(0.0f);
+
 	mPrevMousePos = Vector2i(GO_LS_RESET_MOUSE_VALUE, -1);
 	mScrollVelocity = Vector3(0.0f);
 	mClickIndex = -1;
 	mLevelButtonScaleAnim = 0.0f;
+
+	mSettingsOpened = false;
+	mSettingsAnim = 0.0f;
+
 	mCurrentViewingLevelId = 0U;
 
 	// Create sky plane
@@ -54,11 +59,12 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject()
 		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 1.0f, -1.0f });
 
-		mScreenButtonAnim[0] = Constants::piHalf();
-		mScreenButtons[0] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+		mScreenButtonAnim[GO_LS_GUI_SETTINGS] = 1.0f;
+		mScreenButtons[GO_LS_GUI_SETTINGS] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 
-		mCallbacks[0] = []() {
-			printf("You have clicked settings\n");
+		mCallbacks[GO_LS_GUI_SETTINGS] = [this]() {
+			mSettingsOpened = !mSettingsOpened;
+			Debug{} << "You have" << (mSettingsOpened ? "opened" : "closed") << "SETTINGS";
 		};
 	}
 
@@ -123,6 +129,14 @@ const Int LevelSelector::getType() const
 
 void LevelSelector::update()
 {
+#if NDEBUG or _DEBUG
+	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
+	{
+		// RoomManager::singleton->prepareRoom(false);
+		RoomManager::singleton->createLevelRoom();
+	}
+#endif
+
 	// Update sky plane
 	(*mSkyManipulator)
 		.resetTransformation()
@@ -135,40 +149,26 @@ void LevelSelector::update()
 		return;
 	}
 
+	// Overlay for common
+	windowForCommon();
+
+	// Overlay for settings
+	manageBackendAnimationVariable(mSettingsAnim, 0.8f, mSettingsOpened);
+	windowForSettings();
+
 	// Overlay for current level viewing
 	const bool isViewing = mCurrentViewingLevelId != 0U;
-	if (isViewing)
-	{
-		// Advance animation
-		mLevelAnim += 0.8f * mDeltaTime;
-		if (mLevelAnim > 1.0f)
-		{
-			mLevelAnim = 1.0f;
-		}
-	}
-	else
-	{
-		// Reduce animation
-		mLevelAnim -= 0.8f * mDeltaTime;
-		if (mLevelAnim < 0.0f)
-		{
-			mLevelAnim = 0.0f;
-		}
-	}
-
-	// Current level view
-	currentLevelView();
+	manageBackendAnimationVariable(mLevelAnim, 0.8f, isViewing);
+	windowForCurrentLevelView();
 
 	// Animation for overlay buttons
 	for (UnsignedInt i = 0; i < 1; ++i)
 	{
-		mScreenButtonAnim[0] -= mDeltaTime;
-		if (mScreenButtonAnim[0] < 0.0f)
+		mScreenButtonAnim[i] -= mDeltaTime;
+		if (mScreenButtonAnim[i] < 0.0f)
 		{
-			mScreenButtonAnim[0] = 0.0f;
+			mScreenButtonAnim[i] = 0.0f;
 		}
-
-		mScreenButtons[i]->setPosition(Vector2(-0.5f, 0.5f) - Vector2(Math::sin(Rad(mScreenButtonAnim[0])), 0.0f));
 	}
 
 	// Handle button clicks
@@ -232,7 +232,7 @@ void LevelSelector::update()
 	// Handle scrollable scenery
 	if (lbs == IM_STATE_PRESSED)
 	{
-		if (!isViewing)
+		if (!isViewing && !mSettingsOpened)
 		{
 			mPrevMousePos = InputManager::singleton->mMousePosition;
 			mClickStartTime = std::chrono::system_clock::now();
@@ -412,6 +412,28 @@ void LevelSelector::collidedWith(const std::unique_ptr<std::unordered_set<GameOb
 {
 }
 
+constexpr void LevelSelector::manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment)
+{
+	if (increment)
+	{
+		// Advance animation
+		variable += factor * mDeltaTime;
+		if (variable > 1.0f)
+		{
+			variable = 1.0f;
+		}
+	}
+	else
+	{
+		// Reduce animation
+		variable -= factor * mDeltaTime;
+		if (variable < 0.0f)
+		{
+			variable = 0.0f;
+		}
+	}
+}
+
 void LevelSelector::createSkyPlane()
 {
 	Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForFlatShader();
@@ -576,17 +598,54 @@ void LevelSelector::handleScrollableScenery()
 void LevelSelector::clickLevelButton(const UnsignedInt id)
 {
 	Debug{} << "You have clicked level" << id;
+
+	// Set current level identifier
 	mCurrentViewingLevelId = id;
 
+	// Set text for selected level
 	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(id));
 }
 
-void LevelSelector::currentLevelView()
+void LevelSelector::windowForCommon()
 {
-	const auto& d = Math::sin(Deg(mLevelAnim * 90.0f));
+	const auto& d = mCbEaseInOut.value(mSettingsAnim + mLevelAnim)[1];
 
 	// Main panel
 	mLevelGuis[GO_LS_GUI_LEVEL_PANEL]->setPosition({ 0.0f, 1.0f - d });
+}
+
+void LevelSelector::windowForSettings()
+{
+	const auto& d = mCbEaseInOut.value(mSettingsAnim)[1];
+
+	// Animation for settings window
+	{
+		const auto& d2 = mCbEaseInOut.value(mScreenButtonAnim[GO_LS_GUI_SETTINGS])[1];
+		mScreenButtons[GO_LS_GUI_SETTINGS]->setPosition(Vector2(-0.5f, 0.5f) - Vector2(d2, 0.0f) + Vector2(0.5f, -0.15f) * d);
+		mScreenButtons[GO_LS_GUI_SETTINGS]->setAnchor(Vector2( 1.0f, -1.0f ) * (1.0f - d));
+		mScreenButtons[GO_LS_GUI_SETTINGS]->setRotationInDegrees(360.0f * d);
+
+		const bool isSettings = mScreenButtons[GO_LS_GUI_SETTINGS]->getTextureResource().key() == ResourceKey(RESOURCE_TEXTURE_GUI_SETTINGS);
+		if (d > 0.5f)
+		{
+			if (isSettings)
+			{
+				mScreenButtons[GO_LS_GUI_SETTINGS]->setTexture(RESOURCE_TEXTURE_GUI_BACK_ARROW);
+			}
+		}
+		else
+		{
+			if (!isSettings)
+			{
+				mScreenButtons[GO_LS_GUI_SETTINGS]->setTexture(RESOURCE_TEXTURE_GUI_SETTINGS);
+			}
+		}
+	}
+}
+
+void LevelSelector::windowForCurrentLevelView()
+{
+	const auto& d = mCbEaseInOut.value(mLevelAnim)[1];
 
 	// Score stars
 	for (UnsignedInt i = 0; i < 3; ++i)

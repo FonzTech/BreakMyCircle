@@ -190,14 +190,6 @@ void Logo::update()
 	{
 		mFinishTimer -= mDeltaTime;
 	}
-
-#if NDEBUG or _DEBUG
-	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
-	{
-		// RoomManager::singleton->prepareRoom(false);
-		RoomManager::singleton->createLevelRoom();
-	}
-#endif
 }
 
 void Logo::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)

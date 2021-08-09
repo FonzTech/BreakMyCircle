@@ -23,9 +23,13 @@ public:
 
 	void setPosition(const Vector2 & position);
 	void setSize(const Vector2 & size);
+	void setRotationInDegrees(const Float rotation);
 	void setAnchor(const Vector2 & anchor);
 	void setOpacity(const Float opacity);
 	Range3D getBoundingBox(const Vector2 & windowSize);
+
+	const Resource<GL::Texture2D> & getTextureResource() const;
+	const void setTexture(const std::string & textureName);
 
 protected:
 	void updateAspectRatioFactors();
@@ -33,6 +37,7 @@ protected:
 
 	Float mArs[2];
 	Float mOpacity;
+	Rad mRotation;
 	Vector2 mSize;
 	Vector2 mAnchor;
 };

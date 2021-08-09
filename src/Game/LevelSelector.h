@@ -8,6 +8,8 @@
 #define GO_LS_RESET_MOUSE_VALUE -10000
 #define GO_LS_CLICK_TAP_MAX_DELAY 0.3
 
+#define GO_LS_GUI_SETTINGS 0U
+
 #define GO_LS_TEXT_LEVEL 0U
 
 #define GO_LS_GUI_LEVEL_PANEL 0U
@@ -20,6 +22,7 @@
 
 #include <nlohmann/json.hpp>
 #include <Magnum/Magnum.h>
+#include <Magnum/Math/Bezier.h>
 
 #include "../GameObject.h"
 #include "../Graphics/BaseDrawable.h"
@@ -60,11 +63,15 @@ private:
 		Object3D* manipulator;
 	};
 
+	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);
 	void createSkyPlane();
 	void handleScrollableCameraPosition(const Vector3 & delta);
 	void handleScrollableScenery();
 	void clickLevelButton(const UnsignedInt id);
-	void currentLevelView();
+
+	void windowForCommon();
+	void windowForSettings();
+	void windowForCurrentLevelView();
 
 	std::shared_ptr<TexturedDrawable<Shaders::Flat3D>> mSkyPlane;
 	Object3D* mSkyManipulator;
@@ -74,10 +81,15 @@ private:
 	Float mScreenButtonAnim[1];
 	Float mLevelButtonScaleAnim;
 
+	Math::CubicBezier2D<Float> mCbEaseInOut;
+	bool mSettingsOpened;
+	Float mSettingsAnim;
+
+	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
+
 	Int mClickIndex;
 	std::unordered_map<Int, std::shared_ptr<OverlayGui>> mScreenButtons;
-	std::function<void()> mCallbacks[1];
-	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
+	std::unordered_map<Int, std::function<void()>> mCallbacks;
 
 	std::unordered_map<Int, std::shared_ptr<OverlayGui>> mLevelGuis;
 	std::unordered_map<Int, std::shared_ptr<OverlayText>> mLevelTexts;
