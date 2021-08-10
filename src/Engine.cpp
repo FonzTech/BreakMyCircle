@@ -10,8 +10,9 @@
 
 #include "Engine.h"
 #include "Common/CommonUtility.h"
-#include "InputManager.h"
 #include "Audio/StreamedAudioBuffer.h"
+#include "Game/OverlayText.h"
+#include "InputManager.h"
 #include "RoomManager.h"
 #include "GameObject.h"
 
@@ -24,8 +25,6 @@ const Int Engine::GO_LAYERS[] = {
 const std::unordered_set<Int> Engine::INTRINSIC_GAME_OBJECTS = {
 	GOT_OVERLAY_TEXT
 };
-
-const Matrix4 Engine::_dummyMatrix = Matrix4();
 
 Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
 {
@@ -169,7 +168,7 @@ void Engine::tickEvent()
 				std::shared_ptr<GameObject> & go = gos->at(i);
 				if (INTRINSIC_GAME_OBJECTS.find(go->getType()) != INTRINSIC_GAME_OBJECTS.end())
 				{
-					go->draw(nullptr, _dummyMatrix, *RoomManager::singleton->mCamera);
+					((std::shared_ptr<OverlayText>&)go)->drawDetached();
 				}
 			}
 		}

@@ -30,9 +30,6 @@ private:
 	// List of intrinstic game objects
 	static const std::unordered_set<Int> INTRINSIC_GAME_OBJECTS;
 
-	// Constant dummy matrix
-	static const Matrix4 _dummyMatrix;
-
 	// Application methods
 	void drawEvent() override;
 	void mousePressEvent(MouseEvent& event) override;
