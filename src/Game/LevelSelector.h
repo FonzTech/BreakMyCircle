@@ -18,6 +18,10 @@
 #define GO_LS_GUI_PLAY 1U
 #define GO_LS_GUI_STAR 100U
 
+#define GO_LS_LEVEL_INIT 0
+#define GO_LS_LEVEL_STARTING 1
+#define GO_LS_LEVEL_STARTED 2
+
 #include <array>
 #include <vector>
 #include <memory>
@@ -67,6 +71,13 @@ private:
 		Object3D* manipulator;
 	};
 
+	struct LS_ScreenButton
+	{
+		std::shared_ptr<OverlayGui> drawable;
+		std::function<void()> callback;
+		Float animation; // Factor from 0 to 1
+	};
+
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);
 	void createSkyPlane();
 	void handleScrollableCameraPosition(const Vector3 & delta);
@@ -82,7 +93,6 @@ private:
 
 	Vector2i mPrevMousePos;
 	Vector3 mScrollVelocity;
-	Float mScreenButtonAnim[1];
 	Float mLevelButtonScaleAnim;
 
 	Math::CubicBezier2D<Float> mCbEaseInOut;
@@ -92,8 +102,7 @@ private:
 	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
 
 	Int mClickIndex;
-	std::unordered_map<Int, std::shared_ptr<OverlayGui>> mScreenButtons;
-	std::unordered_map<Int, std::function<void()>> mCallbacks;
+	std::unordered_map<Int, LS_ScreenButton> mScreenButtons;
 
 	std::unordered_map<Int, std::shared_ptr<OverlayGui>> mLevelGuis;
 	std::unordered_map<Int, std::shared_ptr<OverlayText>> mLevelTexts;
@@ -103,4 +112,5 @@ private:
 	std::unordered_map<UnsignedInt, Int> mPickableObjectRefs;
 
 	UnsignedInt mCurrentViewingLevelId;
+	Int mStartingLevel;
 };

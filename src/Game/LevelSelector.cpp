@@ -50,6 +50,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mSettingsAnim = 0.0f;
 
 	mCurrentViewingLevelId = 0U;
+	mStartingLevel = GO_LS_LEVEL_INIT;
 
 	// Create sky plane
 	createSkyPlane();
@@ -61,21 +62,22 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 1.0f, -1.0f });
 
-		mScreenButtonAnim[GO_LS_GUI_SETTINGS] = 1.0f;
-		mScreenButtons[GO_LS_GUI_SETTINGS] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
-
-		mCallbacks[GO_LS_GUI_SETTINGS] = [this]() {
-			// Close level details screen
-			if (mCurrentViewingLevelId != 0U)
-			{
-				mCurrentViewingLevelId = 0U;
-			}
-			// If already closed, open/close the settings window
-			else
-			{
-				mSettingsOpened = !mSettingsOpened;
-				Debug{} << "You have" << (mSettingsOpened ? "opened" : "closed") << "SETTINGS";
-			}
+		mScreenButtons[GO_LS_GUI_SETTINGS] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this]() {
+				// Close level details screen
+				if (mCurrentViewingLevelId != 0U)
+				{
+					mCurrentViewingLevelId = 0U;
+				}
+				// If already closed, open/close the settings window
+				else
+				{
+					mSettingsOpened = !mSettingsOpened;
+					Debug{} << "You have" << (mSettingsOpened ? "opened" : "closed") << "SETTINGS";
+				}
+			},
+			1.0f
 		};
 	}
 
@@ -99,11 +101,21 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		o->setSize({ 0.25f, 0.125f });
 		o->setAnchor({ 0.0f, 0.0f });
 
-		mScreenButtons[GO_LS_GUI_PLAY] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+		mScreenButtons[GO_LS_GUI_PLAY] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this]() {
+				// Check if a level is starting
+				if (mStartingLevel > GO_LS_LEVEL_INIT)
+				{
+					return;
+				}
 
-		// Create callback
-		mCallbacks[GO_LS_GUI_PLAY] = [this]() {
-			Debug{} << "User wants to play level" << mCurrentViewingLevelId;
+				// Start the selected level
+				Debug{} << "User wants to play level" << mCurrentViewingLevelId;
+				mCurrentViewingLevelId = 0U;
+				mStartingLevel = GO_LS_LEVEL_STARTING;
+			},
+			1.0f
 		};
 	}
 
@@ -158,11 +170,22 @@ const Int LevelSelector::getType() const
 
 void LevelSelector::update()
 {
+	// Manage level start
+	if (mStartingLevel == GO_LS_LEVEL_STARTING)
+	{
+		if (mLevelButtonScaleAnim <= 0.0f)
+		{
+			RoomManager::singleton->createLevelRoom();
+			mStartingLevel = GO_LS_LEVEL_STARTED;
+		}
+	}
+
 #if NDEBUG or _DEBUG
 	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
 	{
 		// RoomManager::singleton->prepareRoom(false);
 		RoomManager::singleton->createLevelRoom();
+		mStartingLevel = GO_LS_LEVEL_STARTED;
 	}
 #endif
 
@@ -173,7 +196,7 @@ void LevelSelector::update()
 		.translate(mPosition + Vector3(0.0f, 0.0f, -GO_LS_SCENERY_LENGTH_DOUBLE));
 
 	// Check if there is any on-going action on top
-	if (RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->size() > 0)
+	if (mStartingLevel == GO_LS_LEVEL_INIT && RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->size() > 0)
 	{
 		return;
 	}
@@ -191,12 +214,12 @@ void LevelSelector::update()
 	windowForCurrentLevelView();
 
 	// Animation for overlay buttons
-	for (UnsignedInt i = 0; i < 1; ++i)
+	for (auto it = mScreenButtons.begin(); it != mScreenButtons.end(); ++it)
 	{
-		mScreenButtonAnim[i] -= mDeltaTime;
-		if (mScreenButtonAnim[i] < 0.0f)
+		it->second.animation -= mDeltaTime;
+		if (it->second.animation < 0.0f)
 		{
-			mScreenButtonAnim[i] = 0.0f;
+			it->second.animation = 0.0f;
 		}
 	}
 
@@ -208,7 +231,7 @@ void LevelSelector::update()
 
 	for (auto it = mScreenButtons.begin(); it != mScreenButtons.end(); ++it)
 	{
-		const auto& b = it->second->getBoundingBox(w);
+		const auto& b = it->second.drawable->getBoundingBox(w);
 		if (b.contains(p))
 		{
 			if (lbs == IM_STATE_PRESSED)
@@ -218,7 +241,7 @@ void LevelSelector::update()
 			}
 			else if (lbs == IM_STATE_RELEASED && mClickIndex == it->first)
 			{
-				mCallbacks[it->first]();
+				it->second.callback();
 				break;
 			}
 		}
@@ -226,11 +249,10 @@ void LevelSelector::update()
 
 	// Handle button scale animation 
 	{
-		// Increment scale value
-		mLevelButtonScaleAnim += mDeltaTime;
-		if (mLevelButtonScaleAnim > 1.0f)
+		// Handle scale value
 		{
-			mLevelButtonScaleAnim = 1.0f;
+			const bool& mode = mStartingLevel == GO_LS_LEVEL_INIT;
+			manageBackendAnimationVariable(mLevelButtonScaleAnim, mode ? 1.0f : 0.8f, mode);
 		}
 
 		// Create common scaling vector
@@ -261,7 +283,7 @@ void LevelSelector::update()
 	// Handle scrollable scenery
 	if (lbs == IM_STATE_PRESSED)
 	{
-		if (!isViewing && !mSettingsOpened)
+		if (!isViewing && !mSettingsOpened && mStartingLevel == GO_LS_LEVEL_INIT)
 		{
 			mPrevMousePos = InputManager::singleton->mMousePosition;
 			mClickStartTime = std::chrono::system_clock::now();
@@ -683,32 +705,46 @@ void LevelSelector::windowForSettings()
 
 	// Animation for settings window
 	{
-		const auto& d2 = mCbEaseInOut.value(mScreenButtonAnim[GO_LS_GUI_SETTINGS])[1];
-		const auto& dp = d + dl;
+		const auto& d2 = mCbEaseInOut.value(mScreenButtons[GO_LS_GUI_SETTINGS].animation)[1];
+		const auto& d3 = mStartingLevel > GO_LS_LEVEL_INIT ? mCbEaseInOut.value(1.0f - mLevelButtonScaleAnim)[1] : 0.0f;
+		const auto& dp = mStartingLevel < GO_LS_LEVEL_STARTED ? d + dl : 0.0f;
 
+		const auto& drawable = mScreenButtons[GO_LS_GUI_SETTINGS].drawable;
+
+		// Position
 		{
 			const auto& p1 = Vector2(-0.5f, 0.5f) - Vector2(d2, 0.0f); // Left to right
 			const auto& p2 = Vector2(0.5f, -0.15f) * dp; // Upper-left to mid-upper-center
 			const auto& p3 = Vector2(0.0f, 0.25f) * d2; // Upper-left to outside-top
-			mScreenButtons[GO_LS_GUI_SETTINGS]->setPosition(p1 + p2 + p3);
+			const auto& p4 = Vector2(0.0f, -1.0f) * d3;
+			const auto& p5 = Vector2(0.5f, 0.85f) * d;
+			drawable->setPosition(p1 + p2 + p3 + p4 + p5);
 		}
 
-		mScreenButtons[GO_LS_GUI_SETTINGS]->setAnchor(Vector2( 1.0f, -1.0f ) * (1.0f - dp));
-		mScreenButtons[GO_LS_GUI_SETTINGS]->setRotationInDegrees(360.0f * dp);
+		// Anchor
+		{
+			const auto& p1 = Vector2(1.0f, -1.0f) * (1.0f - dp - d3);
+			const auto& p2 = Vector2(1.0f, 1.0f) * (d3 * (1.0f - d));
+			drawable->setAnchor(p1 + p2);
+		}
 
-		const bool isSettings = mScreenButtons[GO_LS_GUI_SETTINGS]->getTextureResource().key() == ResourceKey(RESOURCE_TEXTURE_GUI_SETTINGS);
-		if (dp > 0.5f)
+		// Rotation
+		drawable->setRotationInDegrees(360.0f * (dp + d));
+
+		// Texture change
+		const bool isSettings = drawable->getTextureResource().key() == ResourceKey(RESOURCE_TEXTURE_GUI_SETTINGS);
+		if (dp > 0.5f || d > 0.5f)
 		{
 			if (isSettings)
 			{
-				mScreenButtons[GO_LS_GUI_SETTINGS]->setTexture(RESOURCE_TEXTURE_GUI_BACK_ARROW);
+				drawable->setTexture(RESOURCE_TEXTURE_GUI_BACK_ARROW);
 			}
 		}
 		else
 		{
 			if (!isSettings)
 			{
-				mScreenButtons[GO_LS_GUI_SETTINGS]->setTexture(RESOURCE_TEXTURE_GUI_SETTINGS);
+				drawable->setTexture(RESOURCE_TEXTURE_GUI_SETTINGS);
 			}
 		}
 	}
@@ -725,7 +761,7 @@ void LevelSelector::windowForCurrentLevelView()
 	}
 
 	// Play button
-	mScreenButtons[GO_LS_GUI_PLAY]->setPosition({ 0.0f, -1.5f + d * 1.25f });
+	mScreenButtons[GO_LS_GUI_PLAY].drawable->setPosition({ 0.0f, -1.5f + d * 1.25f });
 
 	// Level texts
 	mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.15f - d, 0.0f });
