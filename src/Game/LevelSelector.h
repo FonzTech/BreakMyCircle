@@ -15,7 +15,8 @@
 #define GO_LS_TEXT_LEVEL 0U
 
 #define GO_LS_GUI_LEVEL_PANEL 0U
-#define GO_LS_GUI_STAR 1U
+#define GO_LS_GUI_PLAY 1U
+#define GO_LS_GUI_STAR 100U
 
 #include <array>
 #include <vector>
