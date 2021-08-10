@@ -37,7 +37,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mParentIndex = parentIndex;
 	
 	// Init members
-	mLightPosition = Vector3(0.0f);
+	mLightPosition = Vector3(0.0f, -0.5f, 0.0f);
 	mLightDirection = false;
 	mIntroBubbles = true;
 	mLogoZoom = 0.0f;
