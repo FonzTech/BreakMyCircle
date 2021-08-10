@@ -52,6 +52,11 @@ void OverlayText::update()
 
 void OverlayText::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
+	drawDetached();
+}
+
+void OverlayText::drawDetached()
+{
 	if (mColor.a() > 0.0f || mOutlineColor.a() > 0.0f)
 	{
 		(*mShader)

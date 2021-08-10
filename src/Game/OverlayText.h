@@ -11,10 +11,11 @@
 
 #include "../GameObject.h"
 #include "../Common/CommonUtility.h"
+#include "../Graphics/IDrawDetached.h"
 
 using namespace Magnum;
 
-class OverlayText : public GameObject
+class OverlayText : public GameObject, public IDrawDetached
 {
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
@@ -26,6 +27,7 @@ public:
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
+	void drawDetached() override;
 
 	void setText(const std::string & text);
 	void setPosition(const Vector3 & position);

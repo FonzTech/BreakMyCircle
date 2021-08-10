@@ -165,6 +165,7 @@ _CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClCompile Include="src\Game\Bubble.cpp" />
     <ClCompile Include="src\Game\LevelSelector.cpp" />
     <ClCompile Include="src\Game\OverlayGui.cpp" />
+    <ClCompile Include="src\Game\OverlayGuiDetached.cpp" />
     <ClCompile Include="src\Game\OverlayText.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Engine.cpp" />
@@ -197,7 +198,9 @@ _CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\Game\LevelSelector.h" />
     <ClInclude Include="src\Game\OverlayGui.h" />
+    <ClInclude Include="src\Game\OverlayGuiDetached.h" />
     <ClInclude Include="src\Game\OverlayText.h" />
+    <ClInclude Include="src\Graphics\IDrawDetached.h" />
     <ClInclude Include="src\Graphics\TexturedDrawable.h" />
     <ClInclude Include="src\RoomManager.h" />
     <ClInclude Include="src\AssetManager.h" />

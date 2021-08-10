@@ -18,6 +18,10 @@ std::shared_ptr<GameObject> OverlayGui::getInstance(const nlohmann::json & param
 	return p;
 }
 
+OverlayGui::OverlayGui(const Int parentIndex) : GameObject(parentIndex)
+{
+}
+
 OverlayGui::OverlayGui(const Int parentIndex, const std::string & textureName) : GameObject(parentIndex)
 {
 	// Assign member

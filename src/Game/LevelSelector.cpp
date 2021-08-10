@@ -574,7 +574,7 @@ void LevelSelector::handleScrollableScenery()
 			auto& bs = mSceneries[yp].buttons.back();
 			
 			// Compute object identifier
-			const UnsignedInt objectId = UnsignedInt(yp) * 6U + UnsignedInt(i + 1);
+			const UnsignedInt objectId = UnsignedInt(-yp) * 6U + UnsignedInt(i + 1);
 			mPickableObjectRefs[objectId] = yp;
 
 			bs.levelIndex = objectId;
@@ -582,17 +582,17 @@ void LevelSelector::handleScrollableScenery()
 
 			// Create and save texture
 			{
-				const auto& nt = std::to_string(objectId);
+				const auto& nt = std::to_string(Int(objectId));
 				const auto& key = "tex_ls_" + nt;
 
 				bs.texture = CommonUtility::singleton->manager.get<GL::Texture2D>(key);
 				if (!bs.texture)
 				{
 					// Create renderer
-					LSNumberRenderer nr(mParentIndex, Vector2i(64, 64), nt);
+					LSNumberRenderer nr(mParentIndex, Vector2i(32), nt);
 
 					// Render to texture
-					GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceColor, GL::Renderer::BlendFunction::OneMinusSourceColor);
+					GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::SourceColor);
 					GL::Texture2D & texture = nr.getRenderedTexture(true);
 					GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 
