@@ -592,7 +592,7 @@ void LevelSelector::handleScrollableScenery()
 					LSNumberRenderer nr(mParentIndex, Vector2i(32), nt);
 
 					// Render to texture
-					GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::SourceColor);
+					GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 					GL::Texture2D & texture = nr.getRenderedTexture(true);
 					GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 

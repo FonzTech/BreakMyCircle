@@ -13,9 +13,8 @@ LSNumberRenderer::LSNumberRenderer(const Int parentIndex, const Vector2i & size,
 	mOverlayText = std::make_shared<OverlayText>(-1);
 	mOverlayText->mPosition = Vector3(0.0f);
 	mOverlayText->setScale(Vector2(0.055f - 0.01f * Float(text.length())));
-	mOverlayText->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
-	mOverlayText->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-	mOverlayText->mOutlineRange = Vector2(0.75f, 1.0f);
+	mOverlayText->mColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+	mOverlayText->mOutlineRange = Vector2(0.6f, 1.0f);
 	mOverlayText->setText(text);
 }
 
