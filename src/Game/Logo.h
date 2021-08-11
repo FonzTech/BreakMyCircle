@@ -1,6 +1,6 @@
 #pragma once
 
-#define FINISH_TIMER_STARTING_VALUE 6.0f
+#define FINISH_TIMER_STARTING_VALUE 5.0f
 
 #include <vector>
 #include <memory>

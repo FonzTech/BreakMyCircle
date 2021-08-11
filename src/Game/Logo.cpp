@@ -41,7 +41,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mLightDirection = false;
 	mIntroBubbles = true;
 	mLogoZoom = 0.0f;
-	mAnimElapsed = -5.001f; // Cycle waste
+	mAnimElapsed = -3.001f; // Cycle waste
 
 	// Load assets
 	mPosition = Vector3(0.0f, 10.0f, 0.0f);
@@ -103,6 +103,7 @@ void Logo::update()
 	if (mAnimElapsed < 0.0f) // Cycle waste
 	{
 		mAnimElapsed += 1.0f;
+		return;
 	}
 	else
 	{

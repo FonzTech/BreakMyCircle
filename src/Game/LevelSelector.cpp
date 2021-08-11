@@ -75,13 +75,21 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 					mCurrentViewingLevelId = 0U;
 				}
 				// If already closed, open/close the settings window
-				else
+				else if (mLevelState < GO_LS_LEVEL_FINISHED)
 				{
 					mSettingsOpened = !mSettingsOpened;
+					if (mSettingsOpened)
+					{
+						if (!mPlayerPointer.expired())
+						{
+							((Player*)mPlayerPointer.lock().get())->mCanShoot = false;
+						}
+					}
+
 					Debug{} << "You have" << (mSettingsOpened ? "opened" : "closed") << "SETTINGS";
 				}
-		},
-		1.0f
+			},
+			1.0f
 		};
 	}
 
@@ -780,23 +788,25 @@ void LevelSelector::windowForSettings()
 		// Position
 		{
 			const auto& p1 = Vector2(-0.5f, 0.5f) - Vector2(d2, 0.0f); // Left to right
-			const auto& p2 = Vector2(0.5f, -0.15f) * dp; // Upper-left to mid-upper-center
+			const auto& p2 = (mLevelState == GO_LS_LEVEL_STARTED ? Vector2(0.1f, -0.05f) : Vector2(0.5f, -0.1f)) * dp; // Upper-left to mid-upper-center
 			const auto& p3 = Vector2(0.0f, 0.25f) * d2; // Upper-left to outside-top
 			const auto& p4 = Vector2(0.0f, -1.0f) * d3;
 			const auto& p5 = Vector2(0.5f, 0.85f) * d;
-			const auto& p6 = Vector2(0.0f, 0.85f) * d4;
-			drawable->setPosition(p1 + p2 + p3 + p4 + p5 + p6);
+			const auto& p6 = Vector2(-0.1f, 0.94f) * d4;
+			const auto& p7 = mLevelState >= GO_LS_LEVEL_FINISHED ? Vector2(0.0f, -0.2f) * dl : Vector2(0.0f);
+			drawable->setPosition(p1 + p2 + p3 + p4 + p5 + p6 + p7);
 		}
 
 		// Anchor
 		{
 			const auto& p1 = Vector2(1.0f, -1.0f) * (1.0f - dp - d3);
 			const auto& p2 = Vector2(1.0f, 1.0f) * (d3 * (1.0f - d));
-			drawable->setAnchor(p1 + p2);
+			const auto& p3 = mLevelState == GO_LS_LEVEL_RESTORING ? Vector2(1.0f, -1.0f) * (1.0f - dl) : Vector2(0.0f);
+			drawable->setAnchor(p1 + p2 + p3);
 		}
 
 		// Rotation
-		drawable->setRotationInDegrees(360.0f * (dp + d));
+		drawable->setRotationInDegrees(360.0f * (dp + d + d4));
 
 		// Texture change
 		const bool isSettings = drawable->getTextureResource().key() == ResourceKey(RESOURCE_TEXTURE_GUI_SETTINGS);
