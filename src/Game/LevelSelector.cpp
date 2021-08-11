@@ -59,16 +59,6 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	// Create overlay eye-candy drawables
 	mLevelAnim = 0.0f;
 
-	// Level panel
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_LEVEL_PANEL);
-		o->setPosition({ 2.0f, 2.0f });
-		o->setSize({ 0.45f, 0.45f });
-		o->setAnchor({ 0.0f, 0.0f });
-
-		mLevelGuis[GO_LS_GUI_LEVEL_PANEL] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
-	}
-
 	// Create "Settings" button
 	{
 		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SETTINGS);
@@ -95,6 +85,16 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		};
 	}
 
+	// Level panel (after the "Settings" button, so this panel appears on top of it)
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_LEVEL_PANEL);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.45f, 0.45f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mLevelGuis[GO_LS_GUI_LEVEL_PANEL] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+
 	// Create "Replay" button
 	{
 		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_REPLAY);
@@ -106,8 +106,8 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 			[this]() {
 				Debug{} << "You have clicked REPLAY";
-		},
-		1.0f
+			},
+			1.0f
 		};
 	}
 
@@ -122,8 +122,17 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 			[this]() {
 				Debug{} << "You have clicked NEXT";
-		},
-		1.0f
+
+				// Restore level state to init
+				mLevelState = GO_LS_LEVEL_RESTORING;
+
+				// Delete all objects from the second layer
+				for (auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
+				{
+					go->mDestroyMe = true;
+				}
+			},
+			1.0f
 		};
 	}
 
@@ -138,8 +147,8 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 			[this]() {
 				Debug{} << "You have clicked SHARE";
-		},
-		1.0f
+			},
+			1.0f
 		};
 	}
 
@@ -763,6 +772,7 @@ void LevelSelector::windowForSettings()
 	{
 		const auto& d2 = mCbEaseInOut.value(mScreenButtons[GO_LS_GUI_SETTINGS].animation)[1];
 		const auto& d3 = mLevelState > GO_LS_LEVEL_INIT ? mCbEaseInOut.value(1.0f - mLevelButtonScaleAnim)[1] : 0.0f;
+		const auto& d4 = mLevelState == GO_LS_LEVEL_RESTORING ? mCbEaseInOut.value(1.0f - mLevelAnim)[1] : 0.0f;
 		const auto& dp = mLevelState < GO_LS_LEVEL_FINISHED ? d + dl : 0.0f;
 
 		const auto& drawable = mScreenButtons[GO_LS_GUI_SETTINGS].drawable;
@@ -774,7 +784,8 @@ void LevelSelector::windowForSettings()
 			const auto& p3 = Vector2(0.0f, 0.25f) * d2; // Upper-left to outside-top
 			const auto& p4 = Vector2(0.0f, -1.0f) * d3;
 			const auto& p5 = Vector2(0.5f, 0.85f) * d;
-			drawable->setPosition(p1 + p2 + p3 + p4 + p5);
+			const auto& p6 = Vector2(0.0f, 0.85f) * d4;
+			drawable->setPosition(p1 + p2 + p3 + p4 + p5 + p6);
 		}
 
 		// Anchor
@@ -808,7 +819,7 @@ void LevelSelector::windowForSettings()
 
 void LevelSelector::windowForCurrentLevelView()
 {
-	const bool& isFinished = mLevelState == GO_LS_LEVEL_FINISHED;
+	const bool& isFinished = mLevelState >= GO_LS_LEVEL_FINISHED;
 	const auto& d = mCbEaseInOut.value(mLevelAnim)[1];
 
 	// Score stars
@@ -928,6 +939,14 @@ void LevelSelector::manageLevelState()
 		// Control animation
 		manageBackendAnimationVariable(mLevelStartedAnim, 1.0f, false);
 
+		break;
+
+	case GO_LS_LEVEL_RESTORING:
+		// Reset level state when animation has finished
+		if (mLevelAnim <= 0.0f)
+		{
+			mLevelState = GO_LS_LEVEL_INIT;
+		}
 		break;
 	}
 

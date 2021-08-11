@@ -24,6 +24,7 @@
 #define GO_LS_LEVEL_STARTING 1
 #define GO_LS_LEVEL_STARTED 2
 #define GO_LS_LEVEL_FINISHED 3
+#define GO_LS_LEVEL_RESTORING 4
 
 #include <array>
 #include <vector>
