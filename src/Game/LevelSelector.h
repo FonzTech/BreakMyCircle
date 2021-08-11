@@ -120,6 +120,7 @@ private:
 	std::unordered_map<UnsignedInt, Int> mPickableObjectRefs;
 
 	UnsignedInt mCurrentViewingLevelId;
+	UnsignedInt mMaxLevelId;
 	Int mLevelState;
 
 	std::weak_ptr<GameObject> mPlayerPointer;

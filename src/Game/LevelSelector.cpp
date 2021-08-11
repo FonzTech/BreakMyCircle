@@ -51,6 +51,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mSettingsAnim = 0.0f;
 
 	mCurrentViewingLevelId = 0U;
+	mMaxLevelId = 2U;
 	mLevelState = GO_LS_LEVEL_INIT;
 
 	// Create sky plane
@@ -459,7 +460,14 @@ void LevelSelector::update()
 							// Trigger level selection
 							if (spo != nullptr)
 							{
-								clickLevelButton(spo->levelIndex);
+								if (spo->levelIndex < mMaxLevelId)
+								{
+									clickLevelButton(spo->levelIndex);
+								}
+								else
+								{
+									Debug{} << "Max level ID is" << mMaxLevelId << "and user has selected level ID" << spo->levelIndex;
+								}
 							}
 							else
 							{
@@ -518,12 +526,13 @@ void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 	}
 	else
 	{
+		const auto& color = baseDrawable->getObjectId() < mMaxLevelId ? 0xc0c0c0_rgbf : 0x404040_rgbf;
 		((Shaders::Phong&)baseDrawable->getShader())
 			.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(0.0f, 6.0f, 0.0f)))
 			.setLightColor(0xc0c0c0_rgbf)
 			.setSpecularColor(0x000000_rgbf)
-			.setDiffuseColor(0xc0c0c0_rgbf)
-			.setAmbientColor(0xc0c0c0_rgbf)
+			.setDiffuseColor(color)
+			.setAmbientColor(color)
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
 			.setProjectionMatrix(camera.projectionMatrix())
@@ -966,6 +975,6 @@ void LevelSelector::manageLevelState()
 		const auto& d = mCbEaseInOut.value(mLevelStartedAnim)[1];
 
 		auto& gol = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND];
-		gol.cameraEye = { 8.0f, -20.0f, 1.0f + 43.0f * d };
+		gol.cameraEye = { 8.0f, -19.0f, 1.0f + 40.0f * d };
 	}
 }
