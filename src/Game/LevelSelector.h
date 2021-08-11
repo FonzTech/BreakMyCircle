@@ -10,12 +10,14 @@
 
 #define GO_LS_MESH_PLATFORM "PlatformV"
 
-#define GO_LS_GUI_SETTINGS 0U
-
 #define GO_LS_TEXT_LEVEL 0U
 
 #define GO_LS_GUI_LEVEL_PANEL 0U
-#define GO_LS_GUI_PLAY 1U
+#define GO_LS_GUI_SETTINGS 1U
+#define GO_LS_GUI_PLAY 2U
+#define GO_LS_GUI_REPLAY 3U
+#define GO_LS_GUI_NEXT 4U
+#define GO_LS_GUI_SHARE 5U
 #define GO_LS_GUI_STAR 100U
 
 #define GO_LS_LEVEL_INIT 0

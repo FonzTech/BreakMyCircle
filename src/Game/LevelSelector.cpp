@@ -56,7 +56,20 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	// Create sky plane
 	createSkyPlane();
 
-	// Create button overlays
+	// Create overlay eye-candy drawables
+	mLevelAnim = 0.0f;
+
+	// Level panel
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_LEVEL_PANEL);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.45f, 0.45f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mLevelGuis[GO_LS_GUI_LEVEL_PANEL] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+
+	// Create "Settings" button
 	{
 		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SETTINGS);
 		o->setPosition({ -2.0f, 0.5f });
@@ -77,22 +90,57 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 					mSettingsOpened = !mSettingsOpened;
 					Debug{} << "You have" << (mSettingsOpened ? "opened" : "closed") << "SETTINGS";
 				}
-			},
-			1.0f
+		},
+		1.0f
 		};
 	}
 
-	// Create overlay eye-candy drawables
-	mLevelAnim = 0.0f;
-
-	// Level panel
+	// Create "Replay" button
 	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_LEVEL_PANEL);
-		o->setPosition({ 2.0f, 2.0f });
-		o->setSize({ 0.45f, 0.45f });
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_REPLAY);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 0.0f, 0.0f });
 
-		mLevelGuis[GO_LS_GUI_LEVEL_PANEL] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+		mScreenButtons[GO_LS_GUI_REPLAY] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this]() {
+				Debug{} << "You have clicked REPLAY";
+		},
+		1.0f
+		};
+	}
+
+	// Create "Next" button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_NEXT);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_NEXT] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this]() {
+				Debug{} << "You have clicked NEXT";
+		},
+		1.0f
+		};
+	}
+
+	// Create "Share" button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SHARE);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_SHARE] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this]() {
+				Debug{} << "You have clicked SHARE";
+		},
+		1.0f
+		};
 	}
 
 	// Play button
@@ -711,7 +759,7 @@ void LevelSelector::windowForSettings()
 	const auto& d = mCbEaseInOut.value(mSettingsAnim)[1];
 	const auto& dl = mCbEaseInOut.value(mLevelAnim)[1];
 
-	// Animation for settings window
+	// Animation for "Settings" button
 	{
 		const auto& d2 = mCbEaseInOut.value(mScreenButtons[GO_LS_GUI_SETTINGS].animation)[1];
 		const auto& d3 = mLevelState > GO_LS_LEVEL_INIT ? mCbEaseInOut.value(1.0f - mLevelButtonScaleAnim)[1] : 0.0f;
@@ -760,6 +808,7 @@ void LevelSelector::windowForSettings()
 
 void LevelSelector::windowForCurrentLevelView()
 {
+	const bool& isFinished = mLevelState == GO_LS_LEVEL_FINISHED;
 	const auto& d = mCbEaseInOut.value(mLevelAnim)[1];
 
 	// Score stars
@@ -769,10 +818,35 @@ void LevelSelector::windowForCurrentLevelView()
 	}
 
 	// Play button
-	mScreenButtons[GO_LS_GUI_PLAY].drawable->setPosition({ 0.0f, -1.5f + d * 1.25f });
+	{
+		const auto& p1 = isFinished ? Vector2{ 2.0f } : Vector2{ 0.0f, -1.5f + d * 1.25f };
+		mScreenButtons[GO_LS_GUI_PLAY].drawable->setPosition(p1);
+	}
 
 	// Level texts
 	mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.15f - d, 0.0f });
+
+	{
+		const auto& c = -1.5f + d * 1.275f;
+
+		// Animation for "Replay" button
+		{
+			const auto& p1 = isFinished ? Vector2{ -0.3f, c } : Vector2{ 2.0f };
+			mScreenButtons[GO_LS_GUI_REPLAY].drawable->setPosition(p1);
+		}
+
+		// Animation for "Next" button
+		{
+			const auto& p1 = isFinished ? Vector2{ 0.0f, c } : Vector2{ 2.0f };
+			mScreenButtons[GO_LS_GUI_NEXT].drawable->setPosition(p1);
+		}
+
+		// Animation for "Share" button
+		{
+			const auto& p1 = isFinished ? Vector2{ 0.3f, c } : Vector2{ 2.0f };
+			mScreenButtons[GO_LS_GUI_SHARE].drawable->setPosition(p1);
+		}
+	}
 }
 
 void LevelSelector::createLevelRoom()
