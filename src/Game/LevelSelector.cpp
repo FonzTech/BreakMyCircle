@@ -791,7 +791,7 @@ void LevelSelector::windowForSettings()
 			const auto& p2 = (mLevelState == GO_LS_LEVEL_STARTED ? Vector2(0.1f, -0.05f) : Vector2(0.5f, -0.1f)) * dp; // Upper-left to mid-upper-center
 			const auto& p3 = Vector2(0.0f, 0.25f) * d2; // Upper-left to outside-top
 			const auto& p4 = Vector2(0.0f, -1.0f) * d3;
-			const auto& p5 = Vector2(0.5f, 0.85f) * d;
+			const auto& p5 = mLevelState == GO_LS_LEVEL_STARTED ? Vector2(0.5f, 0.85f) * d : Vector2(0.0f);
 			const auto& p6 = Vector2(-0.1f, 0.94f) * d4;
 			const auto& p7 = mLevelState >= GO_LS_LEVEL_FINISHED ? Vector2(0.0f, -0.2f) * dl : Vector2(0.0f);
 			drawable->setPosition(p1 + p2 + p3 + p4 + p5 + p6 + p7);
