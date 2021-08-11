@@ -21,6 +21,7 @@
 #define GO_LS_LEVEL_INIT 0
 #define GO_LS_LEVEL_STARTING 1
 #define GO_LS_LEVEL_STARTED 2
+#define GO_LS_LEVEL_FINISHED 3
 
 #include <array>
 #include <vector>
@@ -88,6 +89,9 @@ private:
 	void windowForSettings();
 	void windowForCurrentLevelView();
 
+	void createLevelRoom();
+	void manageLevelState();
+
 	std::shared_ptr<TexturedDrawable<Shaders::Flat3D>> mSkyPlane;
 	Object3D* mSkyManipulator;
 
@@ -98,6 +102,7 @@ private:
 	Math::CubicBezier2D<Float> mCbEaseInOut;
 	bool mSettingsOpened;
 	Float mSettingsAnim;
+	Float mLevelStartedAnim;
 
 	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
 
@@ -112,5 +117,7 @@ private:
 	std::unordered_map<UnsignedInt, Int> mPickableObjectRefs;
 
 	UnsignedInt mCurrentViewingLevelId;
-	Int mStartingLevel;
+	Int mLevelState;
+
+	std::weak_ptr<GameObject> mPlayerPointer;
 };

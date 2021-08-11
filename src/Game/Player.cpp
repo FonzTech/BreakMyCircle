@@ -27,7 +27,7 @@ std::shared_ptr<GameObject> Player::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Player::Player(const Int parentIndex) : GameObject()
+Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true)
 {
 	// Assign parent index
 	mParentIndex = parentIndex;
@@ -110,42 +110,45 @@ void Player::update()
 	}
 
 	// Check for mouse input
-	const auto& bs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
-	if (bs == IM_STATE_PRESSED)
+	if (mCanShoot)
 	{
-		mShootTimeline = 1.0f;
-	}
-	else if (bs == IM_STATE_RELEASED)
-	{
-		if (mProjectile.expired())
+		const auto& bs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
+		if (bs == IM_STATE_PRESSED)
 		{
-			// Create projectile
-			std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mParentIndex, mProjColors[0].rgb());
-			go->mPosition = mPosition;
-			go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
-			RoomManager::singleton->mGoLayers[mParentIndex].push_back(go);
-
-			// Update color for next bubble
-			mProjColors[0] = mProjColors[1];
-			mProjColors[1] = getRandomEligibleColor(1)->at(0);
-
-			mProjTextures[0] = mProjTextures[1];
-			mProjTextures[1] = getTextureResourceForIndex(1);
-
-			mSphereDrawables[0]->mTexture = mProjTextures[0];
-
-			// Reset animation for new projectile
-			mProjPath->mProgress = Float(mProjPath->getSize());
-
-			// Prevent shooting by keeping a reference
-			mProjectile = (*RoomManager::singleton->mGoLayers[mParentIndex].list).back();
-
-			// Play random sound
+			mShootTimeline = 1.0f;
+		}
+		else if (bs == IM_STATE_RELEASED)
+		{
+			if (mProjectile.expired())
 			{
-				const UnsignedInt index = std::rand() % 3;
-				mPlayables[index]->source()
-					.setOffsetInSamples(0)
-					.play();
+				// Create projectile
+				std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mParentIndex, mProjColors[0].rgb());
+				go->mPosition = mPosition;
+				go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
+				RoomManager::singleton->mGoLayers[mParentIndex].push_back(go);
+
+				// Update color for next bubble
+				mProjColors[0] = mProjColors[1];
+				mProjColors[1] = getRandomEligibleColor(1)->at(0);
+
+				mProjTextures[0] = mProjTextures[1];
+				mProjTextures[1] = getTextureResourceForIndex(1);
+
+				mSphereDrawables[0]->mTexture = mProjTextures[0];
+
+				// Reset animation for new projectile
+				mProjPath->mProgress = Float(mProjPath->getSize());
+
+				// Prevent shooting by keeping a reference
+				mProjectile = (*RoomManager::singleton->mGoLayers[mParentIndex].list).back();
+
+				// Play random sound
+				{
+					const UnsignedInt index = std::rand() % 3;
+					mPlayables[index]->source()
+						.setOffsetInSamples(0)
+						.play();
+				}
 			}
 		}
 	}

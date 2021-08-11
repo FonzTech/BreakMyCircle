@@ -24,6 +24,8 @@ public:
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
+	bool mCanShoot;
+
 protected:
 
 	std::unique_ptr<std::vector<Color4>> getRandomEligibleColor(const UnsignedInt times);

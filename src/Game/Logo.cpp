@@ -41,7 +41,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mLightDirection = false;
 	mIntroBubbles = true;
 	mLogoZoom = 0.0f;
-	mAnimElapsed = -1.0f;
+	mAnimElapsed = -5.001f; // Cycle waste
 
 	// Load assets
 	mPosition = Vector3(0.0f, 10.0f, 0.0f);
@@ -64,6 +64,9 @@ Logo::Logo(const Int parentIndex) : GameObject()
 		if (it != indexes.end())
 		{
 			mLogoObjects[it->second] = (Object3D*)item.get();
+			(*mLogoObjects[it->second])
+				.resetTransformation()
+				.translate(Vector3(500.0f));
 		}
 	}
 
@@ -97,9 +100,9 @@ const Int Logo::getType() const
 void Logo::update()
 {
 	// Advance animation
-	if (mAnimElapsed < 0.0f)
+	if (mAnimElapsed < 0.0f) // Cycle waste
 	{
-		mAnimElapsed = 0.001f;
+		mAnimElapsed += 1.0f;
 	}
 	else
 	{

@@ -10,6 +10,7 @@
 #include "../AssetManager.h"
 #include "../Common/CommonUtility.h"
 #include "../Common/CustomRenderers/LSNumberRenderer.h"
+#include "../Game/Player.h"
 
 std::shared_ptr<GameObject> LevelSelector::getInstance(const nlohmann::json & params)
 {
@@ -50,7 +51,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mSettingsAnim = 0.0f;
 
 	mCurrentViewingLevelId = 0U;
-	mStartingLevel = GO_LS_LEVEL_INIT;
+	mLevelState = GO_LS_LEVEL_INIT;
 
 	// Create sky plane
 	createSkyPlane();
@@ -105,7 +106,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 			[this]() {
 				// Check if a level is starting
-				if (mStartingLevel > GO_LS_LEVEL_INIT)
+				if (mLevelState > GO_LS_LEVEL_INIT)
 				{
 					return;
 				}
@@ -113,7 +114,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				// Start the selected level
 				Debug{} << "User wants to play level" << mCurrentViewingLevelId;
 				mCurrentViewingLevelId = 0U;
-				mStartingLevel = GO_LS_LEVEL_STARTING;
+				mLevelState = GO_LS_LEVEL_STARTING;
 			},
 			1.0f
 		};
@@ -170,22 +171,29 @@ const Int LevelSelector::getType() const
 
 void LevelSelector::update()
 {
-	// Manage level start
-	if (mStartingLevel == GO_LS_LEVEL_STARTING)
+	// Enable or disable player shooting
+	if (!mPlayerPointer.expired())
 	{
-		if (mLevelButtonScaleAnim <= 0.0f)
-		{
-			RoomManager::singleton->createLevelRoom();
-			mStartingLevel = GO_LS_LEVEL_STARTED;
-		}
+		((Player*)mPlayerPointer.lock().get())->mCanShoot = !mSettingsOpened && mSettingsAnim <= 0.001f;
 	}
+
+	// Manage level state
+	manageLevelState();
 
 #if NDEBUG or _DEBUG
 	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
 	{
-		// RoomManager::singleton->prepareRoom(false);
-		RoomManager::singleton->createLevelRoom();
-		mStartingLevel = GO_LS_LEVEL_STARTED;
+		if (mPlayerPointer.expired())
+		{
+			Debug{} << "Level room created";
+
+			createLevelRoom();
+		}
+		else
+		{
+			Debug{} << "Level state to Finished";
+			mLevelState = GO_LS_LEVEL_FINISHED;
+		}
 	}
 #endif
 
@@ -196,7 +204,7 @@ void LevelSelector::update()
 		.translate(mPosition + Vector3(0.0f, 0.0f, -GO_LS_SCENERY_LENGTH_DOUBLE));
 
 	// Check if there is any on-going action on top
-	if (mStartingLevel == GO_LS_LEVEL_INIT && RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->size() > 0)
+	if (mLevelState == GO_LS_LEVEL_INIT && RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->size() > 0)
 	{
 		return;
 	}
@@ -209,7 +217,7 @@ void LevelSelector::update()
 	windowForSettings();
 
 	// Overlay for current level viewing
-	const bool isViewing = mCurrentViewingLevelId != 0U;
+	const bool isViewing = mCurrentViewingLevelId != 0U || mLevelState == GO_LS_LEVEL_FINISHED;
 	manageBackendAnimationVariable(mLevelAnim, 0.8f, isViewing);
 	windowForCurrentLevelView();
 
@@ -251,7 +259,7 @@ void LevelSelector::update()
 	{
 		// Handle scale value
 		{
-			const bool& mode = mStartingLevel == GO_LS_LEVEL_INIT;
+			const bool& mode = mLevelState == GO_LS_LEVEL_INIT;
 			manageBackendAnimationVariable(mLevelButtonScaleAnim, mode ? 1.0f : 0.8f, mode);
 		}
 
@@ -283,7 +291,7 @@ void LevelSelector::update()
 	// Handle scrollable scenery
 	if (lbs == IM_STATE_PRESSED)
 	{
-		if (!isViewing && !mSettingsOpened && mStartingLevel == GO_LS_LEVEL_INIT)
+		if (!isViewing && !mSettingsOpened && mLevelState == GO_LS_LEVEL_INIT)
 		{
 			mPrevMousePos = InputManager::singleton->mMousePosition;
 			mClickStartTime = std::chrono::system_clock::now();
@@ -706,8 +714,8 @@ void LevelSelector::windowForSettings()
 	// Animation for settings window
 	{
 		const auto& d2 = mCbEaseInOut.value(mScreenButtons[GO_LS_GUI_SETTINGS].animation)[1];
-		const auto& d3 = mStartingLevel > GO_LS_LEVEL_INIT ? mCbEaseInOut.value(1.0f - mLevelButtonScaleAnim)[1] : 0.0f;
-		const auto& dp = mStartingLevel < GO_LS_LEVEL_STARTED ? d + dl : 0.0f;
+		const auto& d3 = mLevelState > GO_LS_LEVEL_INIT ? mCbEaseInOut.value(1.0f - mLevelButtonScaleAnim)[1] : 0.0f;
+		const auto& dp = mLevelState < GO_LS_LEVEL_FINISHED ? d + dl : 0.0f;
 
 		const auto& drawable = mScreenButtons[GO_LS_GUI_SETTINGS].drawable;
 
@@ -765,4 +773,96 @@ void LevelSelector::windowForCurrentLevelView()
 
 	// Level texts
 	mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.15f - d, 0.0f });
+}
+
+void LevelSelector::createLevelRoom()
+{
+	// Level is started
+	RoomManager::singleton->createLevelRoom();
+	mLevelState = GO_LS_LEVEL_STARTED;
+
+	// Get player pointer
+	for (const auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
+	{
+		if (go->getType() == GOT_PLAYER)
+		{
+			mPlayerPointer = go;
+			break;
+		}
+	}
+
+	if (mPlayerPointer.expired())
+	{
+		Error{} << "The player game object was not found after creating the room";
+	}
+
+	// Other variables
+	mLevelStartedAnim = -1.0f; // Cycle waste
+}
+
+void LevelSelector::manageLevelState()
+{
+	// Variables for later
+	bool animateCamera = false;
+
+	// Control level state
+	switch (mLevelState)
+	{
+	case GO_LS_LEVEL_STARTING:
+
+		// Create level room on animation end
+		if (mLevelButtonScaleAnim <= 0.0f)
+		{
+			createLevelRoom();
+		}
+
+		break;
+
+	case GO_LS_LEVEL_STARTED:
+
+		// Animate camera
+		animateCamera = true;
+
+		// Control animation
+		if (mLevelStartedAnim < 0.0f) // Cycle waste
+		{
+			mLevelStartedAnim = 0.0f;
+		}
+		else
+		{
+			manageBackendAnimationVariable(mLevelStartedAnim, 1.0f, true);
+		}
+
+		break;
+
+	case GO_LS_LEVEL_FINISHED:
+
+		// Animate camera
+		animateCamera = true;
+
+		// Prevent player from shooting
+		if (mPlayerPointer.expired())
+		{
+			Error{} << "Player pointer is expired. This should not happen";
+		}
+		else
+		{
+			// Prevent player from shooting
+			((Player*)mPlayerPointer.lock().get())->mCanShoot = false;
+		}
+
+		// Control animation
+		manageBackendAnimationVariable(mLevelStartedAnim, 1.0f, false);
+
+		break;
+	}
+
+	// Animate camera, if requested
+	if (animateCamera)
+	{
+		const auto& d = mCbEaseInOut.value(mLevelStartedAnim)[1];
+
+		auto& gol = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND];
+		gol.cameraEye = { 8.0f, -20.0f, 1.0f + 43.0f * d };
+	}
 }
