@@ -97,7 +97,7 @@ private:
 
 	void createLevelRoom();
 	void manageLevelState();
-	void finishCurrentLevel();
+	void finishCurrentLevel(const bool success);
 
 	std::shared_ptr<TexturedDrawable<Shaders::Flat3D>> mSkyPlane;
 	Object3D* mSkyManipulator;
@@ -109,7 +109,9 @@ private:
 	Math::CubicBezier2D<Float> mCbEaseInOut;
 	bool mSettingsOpened;
 	Float mSettingsAnim;
+
 	Float mLevelStartedAnim;
+	bool mLevelEndingAnim;
 
 	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
 
