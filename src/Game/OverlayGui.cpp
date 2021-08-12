@@ -56,6 +56,7 @@ void OverlayGui::draw(BaseDrawable* baseDrawable, const Matrix4& transformationM
 	((Shaders::Flat3D&) baseDrawable->getShader())
 		.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 		.bindTexture(*baseDrawable->mTexture)
+		.setColor(Color4{ 1.0f })
 		.draw(*baseDrawable->mMesh);
 }
 

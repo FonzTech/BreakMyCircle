@@ -16,6 +16,7 @@
 #include "Game/OverlayGui.h"
 #include "Game/OverlayGuiDetached.h"
 #include "Game/OverlayText.h"
+#include "Game/LimitLine.h"
 #include "RoomManager.h"
 
 using namespace Magnum::Math::Literals;
@@ -30,7 +31,7 @@ RoomManager::RoomManager()
 		.setHrtf(Audio::Context::Configuration::Hrtf::Enabled)
 		.setFrequency(44100)
 		.setRefreshRate(50)
-		);
+	);
 	mAudioListener = std::make_unique<Audio::Listener3D>(mScene);
 
 	// Map every game object to this map
@@ -45,6 +46,7 @@ RoomManager::RoomManager()
 	gameObjectCreators[GOT_OVERLAY_GUI_DETACHED] = OverlayGuiDetached::getInstance;
 	gameObjectCreators[GOT_LEVEL_SELECTOR] = LevelSelector::getInstance;
 	gameObjectCreators[GOT_OVERLAY_TEXT] = OverlayText::getInstance;
+	gameObjectCreators[GOT_LIMIT_LINE] = LimitLine::getInstance;
 
 	// Create collision manager
 	mCollisionManager = std::make_unique<CollisionManager>();
@@ -216,17 +218,26 @@ void RoomManager::createLevelRoom()
 	}
 
 	// Create player
+	std::shared_ptr<GameObject> player = nullptr;
+
 	{
-		std::shared_ptr<Player> p = std::make_shared<Player>(GOL_PERSP_SECOND);
+		const auto& p = std::make_shared<Player>(GOL_PERSP_SECOND);
 		p->mPosition = { 8.0f, -35.0f, 0.0f };
+		player = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p, true);
+	}
+
+	// Create limit line, just above the player
+	{
+		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND);
+		p->mPosition = { 8.0f, player->mPosition.y() + 6.0f, 0.0f };
 		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
 	}
 
 	// Setup camera for game layers
 	{
 		auto& gol = mGoLayers[GOL_PERSP_SECOND];
-		gol.cameraEye = { 8.0f, -20.0f, 1.0f };
-		gol.cameraTarget = { 8.0f, -20.0f, 0.0f };
+		gol.cameraEye = { 8.0f, -19.0f, 1.0f };
+		gol.cameraTarget = { 8.0f, -19.0f, 0.0f };
 	}
 
 	/*

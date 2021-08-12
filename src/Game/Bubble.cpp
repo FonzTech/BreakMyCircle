@@ -38,6 +38,7 @@ std::shared_ptr<GameObject> Bubble::getInstance(const nlohmann::json & params)
 Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(parentIndex)
 {
 	// Assign members
+	mParentIndex = parentIndex;
 	mAmbientColor = ambientColor;
 	mShakePos = { 0.0f };
 	mShakeFact = 0.0f;

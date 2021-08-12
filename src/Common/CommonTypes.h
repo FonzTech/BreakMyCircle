@@ -56,6 +56,7 @@
 #define GOT_LEVEL_SELECTOR 9
 #define GOT_OVERLAY_TEXT 10
 #define GOT_OVERLAY_GUI_DETACHED 11
+#define GOT_LIMIT_LINE 12
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>

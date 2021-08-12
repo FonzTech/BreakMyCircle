@@ -163,6 +163,7 @@
     <ClCompile Include="src\Common\CustomRenderers\LSNumberRenderer.cpp" />
     <ClCompile Include="src\Game\Bubble.cpp" />
     <ClCompile Include="src\Game\LevelSelector.cpp" />
+    <ClCompile Include="src\Game\LimitLine.cpp" />
     <ClCompile Include="src\Game\OverlayGui.cpp" />
     <ClCompile Include="src\Game\OverlayGuiDetached.cpp" />
     <ClCompile Include="src\Game\OverlayText.cpp" />
@@ -196,6 +197,7 @@
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\Game\LevelSelector.h" />
+    <ClInclude Include="src\Game\LimitLine.h" />
     <ClInclude Include="src\Game\OverlayGui.h" />
     <ClInclude Include="src\Game\OverlayGuiDetached.h" />
     <ClInclude Include="src\Game\OverlayText.h" />

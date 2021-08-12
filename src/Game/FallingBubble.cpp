@@ -23,6 +23,7 @@ std::shared_ptr<GameObject> FallingBubble::getInstance(const nlohmann::json & pa
 FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, const bool spark, const Float maxVerticalSpeed) : GameObject(parentIndex)
 {
 	// Assign members
+	mParentIndex = parentIndex;
 	mAmbientColor = ambientColor;
 	mSpark = spark;
 	mVelocity = { 0.0f };
