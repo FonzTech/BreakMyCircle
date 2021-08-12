@@ -17,12 +17,13 @@
 - ~~Remove the default "createGameSphere" method from "Utility".~~
 - ~~Implement audio engine.~~
 - ~~Refactor code for resource creation. Move them to CommonUtility, like water, sprite, etc...~~
-~~- Orthographic layers with GUI engine.~~
-- Small main menu for game.
-- Implement pause/resume system for game. And so the pause menu.
+- ~~Orthographic layers with GUI engine.~~
+- ~~Intro screen with logo and various effects, to be melt with level screen.~~
+- ~~Animate camera for every scenery available in the game.~~
 
 # On-going tasks
 
-- Intro screen with logo and various effects, to be melt with level screen.
-- Animate camera for every scenery available in the game.
+- Complete level cycle, with start, winning and losing.
+- Small main menu for game.
+- Implement pause/resume system for game. And so the pause menu.
 - Procedural level generation.
