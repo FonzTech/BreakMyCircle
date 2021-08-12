@@ -164,9 +164,6 @@
     <ClInclude Include="src\AssetManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\ColoredDrawable.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Graphics\BaseDrawable.h">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
@@ -230,9 +227,6 @@
     <ClInclude Include="src\Game\OverlayText.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="src\Graphics\TexturedDrawable.h">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="src\Common\AbstractCustomRenderer.h">
       <Filter>Header Files\Common</Filter>
     </ClInclude>
@@ -247,6 +241,9 @@
     </ClInclude>
     <ClInclude Include="src\Game\LimitLine.h">
       <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\GameDrawable.h">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

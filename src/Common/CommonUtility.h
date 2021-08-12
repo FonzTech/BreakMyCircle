@@ -21,8 +21,7 @@
 #include <nlohmann/json.hpp>
 
 #include "CommonTypes.h"
-#include "../Graphics/ColoredDrawable.h"
-#include "../Graphics/TexturedDrawable.h"
+#include "../Graphics/GameDrawable.h"
 #include "../GameObject.h"
 #include "../Shaders/SpriteShader.h"
 
@@ -84,6 +83,6 @@ public:
 	bool stringEndsWith(const std::string& data, const std::string& suffix);
 	void createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color);
 	Resource<GL::Mesh> getPlaneMeshForFlatShader();
-	std::shared_ptr<TexturedDrawable<SpriteShader>> createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
+	std::shared_ptr<GameDrawable<SpriteShader>> createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> getFlat3DShader();
 };

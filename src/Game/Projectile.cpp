@@ -3,7 +3,7 @@
 #include <thread>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
-#include "../Graphics/ColoredDrawable.h"
+#include "../Graphics/GameDrawable.h"
 #include "../RoomManager.h"
 #include "../Common/CommonUtility.h"
 #include "Bubble.h"

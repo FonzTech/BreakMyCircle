@@ -7,7 +7,7 @@
 #include <Magnum/Math/Bezier.h>
 
 #include "../GameObject.h"
-#include "../Graphics/TexturedDrawable.h"
+#include "../Graphics/GameDrawable.h"
 #include "../Shaders/WaterShader.h"
 
 class Skybox : public GameObject

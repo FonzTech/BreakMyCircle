@@ -6,7 +6,7 @@
 #include <Magnum/Math/Color.h>
 
 #include "../GameObject.h"
-#include "../Graphics/ColoredDrawable.h"
+#include "../Graphics/GameDrawable.h"
 
 class Projectile : public GameObject
 {

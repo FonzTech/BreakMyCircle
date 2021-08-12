@@ -259,7 +259,7 @@ void Scenery::createWaterDrawable()
 	const auto& waterTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WATER_TEXTURE);
 
 	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
-	wdh.drawable = std::make_shared<TexturedDrawable<WaterShader>>(*drawables, resShader, resMesh, waterTexture);
+	wdh.drawable = std::make_shared<GameDrawable<WaterShader>>(*drawables, resShader, resMesh, waterTexture);
 	wdh.drawable->setParent(mManipulatorList[1]);
 	wdh.drawable->setDrawCallback(this);
 
@@ -282,7 +282,7 @@ void Scenery::createWaterDrawable(const WaterDrawableHolder & fromWdh)
 	auto wdh = WaterDrawableHolder();
 
 	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
-	wdh.drawable = std::make_shared<TexturedDrawable<WaterShader>>(*drawables, fromWdh.drawable->mShader, fromWdh.drawable->mMesh, fromWdh.drawable->mTexture);
+	wdh.drawable = std::make_shared<GameDrawable<WaterShader>>(*drawables, fromWdh.drawable->mShader, fromWdh.drawable->mMesh, fromWdh.drawable->mTexture);
 	wdh.drawable->setParent(mManipulatorList[1]);
 	wdh.drawable->setDrawCallback(this);
 

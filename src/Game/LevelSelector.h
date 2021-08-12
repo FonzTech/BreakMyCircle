@@ -99,7 +99,7 @@ private:
 	void manageLevelState();
 	void finishCurrentLevel(const bool success);
 
-	std::shared_ptr<TexturedDrawable<Shaders::Flat3D>> mSkyPlane;
+	std::shared_ptr<GameDrawable<Shaders::Flat3D>> mSkyPlane;
 	Object3D* mSkyManipulator;
 
 	Vector2i mPrevMousePos;

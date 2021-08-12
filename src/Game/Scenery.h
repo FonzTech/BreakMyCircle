@@ -6,7 +6,7 @@
 #include <nlohmann/json.hpp>
 
 #include "../GameObject.h"
-#include "../Graphics/TexturedDrawable.h"
+#include "../Graphics/GameDrawable.h"
 #include "../Shaders/WaterShader.h"
 
 class Scenery : public GameObject
@@ -29,7 +29,7 @@ protected:
 
 	struct WaterDrawableHolder
 	{
-		std::shared_ptr<TexturedDrawable<WaterShader>> drawable;
+		std::shared_ptr<GameDrawable<WaterShader>> drawable;
 		WaterShader::Parameters parameters;
 	};
 

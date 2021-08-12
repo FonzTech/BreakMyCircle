@@ -3,6 +3,7 @@
 #include <Magnum/Shaders/Flat.h>
 
 #include "../RoomManager.h"
+#include "../Common/CommonUtility.h"
 
 using namespace Magnum;
 
@@ -27,7 +28,7 @@ LimitLine::LimitLine(const Int parentIndex) : GameObject(parentIndex)
 	// Create drawable
 	auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;
 
-	const std::shared_ptr<ColoredDrawable<Shaders::Flat3D>> td = std::make_shared<ColoredDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, RED_COLOR);
+	const std::shared_ptr<GameDrawable<Shaders::Flat3D>> td = std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, RED_COLOR);
 	td->mTexture = texture;
 	td->setParent(mManipulator.get());
 	td->setDrawCallback(this);

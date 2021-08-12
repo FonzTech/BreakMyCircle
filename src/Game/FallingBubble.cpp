@@ -7,7 +7,7 @@
 #include <Magnum/GL/Buffer.h>
 
 #include "../Common/CommonUtility.h"
-#include "../Graphics/ColoredDrawable.h"
+#include "../Graphics/GameDrawable.h"
 #include "../Shaders/SpriteShader.h"
 #include "../RoomManager.h"
 
@@ -38,7 +38,7 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 		Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SPARKLES);
 
 		// Create plane
-		std::shared_ptr<TexturedDrawable<SpriteShader>> td = CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this);
+		std::shared_ptr<GameDrawable<SpriteShader>> td = CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this);
 		mDrawables.emplace_back(td);
 
 		// Create shader data wrapper

@@ -3,7 +3,7 @@
 #include <nlohmann/json.hpp>
 
 #include "../GameObject.h"
-#include "../Graphics/ColoredDrawable.h"
+#include "../Graphics/GameDrawable.h"
 
 class LimitLine : public GameObject
 {

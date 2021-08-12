@@ -185,7 +185,7 @@ Resource<GL::Mesh> CommonUtility::getPlaneMeshForFlatShader()
 	return resMesh;
 }
 
-std::shared_ptr<TexturedDrawable<SpriteShader>> CommonUtility::createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback)
+std::shared_ptr<GameDrawable<SpriteShader>> CommonUtility::createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback)
 {
 	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_PLANE_SPRITE) };
 
@@ -222,7 +222,7 @@ std::shared_ptr<TexturedDrawable<SpriteShader>> CommonUtility::createSpriteDrawa
 
 	// Create textured drawable
 	auto& drawables = RoomManager::singleton->mGoLayers[goLayerIndex].drawables;
-	std::shared_ptr<TexturedDrawable<SpriteShader>> td = std::make_shared<TexturedDrawable<SpriteShader>>(*drawables, resShader, resMesh, texture);
+	std::shared_ptr<GameDrawable<SpriteShader>> td = std::make_shared<GameDrawable<SpriteShader>>(*drawables, resShader, resMesh, texture);
 	td->setParent(&parent);
 	td->setDrawCallback(drawCallback);
 	return td;

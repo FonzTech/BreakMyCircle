@@ -7,7 +7,7 @@
 #include <Magnum/Math/Color.h>
 
 #include "../GameObject.h"
-#include "../Graphics/TexturedDrawable.h"
+#include "../Graphics/GameDrawable.h"
 #include "../Shaders/SpriteShader.h"
 #include "../Common/SpriteShaderDataView.h"
 

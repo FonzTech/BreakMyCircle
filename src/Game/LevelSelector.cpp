@@ -641,7 +641,7 @@ void LevelSelector::createSkyPlane()
 	mSkyManipulator = new Object3D{ mManipulator.get() };
 
 	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
-	mSkyPlane = std::make_shared<TexturedDrawable<Shaders::Flat3D>>(*drawables, resShader, resMesh, resTexture);
+	mSkyPlane = std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, resShader, resMesh, resTexture);
 	mSkyPlane->setParent(mSkyManipulator);
 	mSkyPlane->setDrawCallback(this);
 	mDrawables.emplace_back(mSkyPlane);
