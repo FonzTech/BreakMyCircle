@@ -186,6 +186,22 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		};
 	}
 
+	// Create "Exit" button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_EXIT);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_EXIT] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this]() {
+				Debug{} << "You have clicked EXIT";
+			},
+			1.0f
+		};
+	}
+
 	// Three stars
 	for (UnsignedInt i = 0; i < 3; ++i)
 	{
@@ -258,7 +274,7 @@ void LevelSelector::update()
 		else
 		{
 			Debug{} << "Level state to Finished";
-			mLevelState = GO_LS_LEVEL_FINISHED;
+			finishCurrentLevel();
 		}
 	}
 #endif
@@ -329,14 +345,22 @@ void LevelSelector::update()
 			manageBackendAnimationVariable(mLevelButtonScaleAnim, mode ? 1.0f : 0.8f, mode);
 		}
 
-		// Create common scaling vector
-		const Vector3 sv(mLevelButtonScaleAnim);
-
 		// Apply transformations to all button drawables
 		for (auto it = mSceneries.begin(); it != mSceneries.end(); ++it)
 		{
 			for (auto it2 = it->second.buttons.begin(); it2 != it->second.buttons.end(); ++it2)
 			{
+				// Control animation
+				{
+					const auto& pz = it2->position.z() + it->second.scenery->mPosition.z();
+					const auto& c = mPosition.z() > pz - 25.0f && mPosition.z() < pz + 25.0f;
+					manageBackendAnimationVariable(it2->scale, 1.0f, c);
+				}
+
+				// Create common scaling vector
+				const Vector3 sv(it2->scale * mLevelButtonScaleAnim);
+
+				// Apply transformations to all drawables for this pickable object
 				for (auto dp : it2->drawables)
 				{
 					if (dp.expired())
@@ -710,6 +734,8 @@ void LevelSelector::handleScrollableScenery()
 
 			bs.levelIndex = objectId;
 			bs.objectId = objectId;
+			bs.scale = 0.0f;
+			bs.selectable = false;
 
 			// Create and save texture
 			{
@@ -767,6 +793,7 @@ void LevelSelector::clickLevelButton(const UnsignedInt id)
 
 	// Set current level identifier
 	mCurrentViewingLevelId = id;
+	mSelectedLevelId = id;
 
 	// Set text for selected level
 	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(id));
@@ -840,6 +867,7 @@ void LevelSelector::windowForCurrentLevelView()
 {
 	const bool& isFinished = mLevelState >= GO_LS_LEVEL_FINISHED;
 	const auto& d = mCbEaseInOut.value(mLevelAnim)[1];
+	const auto& s = mCbEaseInOut.value(mSettingsAnim)[1];
 
 	// Score stars
 	for (UnsignedInt i = 0; i < 3; ++i)
@@ -854,27 +882,39 @@ void LevelSelector::windowForCurrentLevelView()
 	}
 
 	// Level texts
-	mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.15f - d, 0.0f });
+	{
+		const auto& p = mLevelState == GO_LS_LEVEL_STARTED ? s * 0.96f : 0.0f;
+		mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.15f - (d + p), 0.0f });
+	}
 
 	{
-		const auto& c = -1.5f + d * 1.275f;
+		const bool& isStarted = mLevelState == GO_LS_LEVEL_STARTED;
+		const auto& cd = -1.5f + d * 1.275f;
+		const auto& cs = -1.5f + s * 1.275f;
 
 		// Animation for "Replay" button
 		{
-			const auto& p1 = isFinished ? Vector2{ -0.3f, c } : Vector2{ 2.0f };
-			mScreenButtons[GO_LS_GUI_REPLAY].drawable->setPosition(p1);
+			const auto& p1 = isFinished ? Vector2{ -0.3f, cd } : Vector2{ isStarted ? 0.0f : 2.0f };
+			const auto& p2 = isStarted ? Vector2{ 0.2f, cs } : Vector2{ 0.0f };
+			mScreenButtons[GO_LS_GUI_REPLAY].drawable->setPosition(p1 + p2);
 		}
 
 		// Animation for "Next" button
 		{
-			const auto& p1 = isFinished ? Vector2{ 0.0f, c } : Vector2{ 2.0f };
+			const auto& p1 = isFinished ? Vector2{ 0.0f, cd } : Vector2{ 2.0f };
 			mScreenButtons[GO_LS_GUI_NEXT].drawable->setPosition(p1);
 		}
 
 		// Animation for "Share" button
 		{
-			const auto& p1 = isFinished ? Vector2{ 0.3f, c } : Vector2{ 2.0f };
+			const auto& p1 = isFinished ? Vector2{ 0.3f, cd } : Vector2{ 2.0f };
 			mScreenButtons[GO_LS_GUI_SHARE].drawable->setPosition(p1);
+		}
+
+		// Animation for "Exit" button
+		{
+			const auto& p1 = mLevelState == GO_LS_LEVEL_STARTED ? Vector2{ -0.2f, cs } : Vector2{ 2.0f };
+			mScreenButtons[GO_LS_GUI_EXIT].drawable->setPosition(p1);
 		}
 	}
 }
@@ -977,4 +1017,10 @@ void LevelSelector::manageLevelState()
 		auto& gol = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND];
 		gol.cameraEye = { 8.0f, -19.0f, 1.0f + 40.0f * d };
 	}
+}
+
+void LevelSelector::finishCurrentLevel()
+{
+	mLevelState = GO_LS_LEVEL_FINISHED;
+	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(mSelectedLevelId) + " Completed");
 }

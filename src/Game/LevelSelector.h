@@ -18,6 +18,7 @@
 #define GO_LS_GUI_REPLAY 3U
 #define GO_LS_GUI_NEXT 4U
 #define GO_LS_GUI_SHARE 5U
+#define GO_LS_GUI_EXIT 6U
 #define GO_LS_GUI_STAR 100U
 
 #define GO_LS_LEVEL_INIT 0
@@ -63,6 +64,8 @@ private:
 	{
 		std::vector<std::weak_ptr<BaseDrawable>> drawables;
 		Vector3 position;
+		Float scale;
+		bool selectable;
 		UnsignedInt levelIndex;
 		UnsignedInt objectId;
 		Resource<GL::Texture2D> texture;
@@ -94,6 +97,7 @@ private:
 
 	void createLevelRoom();
 	void manageLevelState();
+	void finishCurrentLevel();
 
 	std::shared_ptr<TexturedDrawable<Shaders::Flat3D>> mSkyPlane;
 	Object3D* mSkyManipulator;
@@ -120,6 +124,7 @@ private:
 	std::unordered_map<UnsignedInt, Int> mPickableObjectRefs;
 
 	UnsignedInt mCurrentViewingLevelId;
+	UnsignedInt mSelectedLevelId;
 	UnsignedInt mMaxLevelId;
 	Int mLevelState;
 

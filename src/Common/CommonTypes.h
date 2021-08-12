@@ -23,6 +23,7 @@
 #define RESOURCE_TEXTURE_GUI_REPLAY "tex_gui_replay"
 #define RESOURCE_TEXTURE_GUI_NEXT "tex_gui_next"
 #define RESOURCE_TEXTURE_GUI_SHARE "tex_gui_share"
+#define RESOURCE_TEXTURE_GUI_EXIT "tex_gui_exit"
 #define RESOURCE_TEXTURE_GUI_LEVEL_PANEL "tex_gui_level_panel"
 #define RESOURCE_TEXTURE_GUI_STAR_GRAY "tex_gui_star_gray"
 #define RESOURCE_TEXTURE_GUI_BACK_ARROW "tex_gui_back_arrow"
