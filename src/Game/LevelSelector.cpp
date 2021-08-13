@@ -1091,6 +1091,12 @@ void LevelSelector::manageLevelState()
 
 void LevelSelector::finishCurrentLevel(const bool success)
 {
+	// Prevent player from shooting
+	if (!mLevelInfo.playerPointer.expired())
+	{
+		((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = false;
+	}
+
 	// Reset pointers
 	mLevelInfo.playerPointer.reset();
 	mLevelInfo.limitLinePointer.reset();
