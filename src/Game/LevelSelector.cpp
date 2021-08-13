@@ -59,6 +59,8 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mLevelInfo.state = GO_LS_LEVEL_INIT;
 	}
 
+	mLevelGuiAnim = 0.0f;
+
 	// Create sky plane
 	createSkyPlane();
 
@@ -233,9 +235,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mLevelGuis[GO_LS_GUI_STAR + i] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 	}
 
-	// Create overlay text
+	// Level number text
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST);
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter);
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -243,6 +245,18 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		go->setText("Level X");
 
 		mLevelTexts[GO_LS_TEXT_LEVEL] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+
+	// Time counter text
+	{
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineRight);
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setScale(Vector2(1.25f));
+		go->setText("0s");
+
+		mLevelTexts[GO_LS_TEXT_TIME] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 	}
 
 	// Set camera parameters
@@ -313,6 +327,14 @@ void LevelSelector::update()
 	}
 
 	// Overlay for common
+	if (mLevelGuiAnim < 0.0f)
+	{
+		mLevelGuiAnim += 1.0f;
+	}
+	else
+	{
+		manageBackendAnimationVariable(mLevelGuiAnim, 1.0f, mLevelInfo.state == GO_LS_LEVEL_STARTED);
+	}
 	windowForCommon();
 
 	// Overlay for settings
@@ -890,6 +912,12 @@ void LevelSelector::windowForCommon()
 
 	// Main panel
 	mLevelGuis[GO_LS_GUI_LEVEL_PANEL]->setPosition({ 0.0f, 1.0f - d });
+
+	// Time counter
+	{
+		const auto& s = mCbEaseInOut.value(mLevelGuiAnim)[1];
+		mLevelTexts[GO_LS_TEXT_TIME]->setPosition({ 0.475f, -0.725f + s * 0.25f, 0.0f });
+	}
 }
 
 void LevelSelector::windowForSettings()
@@ -1134,6 +1162,7 @@ void LevelSelector::createLevelRoom()
 
 	// Other variables
 	mLevelStartedAnim = -1.0f; // Cycle waste
+	mLevelGuiAnim = -5.0f; // Cycle waste
 }
 
 void LevelSelector::finishCurrentLevel(const bool success)
