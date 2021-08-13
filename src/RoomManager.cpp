@@ -1,3 +1,5 @@
+#include "RoomManager.h"
+
 #include <vector>
 #include <unordered_set>
 #include <Magnum/Audio/AbstractImporter.h>
@@ -17,7 +19,6 @@
 #include "Game/OverlayGuiDetached.h"
 #include "Game/OverlayText.h"
 #include "Game/LimitLine.h"
-#include "RoomManager.h"
 
 using namespace Magnum::Math::Literals;
 
@@ -159,7 +160,7 @@ void RoomManager::loadRoom(const std::string & name)
 	}
 }
 
-void RoomManager::createLevelRoom()
+void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback)
 {
 	// Delete game level layer
 	mGoLayers[GOL_PERSP_SECOND].list->clear();
@@ -217,27 +218,35 @@ void RoomManager::createLevelRoom()
 		}
 	}
 
+	// Setup projectile parameters
+	const Float len = fSquare * 2.0f; // "2" is the fixed diameter of a "game bubble"
+	{
+		Projectile::setGlobalParameters(1.0f, len);
+	}
+
 	// Create player
 	std::shared_ptr<GameObject> player = nullptr;
 
 	{
-		const auto& p = std::make_shared<Player>(GOL_PERSP_SECOND);
-		p->mPosition = { 8.0f, -35.0f, 0.0f };
+		const auto& p = std::make_shared<Player>(GOL_PERSP_SECOND, shootCallback);
+		p->mPosition = { fSquare, -19.0f - len, 0.0f };
+		p->mCameraDist = 32.0f + fSquare;
 		player = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p, true);
 	}
 
 	// Create limit line, just above the player
 	{
 		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND);
-		p->mPosition = { 8.0f, player->mPosition.y() + 6.0f, 0.0f };
+		p->mPosition = { fSquare, player->mPosition.y() + 6.0f, 0.0f };
 		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
 	}
 
 	// Setup camera for game layers
 	{
+		const auto yp = player->mPosition.y() * 0.5f - 1.0f;
 		auto& gol = mGoLayers[GOL_PERSP_SECOND];
-		gol.cameraEye = { 8.0f, -19.0f, 1.0f };
-		gol.cameraTarget = { 8.0f, -19.0f, 0.0f };
+		gol.cameraEye = { fSquare, yp, 1.0f };
+		gol.cameraTarget = { fSquare, yp, 0.0f };
 	}
 
 	/*

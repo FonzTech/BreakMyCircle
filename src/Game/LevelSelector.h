@@ -37,6 +37,7 @@
 #include <Magnum/Math/Bezier.h>
 
 #include "../GameObject.h"
+#include "../Game/Callbacks/IShootCallback.h"
 #include "../Graphics/BaseDrawable.h"
 #include "OverlayGui.h"
 #include "OverlayText.h"
@@ -44,7 +45,7 @@
 
 using namespace Magnum;
 
-class LevelSelector : public GameObject
+class LevelSelector : public GameObject, public IShootCallback, public std::enable_shared_from_this<LevelSelector>
 {
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
@@ -56,6 +57,8 @@ public:
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
+
+	void shootCallback(const Int state) override;
 
 private:
 	static std::unordered_map<Int, std::array<Vector3, 6>> sLevelButtonPositions;
@@ -85,6 +88,17 @@ private:
 		Float animation; // Factor from 0 to 1
 	};
 
+	struct LS_LevelInfo
+	{
+		UnsignedInt currentViewingLevelId;
+		UnsignedInt selectedLevelId;
+		UnsignedInt maxLevelId;
+		Int state;
+
+		std::weak_ptr<GameObject> playerPointer;
+		std::weak_ptr<GameObject> limitLinePointer;
+	};
+
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);
 	void createSkyPlane();
 	void handleScrollableCameraPosition(const Vector3 & delta);
@@ -98,6 +112,7 @@ private:
 	void createLevelRoom();
 	void manageLevelState();
 	void finishCurrentLevel(const bool success);
+	void checkForLevelEnd();
 
 	std::shared_ptr<GameDrawable<Shaders::Flat3D>> mSkyPlane;
 	Object3D* mSkyManipulator;
@@ -125,10 +140,5 @@ private:
 	std::chrono::system_clock::time_point mClickStartTime;
 	std::unordered_map<UnsignedInt, Int> mPickableObjectRefs;
 
-	UnsignedInt mCurrentViewingLevelId;
-	UnsignedInt mSelectedLevelId;
-	UnsignedInt mMaxLevelId;
-	Int mLevelState;
-
-	std::weak_ptr<GameObject> mPlayerPointer;
+	LS_LevelInfo mLevelInfo;
 };

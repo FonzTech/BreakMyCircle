@@ -49,6 +49,9 @@
     <Filter Include="Source Files\Common\CustomRenderers">
       <UniqueIdentifier>{7e35a17b-d0c1-4ad7-a86b-9150664f62f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Callbacks">
+      <UniqueIdentifier>{2a0ea889-2ccd-4c7e-902e-20b5d88df667}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -244,6 +247,9 @@
     </ClInclude>
     <ClInclude Include="src\Graphics\GameDrawable.h">
       <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game\Callbacks\IShootCallback.h">
+      <Filter>Header Files\Game\Callbacks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -196,6 +196,7 @@
     <ClInclude Include="src\Game\Bubble.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\GameObject.h" />
+    <ClInclude Include="src\Game\Callbacks\IShootCallback.h" />
     <ClInclude Include="src\Game\LevelSelector.h" />
     <ClInclude Include="src\Game\LimitLine.h" />
     <ClInclude Include="src\Game\OverlayGui.h" />

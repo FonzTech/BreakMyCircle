@@ -12,6 +12,17 @@
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
 
+Float Projectile::LEFT_X = 0.0f;
+Float Projectile::RIGHT_X = 0.0f;
+Float Projectile::MID_X = 0.0f;
+
+void Projectile::setGlobalParameters(const Float leftX, const Float rightX)
+{
+	LEFT_X = leftX;
+	RIGHT_X = rightX;
+	MID_X = LEFT_X + (RIGHT_X - LEFT_X) * 0.5f;
+}
+
 std::shared_ptr<GameObject> Projectile::getInstance(const nlohmann::json & params)
 {
 	// No default constructor exists for this class!!
@@ -23,8 +34,6 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 	// Initialize members
 	mAmbientColor = ambientColor;
 	mVelocity = { 0.0f };
-	mLeftX = 1.0f;
-	mRightX = 15.0f;
 	mSpeed = 50.0f;
 
 	updateBBox();
@@ -47,14 +56,14 @@ void Projectile::update()
 	mPosition += mVelocity * mDeltaTime * mSpeed;
 
 	// Bounce against side walls
-	if (mPosition.x() <= mLeftX && mVelocity.x() < 0.0f)
+	if (mPosition.x() <= LEFT_X && mVelocity.x() < 0.0f)
 	{
-		mPosition[0] = mLeftX + 0.01f;
+		mPosition[0] = LEFT_X + 0.01f;
 		mVelocity[0] *= -1.0f;
 	}
-	else if (mPosition.x() > mRightX && mVelocity.x() > 0.0f)
+	else if (mPosition.x() > RIGHT_X && mVelocity.x() > 0.0f)
 	{
-		mPosition[0] = mRightX - 0.01f;
+		mPosition[0] = RIGHT_X - 0.01f;
 		mVelocity[0] *= -1.0f;
 	}
 
@@ -139,6 +148,12 @@ void Projectile::snapToGrid()
 	// Add to room
 	RoomManager::singleton->mGoLayers[mParentIndex].push_back(b);
 
+	// Launch callback
+	if (!mShootCallback.expired())
+	{
+		mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_FINISHED);
+	}
+
 	// Destroy me
 	mDestroyMe = true;
 }
@@ -191,7 +206,7 @@ void Projectile::adjustPosition()
 		return;
 	}
 
-	if (mPosition.x() >= mLeftX + (mRightX - mLeftX) * 0.5f)
+	if (mPosition.x() >= MID_X)
 	{
 		mPosition[0] += toLeftX <= IMPOSSIBLE_PROJECTILE_XPOS ? -2.0f : 2.0f;
 	}

@@ -76,6 +76,11 @@ Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true)
 	}
 }
 
+Player::Player(const Int parentIndex, const std::shared_ptr<IShootCallback> & shootCallback) : Player(parentIndex)
+{
+	mShootCallback = shootCallback;
+}
+
 const Int Player::getType() const
 {
 	return GOT_PLAYER;
@@ -125,7 +130,15 @@ void Player::update()
 				std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mParentIndex, mProjColors[0].rgb());
 				go->mPosition = mPosition;
 				go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
-				RoomManager::singleton->mGoLayers[mParentIndex].push_back(go);
+
+				// Assign shoot callback
+				if (!mShootCallback.expired())
+				{
+					go->mShootCallback = mShootCallback;
+				}
+
+				// Prevent shooting by keeping a reference (also, add the projectile to game object list)
+				mProjectile = RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
 
 				// Update color for next bubble
 				mProjColors[0] = mProjColors[1];
@@ -139,15 +152,18 @@ void Player::update()
 				// Reset animation for new projectile
 				mProjPath->mProgress = Float(mProjPath->getSize());
 
-				// Prevent shooting by keeping a reference
-				mProjectile = (*RoomManager::singleton->mGoLayers[mParentIndex].list).back();
-
 				// Play random sound
 				{
 					const UnsignedInt index = std::rand() % 3;
 					mPlayables[index]->source()
 						.setOffsetInSamples(0)
 						.play();
+				}
+
+				// Launch callback
+				if (!mShootCallback.expired())
+				{
+					mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_STARTED);
 				}
 			}
 		}

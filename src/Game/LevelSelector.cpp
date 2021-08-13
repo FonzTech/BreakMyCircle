@@ -53,9 +53,11 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mLevelStartedAnim = 0.0f;
 	mLevelEndingAnim = false;
 
-	mCurrentViewingLevelId = 0U;
-	mMaxLevelId = 2U;
-	mLevelState = GO_LS_LEVEL_INIT;
+	{
+		mLevelInfo.currentViewingLevelId = 0U;
+		mLevelInfo.maxLevelId = 2U;
+		mLevelInfo.state = GO_LS_LEVEL_INIT;
+	}
 
 	// Create sky plane
 	createSkyPlane();
@@ -73,26 +75,26 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mScreenButtons[GO_LS_GUI_SETTINGS] = {
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 			[this]() {
-				// Avoid click on level ending
+				// Avoid inconsistencies
 				if (mLevelEndingAnim)
 				{
 					return;
 				}
 
 				// Close level details screen
-				if (mCurrentViewingLevelId != 0U)
+				if (mLevelInfo.currentViewingLevelId != 0U)
 				{
-					mCurrentViewingLevelId = 0U;
+					mLevelInfo.currentViewingLevelId = 0U;
 				}
 				// If already closed, open/close the settings window
-				else if (mLevelState < GO_LS_LEVEL_FINISHED)
+				else if (mLevelInfo.state < GO_LS_LEVEL_FINISHED)
 				{
 					mSettingsOpened = !mSettingsOpened;
 					if (mSettingsOpened)
 					{
-						if (!mPlayerPointer.expired())
+						if (!mLevelInfo.playerPointer.expired())
 						{
-							((Player*)mPlayerPointer.lock().get())->mCanShoot = false;
+							((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = false;
 						}
 					}
 
@@ -142,7 +144,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				Debug{} << "You have clicked NEXT";
 
 				// Restore level state to init
-				mLevelState = GO_LS_LEVEL_RESTORING;
+				mLevelInfo.state = GO_LS_LEVEL_RESTORING;
 			},
 			1.0f
 		};
@@ -175,18 +177,18 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 			[this]() {
 				// Check if a level is starting
-				if (mLevelState > GO_LS_LEVEL_INIT)
+				if (mLevelInfo.state > GO_LS_LEVEL_INIT)
 				{
 					return;
 				}
 
 				// Start the selected level
-				Debug{} << "User wants to play level" << mCurrentViewingLevelId;
+				Debug{} << "User wants to play level" << mLevelInfo.currentViewingLevelId;
 
 				mLevelEndingAnim = false;
 
-				mCurrentViewingLevelId = 0U;
-				mLevelState = GO_LS_LEVEL_STARTING;
+				mLevelInfo.currentViewingLevelId = 0U;
+				mLevelInfo.state = GO_LS_LEVEL_STARTING;
 			},
 			1.0f
 		};
@@ -205,7 +207,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				Debug{} << "You have clicked EXIT";
 
 				// Set variable flag for level ending
-				if (mLevelState == GO_LS_LEVEL_STARTED)
+				if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
 				{
 					mLevelEndingAnim = true;
 				}
@@ -266,9 +268,9 @@ const Int LevelSelector::getType() const
 void LevelSelector::update()
 {
 	// Enable or disable player shooting
-	if (!mPlayerPointer.expired())
+	if (mLevelInfo.state == GO_LS_LEVEL_STARTED && !mLevelInfo.playerPointer.expired())
 	{
-		((Player*)mPlayerPointer.lock().get())->mCanShoot = !mSettingsOpened && mSettingsAnim <= 0.001f;
+		((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = !mSettingsOpened && mSettingsAnim <= 0.001f;
 	}
 
 	// Manage level state
@@ -277,11 +279,11 @@ void LevelSelector::update()
 #if NDEBUG or _DEBUG
 	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
 	{
-		if (mPlayerPointer.expired())
+		if (mLevelInfo.playerPointer.expired())
 		{
 			Debug{} << "Level room created";
-
-			createLevelRoom();
+			mLevelInfo.currentViewingLevelId = 1U;
+			mScreenButtons[GO_LS_GUI_PLAY].callback();
 		}
 		else
 		{
@@ -298,7 +300,7 @@ void LevelSelector::update()
 		.translate(mPosition + Vector3(0.0f, 0.0f, -GO_LS_SCENERY_LENGTH_DOUBLE));
 
 	// Check for second layer (the gameplay one)
-	if (mLevelState == GO_LS_LEVEL_FINISHED && mLevelStartedAnim <= 0.0f)
+	if (mLevelInfo.state == GO_LS_LEVEL_FINISHED && mLevelStartedAnim <= 0.0f)
 	{
 		// Delete all objects from the second layer
 		for (auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
@@ -308,7 +310,7 @@ void LevelSelector::update()
 	}
 
 	// Check if there is any on-going action on top
-	if (mLevelState == GO_LS_LEVEL_INIT && RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->size() > 0)
+	if (mLevelInfo.state == GO_LS_LEVEL_INIT && RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->size() > 0)
 	{
 		return;
 	}
@@ -321,7 +323,7 @@ void LevelSelector::update()
 	windowForSettings();
 
 	// Overlay for current level viewing
-	const bool isViewing = mCurrentViewingLevelId != 0U || mLevelState == GO_LS_LEVEL_FINISHED;
+	const bool isViewing = mLevelInfo.currentViewingLevelId != 0U || mLevelInfo.state == GO_LS_LEVEL_FINISHED;
 	manageBackendAnimationVariable(mLevelAnim, 0.8f, isViewing);
 	windowForCurrentLevelView();
 
@@ -380,7 +382,7 @@ void LevelSelector::update()
 	{
 		// Handle scale value
 		{
-			const bool& mode = mLevelState == GO_LS_LEVEL_INIT;
+			const bool& mode = mLevelInfo.state == GO_LS_LEVEL_INIT;
 			manageBackendAnimationVariable(mLevelButtonScaleAnim, mode ? 1.0f : 0.8f, mode);
 		}
 
@@ -420,7 +422,7 @@ void LevelSelector::update()
 	// Handle scrollable scenery
 	if (lbs == IM_STATE_PRESSED)
 	{
-		if (!isViewing && !mSettingsOpened && mLevelState == GO_LS_LEVEL_INIT && !mLevelEndingAnim)
+		if (!isViewing && !mSettingsOpened && mLevelInfo.state == GO_LS_LEVEL_INIT && !mLevelEndingAnim)
 		{
 			mPrevMousePos = InputManager::singleton->mMousePosition;
 			mClickStartTime = std::chrono::system_clock::now();
@@ -523,13 +525,13 @@ void LevelSelector::update()
 							// Trigger level selection
 							if (spo != nullptr)
 							{
-								if (spo->levelIndex < mMaxLevelId)
+								if (spo->levelIndex < mLevelInfo.maxLevelId)
 								{
 									clickLevelButton(spo->levelIndex);
 								}
 								else
 								{
-									Debug{} << "Max level ID is" << mMaxLevelId << "and user has selected level ID" << spo->levelIndex;
+									Debug{} << "Max level ID is" << mLevelInfo.maxLevelId << "and user has selected level ID" << spo->levelIndex;
 								}
 							}
 							else
@@ -590,7 +592,7 @@ void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 	}
 	else
 	{
-		const auto& color = baseDrawable->getObjectId() < mMaxLevelId ? 0xc0c0c0_rgbf : 0x404040_rgbf;
+		const auto& color = baseDrawable->getObjectId() < mLevelInfo.maxLevelId ? 0xc0c0c0_rgbf : 0x404040_rgbf;
 		((Shaders::Phong&)baseDrawable->getShader())
 			.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(0.0f, 6.0f, 0.0f)))
 			.setLightColor(0xc0c0c0_rgbf)
@@ -608,6 +610,19 @@ void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 
 void LevelSelector::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
+}
+
+void LevelSelector::shootCallback(const Int state)
+{
+	switch (state)
+	{
+	case ISC_STATE_SHOOT_STARTED:
+		break;
+
+	case ISC_STATE_SHOOT_FINISHED:
+		checkForLevelEnd();
+		break;
+	}
 }
 
 constexpr void LevelSelector::manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment)
@@ -832,8 +847,8 @@ void LevelSelector::clickLevelButton(const UnsignedInt id)
 	Debug{} << "You have clicked level" << id;
 
 	// Set current level identifier
-	mCurrentViewingLevelId = id;
-	mSelectedLevelId = id;
+	mLevelInfo.currentViewingLevelId = id;
+	mLevelInfo.selectedLevelId = id;
 
 	// Set text for selected level
 	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(id));
@@ -855,21 +870,21 @@ void LevelSelector::windowForSettings()
 	// Animation for "Settings" button
 	{
 		const auto& d2 = mCbEaseInOut.value(mScreenButtons[GO_LS_GUI_SETTINGS].animation)[1];
-		const auto& d3 = mLevelState > GO_LS_LEVEL_INIT ? mCbEaseInOut.value(1.0f - mLevelButtonScaleAnim)[1] : 0.0f;
-		const auto& d4 = mLevelState == GO_LS_LEVEL_RESTORING ? mCbEaseInOut.value(1.0f - mLevelAnim)[1] : 0.0f;
-		const auto& dp = mLevelState < GO_LS_LEVEL_FINISHED ? d + dl : 0.0f;
+		const auto& d3 = mLevelInfo.state > GO_LS_LEVEL_INIT ? mCbEaseInOut.value(1.0f - mLevelButtonScaleAnim)[1] : 0.0f;
+		const auto& d4 = mLevelInfo.state == GO_LS_LEVEL_RESTORING ? mCbEaseInOut.value(1.0f - mLevelAnim)[1] : 0.0f;
+		const auto& dp = mLevelInfo.state < GO_LS_LEVEL_FINISHED ? d + dl : 0.0f;
 
 		const auto& drawable = mScreenButtons[GO_LS_GUI_SETTINGS].drawable;
 
 		// Position
 		{
 			const auto& p1 = Vector2(-0.5f, 0.5f) - Vector2(d2, 0.0f); // Left to right
-			const auto& p2 = (mLevelState == GO_LS_LEVEL_STARTED ? Vector2(0.1f, -0.05f) : Vector2(0.5f, -0.1f)) * dp; // Upper-left to mid-upper-center
+			const auto& p2 = (mLevelInfo.state == GO_LS_LEVEL_STARTED ? Vector2(0.1f, -0.05f) : Vector2(0.5f, -0.1f)) * dp; // Upper-left to mid-upper-center
 			const auto& p3 = Vector2(0.0f, 0.25f) * d2; // Upper-left to outside-top
 			const auto& p4 = Vector2(0.0f, -1.0f) * d3;
-			const auto& p5 = mLevelState == GO_LS_LEVEL_STARTED ? Vector2(0.5f, 0.85f) * d : Vector2(0.0f);
+			const auto& p5 = mLevelInfo.state == GO_LS_LEVEL_STARTED ? Vector2(0.5f, 0.85f) * d : Vector2(0.0f);
 			const auto& p6 = Vector2(-0.1f, 0.94f) * d4;
-			const auto& p7 = mLevelState >= GO_LS_LEVEL_FINISHED ? Vector2(0.0f, -0.2f) * dl : Vector2(0.0f);
+			const auto& p7 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector2(0.0f, -0.2f) * dl : Vector2(0.0f);
 			drawable->setPosition(p1 + p2 + p3 + p4 + p5 + p6 + p7);
 		}
 
@@ -877,7 +892,7 @@ void LevelSelector::windowForSettings()
 		{
 			const auto& p1 = Vector2(1.0f, -1.0f) * (1.0f - dp - d3);
 			const auto& p2 = Vector2(1.0f, 1.0f) * (d3 * (1.0f - d));
-			const auto& p3 = mLevelState == GO_LS_LEVEL_RESTORING ? Vector2(1.0f, -1.0f) * (1.0f - dl) : Vector2(0.0f);
+			const auto& p3 = mLevelInfo.state == GO_LS_LEVEL_RESTORING ? Vector2(1.0f, -1.0f) * (1.0f - dl) : Vector2(0.0f);
 			drawable->setAnchor(p1 + p2 + p3);
 		}
 
@@ -905,7 +920,7 @@ void LevelSelector::windowForSettings()
 
 void LevelSelector::windowForCurrentLevelView()
 {
-	const bool& isFinished = mLevelState >= GO_LS_LEVEL_FINISHED;
+	const bool& isFinished = mLevelInfo.state >= GO_LS_LEVEL_FINISHED;
 	const auto& d = mCbEaseInOut.value(mLevelAnim)[1];
 	const auto& s = mCbEaseInOut.value(mSettingsAnim)[1];
 
@@ -923,12 +938,12 @@ void LevelSelector::windowForCurrentLevelView()
 
 	// Level texts
 	{
-		const auto& p = mLevelState == GO_LS_LEVEL_STARTED ? s * 0.96f : 0.0f;
+		const auto& p = mLevelInfo.state == GO_LS_LEVEL_STARTED ? s * 0.96f : 0.0f;
 		mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.15f - (d + p), 0.0f });
 	}
 
 	{
-		const bool& isStarted = mLevelState == GO_LS_LEVEL_STARTED;
+		const bool& isStarted = mLevelInfo.state == GO_LS_LEVEL_STARTED;
 		const auto& cd = -1.5f + d * 1.275f;
 		const auto& cs = -1.5f + s * 1.275f;
 
@@ -953,7 +968,7 @@ void LevelSelector::windowForCurrentLevelView()
 
 		// Animation for "Exit" button
 		{
-			const auto& p1 = mLevelState == GO_LS_LEVEL_STARTED ? Vector2{ -0.2f, cs } : Vector2{ 2.0f };
+			const auto& p1 = mLevelInfo.state == GO_LS_LEVEL_STARTED ? Vector2{ -0.2f, cs } : Vector2{ 2.0f };
 			mScreenButtons[GO_LS_GUI_EXIT].drawable->setPosition(p1);
 		}
 	}
@@ -962,20 +977,31 @@ void LevelSelector::windowForCurrentLevelView()
 void LevelSelector::createLevelRoom()
 {
 	// Level is started
-	RoomManager::singleton->createLevelRoom();
-	mLevelState = GO_LS_LEVEL_STARTED;
+	RoomManager::singleton->createLevelRoom(shared_from_this());
+	mLevelInfo.state = GO_LS_LEVEL_STARTED;
 
 	// Get player pointer
 	for (const auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
 	{
-		if (go->getType() == GOT_PLAYER)
+		switch (go->getType())
 		{
-			mPlayerPointer = go;
+		case GOT_PLAYER:
+			mLevelInfo.playerPointer = go;
 			break;
+
+		case GOT_LIMIT_LINE:
+			mLevelInfo.limitLinePointer = go;
+			break;
+
+		default:
+			if (!mLevelInfo.playerPointer.expired() && !mLevelInfo.limitLinePointer.expired())
+			{
+				break;
+			}
 		}
 	}
 
-	if (mPlayerPointer.expired())
+	if (mLevelInfo.playerPointer.expired())
 	{
 		Error{} << "The player game object was not found after creating the room";
 	}
@@ -990,7 +1016,7 @@ void LevelSelector::manageLevelState()
 	bool animateCamera = false;
 
 	// Control level state
-	switch (mLevelState)
+	switch (mLevelInfo.state)
 	{
 	case GO_LS_LEVEL_STARTING:
 
@@ -1025,10 +1051,10 @@ void LevelSelector::manageLevelState()
 		animateCamera = true;
 
 		// Prevent player from shooting
-		if (!mPlayerPointer.expired())
+		if (!mLevelInfo.playerPointer.expired())
 		{
 			// Prevent player from shooting
-			((Player*)mPlayerPointer.lock().get())->mCanShoot = false;
+			((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = false;
 		}
 
 		// Control animation
@@ -1040,7 +1066,7 @@ void LevelSelector::manageLevelState()
 		// Reset level state when animation has finished
 		if (mLevelAnim <= 0.0f)
 		{
-			mLevelState = GO_LS_LEVEL_INIT;
+			mLevelInfo.state = GO_LS_LEVEL_INIT;
 		}
 		break;
 	}
@@ -1048,18 +1074,67 @@ void LevelSelector::manageLevelState()
 	// Animate camera, if requested
 	if (animateCamera)
 	{
+		// Animation value
 		const auto& d = mCbEaseInOut.value(mLevelStartedAnim)[1];
 
+		// Get second perspective layer by reference
 		auto& gol = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND];
-		gol.cameraEye = { 8.0f, -19.0f, 1.0f + 40.0f * d };
+
+		// Move Z position by a certain animated value
+		if (!mLevelInfo.playerPointer.expired())
+		{
+			const Float zd = ((std::shared_ptr<Player>&)mLevelInfo.playerPointer)->mCameraDist;
+			gol.cameraEye.data()[2] = 1.0f + zd * d;
+		}
 	}
 }
 
 void LevelSelector::finishCurrentLevel(const bool success)
 {
+	// Reset pointers
+	mLevelInfo.playerPointer.reset();
+	mLevelInfo.limitLinePointer.reset();
+
 	// Set level state as "Finished"
-	mLevelState = GO_LS_LEVEL_FINISHED;
+	mLevelInfo.state = GO_LS_LEVEL_FINISHED;
 
 	// Update text
-	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(mSelectedLevelId) + " " + (success ? "Completed" : "Failed"));
+	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(mLevelInfo.selectedLevelId) + " " + (success ? "Completed" : "Failed"));
+}
+
+void LevelSelector::checkForLevelEnd()
+{
+	// Check for consistency
+	if (mLevelInfo.playerPointer.expired())
+	{
+		Error{} << "weak_ptr for Player has expired. This should not happen.";
+	}
+
+	// Check if any bubble has reached the limit line
+	bool lose = false;
+
+	if (mLevelInfo.limitLinePointer.expired())
+	{
+		Error{} << "weak_ptr for LimitLine has expired. This should not happen.";
+	}
+	else
+	{
+		for (auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
+		{
+			if (go->getType() == GOT_BUBBLE)
+			{
+				if (go->mPosition.y() < mLevelInfo.limitLinePointer.lock()->mPosition.y())
+				{
+					lose = true;
+					break;
+				}
+			}
+		}
+	}
+
+	// Finish current level, if required
+	if (lose)
+	{
+		finishCurrentLevel(false);
+	}
 }

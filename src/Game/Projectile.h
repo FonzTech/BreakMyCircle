@@ -6,11 +6,14 @@
 #include <Magnum/Math/Color.h>
 
 #include "../GameObject.h"
+#include "../Game/Callbacks/IShootCallback.h"
 #include "../Graphics/GameDrawable.h"
 
 class Projectile : public GameObject
 {
 public:
+	static void setGlobalParameters(const Float leftX, const Float rightX);
+
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	Projectile(const Int parentIndex, const Color3& ambientColor);
@@ -21,10 +24,15 @@ public:
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 	void adjustPosition();
 
+	// Class members
 	Color3 mAmbientColor;
 	Vector3 mVelocity;
 
+	// Optionals
+	std::weak_ptr<IShootCallback> mShootCallback;
+
 protected:
+	static Float LEFT_X, RIGHT_X, MID_X;
 
 	void snapToGrid();
 	void updateBBox();
@@ -34,6 +42,5 @@ protected:
 
 	Color3 mDiffuseColor;
 
-	Float mLeftX, mRightX;
 	Float mSpeed;
 };

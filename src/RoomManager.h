@@ -22,6 +22,7 @@
 #include "GameObject.h"
 #include "CollisionManager.h"
 #include "Audio/StreamedAudioPlayable.h"
+#include "Game/Callbacks/IShootCallback.h"
 
 using namespace Magnum;
 
@@ -112,6 +113,6 @@ public:
 	void setup();
 	void prepareRoom(const bool stopBgMusic);
 	void loadRoom(const std::string & name);
-	void createLevelRoom();
+	void createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback);
 	Instantiator getGameObjectFromNoiseValue(const double value);
 };

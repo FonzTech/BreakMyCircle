@@ -9,6 +9,7 @@
 #include <Magnum/Timeline.h>
 
 #include "../GameObject.h"
+#include "../Game/Callbacks/IShootCallback.h"
 #include "../Graphics/BaseDrawable.h"
 #include "../Common/LinePath.h"
 
@@ -18,13 +19,19 @@ public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	Player(const Int parentIndex);
+	Player(const Int parentIndex, const std::shared_ptr<IShootCallback> & shootCallback);
 
 	const Int getType() const override;
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
+	// Class members
 	bool mCanShoot;
+	Float mCameraDist;
+
+	// Optionals
+	std::weak_ptr<IShootCallback> mShootCallback;
 
 protected:
 
