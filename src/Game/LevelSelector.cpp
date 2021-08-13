@@ -126,6 +126,11 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 			[this]() {
 				Debug{} << "You have clicked REPLAY";
+
+				if (mLevelInfo.state == GO_LS_LEVEL_STARTED || mLevelInfo.state == GO_LS_LEVEL_FINISHED)
+				{
+					replayCurrentLevel();
+				}
 			},
 			1.0f
 		};
@@ -188,6 +193,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				mLevelEndingAnim = false;
 
 				mLevelInfo.currentViewingLevelId = 0U;
+				mLevelInfo.repeatLevelId = 0U;
 				mLevelInfo.state = GO_LS_LEVEL_STARTING;
 			},
 			1.0f
@@ -314,24 +320,57 @@ void LevelSelector::update()
 	windowForSettings();
 
 	// Overlay for current level viewing
-	const bool isViewing = mLevelInfo.currentViewingLevelId != 0U || mLevelInfo.state == GO_LS_LEVEL_FINISHED;
+	const bool isViewing = mLevelInfo.currentViewingLevelId != 0U || (mLevelInfo.state == GO_LS_LEVEL_FINISHED && mLevelInfo.repeatLevelId == 0U);
 	manageBackendAnimationVariable(mLevelAnim, 0.8f, isViewing);
 	windowForCurrentLevelView();
 
 	// Control level ending
 	if (mLevelEndingAnim)
 	{
-		// Check for animation end
-		if (mSettingsAnim <= 0.0f)
+		bool closeAll = false;
+
+		// Check for animation end for "Level" window
+		if (mLevelAnim <= 0.0f)
+		{
+			// Repeat level, if required
+			if (mLevelInfo.repeatLevelId != 0U)
+			{
+				// Prepare for replay
+				if (mLevelInfo.state == GO_LS_LEVEL_FINISHED)
+				{
+					closeAll = true;
+					prepareForReplay();
+				}
+			}
+		}
+
+		// Check for animation end for "Settings" window
+		if (!closeAll && mSettingsAnim <= 0.0f)
+		{
+			// Repeat level, if required
+			if (mLevelInfo.repeatLevelId != 0U)
+			{
+				// Prepare for replay
+				if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
+				{
+					closeAll = true;
+					prepareForReplay();
+				}
+			}
+			else
+			{
+				closeAll = true;
+				finishCurrentLevel(false); // Finish current level with "Fail" message
+			}
+		}
+
+		if (closeAll)
 		{
 			// Close settings
 			mSettingsOpened = false;
 
 			// End this transition
 			mLevelEndingAnim = false;
-
-			// Finish current level with "Fail" message
-			finishCurrentLevel(false);
 		}
 	}
 
@@ -968,42 +1007,6 @@ void LevelSelector::windowForCurrentLevelView()
 	}
 }
 
-void LevelSelector::createLevelRoom()
-{
-	// Level is started
-	RoomManager::singleton->createLevelRoom(shared_from_this());
-	mLevelInfo.state = GO_LS_LEVEL_STARTED;
-
-	// Get player pointer
-	for (const auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
-	{
-		switch (go->getType())
-		{
-		case GOT_PLAYER:
-			mLevelInfo.playerPointer = go;
-			break;
-
-		case GOT_LIMIT_LINE:
-			mLevelInfo.limitLinePointer = go;
-			break;
-
-		default:
-			if (!mLevelInfo.playerPointer.expired() && !mLevelInfo.limitLinePointer.expired())
-			{
-				break;
-			}
-		}
-	}
-
-	if (mLevelInfo.playerPointer.expired())
-	{
-		Error{} << "The player game object was not found after creating the room";
-	}
-
-	// Other variables
-	mLevelStartedAnim = -1.0f; // Cycle waste
-}
-
 void LevelSelector::manageLevelState()
 {
 	// Variables for later
@@ -1097,6 +1100,42 @@ void LevelSelector::manageLevelState()
 	}
 }
 
+void LevelSelector::createLevelRoom()
+{
+	// Level is started
+	RoomManager::singleton->createLevelRoom(shared_from_this());
+	mLevelInfo.state = GO_LS_LEVEL_STARTED;
+
+	// Get player pointer
+	for (const auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
+	{
+		switch (go->getType())
+		{
+		case GOT_PLAYER:
+			mLevelInfo.playerPointer = go;
+			break;
+
+		case GOT_LIMIT_LINE:
+			mLevelInfo.limitLinePointer = go;
+			break;
+
+		default:
+			if (!mLevelInfo.playerPointer.expired() && !mLevelInfo.limitLinePointer.expired())
+			{
+				break;
+			}
+		}
+	}
+
+	if (mLevelInfo.playerPointer.expired())
+	{
+		Error{} << "The player game object was not found after creating the room";
+	}
+
+	// Other variables
+	mLevelStartedAnim = -1.0f; // Cycle waste
+}
+
 void LevelSelector::finishCurrentLevel(const bool success)
 {
 	// Prevent player from shooting
@@ -1110,6 +1149,32 @@ void LevelSelector::finishCurrentLevel(const bool success)
 
 	// Update text
 	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(mLevelInfo.selectedLevelId) + " " + (success ? "Completed" : "Failed"));
+}
+
+void LevelSelector::prepareForReplay()
+{
+	// Reset variable for "current viewing level window"
+	mLevelInfo.currentViewingLevelId = mLevelInfo.repeatLevelId;
+
+	// Trigger the level start for the same level
+	mLevelInfo.state = GO_LS_LEVEL_INIT;
+	mScreenButtons[GO_LS_GUI_PLAY].callback();
+}
+
+void LevelSelector::replayCurrentLevel()
+{
+	// Avoid multiple calls
+	if (mSettingsAnim < 1.0f && mLevelAnim < 1.0f)
+	{
+		return;
+	}
+
+	// Restore state
+	mSettingsOpened = false;
+	mLevelInfo.repeatLevelId = mLevelInfo.selectedLevelId;
+
+	// Trigger animation
+	mLevelEndingAnim = true;
 }
 
 void LevelSelector::checkForLevelEnd()

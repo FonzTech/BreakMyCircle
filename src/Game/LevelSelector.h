@@ -91,6 +91,7 @@ private:
 	struct LS_LevelInfo
 	{
 		UnsignedInt currentViewingLevelId;
+		UnsignedInt repeatLevelId;
 		UnsignedInt selectedLevelId;
 		UnsignedInt maxLevelId;
 		Int state;
@@ -109,9 +110,11 @@ private:
 	void windowForSettings();
 	void windowForCurrentLevelView();
 
-	void createLevelRoom();
 	void manageLevelState();
+	void createLevelRoom();
 	void finishCurrentLevel(const bool success);
+	void prepareForReplay();
+	void replayCurrentLevel();
 	void checkForLevelEnd();
 
 	std::shared_ptr<GameDrawable<Shaders::Flat3D>> mSkyPlane;
