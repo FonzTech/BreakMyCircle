@@ -241,8 +241,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Set camera parameters
 	{
+		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 		auto& layer = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
-		layer.cameraEye = mPosition + Vector3(0.0f, 10.0f, 20.0f);
+		layer.cameraEye = mPosition + Vector3(0.0f, 12.0f, 34.0f * ar);
 		layer.cameraTarget = mPosition;
 	}
 
@@ -298,16 +299,6 @@ void LevelSelector::update()
 		.resetTransformation()
 		.scale(Vector3(GO_LS_SCENERY_LENGTH, GO_LS_SCENERY_LENGTH, 1.0f))
 		.translate(mPosition + Vector3(0.0f, 0.0f, -GO_LS_SCENERY_LENGTH_DOUBLE));
-
-	// Check for second layer (the gameplay one)
-	if (mLevelInfo.state == GO_LS_LEVEL_FINISHED && mLevelStartedAnim <= 0.0f)
-	{
-		// Delete all objects from the second layer
-		for (auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
-		{
-			go->mDestroyMe = true;
-		}
-	}
 
 	// Check if there is any on-going action on top
 	if (mLevelInfo.state == GO_LS_LEVEL_INIT && RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->size() > 0)
@@ -920,6 +911,8 @@ void LevelSelector::windowForSettings()
 
 void LevelSelector::windowForCurrentLevelView()
 {
+	const auto& ar = RoomManager::singleton->getWindowAspectRatio();
+
 	const bool& isFinished = mLevelInfo.state >= GO_LS_LEVEL_FINISHED;
 	const auto& d = mCbEaseInOut.value(mLevelAnim)[1];
 	const auto& s = mCbEaseInOut.value(mSettingsAnim)[1];
@@ -927,7 +920,8 @@ void LevelSelector::windowForCurrentLevelView()
 	// Score stars
 	for (UnsignedInt i = 0; i < 3; ++i)
 	{
-		mLevelGuis[GO_LS_GUI_STAR + i]->setPosition({ -0.2f + 0.2f * Float(i), 1.25f - d });
+		const Float xp = 0.2f / (ar / 0.5625f);
+		mLevelGuis[GO_LS_GUI_STAR + i]->setPosition({ -xp + xp * Float(i), 1.25f - d });
 	}
 
 	// Play button
@@ -1047,6 +1041,20 @@ void LevelSelector::manageLevelState()
 
 	case GO_LS_LEVEL_FINISHED:
 
+		// Check for second layer (the gameplay one)
+		if (mLevelStartedAnim <= 0.0f)
+		{
+			// Reset pointers
+			mLevelInfo.playerPointer.reset();
+			mLevelInfo.limitLinePointer.reset();
+
+			// Delete all objects from the second layer
+			for (auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
+			{
+				go->mDestroyMe = true;
+			}
+		}
+
 		// Animate camera
 		animateCamera = true;
 
@@ -1096,10 +1104,6 @@ void LevelSelector::finishCurrentLevel(const bool success)
 	{
 		((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = false;
 	}
-
-	// Reset pointers
-	mLevelInfo.playerPointer.reset();
-	mLevelInfo.limitLinePointer.reset();
 
 	// Set level state as "Finished"
 	mLevelInfo.state = GO_LS_LEVEL_FINISHED;

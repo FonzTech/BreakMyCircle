@@ -44,7 +44,7 @@ void LimitLine::update()
 {
 	(*mManipulator)
 		.resetTransformation()
-		.scale(Vector3(20.0f, 0.25f, 1.0f))
+		.scale(Vector3(100.0f, 0.25f, 1.0f))
 		.translate(Vector3(mPosition));
 }
 

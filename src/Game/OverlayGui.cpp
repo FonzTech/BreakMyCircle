@@ -129,10 +129,13 @@ void OverlayGui::updateAspectRatioFactors()
 
 void OverlayGui::updateTransformations()
 {
-	Vector2 tp(mPosition.xy());
-	tp += Vector2(mAnchor.x() * mArs[0], mAnchor.y() * mArs[1]) * mSize;
+	const Float ar = RoomManager::singleton->getWindowAspectRatio();
+	const Vector2 size = mSize / 1.77f / ar;
 
-	Vector2 ts(mSize.x() * mArs[0], mSize.y() * mArs[1]);
+	Vector2 tp(mPosition.xy());
+	tp += Vector2(mAnchor.x() * mArs[0], mAnchor.y() * mArs[1]) * size;
+
+	Vector2 ts(size.x() * mArs[0], size.y() * mArs[1]);
 
 	(*mManipulator)
 		.resetTransformation()

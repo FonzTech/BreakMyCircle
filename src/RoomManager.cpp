@@ -67,6 +67,11 @@ RoomManager::~RoomManager()
 	clear();
 }
 
+const Float RoomManager::getWindowAspectRatio() const
+{
+	return Vector2(mWindowSize).aspectRatio();
+}
+
 void RoomManager::clear()
 {
 	// Clear all layers and their children
@@ -228,9 +233,10 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	std::shared_ptr<GameObject> player = nullptr;
 
 	{
+		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 		const auto& p = std::make_shared<Player>(GOL_PERSP_SECOND, shootCallback);
 		p->mPosition = { fSquare, -19.0f - len, 0.0f };
-		p->mCameraDist = 32.0f + fSquare;
+		p->mCameraDist = (60.0f * ar) + fSquare;
 		player = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p, true);
 	}
 

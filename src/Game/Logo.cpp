@@ -314,7 +314,8 @@ void Logo::buildAnimations()
 
 void Logo::setCameraParameters()
 {
+	const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 	auto& layer = RoomManager::singleton->mGoLayers[mParentIndex];
-	layer.cameraEye = mPosition + Vector3(0.0f, 0.0f, 6.0f);
+	layer.cameraEye = mPosition + Vector3(0.0f, 0.0f, 10.5f * ar);
 	layer.cameraTarget = mPosition;
 }

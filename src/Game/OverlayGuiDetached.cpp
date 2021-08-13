@@ -33,7 +33,7 @@ const Int OverlayGuiDetached::getType() const
 void OverlayGuiDetached::update()
 {
 	// Update transformation
-	updateTransformations();
+	OverlayGui::update();
 	
 	// Update projection
 	if (mCurrentWindowSize != RoomManager::singleton->mWindowSize)

@@ -109,6 +109,7 @@ public:
 	explicit RoomManager();
 	~RoomManager();
 
+	const Float getWindowAspectRatio() const;
 	void clear();
 	void setup();
 	void prepareRoom(const bool stopBgMusic);
