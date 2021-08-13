@@ -79,7 +79,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 
 	// Create overlay text
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST);
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter);
 		go->mPosition = Vector3(0.0f, -0.25f, 0.0f);
 		go->mColor.data()[3] = 0.0f;
 		go->mOutlineColor.data()[3] = 0.0f;

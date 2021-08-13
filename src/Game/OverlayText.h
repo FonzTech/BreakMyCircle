@@ -21,7 +21,7 @@ public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	// Class members
-	OverlayText(const Int parentIndex);
+	OverlayText(const Int parentIndex, const Text::Alignment & textAlignment);
 
 	const Int getType() const override;
 	void update() override;

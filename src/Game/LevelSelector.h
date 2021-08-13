@@ -11,6 +11,7 @@
 #define GO_LS_MESH_PLATFORM "PlatformV"
 
 #define GO_LS_TEXT_LEVEL 0U
+#define GO_LS_TEXT_TIME 1U
 
 #define GO_LS_GUI_LEVEL_PANEL 0U
 #define GO_LS_GUI_SETTINGS 1U
@@ -144,4 +145,5 @@ private:
 	std::unordered_map<UnsignedInt, Int> mPickableObjectRefs;
 
 	LS_LevelInfo mLevelInfo;
+	Float mLevelGuiAnim;
 };

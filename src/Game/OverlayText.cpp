@@ -14,11 +14,11 @@ std::shared_ptr<GameObject> OverlayText::getInstance(const nlohmann::json & para
 	params.at("parent").get_to(parent);
 
 	// Instantiate scenery object
-	std::shared_ptr<OverlayText> p = std::make_shared<OverlayText>(parent);
+	std::shared_ptr<OverlayText> p = std::make_shared<OverlayText>(parent, Text::Alignment::MiddleCenter);
 	return p;
 }
 
-OverlayText::OverlayText(const Int parentIndex) : GameObject(parentIndex), mScale{1.0f}, mCurrentWindowSize{ 0, 0 }
+OverlayText::OverlayText(const Int parentIndex, const Text::Alignment & textAlignment) : GameObject(parentIndex), mScale{1.0f}, mCurrentWindowSize{ 0, 0 }
 {
 	// Init members
 	mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -28,7 +28,7 @@ OverlayText::OverlayText(const Int parentIndex) : GameObject(parentIndex), mScal
 	// Load assets
 	mFontHolder = CommonUtility::singleton->loadFont(RESOURCE_FONT_UBUNTU_TITLE);
 
-	mText.reset(new Text::Renderer2D(*mFontHolder->font, *mFontHolder->cache, 32.0f, Text::Alignment::MiddleCenter));
+	mText.reset(new Text::Renderer2D(*mFontHolder->font, *mFontHolder->cache, 32.0f, textAlignment));
 	mText->reserve(40, GL::BufferUsage::DynamicDraw, GL::BufferUsage::StaticDraw);
 
 	mShader = getShader();

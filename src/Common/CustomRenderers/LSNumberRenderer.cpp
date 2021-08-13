@@ -10,7 +10,7 @@ LSNumberRenderer::LSNumberRenderer(const Int parentIndex, const Vector2i & size,
 	mOverlayGui->setAnchor({ 0.0f, 0.0f });
 
 	// Create overlay text
-	mOverlayText = std::make_shared<OverlayText>(-1);
+	mOverlayText = std::make_shared<OverlayText>(-1, Text::Alignment::MiddleCenter);
 	mOverlayText->mPosition = Vector3(0.0f);
 	mOverlayText->setScale(Vector2(0.055f - 0.01f * Float(text.length())));
 	mOverlayText->mColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
