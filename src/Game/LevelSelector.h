@@ -130,6 +130,8 @@ private:
 	void replayCurrentLevel();
 	void checkForLevelEnd();
 
+	void closeDialog();
+
 	std::weak_ptr<Dialog> mDialog;
 
 	std::shared_ptr<GameDrawable<Shaders::Flat3D>> mSkyPlane;

@@ -141,15 +141,21 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				}
 
 				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
-				o->setText("Do you really want to\nrestart this level?");
+				o->setMessage("Do you really\nwant to restart\nthis level?");
+				o->addAction("Yes", [this]() {
+					Debug{} << "You have clicked YES to REPLAY";
+					if (mLevelInfo.state == GO_LS_LEVEL_STARTED || mLevelInfo.state == GO_LS_LEVEL_FINISHED)
+					{
+						closeDialog();
+						replayCurrentLevel();
+					}
+				});
+				o->addAction("No", [this]() {
+					Debug{} << "You have clicked NO to REPLAY";
+					closeDialog();
+				});
 
 				mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
-				/*
-				if (mLevelInfo.state == GO_LS_LEVEL_STARTED || mLevelInfo.state == GO_LS_LEVEL_FINISHED)
-				{
-					replayCurrentLevel();
-				}
-				*/
 			},
 			1.0f
 		};
@@ -315,6 +321,35 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 LevelSelector::~LevelSelector()
 {
+	// Destroy all of the owned game objects
+	for (auto& item : mLevelGuis)
+	{
+		item.second->mDestroyMe = true;
+	}
+
+	for (auto& item : mLevelTexts)
+	{
+		item.second->mDestroyMe = true;
+	}
+
+	for (auto& item : mSceneries)
+	{
+		item.second.scenery->mDestroyMe = true;
+	}
+
+	for (auto& item : mScreenButtons)
+	{
+		item.second.drawable->mDestroyMe = true;
+	}
+
+	// Destroy dialog, if present
+	if (!mDialog.expired())
+	{
+		mDialog.lock()->mDestroyMe = true;
+		mDialog.reset();
+	}
+
+	// Clear all maps
 	mScreenButtons.clear();
 	mLevelGuis.clear();
 	mLevelTexts.clear();
@@ -330,7 +365,8 @@ const Int LevelSelector::getType() const
 
 void LevelSelector::update()
 {
-	// Check if any dialog is active
+	// Manage player "can shoot" state
+	if (!mLevelInfo.playerPointer.expired())
 	{
 		Int canShoot = 0;
 		if (!mDialog.expired())
@@ -339,14 +375,20 @@ void LevelSelector::update()
 		}
 		else if (mLevelInfo.state == GO_LS_LEVEL_STARTED && !mLevelInfo.playerPointer.expired())
 		{
-			canShoot = !mSettingsOpened && mSettingsAnim <= 0.001f ? 2 : 1;
+			canShoot = !mSettingsOpened && mSettingsAnim <= 0.001f ? 1 : 2;
 		}
 
 		// Enable or disable player shooting
 		if (canShoot != 0)
 		{
-			((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = canShoot == 2;
+			((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = canShoot == 1;
 		}
+	}
+
+	// Check if any dialog is active
+	if (!mDialog.expired())
+	{
+		return;
 	}
 
 	// Manage level state
@@ -1349,5 +1391,18 @@ void LevelSelector::checkForLevelEnd()
 	if (lose)
 	{
 		finishCurrentLevel(false);
+	}
+}
+
+void LevelSelector::closeDialog()
+{
+	if (mDialog.expired())
+	{
+		Debug{} << "Dialog pointer has already expired";
+	}
+	else
+	{
+		mDialog.lock()->closeDialog();
+		mDialog.reset();
 	}
 }
