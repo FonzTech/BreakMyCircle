@@ -673,7 +673,13 @@ void LevelSelector::shootCallback(const Int state)
 		break;
 
 	case ISC_STATE_SHOOT_FINISHED:
-		checkForLevelEnd();
+		/*
+			We have to delay the "Level Fail" state, because when a bubble is hit
+			when a group is at the bottom, the game will think you failed the level.
+			Instead, we waste "just a single" cycle to let the bubble explode, then
+			make all the required checks to decide if the player has failed the level.
+		*/
+		mLevelInfo.delayedLose = true;
 		break;
 	}
 }
@@ -1073,7 +1079,7 @@ void LevelSelector::manageLevelState()
 		if (mLevelInfo.delayedLose)
 		{
 			mLevelInfo.delayedLose = false;
-			finishCurrentLevel(false);
+			checkForLevelEnd();
 		}
 
 		break;
@@ -1247,6 +1253,6 @@ void LevelSelector::checkForLevelEnd()
 	// Finish current level, if required
 	if (lose)
 	{
-		mLevelInfo.delayedLose = true;
+		finishCurrentLevel(false);
 	}
 }
