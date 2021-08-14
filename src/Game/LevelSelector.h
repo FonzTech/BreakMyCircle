@@ -12,6 +12,7 @@
 
 #define GO_LS_TEXT_LEVEL 0U
 #define GO_LS_TEXT_TIME 1U
+#define GO_LS_TEXT_COIN 2U
 
 #define GO_LS_GUI_LEVEL_PANEL 0U
 #define GO_LS_GUI_SETTINGS 1U
@@ -20,6 +21,7 @@
 #define GO_LS_GUI_NEXT 4U
 #define GO_LS_GUI_SHARE 5U
 #define GO_LS_GUI_EXIT 6U
+#define GO_LS_GUI_COIN 7U
 #define GO_LS_GUI_STAR 100U
 
 #define GO_LS_LEVEL_INIT 0
@@ -96,12 +98,18 @@ private:
 		UnsignedInt selectedLevelId;
 		UnsignedInt maxLevelId;
 		Int state;
-		Float timer;
 
 		std::weak_ptr<GameObject> playerPointer;
 		std::weak_ptr<GameObject> limitLinePointer;
 
 		bool delayedLose;
+	};
+
+	template <typename S, typename T>
+	struct LS_CachedVariable
+	{
+		S value;
+		T cached;
 	};
 
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);
@@ -149,5 +157,7 @@ private:
 
 	LS_LevelInfo mLevelInfo;
 	Float mLevelGuiAnim;
-	Int mCachedTimer;
+
+	LS_CachedVariable<Float, Int> mTimer;
+	LS_CachedVariable<Int, Int> mCoins;
 };

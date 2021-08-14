@@ -57,10 +57,12 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	{
 		mLevelInfo.currentViewingLevelId = 0U;
 		mLevelInfo.maxLevelId = 2U;
-		mLevelInfo.timer = 0.0f;
 		mLevelInfo.state = GO_LS_LEVEL_INIT;
+	}
 
-		mCachedTimer = 0;
+	{
+		mTimer = { 0.0f, 0 };
+		mCoins = { 0, 0 };
 	}
 
 	mLevelGuiAnim = 0.0f;
@@ -200,9 +202,10 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 				mLevelInfo.currentViewingLevelId = 0U;
 				mLevelInfo.repeatLevelId = 0U;
-				mLevelInfo.timer = 10.0f;
 				mLevelInfo.delayedLose = false;
 				mLevelInfo.state = GO_LS_LEVEL_STARTING;
+
+				mTimer.value = 25.0f;
 			},
 			1.0f
 		};
@@ -241,6 +244,16 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mLevelGuis[GO_LS_GUI_STAR + i] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 	}
 
+	// Coin icon
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_COIN);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.0625f, 0.0625f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mLevelGuis[GO_LS_GUI_COIN] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+
 	// Level number text
 	{
 		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter);
@@ -263,6 +276,18 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		go->setText("0s");
 
 		mLevelTexts[GO_LS_TEXT_TIME] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+
+	// Coin counter text
+	{
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineLeft);
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setScale(Vector2(1.15f));
+		go->setText("0");
+
+		mLevelTexts[GO_LS_TEXT_COIN] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 	}
 
 	// Set camera parameters
@@ -921,15 +946,17 @@ void LevelSelector::clickLevelButton(const UnsignedInt id)
 void LevelSelector::windowForCommon()
 {
 	const auto& d = mCbEaseInOut.value(mSettingsAnim + mLevelAnim)[1];
+	const auto& s = mCbEaseInOut.value(mLevelGuiAnim)[1];
 
 	// Main panel
 	mLevelGuis[GO_LS_GUI_LEVEL_PANEL]->setPosition({ 0.0f, 1.0f - d });
 
+	// Coin icon and text
+	mLevelGuis[GO_LS_GUI_COIN]->setPosition({ -0.425f, 0.65f - s * 0.19f });
+	mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.36f, 0.65f - s * 0.22f, 0.0f });
+
 	// Time counter
-	{
-		const auto& s = mCbEaseInOut.value(mLevelGuiAnim)[1];
-		mLevelTexts[GO_LS_TEXT_TIME]->setPosition({ 0.475f, -0.725f + s * 0.25f, 0.0f });
-	}
+	mLevelTexts[GO_LS_TEXT_TIME]->setPosition({ 0.475f, -0.725f + s * 0.25f, 0.0f });
 }
 
 void LevelSelector::windowForSettings()
@@ -1071,19 +1098,34 @@ void LevelSelector::manageLevelState()
 		animateCamera = true;
 
 		// Decrement timer
-		if (mLevelInfo.timer < 0.0f)
+		if (mTimer.value < 0.0f)
 		{
 			checkForLevelEnd();
 		}
 		else if (!mSettingsOpened)
 		{
-			mLevelInfo.timer -= mDeltaTime;
-			
-			const Int timerInt(Math::floor(mLevelInfo.timer));
-			if (timerInt != mCachedTimer)
+			// Decrement only when "Start Level" animation has finished
+			if (mLevelStartedAnim >= 1.0f)
 			{
-				mCachedTimer = timerInt;
-				const auto& str = mCachedTimer >= 0 ? std::to_string(mCachedTimer) + "s" : ":(";
+				mTimer.value -= mDeltaTime;
+			}
+			
+			// Update timer text
+			const Int timerInt(Math::floor(mTimer.value));
+			if (timerInt != mTimer.cached)
+			{
+				mTimer.cached = timerInt;
+				const auto& str = mTimer.cached >= 0 ? std::to_string(mTimer.cached) + "s" : ":(";
+				mLevelTexts[GO_LS_TEXT_TIME]->setText(str);
+			}
+		}
+
+		// Update coin counter
+		{
+			if (mCoins.value != mCoins.cached)
+			{
+				mCoins.value = mCoins.cached;
+				const auto& str = std::to_string(mCoins.value);
 				mLevelTexts[GO_LS_TEXT_TIME]->setText(str);
 			}
 		}
@@ -1258,7 +1300,7 @@ void LevelSelector::checkForLevelEnd()
 	}
 
 	// Check if any bubble has reached the limit line
-	bool lose = mLevelInfo.timer < 0.0f;
+	bool lose = mTimer.value < 0.0f;
 
 	if (mLevelInfo.limitLinePointer.expired())
 	{
