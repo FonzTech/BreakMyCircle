@@ -196,6 +196,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 				mLevelInfo.currentViewingLevelId = 0U;
 				mLevelInfo.repeatLevelId = 0U;
+				mLevelInfo.delayedLose = false;
 				mLevelInfo.state = GO_LS_LEVEL_STARTING;
 			},
 			1.0f
@@ -1068,6 +1069,13 @@ void LevelSelector::manageLevelState()
 			manageBackendAnimationVariable(mLevelStartedAnim, 1.0f, !mLevelEndingAnim);
 		}
 
+		// Finish this level (after I wasted a cycle)
+		if (mLevelInfo.delayedLose)
+		{
+			mLevelInfo.delayedLose = false;
+			finishCurrentLevel(false);
+		}
+
 		break;
 
 	case GO_LS_LEVEL_FINISHED:
@@ -1239,6 +1247,6 @@ void LevelSelector::checkForLevelEnd()
 	// Finish current level, if required
 	if (lose)
 	{
-		finishCurrentLevel(false);
+		mLevelInfo.delayedLose = true;
 	}
 }

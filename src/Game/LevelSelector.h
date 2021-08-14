@@ -99,6 +99,8 @@ private:
 
 		std::weak_ptr<GameObject> playerPointer;
 		std::weak_ptr<GameObject> limitLinePointer;
+
+		bool delayedLose;
 	};
 
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);
