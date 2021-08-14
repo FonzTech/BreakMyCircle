@@ -27,8 +27,10 @@ private:
 	// List of layers
 	static const Int GO_LAYERS[];
 
+#ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
 	// List of intrinstic game objects
-	static const std::unordered_set<Int> INTRINSIC_GAME_OBJECTS;
+	static const std::unordered_set<Int> GO_DRAW_DETACHED;
+#endif
 
 	// Application methods
 	void drawEvent() override;

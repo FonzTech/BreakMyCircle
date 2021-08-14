@@ -18,7 +18,7 @@ std::shared_ptr<GameObject> OverlayGui::getInstance(const nlohmann::json & param
 	return p;
 }
 
-OverlayGui::OverlayGui(const Int parentIndex) : GameObject(parentIndex), mOpacity(1.0f), mRotation(Deg(0.0f))
+OverlayGui::OverlayGui(const Int parentIndex) : GameObject(parentIndex), mColor(1.0f, 1.0f, 1.0f, 1.0f), mRotation(Deg(0.0f))
 {
 }
 
@@ -56,7 +56,8 @@ void OverlayGui::draw(BaseDrawable* baseDrawable, const Matrix4& transformationM
 	((Shaders::Flat3D&) baseDrawable->getShader())
 		.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 		.bindTexture(*baseDrawable->mTexture)
-		.setColor({ 1.0f, 1.0f, 1.0, mOpacity })
+		.setColor(mColor)
+		.setAlphaMask(0.001f)
 		.draw(*baseDrawable->mMesh);
 }
 
@@ -88,9 +89,9 @@ void OverlayGui::setAnchor(const Vector2 & anchor)
 	mAnchor = anchor;
 }
 
-void OverlayGui::setOpacity(const Float opacity)
+void OverlayGui::setColor(const Color4 & color)
 {
-	mOpacity = opacity;
+	mColor = color;
 }
 
 Range3D OverlayGui::getBoundingBox(const Vector2 & windowSize)

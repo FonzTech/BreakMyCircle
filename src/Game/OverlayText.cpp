@@ -1,8 +1,10 @@
 #include "OverlayText.h"
 
+#include <Magnum/Math/Tags.h>
 #include <Magnum/Primitives/Plane.h>
 #include <Magnum/MeshTools/Interleave.h>
 #include <Magnum/MeshTools/CompressIndices.h>
+#include <Magnum/GL/Renderer.h>
 
 #include "../RoomManager.h"
 #include "../InputManager.h"
@@ -18,7 +20,7 @@ std::shared_ptr<GameObject> OverlayText::getInstance(const nlohmann::json & para
 	return p;
 }
 
-OverlayText::OverlayText(const Int parentIndex, const Text::Alignment & textAlignment) : GameObject(parentIndex), mScale{1.0f}, mCurrentWindowSize{ 0, 0 }
+OverlayText::OverlayText(const Int parentIndex, const Text::Alignment & textAlignment) : GameObject(parentIndex), mScale{1.0f}
 {
 	// Init members
 	mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -31,7 +33,12 @@ OverlayText::OverlayText(const Int parentIndex, const Text::Alignment & textAlig
 	mText.reset(new Text::Renderer2D(*mFontHolder->font, *mFontHolder->cache, 32.0f, textAlignment));
 	mText->reserve(40, GL::BufferUsage::DynamicDraw, GL::BufferUsage::StaticDraw);
 
-	mShader = getShader();
+	// Create dummy drawable
+	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
+	std::shared_ptr<GameDrawable<Shaders::DistanceFieldVector2D>> td = std::make_shared<GameDrawable<Shaders::DistanceFieldVector2D>>(*drawables, getShader());
+	td->setParent(mManipulator.get());
+	td->setDrawCallback(this);
+	mDrawables.emplace_back(td);
 }
 
 const Int OverlayText::getType() const
@@ -52,14 +59,9 @@ void OverlayText::update()
 
 void OverlayText::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	drawDetached();
-}
-
-void OverlayText::drawDetached()
-{
 	if (mColor.a() > 0.0f || mOutlineColor.a() > 0.0f)
 	{
-		(*mShader)
+		((Shaders::DistanceFieldVector2D&)mDrawables.at(0)->getShader())
 			.bindVectorTexture(mFontHolder->cache->texture())
 			.setTransformationProjectionMatrix(mProjectionMatrix * mTransformationMatrix)
 			.setColor(mColor)
@@ -72,6 +74,11 @@ void OverlayText::drawDetached()
 
 void OverlayText::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
+}
+
+void OverlayText::drawDetached()
+{
+	draw(mDrawables.at(0).get(), Matrix4(Magnum::NoInit), *RoomManager::singleton->mCamera);
 }
 
 void OverlayText::setText(const std::string & text)
@@ -94,6 +101,12 @@ void OverlayText::setScale(const Vector2 & scale)
 void OverlayText::updateTransformation()
 {
 	mTransformationMatrix = Matrix3::translation(mCurrentFloatWindowSize * mPosition.xy()) * Matrix3::scaling(mScale);
+	/*
+	(*mManipulator)
+		.resetTransformation()
+		.scale(mScale)
+		.translate(mPosition);
+	*/
 }
 
 Resource<GL::AbstractShaderProgram, Shaders::DistanceFieldVector2D> OverlayText::getShader()

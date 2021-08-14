@@ -26,7 +26,7 @@ public:
 	void setSize(const Vector2 & size);
 	void setRotationInDegrees(const Float rotation);
 	void setAnchor(const Vector2 & anchor);
-	void setOpacity(const Float opacity);
+	void setColor(const Color4 & color);
 	Range3D getBoundingBox(const Vector2 & windowSize);
 
 	const Resource<GL::Texture2D> & getTextureResource() const;
@@ -37,7 +37,7 @@ protected:
 	void updateTransformations();
 
 	Float mArs[2];
-	Float mOpacity;
+	Color4 mColor;
 	Rad mRotation;
 	Vector2 mSize;
 	Vector2 mAnchor;

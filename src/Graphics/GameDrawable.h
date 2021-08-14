@@ -11,6 +11,13 @@ class GameDrawable : public BaseDrawable
 {
 public:
 	template <class ShaderType>
+	explicit GameDrawable(SceneGraph::DrawableGroup3D& group, const Resource<GL::AbstractShaderProgram, ShaderType>& shader) : BaseDrawable{ group }
+	{
+		mShader = shader;
+		mDrawCallback = nullptr;
+	}
+
+	template <class ShaderType>
 	explicit GameDrawable(SceneGraph::DrawableGroup3D& group, const Resource<GL::AbstractShaderProgram, ShaderType>& shader, const Resource<GL::Mesh>& mesh) : BaseDrawable{ group }
 	{
 		mShader = shader;

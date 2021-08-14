@@ -44,8 +44,6 @@ protected:
 	Resource<FontHolder> mFontHolder;
 	Containers::Pointer<Text::Renderer2D> mText;
 
-	Resource<GL::AbstractShaderProgram, Shaders::DistanceFieldVector2D> mShader;
-
 	Vector2i mCurrentWindowSize;
 	Vector2 mCurrentFloatWindowSize;
 

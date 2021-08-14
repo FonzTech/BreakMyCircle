@@ -49,15 +49,16 @@ void OverlayGuiDetached::draw(BaseDrawable* baseDrawable, const Matrix4& transfo
 	drawDetached();
 }
 
+void OverlayGuiDetached::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
+{
+}
+
 void OverlayGuiDetached::drawDetached()
 {
 	(*mShader)
 		.setTransformationProjectionMatrix(mProjectionMatrix * mManipulator->transformation())
 		.bindTexture(*mTexture)
-		.setColor({ 1.0f, 1.0f, 1.0, mOpacity })
+		.setColor(mColor)
+		.setAlphaMask(0.001f)
 		.draw(*mMesh);
-}
-
-void OverlayGuiDetached::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
 }

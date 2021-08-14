@@ -162,6 +162,7 @@
     <ClCompile Include="src\Common\AbstractCustomRenderer.cpp" />
     <ClCompile Include="src\Common\CustomRenderers\LSNumberRenderer.cpp" />
     <ClCompile Include="src\Game\Bubble.cpp" />
+    <ClCompile Include="src\Game\Dialog.cpp" />
     <ClCompile Include="src\Game\LevelSelector.cpp" />
     <ClCompile Include="src\Game\LimitLine.cpp" />
     <ClCompile Include="src\Game\OverlayGui.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\GameObject.h" />
     <ClInclude Include="src\Game\Callbacks\IShootCallback.h" />
+    <ClInclude Include="src\Game\Dialog.h" />
     <ClInclude Include="src\Game\LevelSelector.h" />
     <ClInclude Include="src\Game\LimitLine.h" />
     <ClInclude Include="src\Game\OverlayGui.h" />

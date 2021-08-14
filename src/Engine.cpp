@@ -22,9 +22,11 @@ const Int Engine::GO_LAYERS[] = {
 	GOL_ORTHO_FIRST
 };
 
-const std::unordered_set<Int> Engine::INTRINSIC_GAME_OBJECTS = {
+#ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
+const std::unordered_set<Int> Engine::GO_DRAW_DETACHED = {
 	GOT_OVERLAY_TEXT
 };
+#endif
 
 Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
 {
@@ -40,6 +42,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	// GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
 	GL::Renderer::enable(GL::Renderer::Feature::Blending);
 	// GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 	GL::Renderer::setBlendEquation(GL::Renderer::BlendEquation::Add, GL::Renderer::BlendEquation::Add);
 
 	// Set clear color
@@ -149,10 +152,13 @@ void Engine::tickEvent()
 		}
 
 		// Draw all game objects on this layer
+#ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
 		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+#endif
 		drawEvent();
 
 		// Check for special actions
+#ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
 		if (index == GOL_ORTHO_FIRST)
 		{
 			// Set specific blend function for text
@@ -166,12 +172,13 @@ void Engine::tickEvent()
 			for (UnsignedInt i = 0; i < gos->size(); ++i)
 			{
 				std::shared_ptr<GameObject> & go = gos->at(i);
-				if (INTRINSIC_GAME_OBJECTS.find(go->getType()) != INTRINSIC_GAME_OBJECTS.end())
+				if (GO_DRAW_DETACHED.find(go->getType()) != GO_DRAW_DETACHED.end())
 				{
-					((std::shared_ptr<OverlayText>&)go)->drawDetached();
+					((std::shared_ptr<IDrawDetached>&)go)->drawDetached();
 				}
 			}
 		}
+#endif
 
 		// De-reference game object layer
 		currentGol = nullptr;
@@ -185,7 +192,9 @@ void Engine::tickEvent()
 			.bind();
 
 		// Redraw
+#ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
 		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+#endif
 		drawEvent();
 	}
 
