@@ -234,8 +234,8 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	{
 		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 		const auto& p = std::make_shared<Player>(GOL_PERSP_SECOND, shootCallback);
-		p->mPosition = { fSquare, -19.0f - len, 0.0f };
-		p->mCameraDist = (60.0f * ar) + fSquare;
+		p->mPosition = { fSquare, -13.0f - len, 0.0f };
+		p->mCameraDist = (50.0f / (1.0f / ar) * 0.95f) + fSquare;
 		player = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p, true);
 	}
 
