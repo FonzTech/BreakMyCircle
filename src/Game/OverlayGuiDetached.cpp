@@ -54,6 +54,7 @@ void OverlayGuiDetached::drawDetached()
 	(*mShader)
 		.setTransformationProjectionMatrix(mProjectionMatrix * mManipulator->transformation())
 		.bindTexture(*mTexture)
+		.setColor({ 1.0f, 1.0f, 1.0, mOpacity })
 		.draw(*mMesh);
 }
 
