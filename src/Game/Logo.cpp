@@ -181,11 +181,11 @@ void Logo::update()
 		// Handle logo light effect
 		mLightPosition += Vector3(0.0f, mLightDirection ? -4.0f : 4.0f, 0.0f) * mDeltaTime;
 
-		if (mLightPosition.y() > 12.0f)
+		if (mLightPosition.y() > 11.0f)
 		{
 			mLightDirection = true;
 		}
-		else if (mLightPosition.y() < -4.0f)
+		else if (mLightPosition.y() < -1.0f)
 		{
 			mLightDirection = false;
 		}

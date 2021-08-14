@@ -11,6 +11,7 @@
 #include "../Common/CommonUtility.h"
 #include "../Common/CustomRenderers/LSNumberRenderer.h"
 #include "../Game/Player.h"
+#include "../Game/LimitLine.h"
 
 std::shared_ptr<GameObject> LevelSelector::getInstance(const nlohmann::json & params)
 {
@@ -1158,7 +1159,13 @@ void LevelSelector::createLevelRoom()
 			break;
 
 		case GOT_LIMIT_LINE:
-			mLevelInfo.limitLinePointer = go;
+		{
+			const std::shared_ptr<LimitLine>& line = (std::shared_ptr<LimitLine>&)go;
+			if (line->getCustomType() == 1)
+			{
+				mLevelInfo.limitLinePointer = go;
+			}
+		}
 			break;
 
 		default:

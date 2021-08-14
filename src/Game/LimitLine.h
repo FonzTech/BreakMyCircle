@@ -8,14 +8,20 @@
 class LimitLine : public GameObject
 {
 public:
-	static Color4 RED_COLOR;
-
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	LimitLine(const Int parentIndex);
+	LimitLine(const Int parentIndex, const Color4 & color, const Int customType);
 
 	const Int getType() const override;
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
+
+	const Int getCustomType() const;
+	const void setScale(const Vector3 & scale);
+
+protected:
+	Color4 mColor;
+	Int mCustomType;
+	Vector3 mScale;
 };

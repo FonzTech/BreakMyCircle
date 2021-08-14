@@ -7,18 +7,18 @@
 
 using namespace Magnum;
 
-Color4 LimitLine::RED_COLOR = Color4(1.0f, 0.0f, 0.0f, 1.0f);
-
 std::shared_ptr<GameObject> LimitLine::getInstance(const nlohmann::json & params)
 {
 	// No default constructor exists for this class!!
 	return nullptr;
 }
 
-LimitLine::LimitLine(const Int parentIndex) : GameObject(parentIndex)
+LimitLine::LimitLine(const Int parentIndex, const Color4 & color, const Int customType) : GameObject(parentIndex)
 {
 	// Assign members
 	mParentIndex = parentIndex;
+	mColor = color;
+	mCustomType = customType;
 
 	// Get assets
 	Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForFlatShader();
@@ -28,7 +28,7 @@ LimitLine::LimitLine(const Int parentIndex) : GameObject(parentIndex)
 	// Create drawable
 	auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;
 
-	const std::shared_ptr<GameDrawable<Shaders::Flat3D>> td = std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, RED_COLOR);
+	const std::shared_ptr<GameDrawable<Shaders::Flat3D>> td = std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, mColor);
 	td->mTexture = texture;
 	td->setParent(mManipulator.get());
 	td->setDrawCallback(this);
@@ -44,7 +44,7 @@ void LimitLine::update()
 {
 	(*mManipulator)
 		.resetTransformation()
-		.scale(Vector3(100.0f, 0.25f, 1.0f))
+		.scale(mScale)
 		.translate(Vector3(mPosition));
 }
 
@@ -53,10 +53,21 @@ void LimitLine::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMa
 	((Shaders::Flat3D&) baseDrawable->getShader())
 		.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 		.setColor(baseDrawable->mColor)
+		.setAlphaMask(0.1f)
 		.bindTexture(*baseDrawable->mTexture)
 		.draw(*baseDrawable->mMesh);
 }
 
 void LimitLine::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
+}
+
+const Int LimitLine::getCustomType() const
+{
+	return mCustomType;
+}
+
+const void LimitLine::setScale(const Vector3 & scale)
+{
+	mScale = scale;
 }

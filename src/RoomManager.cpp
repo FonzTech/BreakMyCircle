@@ -226,7 +226,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	// Setup projectile parameters
 	const Float len = fSquare * 2.0f; // "2" is the fixed diameter of a "game bubble"
 	{
-		Projectile::setGlobalParameters(1.0f, len);
+		Projectile::setGlobalParameters(1.0f, len - 1.0f);
 	}
 
 	// Create player
@@ -240,16 +240,29 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 		player = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p, true);
 	}
 
-	// Create limit line, just above the player
+	// Get middle Y position
+	const auto yp = player->mPosition.y() * 0.5f - 1.0f;
+
+	// Create player limit line, just above the player
 	{
-		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND);
+		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 1.0f, 0.0f, 0.0f, 1.0f }, 1);
 		p->mPosition = { fSquare, player->mPosition.y() + 6.0f, 0.0f };
+		p->setScale(Vector3(100.0f, 0.2f, 1.0f));
+		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
+	}
+
+	// Create left limit line
+	for (UnsignedInt i = 0; i < 2; ++i)
+	{
+		const Float xp = i ? len + 50.0f : -50.0f;
+		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 0.0f, 0.0f, 0.0f, 0.3f }, 10);
+		p->mPosition = { xp, player->mPosition.y() + 56.0f, 0.0f };
+		p->setScale(Vector3(50.0f, 50.0f, 1.0f));
 		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
 	}
 
 	// Setup camera for game layers
 	{
-		const auto yp = player->mPosition.y() * 0.5f - 1.0f;
 		auto& gol = mGoLayers[GOL_PERSP_SECOND];
 		gol.cameraEye = { fSquare, yp, 1.0f };
 		gol.cameraTarget = { fSquare, yp, 0.0f };
