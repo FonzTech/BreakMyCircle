@@ -114,6 +114,6 @@ public:
 	void setup();
 	void prepareRoom(const bool stopBgMusic);
 	void loadRoom(const std::string & name);
-	void createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback);
+	void createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen);
 	Instantiator getGameObjectFromNoiseValue(const double value);
 };

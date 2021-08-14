@@ -165,7 +165,7 @@ void RoomManager::loadRoom(const std::string & name)
 	}
 }
 
-void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback)
+void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen)
 {
 	// Delete game level layer
 	mGoLayers[GOL_PERSP_SECOND].list->clear();
@@ -173,12 +173,11 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	// Create bubbles
 	const siv::PerlinNoise perlin(mSeed);
 
-	const Int square = 8;
-	const Float fSquare(square);
+	const Float fSquare(xlen);
 
-	for (Int i = 0; i < square; ++i)
+	for (Int i = 0; i < ylen; ++i)
 	{
-		for (Int j = 0; j < square; ++j)
+		for (Int j = 0; j < xlen; ++j)
 		{
 			// Working variables
 			Float y = (Float) i;
@@ -205,7 +204,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 			Float startX;
 			if (i % 2)
 			{
-				if (j == 7)
+				if (j == xlen - 1)
 				{
 					break;
 				}

@@ -57,7 +57,10 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	{
 		mLevelInfo.currentViewingLevelId = 0U;
 		mLevelInfo.maxLevelId = 2U;
+		mLevelInfo.timer = 0.0f;
 		mLevelInfo.state = GO_LS_LEVEL_INIT;
+
+		mCachedTimer = 0;
 	}
 
 	mLevelGuiAnim = 0.0f;
@@ -197,6 +200,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 				mLevelInfo.currentViewingLevelId = 0U;
 				mLevelInfo.repeatLevelId = 0U;
+				mLevelInfo.timer = 10.0f;
 				mLevelInfo.delayedLose = false;
 				mLevelInfo.state = GO_LS_LEVEL_STARTING;
 			},
@@ -1066,6 +1070,24 @@ void LevelSelector::manageLevelState()
 		// Animate camera
 		animateCamera = true;
 
+		// Decrement timer
+		if (mLevelInfo.timer < 0.0f)
+		{
+			checkForLevelEnd();
+		}
+		else if (!mSettingsOpened)
+		{
+			mLevelInfo.timer -= mDeltaTime;
+			
+			const Int timerInt(Math::floor(mLevelInfo.timer));
+			if (timerInt != mCachedTimer)
+			{
+				mCachedTimer = timerInt;
+				const auto& str = mCachedTimer >= 0 ? std::to_string(mCachedTimer) + "s" : ":(";
+				mLevelTexts[GO_LS_TEXT_TIME]->setText(str);
+			}
+		}
+
 		// Control animation
 		if (mLevelStartedAnim < 0.0f) // Cycle waste
 		{
@@ -1146,7 +1168,7 @@ void LevelSelector::manageLevelState()
 void LevelSelector::createLevelRoom()
 {
 	// Level is started
-	RoomManager::singleton->createLevelRoom(shared_from_this());
+	RoomManager::singleton->createLevelRoom(shared_from_this(), 8, 7);
 	mLevelInfo.state = GO_LS_LEVEL_STARTED;
 
 	// Get player pointer
@@ -1236,13 +1258,13 @@ void LevelSelector::checkForLevelEnd()
 	}
 
 	// Check if any bubble has reached the limit line
-	bool lose = false;
+	bool lose = mLevelInfo.timer < 0.0f;
 
 	if (mLevelInfo.limitLinePointer.expired())
 	{
 		Error{} << "weak_ptr for LimitLine has expired. This should not happen.";
 	}
-	else
+	else if (!lose)
 	{
 		for (auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
 		{

@@ -96,6 +96,7 @@ private:
 		UnsignedInt selectedLevelId;
 		UnsignedInt maxLevelId;
 		Int state;
+		Float timer;
 
 		std::weak_ptr<GameObject> playerPointer;
 		std::weak_ptr<GameObject> limitLinePointer;
@@ -148,4 +149,5 @@ private:
 
 	LS_LevelInfo mLevelInfo;
 	Float mLevelGuiAnim;
+	Int mCachedTimer;
 };
