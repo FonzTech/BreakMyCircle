@@ -135,10 +135,21 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			[this]() {
 				Debug{} << "You have clicked REPLAY";
 
+				if (!mDialog.expired())
+				{
+					return;
+				}
+
+				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
+				o->setText("Do you really want to\nrestart this level?");
+
+				mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+				/*
 				if (mLevelInfo.state == GO_LS_LEVEL_STARTED || mLevelInfo.state == GO_LS_LEVEL_FINISHED)
 				{
 					replayCurrentLevel();
 				}
+				*/
 			},
 			1.0f
 		};
@@ -319,10 +330,23 @@ const Int LevelSelector::getType() const
 
 void LevelSelector::update()
 {
-	// Enable or disable player shooting
-	if (mLevelInfo.state == GO_LS_LEVEL_STARTED && !mLevelInfo.playerPointer.expired())
+	// Check if any dialog is active
 	{
-		((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = !mSettingsOpened && mSettingsAnim <= 0.001f;
+		Int canShoot = 0;
+		if (!mDialog.expired())
+		{
+			canShoot = 2;
+		}
+		else if (mLevelInfo.state == GO_LS_LEVEL_STARTED && !mLevelInfo.playerPointer.expired())
+		{
+			canShoot = !mSettingsOpened && mSettingsAnim <= 0.001f ? 2 : 1;
+		}
+
+		// Enable or disable player shooting
+		if (canShoot != 0)
+		{
+			((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = canShoot == 2;
+		}
 	}
 
 	// Manage level state

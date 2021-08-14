@@ -40,6 +40,7 @@
 #include <Magnum/Math/Bezier.h>
 
 #include "../GameObject.h"
+#include "../Game/Dialog.h"
 #include "../Game/Callbacks/IShootCallback.h"
 #include "../Graphics/BaseDrawable.h"
 #include "OverlayGui.h"
@@ -128,6 +129,8 @@ private:
 	void prepareForReplay();
 	void replayCurrentLevel();
 	void checkForLevelEnd();
+
+	std::weak_ptr<Dialog> mDialog;
 
 	std::shared_ptr<GameDrawable<Shaders::Flat3D>> mSkyPlane;
 	Object3D* mSkyManipulator;
