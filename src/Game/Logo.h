@@ -25,6 +25,7 @@ public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	Logo(const Int parentIndex);
+	~Logo();
 
 	const Int getType() const override;
 	void update() override;

@@ -21,6 +21,7 @@
 #define RESOURCE_TEXTURE_BUBBLE_ORANGE "tex_bubble_orange"
 #define RESOURCE_TEXTURE_BUBBLE_PURPLE "tex_bubble_purple"
 #define RESOURCE_TEXTURE_BUBBLE_CYAN "tex_bubble_cyan"
+#define RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT "tex_bubble_translucent"
 #define RESOURCE_TEXTURE_SKYBOX_1_PX "tex_skybox_1_px"
 #define RESOURCE_TEXTURE_WATER_DISPLACEMENT "tex_water_dm"
 #define RESOURCE_TEXTURE_WATER_TEXTURE "tex_water_tm"

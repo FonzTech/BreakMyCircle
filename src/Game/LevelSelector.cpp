@@ -265,7 +265,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				mLevelInfo.delayedLose = false;
 				mLevelInfo.state = GO_LS_LEVEL_STARTING;
 
-				mTimer.value = 25.0f;
+				mTimer.value = 60.0f;
 			},
 			1.0f
 		};

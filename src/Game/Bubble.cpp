@@ -6,6 +6,7 @@
 
 #include <Magnum/Math/Math.h>
 #include <Magnum/Math/Bezier.h>
+#include <Magnum/Math/Constants.h>
 
 #include "../Common/CommonUtility.h"
 #include "../AssetManager.h"
@@ -43,14 +44,21 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 	mShakePos = { 0.0f };
 	mShakeFact = 0.0f;
 
-	// Create game bubble
+	// Create game sphere for this game object
+	CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
+
+	// Load asset for "Coin" game object, if required
 	if (mAmbientColor == BUBBLE_COIN)
 	{
-		AssetManager().loadAssets(*this, *mManipulator, RESOURCE_SCENE_COIN, this);
+		mItemManipulator = new Object3D{ mManipulator.get() };
+
+		AssetManager().loadAssets(*this, *mItemManipulator, RESOURCE_SCENE_COIN, this);
+
+		mRotation = Float(Rad(Deg(std::rand() % 360)));
 	}
 	else
 	{
-		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
+		mRotation = 0.0f;
 	}
 }
 
@@ -58,7 +66,7 @@ const Int Bubble::getType() const
 {
 	return GOT_BUBBLE;
 }
-
+ 
 void Bubble::update()
 {
 	// Update shake animation
@@ -72,11 +80,24 @@ void Bubble::update()
 	}
 
 	// Update transformations
-	const Vector3 shakeVect = mShakeFact > 0.001f ? mShakePos * std::sin(mShakeFact * Constants::pi()) : Vector3(0.0f);
-	for (auto& d : mDrawables)
+	const bool& isCoin = mAmbientColor == BUBBLE_COIN;
+	if (isCoin)
 	{
-		d->setTransformation(Matrix4::translation(mPosition + shakeVect));
+		mRotation += mDeltaTime * Constants::pi();
+
+		(*mItemManipulator)
+			.resetTransformation()
+			.scale(Vector3(0.75f))
+			.rotateX(Rad(Deg(90.0f)))
+			.rotateY(Rad(mRotation))
+			.translate(Vector3(0.0f, 0.0f, -0.5f));
 	}
+
+	const Vector3 shakeVect = mShakeFact > 0.001f ? mShakePos * std::sin(mShakeFact * Constants::pi()) : Vector3(0.0f);
+
+	(*mManipulator)
+		.resetTransformation()
+		.translate(mPosition + shakeVect);
 
 	// Update bounding box
 	updateBBox();
@@ -85,8 +106,8 @@ void Bubble::update()
 void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPosition(mPosition + Vector3(0.0f, 0.0f, 1.0f))
-		.setLightColor(0x808080_rgbf)
+		.setLightPosition(mPosition + Vector3(0.0f, 0.0f, 1.5f))
+		.setLightColor(mAmbientColor == BUBBLE_COIN ? 0xd0d0d0_rgbf : 0x808080_rgbf)
 		.setSpecularColor(0xffffff00_rgbaf)
 		.setAmbientColor(0xc0c0c0_rgbf)
 		.setDiffuseColor(0x808080_rgbf)

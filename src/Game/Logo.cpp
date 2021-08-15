@@ -10,6 +10,7 @@
 #include "../RoomManager.h"
 #include "../Common/CommonUtility.h"
 #include "../Graphics/BaseDrawable.h"
+#include "Bubble.h"
 #include "FallingBubble.h"
 
 #if NDEBUG or _DEBUG
@@ -92,6 +93,14 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	buildAnimations();
 }
 
+Logo::~Logo()
+{
+	for (auto& item : mTexts)
+	{
+		item->mDestroyMe = true;
+	}
+}
+
 const Int Logo::getType() const
 {
 	return GOT_LOGO;
@@ -118,16 +127,27 @@ void Logo::update()
 	}
 	else if (mIntroBubbles)
 	{
-		// Get random color
+		// Create bubble of random color
 		const auto& bc = RoomManager::singleton->mBubbleColors;
-		const auto& it = std::next(std::begin(bc), std::rand() % bc.size());
+		while (true)
+		{
+			// Get random color (no special objects, like coins)
+			const auto& it = std::next(std::begin(bc), std::rand() % bc.size());
+			if (it->second.color == BUBBLE_COIN)
+			{
+				continue;
+			}
 
-		// Create random bubble
-		std::shared_ptr<FallingBubble> fb = std::make_shared<FallingBubble>(mParentIndex, it->second.color, false, -25.0f);
-		fb->mPosition = mPosition;
-		fb->mPosition -= RoomManager::singleton->mGoLayers[mParentIndex].cameraEye;
-		fb->mPosition += Vector3(-6.0f + 12.0f * (std::rand() % 12) / 12.0f, 20.0, 0.0f);
-		RoomManager::singleton->mGoLayers[mParentIndex].push_back(fb);
+			// Create random bubble
+			std::shared_ptr<FallingBubble> fb = std::make_shared<FallingBubble>(mParentIndex, it->second.color, false, -25.0f);
+			fb->mPosition = mPosition;
+			fb->mPosition -= RoomManager::singleton->mGoLayers[mParentIndex].cameraEye;
+			fb->mPosition += Vector3(-6.0f + 12.0f * (std::rand() % 12) / 12.0f, 20.0, 0.0f);
+			RoomManager::singleton->mGoLayers[mParentIndex].push_back(fb);
+
+			// Break from cycle
+			break;
+		}
 
 		// Reset timer
 		mBubbleTimer = Float(std::rand() % 100) * 0.001f + 0.25f;

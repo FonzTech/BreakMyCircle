@@ -244,11 +244,18 @@ std::unique_ptr<std::vector<Color4>> Player::getRandomEligibleColor(const Unsign
 	if (bubbles.size())
 	{
 		// Get random color from one in-game bubble
-		for (UnsignedInt i = 0; i < times; ++i)
+		for (UnsignedInt i = 0; i < times;)
 		{
 			const Int index = std::rand() % bubbles.size();
 			const auto& color = ((Bubble*)bubbles[index].lock().get())->mAmbientColor;
+
+			if (color == BUBBLE_COIN)
+			{
+				continue;
+			}
+
 			list->emplace_back(color.r(), color.g(), color.b());
+			++i;
 		}
 	}
 	else

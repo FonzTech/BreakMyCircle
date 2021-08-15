@@ -80,6 +80,8 @@ public:
 	Color3 mAmbientColor;
 
 private:
+	Float getShakeSmooth(const Float xt);
+
 	// Complex structures
 	struct GraphNode
 	{
@@ -88,8 +90,8 @@ private:
 	};
 
 	// Class members
+	Object3D* mItemManipulator;
 	Vector3 mShakePos;
 	Float mShakeFact;
-
-	Float getShakeSmooth(const Float xt);
+	Float mRotation;
 };
