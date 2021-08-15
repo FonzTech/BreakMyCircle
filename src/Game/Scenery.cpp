@@ -57,7 +57,7 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 	// Load assets
 	{
 		AssetManager am(RESOURCE_SHADER_COLORED_PHONG_2, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE_2, 2);
-		am.loadAssets(*this, *mManipulatorList[0], "scenes/world_1.glb", this);
+		am.loadAssets(*this, *mManipulatorList[0], RESOURCE_SCENE_WORLD_1, this);
 	}
 
 	// Create water drawable

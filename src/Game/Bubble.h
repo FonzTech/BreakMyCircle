@@ -2,6 +2,7 @@
 
 #define MINIMUM_BUBBLE_TRAIL_SIZE 3
 
+#define BUBBLE_COIN 0x000001_rgbf
 #define BUBBLE_COLOR_RED 0xff0000_rgbf
 #define BUBBLE_COLOR_GREEN 0x00ff00_rgbf
 #define BUBBLE_COLOR_BLUE 0x0000ff_rgbf

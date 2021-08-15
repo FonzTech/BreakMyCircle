@@ -144,7 +144,7 @@ bool CommonUtility::stringEndsWith(const std::string& data, const std::string& s
 void CommonUtility::createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color)
 {
 	// Create game bubble
-	AssetManager().loadAssets(*gameObject, manipulator, "scenes/bubble.glb", gameObject);
+	AssetManager().loadAssets(*gameObject, manipulator, RESOURCE_SCENE_BUBBLE, gameObject);
 
 	// Load texture based on color
 	Debug{} << "Created bubble with color" << color.toSrgbInt();

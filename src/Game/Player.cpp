@@ -35,7 +35,7 @@ Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true)
 	// Load asset as first drawable
 	{
 		mShooterManipulator = new Object3D{ mManipulator.get() };
-		AssetManager().loadAssets(*this, *mShooterManipulator, "scenes/cannon_1.glb", this);
+		AssetManager().loadAssets(*this, *mShooterManipulator, RESOURCE_SCENE_CANNON_1, this);
 	}
 
 	// Load path for new sphere animation
@@ -48,7 +48,7 @@ Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true)
 	mShootAngle = Rad(0.0f);
 
 	{
-		auto list = getRandomEligibleColor(2);
+		const auto& list = getRandomEligibleColor(2);
 		mProjColors[0] = list->at(0);
 		mProjColors[1] = list->at(1);
 

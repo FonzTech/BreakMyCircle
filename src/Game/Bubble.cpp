@@ -44,7 +44,14 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 	mShakeFact = 0.0f;
 
 	// Create game bubble
-	CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
+	if (mAmbientColor == BUBBLE_COIN)
+	{
+		AssetManager().loadAssets(*this, *mManipulator, RESOURCE_SCENE_COIN, this);
+	}
+	else
+	{
+		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
+	}
 }
 
 const Int Bubble::getType() const

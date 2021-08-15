@@ -48,7 +48,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mManipulator->setTransformation(Matrix4::translation(mPosition));
 
 	mLogoManipulator = new Object3D(mManipulator.get());
-	AssetManager().loadAssets(*this, *mLogoManipulator, "scenes/logo.glb", this);
+	AssetManager().loadAssets(*this, *mLogoManipulator, RESOURCE_SCENE_LOGO, this);
 
 	// Filter required meshes
 	const std::unordered_map<std::string, UnsignedInt> indexes{

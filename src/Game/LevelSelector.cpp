@@ -1043,7 +1043,7 @@ void LevelSelector::handleScrollableScenery()
 
 			// Load drawables
 			AssetManager am(RESOURCE_SHADER_COLORED_PHONG, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE, 1);
-			am.loadAssets(*this, *mSceneries[yp].manipulator, "scenes/level_button.glb", this);
+			am.loadAssets(*this, *mSceneries[yp].manipulator, RESOURCE_SCENE_LEVEL_BUTTON, this);
 
 			// Apply the same transformations
 			bs.position = sLevelButtonPositions[modelIndex][i];
