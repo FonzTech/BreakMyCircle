@@ -136,9 +136,9 @@ void Dialog::addAction(const std::string & text, const std::function<void()> & c
 	const Float index(Float(mActions.size()) + 1.0f);
 	const Float yp = -0.15f * index;
 
-	const std::shared_ptr<OverlayGui> buttonGui = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_WHITE);
+	const std::shared_ptr<OverlayGui> buttonGui = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_GUI_BUTTON_2X1);
 	buttonGui->setPosition({ 0.0f, yp });
-	buttonGui->setSize({ 0.4f, 0.1f });
+	buttonGui->setSize({ 0.2f, 0.1f });
 	buttonGui->setAnchor({ 0.0f, 0.0f });
 
 	const std::shared_ptr<OverlayText> buttonText = std::make_shared<OverlayText>(mParentIndex, Text::Alignment::MiddleCenter);

@@ -29,6 +29,7 @@
 #define RESOURCE_TEXTURE_GUI_BACK_ARROW "tex_gui_back_arrow"
 #define RESOURCE_TEXTURE_GUI_PLAY "tex_gui_play"
 #define RESOURCE_TEXTURE_GUI_COIN "tex_gui_coin"
+#define RESOURCE_TEXTURE_GUI_BUTTON_2X1 "tex_gui_button_2x1"
 #define RESOURCE_TEXTURE_WHITE "tex_white"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"

@@ -240,11 +240,28 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			[this]() {
 				Debug{} << "You have clicked EXIT";
 
-				// Set variable flag for level ending
-				if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
+				if (!mDialog.expired())
 				{
-					mLevelEndingAnim = true;
+					return;
 				}
+
+				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
+				o->setMessage("Do you really\nwant to exit?");
+				o->addAction("Yes", [this]() {
+					Debug{} << "You have clicked YES to EXIT";
+					// Set variable flag for level ending
+					if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
+					{
+						closeDialog();
+						mLevelEndingAnim = true;
+					}
+				});
+				o->addAction("No", [this]() {
+					Debug{} << "You have clicked NO to EXIT";
+					closeDialog();
+				});
+
+				mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 			},
 			1.0f
 		};
