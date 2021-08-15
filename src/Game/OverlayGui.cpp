@@ -114,6 +114,11 @@ const void OverlayGui::setTexture(const std::string & textureName)
 	mDrawables[0]->mTexture = CommonUtility::singleton->loadTexture(textureName);
 }
 
+Float* OverlayGui::color()
+{
+	return mColor.data();
+}
+
 void OverlayGui::updateAspectRatioFactors()
 {
 	if (RoomManager::singleton->mWindowSize.x() < RoomManager::singleton->mWindowSize.y())

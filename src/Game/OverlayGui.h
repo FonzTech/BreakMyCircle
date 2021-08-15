@@ -31,6 +31,7 @@ public:
 
 	const Resource<GL::Texture2D> & getTextureResource() const;
 	const void setTexture(const std::string & textureName);
+	Float* color();
 
 protected:
 	void updateAspectRatioFactors();
