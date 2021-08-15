@@ -44,6 +44,13 @@
 
 #define RESOURCE_FONT_UBUNTU_TITLE "ubuntu-title"
 
+#define RESOURCE_AUDIO_BUBBLE_STOMP "bubble_stomp"
+#define RESOURCE_AUDIO_BUBBLE_POP "bubble_pop"
+#define RESOURCE_AUDIO_BUBBLE_FALL "bubble_fall"
+#define RESOURCE_AUDIO_SHOT_PREFIX "shot_"
+#define RESOURCE_AUDIO_SHOT_WIN "end_win"
+#define RESOURCE_AUDIO_SHOT_LOSE "end_lose"
+
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"
 

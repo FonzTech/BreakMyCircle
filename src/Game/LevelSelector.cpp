@@ -376,7 +376,19 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		layer.cameraTarget = mPosition;
 	}
 
-	// Trigger scenery creation
+	// Load audios
+	for (UnsignedInt i = 0; i < 2; ++i)
+	{
+		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(i == 0 ? RESOURCE_AUDIO_SHOT_WIN : RESOURCE_AUDIO_SHOT_LOSE);
+		mPlayables[i == 0 ? GO_LS_AUDIO_WIN : GO_LS_AUDIO_LOSE] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+		mPlayables[i == 0 ? GO_LS_AUDIO_WIN : GO_LS_AUDIO_LOSE]->source()
+			.setBuffer(buffer)
+			.setMinGain(1.0f)
+			.setMaxGain(1.0f)
+			.setLooping(false);
+	}
+
+	// Trigger sc\ery creation
 	handleScrollableScenery();
 }
 
@@ -1391,6 +1403,13 @@ void LevelSelector::finishCurrentLevel(const bool success)
 {
 	// Update level state
 	mLevelInfo.success = success;
+
+	// Play success or failure sound for level end
+	{
+		auto& p = mPlayables[success ? GO_LS_AUDIO_WIN : GO_LS_AUDIO_LOSE]->source();
+		p.setOffsetInSeconds(0.0f);
+		p.play();
+	}
 
 	// Prevent player from shooting
 	if (!mLevelInfo.playerPointer.expired())

@@ -113,7 +113,7 @@ void Bubble::applyRippleEffect(const Vector3& center)
 
 void Bubble::playStompSound()
 {
-	Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData("bubble_stomp");
+	Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(RESOURCE_AUDIO_BUBBLE_STOMP);
 	mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
 	mPlayables[0]->source()
 		.setBuffer(buffer)
@@ -236,7 +236,7 @@ void Bubble::destroyDisjointBubbles()
 		while (!group.empty())
 		{
 			// Pick the first node in list
-			auto it = group.begin();
+			const auto& it = group.begin();
 			Bubble* bubble = *it;
 			group.erase(it);
 

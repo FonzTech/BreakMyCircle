@@ -30,6 +30,9 @@
 #define GO_LS_LEVEL_FINISHED 3
 #define GO_LS_LEVEL_RESTORING 4
 
+#define GO_LS_AUDIO_WIN 1
+#define GO_LS_AUDIO_LOSE 2
+
 #include <array>
 #include <vector>
 #include <memory>

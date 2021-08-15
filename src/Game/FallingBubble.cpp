@@ -157,7 +157,7 @@ void FallingBubble::collidedWith(const std::unique_ptr<std::unordered_set<GameOb
 
 std::shared_ptr<Audio::Playable3D>& FallingBubble::buildBubbleSound()
 {
-	Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(mSpark ? "bubble_pop" : "bubble_fall");
+	Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(mSpark ? RESOURCE_AUDIO_BUBBLE_POP : RESOURCE_AUDIO_BUBBLE_FALL);
 	mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
 	mPlayables[0]->source()
 		.setBuffer(buffer)

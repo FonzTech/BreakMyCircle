@@ -66,7 +66,7 @@ Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true)
 	// Load sound effects
 	for (UnsignedInt i = 0; i < 3; ++i)
 	{
-		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData("shot_" + std::to_string(i + 1));
+		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(RESOURCE_AUDIO_SHOT_PREFIX + std::to_string(i + 1));
 		mPlayables[i] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
 		mPlayables[i]->source()
 			.setBuffer(buffer)
