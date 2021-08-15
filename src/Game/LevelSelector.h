@@ -104,6 +104,9 @@ private:
 		std::weak_ptr<GameObject> limitLinePointer;
 
 		bool delayedLose;
+		Vector3 currentLevelPos, nextLevelPos;
+		Float nextLevelAnim;
+		bool success;
 	};
 
 	template <typename S, typename T>

@@ -56,8 +56,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	{
 		mLevelInfo.currentViewingLevelId = 0U;
-		mLevelInfo.maxLevelId = 2U;
+		mLevelInfo.maxLevelId = 7U;
 		mLevelInfo.state = GO_LS_LEVEL_INIT;
+		mLevelInfo.nextLevelAnim = 0.0f;
 	}
 
 	{
@@ -173,6 +174,48 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			[this]() {
 				Debug{} << "You have clicked NEXT";
 
+				// Get position to animate to  (next level)
+				if (mLevelInfo.success)
+				{
+					// Get next index
+					Int yi, yf;
+
+					{
+						const Int sli(Float(mLevelInfo.selectedLevelId - 1U));
+						yi = Int(Math::floor(sli / 6.0f));
+						yf = Int(sli - yi + 1);
+					}
+
+					// Wrap index to next scenery
+					if (yf >= 6)
+					{
+						++yi;
+						yf = 0;
+					}
+
+					// Iterator check before continuing
+					const auto& bs = mSceneries.find(-yi);
+					if (bs == mSceneries.end())
+					{
+						Error{} << "No Scenery found with index" << yi;
+						return;
+					}
+
+					// Check for consistency
+					if (yf >= bs->second.buttons.size())
+					{
+						Error{} << "Button index" << yf << "is greater than size" << bs->second.buttons.size();
+						return;
+					}
+					const auto& bp = bs->second.buttons.at(yf).position;
+
+					// Set parameters to later animation
+					mLevelInfo.currentLevelPos = mPosition;
+
+					const Vector3 sp = bs->second.scenery->mPosition;
+					mLevelInfo.nextLevelPos = Vector3(sp.x(), 0.0f, sp.z()) + Vector3(bp.x(), 0.0f, bp.z() - 8.0f);
+				}
+
 				// Restore level state to init
 				mLevelInfo.state = GO_LS_LEVEL_RESTORING;
 			},
@@ -246,9 +289,10 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				}
 
 				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
-				o->setMessage("Do you really\nwant to exit?");
+				o->setMessage("Do you really\nwant to exit\nthis level?");
 				o->addAction("Yes", [this]() {
 					Debug{} << "You have clicked YES to EXIT";
+
 					// Set variable flag for level ending
 					if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
 					{
@@ -290,7 +334,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Level number text
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter);
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopCenter);
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -422,8 +466,8 @@ void LevelSelector::update()
 		}
 		else
 		{
-			Debug{} << "Level state to Finished";
-			finishCurrentLevel(false);
+			Debug{} << "Level state to Finished SUCCESS";
+			finishCurrentLevel(true);
 		}
 	}
 #endif
@@ -1122,7 +1166,7 @@ void LevelSelector::windowForCurrentLevelView()
 	// Level texts
 	{
 		const auto& p = mLevelInfo.state == GO_LS_LEVEL_STARTED ? s * 0.96f : 0.0f;
-		mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.15f - (d + p), 0.0f });
+		mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - (d + p), 0.0f });
 	}
 
 	{
@@ -1264,11 +1308,21 @@ void LevelSelector::manageLevelState()
 		break;
 
 	case GO_LS_LEVEL_RESTORING:
+
 		// Reset level state when animation has finished
 		if (mLevelAnim <= 0.0f)
 		{
 			mLevelInfo.state = GO_LS_LEVEL_INIT;
 		}
+
+		// Animate jump to new level
+		if (mLevelInfo.success)
+		{
+			const auto oldPosition = mPosition;
+			mPosition = mLevelInfo.currentLevelPos + (mLevelInfo.nextLevelPos - mLevelInfo.currentLevelPos) * (1.0f - mLevelAnim);
+			handleScrollableCameraPosition(mPosition - oldPosition);
+		}
+
 		break;
 	}
 
@@ -1335,6 +1389,9 @@ void LevelSelector::createLevelRoom()
 
 void LevelSelector::finishCurrentLevel(const bool success)
 {
+	// Update level state
+	mLevelInfo.success = success;
+
 	// Prevent player from shooting
 	if (!mLevelInfo.playerPointer.expired())
 	{
@@ -1345,7 +1402,7 @@ void LevelSelector::finishCurrentLevel(const bool success)
 	mLevelInfo.state = GO_LS_LEVEL_FINISHED;
 
 	// Update text
-	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(mLevelInfo.selectedLevelId) + " " + (success ? "Completed" : "Failed"));
+	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(mLevelInfo.selectedLevelId) + "\n" + (success ? "Completed" : "Failed"));
 }
 
 void LevelSelector::prepareForReplay()
