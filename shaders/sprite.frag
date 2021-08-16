@@ -12,11 +12,8 @@ out vec4 fragmentColor;
 
 void main()
 {
-	float xp = texWidth / columns;
-	float yp = texHeight / rows;
-
-	float xs = xp / texWidth;
-	float ys = yp / texHeight;
+	float xs = 1.0 / columns;
+	float ys = 1.0 / rows;
 
 	vec2 tc;	
 	tc.x = xs * (mod(floor(index), columns) + interpolatedTextureCoordinates.x);

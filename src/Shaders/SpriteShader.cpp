@@ -29,8 +29,6 @@ SpriteShader::SpriteShader()
 
 	mColorUniform = uniformLocation("color");
 	mIndexUniform = uniformLocation("index");
-	mTexWidthUniform = uniformLocation("texWidth");
-	mTexHeightUniform = uniformLocation("texHeight");
 	mRowsUniform = uniformLocation("rows");
 	mColumnsUniform = uniformLocation("columns");
 
@@ -64,18 +62,6 @@ SpriteShader& SpriteShader::setColor(const Color4& color)
 SpriteShader& SpriteShader::setIndex(const Float index)
 {
 	setUniform(mIndexUniform, index);
-	return *this;
-}
-
-SpriteShader& SpriteShader::setTextureWidth(const Float width)
-{
-	setUniform(mTexWidthUniform, width);
-	return *this;
-}
-
-SpriteShader& SpriteShader::setTextureHeight(const Float height)
-{
-	setUniform(mTexHeightUniform, height);
 	return *this;
 }
 

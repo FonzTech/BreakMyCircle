@@ -14,7 +14,6 @@ public:
 	{
 		Resource<GL::Texture2D> texture;
 		Float index, total;
-		Float texWidth, texHeight;
 		Float rows, columns;
 	};
 
@@ -29,8 +28,6 @@ public:
 
 	SpriteShader& setColor(const Color4& color);
 	SpriteShader& setIndex(const Float index);
-	SpriteShader& setTextureWidth(const Float width);
-	SpriteShader& setTextureHeight(const Float height);
 	SpriteShader& setRows(const Float rows);
 	SpriteShader& setColumns(const Float columns);
 
