@@ -248,17 +248,17 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 
 	// Create player limit line, just above the player
 	{
-		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 1.0f, 0.0f, 0.0f, 1.0f }, 1);
+		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 1.0f, 0.0f, 0.0f, 1.0f }, GO_LL_TYPE_RED);
 		p->mPosition = { fSquare, player->mPosition.y() + 6.0f, 0.0f };
 		p->setScale(Vector3(100.0f, 0.2f, 1.0f));
 		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
 	}
 
-	// Create left limit line
+	// Create left and right limit line
 	for (UnsignedInt i = 0; i < 2; ++i)
 	{
 		const Float xp = i ? len + 50.0f : -50.0f;
-		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 0.0f, 0.0f, 0.0f, 0.3f }, 10);
+		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 0.0f, 0.0f, 0.0f, 0.3f }, GO_LL_TYPE_BLACK);
 		p->mPosition = { xp, player->mPosition.y() + 56.0f, 0.0f };
 		p->setScale(Vector3(50.0f, 50.0f, 1.0f));
 		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);

@@ -1385,7 +1385,7 @@ void LevelSelector::createLevelRoom()
 		case GOT_LIMIT_LINE:
 		{
 			const std::shared_ptr<LimitLine>& line = (std::shared_ptr<LimitLine>&)go;
-			if (line->getCustomType() == 1)
+			if (line->getCustomType() == GO_LL_TYPE_RED)
 			{
 				mLevelInfo.limitLinePointer = go;
 			}
