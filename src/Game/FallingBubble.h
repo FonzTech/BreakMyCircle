@@ -1,5 +1,9 @@
 #pragma once
 
+#define GO_FB_TYPE_BUBBLE 1
+#define GO_FB_TYPE_SPARK 2
+#define GO_FB_TYPE_COIN 3
+
 #include <unordered_set>
 #include <nlohmann/json.hpp>
 #include <Magnum/GL/Mesh.h>
@@ -16,20 +20,20 @@ class FallingBubble : public GameObject
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	FallingBubble(const Int parentIndex, const Color3& ambientColor, const bool spark, const Float maxVerticalSpeed = -100.0f);
+	FallingBubble(const Int parentIndex, const Color3& ambientColor, const Int customType, const Float maxVerticalSpeed = -100.0f);
 
 	const Int getType() const  override;
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
-	bool mSpark;
-	Color3 mAmbientColor;
-
 	std::shared_ptr<Audio::Playable3D>& buildBubbleSound();
 
-private:
+	Int mCustomType;
 	Vector3 mVelocity;
+
+private:
+	Color3 mAmbientColor;
 	Float mDelay;
 	Float mMaxVerticalSpeed;
 	SpriteShaderDataView mWrapper;

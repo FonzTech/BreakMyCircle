@@ -1,5 +1,8 @@
 #pragma once
 
+#define GO_LL_TYPE_BLACK 1
+#define GO_LL_TYPE_RED 2
+
 #include <nlohmann/json.hpp>
 
 #include "../GameObject.h"

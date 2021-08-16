@@ -170,5 +170,5 @@ private:
 	Float mLevelGuiAnim;
 
 	LS_CachedVariable<Float, Int> mTimer;
-	LS_CachedVariable<Int, Int> mCoins;
+	LS_CachedVariable<Float, Int> mCoins;
 };

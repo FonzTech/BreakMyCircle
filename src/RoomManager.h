@@ -71,6 +71,12 @@ public:
 		std::string textureKey;
 	};
 
+	// Global game save data
+	struct SaveData
+	{
+		Int coins;
+	};
+
 	// Singleton
 	static std::unique_ptr<RoomManager> singleton;
 
@@ -104,6 +110,9 @@ public:
 
 	// Window size
 	Vector2i mWindowSize;
+
+	// Game save data
+	SaveData mSaveData;
 
 	// Class methods
 	explicit RoomManager();

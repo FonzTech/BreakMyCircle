@@ -81,6 +81,7 @@ public:
 
 private:
 	Float getShakeSmooth(const Float xt);
+	Int getCustomTypeForFallingBubble(const Color3 & color);
 
 	// Complex structures
 	struct GraphNode

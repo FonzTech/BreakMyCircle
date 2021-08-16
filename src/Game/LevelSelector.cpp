@@ -63,7 +63,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	{
 		mTimer = { 0.0f, 0 };
-		mCoins = { 0, 0 };
+		mCoins = { 0.0f, 0 };
 	}
 
 	mLevelGuiAnim = 0.0f;
@@ -1265,11 +1265,18 @@ void LevelSelector::manageLevelState()
 
 		// Update coin counter
 		{
-			if (mCoins.value != mCoins.cached)
+			if (RoomManager::singleton->mSaveData.coins != mCoins.cached)
 			{
-				mCoins.value = mCoins.cached;
-				const auto& str = std::to_string(mCoins.value);
-				mLevelTexts[GO_LS_TEXT_TIME]->setText(str);
+				mCoins.value += mDeltaTime * 10.0f;
+				mCoins.cached = Int(mCoins.value);
+
+				if (mCoins.cached > RoomManager::singleton->mSaveData.coins)
+				{
+					mCoins.cached = RoomManager::singleton->mSaveData.coins;
+				}
+
+				const auto& str = std::to_string(mCoins.cached);
+				mLevelTexts[GO_LS_TEXT_COIN]->setText(str);
 			}
 		}
 

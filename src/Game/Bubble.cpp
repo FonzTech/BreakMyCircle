@@ -25,7 +25,7 @@ std::shared_ptr<GameObject> Bubble::getInstance(const nlohmann::json & params)
 	// Parse color
 	Color3 color;
 	{
-		auto& values = params["color"];
+		const auto& values = params["color"];
 		values.at("r").get_to(color[0]);
 		values.at("g").get_to(color[1]);
 		values.at("b").get_to(color[2]);
@@ -53,7 +53,6 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 		mItemManipulator = new Object3D{ mManipulator.get() };
 
 		AssetManager().loadAssets(*this, *mItemManipulator, RESOURCE_SCENE_COIN, this);
-
 		mRotation = Float(Rad(Deg(std::rand() % 360)));
 	}
 	else
@@ -196,7 +195,7 @@ bool Bubble::destroyNearbyBubbles()
 		{
 			auto& gn = fps->front();
 
-			std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, true);
+			std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, GO_FB_TYPE_SPARK);
 			ib->mPosition = gn.position + Vector3(0.0f, 0.0f, posZ);
 			RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
 
@@ -300,17 +299,43 @@ void Bubble::destroyDisjointBubbles()
 	});
 	auto fps = future.get();
 
+	bool coinSound = true;
 	while (!fps->empty())
 	{
+		// Get front node from graph
 		auto& gn = fps->front();
 
-		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, false);
+		// Create "eye-candy" bubble
+		const auto& customType = getCustomTypeForFallingBubble(gn.color);
+		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, customType);
 		ib->mPosition = gn.position;
+
+		// Special setup for picked-up coins
+		if (customType == GO_FB_TYPE_COIN)
+		{
+			ib->mVelocity = -gn.position + Vector3(-5.0f, 0.0f, 0.0f);
+			ib->mPosition += Vector3(0.0f, 0.0f, 0.5f);
+
+			// Let "coin" sound play only once
+			if (coinSound)
+			{
+				ib->buildBubbleSound();
+				coinSound = false;
+			}
+
+			// Increment coin counter
+			++RoomManager::singleton->mSaveData.coins;
+		}
+		else
+		{
+			ib->buildBubbleSound();
+		}
+
+		// Add to room
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
 
+		// Remove from graph
 		fps->pop();
-
-		ib->buildBubbleSound();
 	}
 }
 
@@ -386,4 +411,16 @@ std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered
 Float Bubble::getShakeSmooth(const Float xt)
 {
 	return CubicBezier2D(Vector2(0.0f, 0.0f), Vector2(1.0f, 0.06f), Vector2(1.0f, 0.04f), Vector2(1.0f)).value(xt)[1];
-} 
+}
+
+Int Bubble::getCustomTypeForFallingBubble(const Color3 & color)
+{
+	if (color == BUBBLE_COIN)
+	{
+		return GO_FB_TYPE_COIN;
+	}
+	else
+	{
+		return GO_FB_TYPE_BUBBLE;
+	}
+}

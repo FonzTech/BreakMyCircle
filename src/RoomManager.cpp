@@ -61,6 +61,9 @@ RoomManager::RoomManager()
 	mBubbleColors[BUBBLE_COLOR_ORANGE.toSrgbInt()] = { BUBBLE_COLOR_ORANGE, RESOURCE_TEXTURE_BUBBLE_ORANGE };
 	mBubbleColors[BUBBLE_COLOR_CYAN.toSrgbInt()] = { BUBBLE_COLOR_CYAN, RESOURCE_TEXTURE_BUBBLE_CYAN };
 	mBubbleColors[BUBBLE_COIN.toSrgbInt()] = { BUBBLE_COIN, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
+
+	// Initialize game save data
+	mSaveData.coins = 0;
 }
 
 RoomManager::~RoomManager()
@@ -280,15 +283,25 @@ RoomManager::Instantiator RoomManager::getGameObjectFromNoiseValue(const double 
 
 	if (value >= 0.0)
 	{
-		const Int index = Int(Math::floor(value * double(mBubbleColors.size() * 16))) % mBubbleColors.size();
-		const auto& it = std::next(std::begin(mBubbleColors), std::rand() % mBubbleColors.size());
-
+		const Int index = Int(Math::round(value * double(mBubbleColors.size())));
+		const auto& it = std::next(std::begin(mBubbleColors), index % mBubbleColors.size());;
+		 
 		nlohmann::json params;
 		params["parent"] = GOL_PERSP_SECOND;
 		params["color"] = {};
-		params["color"]["r"] = it->second.color.r();
-		params["color"]["g"] = it->second.color.g();
-		params["color"]["b"] = it->second.color.b();
+
+		if (value == 0.5)
+		{
+			params["color"]["r"] = mBubbleColors[BUBBLE_COIN.toSrgbInt()].color.r();
+			params["color"]["g"] = mBubbleColors[BUBBLE_COIN.toSrgbInt()].color.g();
+			params["color"]["b"] = mBubbleColors[BUBBLE_COIN.toSrgbInt()].color.b();
+		}
+		else
+		{
+			params["color"]["r"] = it->second.color.r();
+			params["color"]["g"] = it->second.color.g();
+			params["color"]["b"] = it->second.color.b();
+		}
 		
 		d.key = GOT_BUBBLE;
 		d.params = std::make_unique<nlohmann::json>(params);
