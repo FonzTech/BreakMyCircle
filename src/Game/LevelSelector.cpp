@@ -265,7 +265,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				mLevelInfo.delayedLose = false;
 				mLevelInfo.state = GO_LS_LEVEL_STARTING;
 
-				mTimer.value = 60.0f;
+				mTimer.value = 120.0f;
 			},
 			1.0f
 		};
@@ -849,6 +849,7 @@ void LevelSelector::shootCallback(const Int state)
 			make all the required checks to decide if the player has failed the level.
 		*/
 		mLevelInfo.delayedLose = true;
+
 		break;
 	}
 }
@@ -1239,7 +1240,10 @@ void LevelSelector::manageLevelState()
 		// Decrement timer
 		if (mTimer.value < 0.0f)
 		{
-			checkForLevelEnd();
+			if (mLevelInfo.playerPointer.expired() || ((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot)
+			{
+				checkForLevelEnd();
+			}
 		}
 		else if (!mSettingsOpened)
 		{
