@@ -63,7 +63,8 @@ RoomManager::RoomManager()
 	mBubbleColors[BUBBLE_COIN.toSrgbInt()] = { BUBBLE_COIN, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
 
 	// Initialize game save data
-	mSaveData.coins = 0;
+	mSaveData.coinTotal = 0;
+	mSaveData.coinCurrent = 0;
 }
 
 RoomManager::~RoomManager()

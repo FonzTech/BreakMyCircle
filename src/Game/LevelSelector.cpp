@@ -265,7 +265,8 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				mLevelInfo.delayedLose = false;
 				mLevelInfo.state = GO_LS_LEVEL_STARTING;
 
-				mTimer.value = 120.0f;
+				mTimer = { 120.0f, 120 };
+				mCoins = { 0.0f, 0 };
 			},
 			1.0f
 		};
@@ -1265,14 +1266,15 @@ void LevelSelector::manageLevelState()
 
 		// Update coin counter
 		{
-			if (RoomManager::singleton->mSaveData.coins != mCoins.cached)
+			const auto& value = RoomManager::singleton->mSaveData.coinCurrent;
+			if (value != mCoins.cached)
 			{
 				mCoins.value += mDeltaTime * 10.0f;
-				mCoins.cached = Int(mCoins.value);
+				mCoins.cached = Int(value);
 
-				if (mCoins.cached > RoomManager::singleton->mSaveData.coins)
+				if (mCoins.cached > value)
 				{
-					mCoins.cached = RoomManager::singleton->mSaveData.coins;
+					mCoins.cached = value;
 				}
 
 				const auto& str = std::to_string(mCoins.cached);
@@ -1414,6 +1416,9 @@ void LevelSelector::finishCurrentLevel(const bool success)
 {
 	// Update level state
 	mLevelInfo.success = success;
+
+	// Add coins
+	RoomManager::singleton->mSaveData.coinTotal += RoomManager::singleton->mSaveData.coinCurrent;
 
 	// Play success or failure sound for level end
 	{

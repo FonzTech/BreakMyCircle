@@ -324,7 +324,7 @@ void Bubble::destroyDisjointBubbles()
 			}
 
 			// Increment coin counter
-			++RoomManager::singleton->mSaveData.coins;
+			++RoomManager::singleton->mSaveData.coinCurrent;
 		}
 		else
 		{

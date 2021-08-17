@@ -74,7 +74,8 @@ public:
 	// Global game save data
 	struct SaveData
 	{
-		Int coins;
+		Int coinTotal;
+		Int coinCurrent;
 	};
 
 	// Singleton
