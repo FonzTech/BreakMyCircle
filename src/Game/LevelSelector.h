@@ -22,6 +22,7 @@
 #define GO_LS_GUI_SHARE 5U
 #define GO_LS_GUI_EXIT 6U
 #define GO_LS_GUI_COIN 7U
+#define GO_LS_GUI_TIME 8U
 #define GO_LS_GUI_STAR 100U
 
 #define GO_LS_LEVEL_INIT 0

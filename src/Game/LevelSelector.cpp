@@ -312,6 +312,16 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mLevelGuis[GO_LS_GUI_COIN] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 	}
 
+	// Timer icon
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_TIME);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.08f, 0.08f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mLevelGuis[GO_LS_GUI_TIME] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+
 	// Level number text
 	{
 		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopCenter);
@@ -1074,10 +1084,13 @@ void LevelSelector::windowForCommon()
 		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.36f, 0.63f - dx, 0.0f });
 	}
 
-	// Time counter
+	// Time icon and text
 	{
-		const auto& p1 = Vector3(0.475f, -0.725f + ds * 0.25f, 0.0f);
+		// 0.475f
+		const auto& p1 = Vector3(0.35f, -0.725f + ds * 0.25f, 0.0f);
 		const auto& p2 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector3(0.0f, -0.2f, 0.0f) * d1 : Vector3(0.0f);
+
+		mLevelGuis[GO_LS_GUI_TIME]->setPosition(p1.xy() + Vector2(0.06f, 0.03f));
 		mLevelTexts[GO_LS_TEXT_TIME]->setPosition(p1);
 	}
 }
