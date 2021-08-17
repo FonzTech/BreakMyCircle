@@ -74,6 +74,7 @@ public:
 	// Global game save data
 	struct SaveData
 	{
+		UnsignedInt maxLevelId;
 		Int coinTotal;
 		Int coinCurrent;
 	};

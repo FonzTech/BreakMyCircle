@@ -63,6 +63,7 @@ RoomManager::RoomManager()
 	mBubbleColors[BUBBLE_COIN.toSrgbInt()] = { BUBBLE_COIN, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
 
 	// Initialize game save data
+	mSaveData.maxLevelId = 10U;
 	mSaveData.coinTotal = 0;
 	mSaveData.coinCurrent = 0;
 }
@@ -191,7 +192,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 			// Get noise value at this position
 			const double dx(1.0f / fSquare * x);
 			const double dy(1.0f / fSquare * y);
-			const double value = perlin.accumulatedOctaveNoise2D_0_1(dx, dy, 8);
+			const double value = dy > 0.01 ? perlin.accumulatedOctaveNoise2D_0_1(dx, dy, 8) : 1.0;
 
 			// Work with noise value to get the actual in-game object
 			const Instantiator d = getGameObjectFromNoiseValue(value);

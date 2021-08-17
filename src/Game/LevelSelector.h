@@ -92,7 +92,6 @@ private:
 	{
 		std::shared_ptr<OverlayGui> drawable;
 		std::function<void()> callback;
-		Float animation; // Factor from 0 to 1
 	};
 
 	struct LS_LevelInfo
@@ -100,13 +99,13 @@ private:
 		UnsignedInt currentViewingLevelId;
 		UnsignedInt repeatLevelId;
 		UnsignedInt selectedLevelId;
-		UnsignedInt maxLevelId;
 		Int state;
+		Int numberOfRetries;
 
 		std::weak_ptr<GameObject> playerPointer;
 		std::weak_ptr<GameObject> limitLinePointer;
 
-		bool delayedLose;
+		Float delayedChecks;
 		Vector3 currentLevelPos, nextLevelPos;
 		Float nextLevelAnim;
 		bool success;
@@ -135,7 +134,9 @@ private:
 	void prepareForReplay();
 	void replayCurrentLevel();
 	void checkForLevelEnd();
+	void startLevel(const UnsignedInt levelId);
 
+	void manageGuiLevelAnim(const UnsignedInt index, const bool increment);
 	void closeDialog();
 
 	std::weak_ptr<Dialog> mDialog;
@@ -167,7 +168,7 @@ private:
 	std::unordered_map<UnsignedInt, Int> mPickableObjectRefs;
 
 	LS_LevelInfo mLevelInfo;
-	Float mLevelGuiAnim;
+	Float mLevelGuiAnim[2];
 
 	LS_CachedVariable<Float, Int> mTimer;
 	LS_CachedVariable<Float, Int> mCoins;

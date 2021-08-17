@@ -56,9 +56,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	{
 		mLevelInfo.currentViewingLevelId = 0U;
-		mLevelInfo.maxLevelId = 7U;
 		mLevelInfo.state = GO_LS_LEVEL_INIT;
 		mLevelInfo.nextLevelAnim = 0.0f;
+		mLevelInfo.numberOfRetries = 0;
 	}
 
 	{
@@ -66,7 +66,8 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mCoins = { 0.0f, 0 };
 	}
 
-	mLevelGuiAnim = 0.0f;
+	mLevelGuiAnim[0] = 0.0f;
+	mLevelGuiAnim[1] = 0.0f;
 
 	// Create sky plane
 	createSkyPlane();
@@ -79,7 +80,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SETTINGS);
 		o->setPosition({ -2.0f, 0.5f });
 		o->setSize({ 0.1f, 0.1f });
-		o->setAnchor({ 1.0f, -1.0f });
+		o->setAnchor({ 0.0f, -0.0f });
 
 		mScreenButtons[GO_LS_GUI_SETTINGS] = {
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
@@ -109,8 +110,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 					Debug{} << "You have" << (mSettingsOpened ? "opened" : "closed") << "SETTINGS";
 				}
-			},
-			1.0f
+			}
 		};
 	}
 
@@ -157,8 +157,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				});
 
 				mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
-			},
-			1.0f
+			}
 		};
 	}
 
@@ -218,8 +217,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 				// Restore level state to init
 				mLevelInfo.state = GO_LS_LEVEL_RESTORING;
-			},
-			1.0f
+			}
 		};
 	}
 
@@ -234,8 +232,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 			[this]() {
 				Debug{} << "You have clicked SHARE";
-			},
-			1.0f
+			}
 		};
 	}
 
@@ -249,26 +246,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mScreenButtons[GO_LS_GUI_PLAY] = {
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 			[this]() {
-				// Check if a level is starting
-				if (mLevelInfo.state > GO_LS_LEVEL_INIT)
-				{
-					return;
-				}
-
-				// Start the selected level
-				Debug{} << "User wants to play level" << mLevelInfo.currentViewingLevelId;
-
-				mLevelEndingAnim = false;
-
-				mLevelInfo.currentViewingLevelId = 0U;
-				mLevelInfo.repeatLevelId = 0U;
-				mLevelInfo.delayedLose = false;
-				mLevelInfo.state = GO_LS_LEVEL_STARTING;
-
-				mTimer = { 120.0f, 120 };
-				mCoins = { 0.0f, 0 };
-			},
-			1.0f
+				mLevelInfo.numberOfRetries = 0;
+				startLevel(mLevelInfo.currentViewingLevelId);
+			}
 		};
 	}
 
@@ -307,8 +287,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				});
 
 				mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
-			},
-			1.0f
+			}
 		};
 	}
 
@@ -389,7 +368,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			.setLooping(false);
 	}
 
-	// Trigger sc\ery creation
+	// Trigger scenery creation
 	handleScrollableScenery();
 }
 
@@ -498,14 +477,6 @@ void LevelSelector::update()
 	}
 
 	// Overlay for common
-	if (mLevelGuiAnim < 0.0f)
-	{
-		mLevelGuiAnim += 1.0f;
-	}
-	else
-	{
-		manageBackendAnimationVariable(mLevelGuiAnim, 1.0f, mLevelInfo.state == GO_LS_LEVEL_STARTED);
-	}
 	windowForCommon();
 
 	// Overlay for settings
@@ -567,15 +538,17 @@ void LevelSelector::update()
 		}
 	}
 
+	/*
 	// Animation for overlay buttons
 	for (auto it = mScreenButtons.begin(); it != mScreenButtons.end(); ++it)
 	{
-		it->second.animation -= mDeltaTime;
-		if (it->second.animation < 0.0f)
+		it->second.animation += mDeltaTime;
+		if (it->second.animation > 1.0f)
 		{
-			it->second.animation = 0.0f;
+			it->second.animation = 1.0f;
 		}
 	}
+	*/
 
 	// Handle button clicks
 	const auto& lbs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
@@ -748,13 +721,13 @@ void LevelSelector::update()
 							// Trigger level selection
 							if (spo != nullptr)
 							{
-								if (spo->levelIndex < mLevelInfo.maxLevelId)
+								if (spo->levelIndex < RoomManager::singleton->mSaveData.maxLevelId)
 								{
 									clickLevelButton(spo->levelIndex);
 								}
 								else
 								{
-									Debug{} << "Max level ID is" << mLevelInfo.maxLevelId << "and user has selected level ID" << spo->levelIndex;
+									Debug{} << "Max level ID is" << RoomManager::singleton->mSaveData.maxLevelId << "and user has selected level ID" << spo->levelIndex;
 								}
 							}
 							else
@@ -815,7 +788,7 @@ void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 	}
 	else
 	{
-		const auto& color = baseDrawable->getObjectId() < mLevelInfo.maxLevelId ? 0xc0c0c0_rgbf : 0x404040_rgbf;
+		const auto& color = baseDrawable->getObjectId() < RoomManager::singleton->mSaveData.maxLevelId ? 0xc0c0c0_rgbf : 0x404040_rgbf;
 		((Shaders::Phong&)baseDrawable->getShader())
 			.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(0.0f, 6.0f, 0.0f)))
 			.setLightColor(0xc0c0c0_rgbf)
@@ -849,7 +822,7 @@ void LevelSelector::shootCallback(const Int state)
 			Instead, we waste "just a single" cycle to let the bubble explode, then
 			make all the required checks to decide if the player has failed the level.
 		*/
-		mLevelInfo.delayedLose = true;
+		mLevelInfo.delayedChecks = 0.6f;
 
 		break;
 	}
@@ -1086,60 +1059,54 @@ void LevelSelector::clickLevelButton(const UnsignedInt id)
 
 void LevelSelector::windowForCommon()
 {
-	const auto& d = mCbEaseInOut.value(mSettingsAnim + mLevelAnim)[1];
-	const auto& s = mCbEaseInOut.value(mLevelGuiAnim)[1];
+	const auto& dsl = mCbEaseInOut.value(mSettingsAnim + mLevelAnim)[1];
+	const auto& d0 = mCbEaseInOut.value(mLevelGuiAnim[0])[1];
+	const auto& d1 = mCbEaseInOut.value(mLevelGuiAnim[1])[1];
+	const auto& ds = mCbEaseInOut.value(mLevelStartedAnim)[1];
 
 	// Main panel
-	mLevelGuis[GO_LS_GUI_LEVEL_PANEL]->setPosition({ 0.0f, 1.0f - d });
+	mLevelGuis[GO_LS_GUI_LEVEL_PANEL]->setPosition({ 0.0f, 1.0f - dsl });
 
 	// Coin icon and text
-	mLevelGuis[GO_LS_GUI_COIN]->setPosition({ -0.425f, 0.65f - s * 0.19f });
-	mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.36f, 0.65f - s * 0.22f, 0.0f });
+	{
+		const auto& dx = 0.2f * d0;
+		mLevelGuis[GO_LS_GUI_COIN]->setPosition({ -0.425f, 0.66f - dx });
+		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.36f, 0.63f - dx, 0.0f });
+	}
 
 	// Time counter
-	mLevelTexts[GO_LS_TEXT_TIME]->setPosition({ 0.475f, -0.725f + s * 0.25f, 0.0f });
+	{
+		const auto& p1 = Vector3(0.475f, -0.725f + ds * 0.25f, 0.0f);
+		const auto& p2 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector3(0.0f, -0.2f, 0.0f) * d1 : Vector3(0.0f);
+		mLevelTexts[GO_LS_TEXT_TIME]->setPosition(p1);
+	}
 }
 
 void LevelSelector::windowForSettings()
 {
-	const auto& d = mCbEaseInOut.value(mSettingsAnim)[1];
+	const auto& ds = mCbEaseInOut.value(mSettingsAnim)[1];
 	const auto& dl = mCbEaseInOut.value(mLevelAnim)[1];
 
 	// Animation for "Settings" button
 	{
-		const auto& d2 = mCbEaseInOut.value(mScreenButtons[GO_LS_GUI_SETTINGS].animation)[1];
-		const auto& d3 = mLevelInfo.state > GO_LS_LEVEL_INIT ? mCbEaseInOut.value(1.0f - mLevelButtonScaleAnim)[1] : 0.0f;
-		const auto& d4 = mLevelInfo.state == GO_LS_LEVEL_RESTORING ? mCbEaseInOut.value(1.0f - mLevelAnim)[1] : 0.0f;
-		const auto& dp = mLevelInfo.state < GO_LS_LEVEL_FINISHED ? d + dl : 0.0f;
+		const auto& d2 = mCbEaseInOut.value(mLevelGuiAnim[0])[1];
 
 		const auto& drawable = mScreenButtons[GO_LS_GUI_SETTINGS].drawable;
 
 		// Position
 		{
-			const auto& p1 = Vector2(-0.5f, 0.5f) - Vector2(d2, 0.0f); // Left to right
-			const auto& p2 = (mLevelInfo.state == GO_LS_LEVEL_STARTED ? Vector2(0.1f, -0.05f) : Vector2(0.5f, -0.1f)) * dp; // Upper-left to mid-upper-center
-			const auto& p3 = Vector2(0.0f, 0.25f) * d2; // Upper-left to outside-top
-			const auto& p4 = Vector2(0.0f, -1.0f) * d3;
-			const auto& p5 = mLevelInfo.state == GO_LS_LEVEL_STARTED ? Vector2(0.5f, 0.85f) * d : Vector2(0.0f);
-			const auto& p6 = Vector2(-0.1f, 0.94f) * d4;
-			const auto& p7 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector2(0.0f, -0.2f) * dl : Vector2(0.0f);
-			drawable->setPosition(p1 + p2 + p3 + p4 + p5 + p6 + p7);
-		}
-
-		// Anchor
-		{
-			const auto& p1 = Vector2(1.0f, -1.0f) * (1.0f - dp - d3);
-			const auto& p2 = Vector2(1.0f, 1.0f) * (d3 * (1.0f - d));
-			const auto& p3 = mLevelInfo.state == GO_LS_LEVEL_RESTORING ? Vector2(1.0f, -1.0f) * (1.0f - dl) : Vector2(0.0f);
-			drawable->setAnchor(p1 + p2 + p3);
+			const auto& p1 = Vector2(-0.65f, -0.44f) + Vector2(0.25f, 0.0f) * d2;
+			const auto& p2 = Vector2(0.4f, 0.76f) * ds;
+			const auto& p3 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector2(0.0f, -0.2f) * dl : Vector2(0.0f);
+			drawable->setPosition(p1 + p2 + p3);
 		}
 
 		// Rotation
-		drawable->setRotationInDegrees(360.0f * (dp + d + d4));
+		drawable->setRotationInDegrees(360.0f * ds);
 
 		// Texture change
 		const bool isSettings = drawable->getTextureResource().key() == ResourceKey(RESOURCE_TEXTURE_GUI_SETTINGS);
-		if (dp > 0.5f || d > 0.5f)
+		if (ds > 0.5f)
 		{
 			if (isSettings)
 			{
@@ -1218,11 +1185,21 @@ void LevelSelector::windowForCurrentLevelView()
 void LevelSelector::manageLevelState()
 {
 	// Variables for later
-	bool animateCamera = false;
+	bool animate[2] = { false, false };
 
 	// Control level state
 	switch (mLevelInfo.state)
 	{
+	case GO_LS_LEVEL_INIT:
+
+		// Animations
+		if (mLevelButtonScaleAnim > 0.0f)
+		{
+			manageGuiLevelAnim(0, true);
+		}
+
+		break;
+
 	case GO_LS_LEVEL_STARTING:
 
 		// Create level room on animation end
@@ -1236,7 +1213,7 @@ void LevelSelector::manageLevelState()
 	case GO_LS_LEVEL_STARTED:
 
 		// Animate camera
-		animateCamera = true;
+		animate[1] = true;
 
 		// Decrement timer
 		if (mTimer.value < 0.0f)
@@ -1293,10 +1270,13 @@ void LevelSelector::manageLevelState()
 		}
 
 		// Finish this level (after I wasted a cycle)
-		if (mLevelInfo.delayedLose)
+		if (mLevelInfo.delayedChecks > 0.0f)
 		{
-			mLevelInfo.delayedLose = false;
-			checkForLevelEnd();
+			mLevelInfo.delayedChecks -= mDeltaTime;
+			if (mLevelInfo.delayedChecks <= 0.0f)
+			{
+				checkForLevelEnd();
+			}
 		}
 
 		break;
@@ -1318,7 +1298,8 @@ void LevelSelector::manageLevelState()
 		}
 
 		// Animate camera
-		animateCamera = true;
+		animate[0] = true;
+		animate[1] = true;
 
 		// Prevent player from shooting
 		if (!mLevelInfo.playerPointer.expired())
@@ -1351,8 +1332,11 @@ void LevelSelector::manageLevelState()
 		break;
 	}
 
+	// Animate level GUI
+	manageGuiLevelAnim(1, animate[0]);
+
 	// Animate camera, if requested
-	if (animateCamera)
+	if (animate[1])
 	{
 		// Animation value
 		const auto& d = mCbEaseInOut.value(mLevelStartedAnim)[1];
@@ -1409,7 +1393,7 @@ void LevelSelector::createLevelRoom()
 
 	// Other variables
 	mLevelStartedAnim = -1.0f; // Cycle waste
-	mLevelGuiAnim = -5.0f; // Cycle waste
+	mLevelGuiAnim[1] = -5.0f; // Cycle waste
 }
 
 void LevelSelector::finishCurrentLevel(const bool success)
@@ -1418,11 +1402,26 @@ void LevelSelector::finishCurrentLevel(const bool success)
 	mLevelInfo.success = success;
 
 	// Add coins
-	RoomManager::singleton->mSaveData.coinTotal += RoomManager::singleton->mSaveData.coinCurrent;
+	if (mLevelInfo.success)
+	{
+		// Reset number of retries
+		mLevelInfo.numberOfRetries = 0;
+
+		// Increment maximum level ID
+		++RoomManager::singleton->mSaveData.maxLevelId;
+
+		// Add coins picked-up in this level to total count
+		RoomManager::singleton->mSaveData.coinTotal += RoomManager::singleton->mSaveData.coinCurrent;
+	}
+	else
+	{
+		// Update GUI
+		mLevelTexts[GO_LS_TEXT_COIN]->setText(":(");
+	}
 
 	// Play success or failure sound for level end
 	{
-		auto& p = mPlayables[success ? GO_LS_AUDIO_WIN : GO_LS_AUDIO_LOSE]->source();
+		auto& p = mPlayables[mLevelInfo.success ? GO_LS_AUDIO_WIN : GO_LS_AUDIO_LOSE]->source();
 		p.setOffsetInSeconds(0.0f);
 		p.play();
 	}
@@ -1437,7 +1436,7 @@ void LevelSelector::finishCurrentLevel(const bool success)
 	mLevelInfo.state = GO_LS_LEVEL_FINISHED;
 
 	// Update text
-	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(mLevelInfo.selectedLevelId) + "\n" + (success ? "Completed" : "Failed"));
+	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(mLevelInfo.selectedLevelId) + "\n" + (mLevelInfo.success ? "Completed" : "Failed"));
 }
 
 void LevelSelector::prepareForReplay()
@@ -1447,7 +1446,9 @@ void LevelSelector::prepareForReplay()
 
 	// Trigger the level start for the same level
 	mLevelInfo.state = GO_LS_LEVEL_INIT;
-	mScreenButtons[GO_LS_GUI_PLAY].callback();
+
+	++mLevelInfo.numberOfRetries;
+	startLevel(mLevelInfo.currentViewingLevelId);
 }
 
 void LevelSelector::replayCurrentLevel()
@@ -1476,6 +1477,7 @@ void LevelSelector::checkForLevelEnd()
 
 	// Check if any bubble has reached the limit line
 	bool lose = mTimer.value < 0.0f;
+	bool win = !lose;
 
 	if (mLevelInfo.limitLinePointer.expired())
 	{
@@ -1487,6 +1489,10 @@ void LevelSelector::checkForLevelEnd()
 		{
 			if (go->getType() == GOT_BUBBLE)
 			{
+				// Level is not won if there is one bubble at least
+				win = false;
+
+				// Check if there is any bubble below the red line
 				if (go->mPosition.y() < mLevelInfo.limitLinePointer.lock()->mPosition.y())
 				{
 					lose = true;
@@ -1500,6 +1506,45 @@ void LevelSelector::checkForLevelEnd()
 	if (lose)
 	{
 		finishCurrentLevel(false);
+	}
+	else if (win)
+	{
+		finishCurrentLevel(true);
+	}
+}
+
+void LevelSelector::startLevel(const UnsignedInt levelId)
+{
+	// Check if a level is starting
+	if (mLevelInfo.state > GO_LS_LEVEL_INIT)
+	{
+		return;
+	}
+
+	// Start the selected level
+	Debug{} << "User wants to play level" << levelId;
+
+	mLevelEndingAnim = false;
+
+	mLevelInfo.currentViewingLevelId = 0U;
+	mLevelInfo.repeatLevelId = 0U;
+	mLevelInfo.delayedChecks = 0.0f;
+	mLevelInfo.state = GO_LS_LEVEL_STARTING;
+
+	mTimer = { 120.0f, 120 };
+	mCoins = { -0.001f, -1 };
+	RoomManager::singleton->mSaveData.coinCurrent = 0;
+}
+
+void LevelSelector::manageGuiLevelAnim(const UnsignedInt index, const bool increment)
+{
+	if (mLevelGuiAnim[index] < 0.0f)
+	{
+		mLevelGuiAnim[index] += 1.0f;
+	}
+	else
+	{
+		manageBackendAnimationVariable(mLevelGuiAnim[index], 1.0f, increment);
 	}
 }
 
