@@ -119,6 +119,11 @@ Float* OverlayGui::color()
 	return mColor.data();
 }
 
+const Vector2 OverlayGui::getSize() const
+{
+	return mSize;
+}
+
 void OverlayGui::updateAspectRatioFactors()
 {
 	const auto& w = RoomManager::singleton->getWindowSize();

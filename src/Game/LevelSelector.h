@@ -97,7 +97,7 @@ private:
 	struct LS_ScreenButton
 	{
 		std::shared_ptr<OverlayGui> drawable;
-		std::function<void()> callback;
+		std::function<void(UnsignedInt)> callback;
 	};
 
 	struct LS_LevelInfo
@@ -119,7 +119,8 @@ private:
 
 	struct LS_PowerupView
 	{
-		Float scroll;
+		Int startX;
+		Float scrollX;
 	};
 
 	template <typename S, typename T>

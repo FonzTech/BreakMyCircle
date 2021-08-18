@@ -67,7 +67,8 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	}
 
 	{
-		mPuView.scroll = 0.0f;
+		mPuView.startX = GO_LS_RESET_MOUSE_VALUE;
+		mPuView.scrollX = 0.0f;
 	}
 
 	mLevelGuiAnim[0] = 0.0f;
@@ -88,7 +89,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 		mScreenButtons[GO_LS_GUI_SETTINGS] = {
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this]() {
+			[this](UnsignedInt index) {
 				// Avoid inconsistencies
 				if (mLevelEndingAnim)
 				{
@@ -137,7 +138,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 		mScreenButtons[GO_LS_GUI_REPLAY] = {
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this]() {
+			[this](UnsignedInt index) {
 				Debug{} << "You have clicked REPLAY";
 
 				if (!mDialog.expired())
@@ -174,7 +175,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 		mScreenButtons[GO_LS_GUI_NEXT] = {
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this]() {
+			[this](UnsignedInt index) {
 				Debug{} << "You have clicked NEXT";
 
 				// Get position to animate to  (next level)
@@ -234,7 +235,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 		mScreenButtons[GO_LS_GUI_SHARE] = {
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this]() {
+			[this](UnsignedInt index) {
 				Debug{} << "You have clicked SHARE";
 			}
 		};
@@ -249,7 +250,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 		mScreenButtons[GO_LS_GUI_PLAY] = {
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this]() {
+			[this](UnsignedInt index) {
 				mLevelInfo.numberOfRetries = 0;
 				startLevel(mLevelInfo.currentViewingLevelId);
 			}
@@ -265,7 +266,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 		mScreenButtons[GO_LS_GUI_EXIT] = {
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this]() {
+			[this](UnsignedInt index) {
 				Debug{} << "You have clicked EXIT";
 
 				if (!mDialog.expired())
@@ -381,7 +382,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	{
 		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 		auto& layer = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
-		layer.cameraEye = mPosition + Vector3(0.0f, 12.0f + 4.0f * ar, 15.0f + 15.0f * ar);
+		layer.cameraEye = mPosition + Vector3(0.0f, 9.0f + 4.0f * ar, 12.0f + 15.0f * ar);
 		layer.cameraTarget = mPosition;
 	}
 
@@ -490,7 +491,7 @@ void LevelSelector::update()
 		{
 			Debug{} << "Level room created";
 			mLevelInfo.currentViewingLevelId = 1U;
-			mScreenButtons[GO_LS_GUI_PLAY].callback();
+			mScreenButtons[GO_LS_GUI_PLAY].callback(GO_LS_GUI_PLAY);
 		}
 		else
 		{
@@ -522,6 +523,42 @@ void LevelSelector::update()
 	// Overlay for current level viewing
 	const bool isViewing = mLevelInfo.currentViewingLevelId != 0U || (mLevelInfo.state == GO_LS_LEVEL_FINISHED && mLevelInfo.repeatLevelId == 0U);
 	manageBackendAnimationVariable(mLevelAnim, 0.8f, isViewing);
+
+	if (isViewing)
+	{
+		const auto& lbs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
+		if (lbs == IM_STATE_PRESSED)
+		{
+			const auto& y = Float(InputManager::singleton->mMousePosition.y());
+			const auto& bbox = mScreenButtons[GO_LS_GUI_POWERUP].drawable->getBoundingBox(RoomManager::singleton->getWindowSize());
+
+			if (y > bbox.backBottomLeft().y() && y < bbox.backTopLeft().y())
+			{
+				mPuView.startX = InputManager::singleton->mMousePosition.x();
+			}
+		}
+		else if (lbs >= IM_STATE_PRESSING)
+		{
+			if (mPuView.startX != GO_LS_RESET_MOUSE_VALUE)
+			{
+				mPuView.scrollX += Float(InputManager::singleton->mMousePosition.x() - mPuView.startX) * 0.005f;
+				mPuView.startX = InputManager::singleton->mMousePosition.x();
+			}
+		}
+		else if (lbs == IM_STATE_RELEASED)
+		{
+			mPuView.startX = GO_LS_RESET_MOUSE_VALUE;
+		}
+		else
+		{
+			// Restore original scroll here
+		}
+	}
+	else
+	{
+		mPuView.startX = GO_LS_RESET_MOUSE_VALUE;
+	}
+
 	windowForCurrentLevelView();
 
 	// Control level ending
@@ -604,7 +641,7 @@ void LevelSelector::update()
 			}
 			else if (lbs == IM_STATE_RELEASED && mClickIndex == it->first)
 			{
-				it->second.callback();
+				it->second.callback(it->first);
 				break;
 			}
 		}
@@ -1112,7 +1149,6 @@ void LevelSelector::windowForCommon()
 
 	// Time icon and text
 	{
-		// 0.475f
 		const auto& p1 = Vector3(0.35f, -0.725f + ds * 0.25f, 0.0f);
 		const auto& p2 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector3(0.0f, -0.2f, 0.0f) * d1 : Vector3(0.0f);
 
@@ -1129,23 +1165,24 @@ void LevelSelector::windowForSettings()
 	// Animation for "Settings" button
 	{
 		const auto& d2 = mCbEaseInOut.value(mLevelGuiAnim[0])[1];
+		const auto& dsl = ds + dl;
 
 		const auto& drawable = mScreenButtons[GO_LS_GUI_SETTINGS].drawable;
 
 		// Position
 		{
 			const auto& p1 = Vector2(-0.65f, -0.44f) + Vector2(0.25f, 0.0f) * d2;
-			const auto& p2 = Vector2(0.4f, 0.76f) * ds;
+			const auto& p2 = Vector2(0.4f, 0.76f + 0.05f * dl) * dsl;
 			const auto& p3 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector2(0.0f, -0.2f) * dl : Vector2(0.0f);
 			drawable->setPosition(p1 + p2 + p3);
 		}
 
 		// Rotation
-		drawable->setRotationInDegrees(360.0f * ds);
+		drawable->setRotationInDegrees(360.0f * dsl);
 
 		// Texture change
 		const bool isSettings = drawable->getTextureResource().key() == ResourceKey(RESOURCE_TEXTURE_GUI_SETTINGS);
-		if (ds > 0.5f)
+		if (dsl > 0.75f)
 		{
 			if (isSettings)
 			{
@@ -1193,22 +1230,21 @@ void LevelSelector::windowForCurrentLevelView()
 	// Powerup buttons
 	{
 		const Float xf = 0.5f - 0.25f * ar;
-
-		mPuView.scroll = Float(InputManager::singleton->mMousePosition.x() - 100) * 0.01f;
+		const Float yf = 0.91f - d;
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
 			auto& item = mScreenButtons[GO_LS_GUI_POWERUP + i].drawable;
 
-			const Float xp = Float(i) * xf + mPuView.scroll;
+			const Float xp = Float(i) * xf + mPuView.scrollX;
 			const Float alpha = 1.2f - Math::abs(xp) * 5.0f * ar;
 			if (alpha > 0.0f)
 			{
-				item->setPosition({ xp, 0.91f - d });
+				item->setPosition({ xp, yf });
 				item->color()[3] = Math::clamp(alpha, 0.0f, 1.0f);
 			}
 			else
 			{
-				item->setPosition({ -2.0f, -2.0f });
+				item->setPosition({ -2.0f, yf });
 			}
 		}
 	}
@@ -1651,8 +1687,13 @@ void LevelSelector::createPowerupView()
 
 		mScreenButtons[GO_LS_GUI_POWERUP + i] = {
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[&]() {
-				Debug{} << "You have clicked POWERUP" << i;
+			[&](UnsignedInt index) {
+				if (mLevelAnim < 0.95f || mScreenButtons[index].drawable->color()[3] < 0.95f)
+				{
+					return;
+				}
+
+				Debug{} << "You have clicked POWERUP" << index;
 			}
 		};
 	}
