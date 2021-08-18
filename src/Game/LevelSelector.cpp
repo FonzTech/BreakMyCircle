@@ -66,6 +66,10 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mCoins = { 0.0f, 0 };
 	}
 
+	{
+		mPuView.scroll = 0.0f;
+	}
+
 	mLevelGuiAnim[0] = 0.0f;
 	mLevelGuiAnim[1] = 0.0f;
 
@@ -358,11 +362,26 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mLevelTexts[GO_LS_TEXT_COIN] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 	}
 
+	// Powerup text
+	{
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter);
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(0.9f, 0.9f, 0.9f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setScale(Vector2(1.0f));
+		go->setText("Your Powerups");
+
+		mLevelTexts[GO_LS_TEXT_POWERUP_TITLE] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+
+	// Create powerup view
+	createPowerupView();
+
 	// Set camera parameters
 	{
 		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 		auto& layer = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
-		layer.cameraEye = mPosition + Vector3(0.0f, 12.0f, 34.0f * ar);
+		layer.cameraEye = mPosition + Vector3(0.0f, 12.0f + 4.0f * ar, 15.0f + 15.0f * ar);
 		layer.cameraTarget = mPosition;
 	}
 
@@ -460,7 +479,14 @@ void LevelSelector::update()
 #if NDEBUG or _DEBUG
 	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
 	{
-		if (mLevelInfo.playerPointer.expired())
+		if (mLevelGuiAnim[0] == 0.0f)
+		{
+			for (auto& item : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
+			{
+				item->mDestroyMe = true;
+			}
+		}
+		else if (mLevelInfo.playerPointer.expired())
 		{
 			Debug{} << "Level room created";
 			mLevelInfo.currentViewingLevelId = 1U;
@@ -478,7 +504,7 @@ void LevelSelector::update()
 	(*mSkyManipulator)
 		.resetTransformation()
 		.scale(Vector3(GO_LS_SCENERY_LENGTH, GO_LS_SCENERY_LENGTH, 1.0f))
-		.translate(mPosition + Vector3(0.0f, 0.0f, -GO_LS_SCENERY_LENGTH_DOUBLE));
+		.translate(mPosition + Vector3(0.0f, 0.0f, -GO_LS_SKYPLANE_DISTANCE));
 
 	// Check if there is any on-going action on top
 	if (mLevelInfo.state == GO_LS_LEVEL_INIT && RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->size() > 0)
@@ -564,7 +590,7 @@ void LevelSelector::update()
 	const auto& lbs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
 
 	const Vector3 p(Float(InputManager::singleton->mMousePosition.x()), Float(InputManager::singleton->mMousePosition.y()), 0.0f);
-	const Vector2 w(Float(RoomManager::singleton->mWindowSize.x()), Float(RoomManager::singleton->mWindowSize.y()));
+	const auto& w = RoomManager::singleton->getWindowSize();
 
 	for (auto it = mScreenButtons.begin(); it != mScreenButtons.end(); ++it)
 	{
@@ -1143,6 +1169,7 @@ void LevelSelector::windowForCurrentLevelView()
 	const bool& isFinished = mLevelInfo.state >= GO_LS_LEVEL_FINISHED;
 	const auto& d = mCbEaseInOut.value(mLevelAnim)[1];
 	const auto& s = mCbEaseInOut.value(mSettingsAnim)[1];
+	//const auto& p = mLevelInfo.state == GO_LS_LEVEL_STARTED ? s * 0.96f : 0.0f;
 
 	// Score stars
 	for (UnsignedInt i = 0; i < 3; ++i)
@@ -1157,20 +1184,45 @@ void LevelSelector::windowForCurrentLevelView()
 		mScreenButtons[GO_LS_GUI_PLAY].drawable->setPosition(p1);
 	}
 
-	// Level texts
+	// Level text
+	mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - d, 0.0f });
+
+	// Powerup title text
+	mLevelTexts[GO_LS_TEXT_POWERUP_TITLE]->setPosition({ 0.0f, 1.05f - d, 0.0f });
+
+	// Powerup buttons
 	{
-		const auto& p = mLevelInfo.state == GO_LS_LEVEL_STARTED ? s * 0.96f : 0.0f;
-		mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - (d + p), 0.0f });
+		const Float xf = 0.5f - 0.25f * ar;
+
+		mPuView.scroll = Float(InputManager::singleton->mMousePosition.x() - 100) * 0.01f;
+		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
+		{
+			auto& item = mScreenButtons[GO_LS_GUI_POWERUP + i].drawable;
+
+			const Float xp = Float(i) * xf + mPuView.scroll;
+			const Float alpha = 1.2f - Math::abs(xp) * 5.0f * ar;
+			if (alpha > 0.0f)
+			{
+				item->setPosition({ xp, 0.91f - d });
+				item->color()[3] = Math::clamp(alpha, 0.0f, 1.0f);
+			}
+			else
+			{
+				item->setPosition({ -2.0f, -2.0f });
+			}
+		}
 	}
 
+	// Navigation buttons for level
 	{
 		const bool& isStarted = mLevelInfo.state == GO_LS_LEVEL_STARTED;
 		const auto& cd = -1.5f + d * 1.275f;
 		const auto& cs = -1.5f + s * 1.275f;
+		const auto& xd = 0.15f / ar;
 
 		// Animation for "Replay" button
 		{
-			const auto& p1 = isFinished ? Vector2{ -0.3f, cd } : Vector2{ isStarted ? 0.0f : 2.0f };
+			const auto& p1 = isFinished ? Vector2{ -xd, cd } : Vector2{ isStarted ? 0.0f : 2.0f };
 			const auto& p2 = isStarted ? Vector2{ 0.2f, cs } : Vector2{ 0.0f };
 			mScreenButtons[GO_LS_GUI_REPLAY].drawable->setPosition(p1 + p2);
 		}
@@ -1183,7 +1235,7 @@ void LevelSelector::windowForCurrentLevelView()
 
 		// Animation for "Share" button
 		{
-			const auto& p1 = isFinished ? Vector2{ 0.3f, cd } : Vector2{ 2.0f };
+			const auto& p1 = isFinished ? Vector2{ xd, cd } : Vector2{ 2.0f };
 			mScreenButtons[GO_LS_GUI_SHARE].drawable->setPosition(p1);
 		}
 
@@ -1571,5 +1623,37 @@ void LevelSelector::closeDialog()
 	{
 		mDialog.lock()->closeDialog();
 		mDialog.reset();
+	}
+}
+
+void LevelSelector::createPowerupView()
+{
+	for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
+	{
+		// Get correct icon for this powerup
+		std::string tn;
+		switch (i)
+		{
+		case 0:
+			tn = RESOURCE_TEXTURE_GUI_PU_BOMB;
+			break;
+
+		case 1:
+			tn = RESOURCE_TEXTURE_GUI_PU_PLASMA;
+			break;
+		}
+
+		// Create icon
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, tn);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.15f, 0.15f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_POWERUP + i] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[&]() {
+				Debug{} << "You have clicked POWERUP" << i;
+			}
+		};
 	}
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #define GO_LS_SCENERY_LENGTH 50.0f
-#define GO_LS_SCENERY_LENGTH_DOUBLE GO_LS_SCENERY_LENGTH * 2.0f
+#define GO_LS_SKYPLANE_DISTANCE GO_LS_SCENERY_LENGTH * 1.5f
 #define GO_LS_MAX_SCROLL_THRESHOLD 0.01f
 #define GO_LS_MAX_SCROLL_VELOCITY 0.025f
 #define GO_LS_MAX_SCROLL_VELOCITY_MAX (GO_LS_MAX_SCROLL_VELOCITY * GO_LS_SCENERY_LENGTH)
@@ -13,6 +13,8 @@
 #define GO_LS_TEXT_LEVEL 0U
 #define GO_LS_TEXT_TIME 1U
 #define GO_LS_TEXT_COIN 2U
+#define GO_LS_TEXT_POWERUP_TITLE 3U
+#define GO_LS_TEXT_POWERUP_COUNT 1000U
 
 #define GO_LS_GUI_LEVEL_PANEL 0U
 #define GO_LS_GUI_SETTINGS 1U
@@ -24,6 +26,7 @@
 #define GO_LS_GUI_COIN 7U
 #define GO_LS_GUI_TIME 8U
 #define GO_LS_GUI_STAR 100U
+#define GO_LS_GUI_POWERUP 1000U
 
 #define GO_LS_LEVEL_INIT 0
 #define GO_LS_LEVEL_STARTING 1
@@ -33,6 +36,8 @@
 
 #define GO_LS_AUDIO_WIN 1
 #define GO_LS_AUDIO_LOSE 2
+
+#define GO_LS_MAX_POWERUP_COUNT 2
 
 #include <array>
 #include <vector>
@@ -112,6 +117,11 @@ private:
 		bool success;
 	};
 
+	struct LS_PowerupView
+	{
+		Float scroll;
+	};
+
 	template <typename S, typename T>
 	struct LS_CachedVariable
 	{
@@ -140,6 +150,8 @@ private:
 	void manageGuiLevelAnim(const UnsignedInt index, const bool increment);
 	void closeDialog();
 
+	void createPowerupView();
+
 	std::weak_ptr<Dialog> mDialog;
 
 	std::shared_ptr<GameDrawable<Shaders::Flat3D>> mSkyPlane;
@@ -159,18 +171,20 @@ private:
 	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
 
 	Int mClickIndex;
-	std::unordered_map<Int, LS_ScreenButton> mScreenButtons;
+	std::unordered_map<UnsignedInt, LS_ScreenButton> mScreenButtons;
 
-	std::unordered_map<Int, std::shared_ptr<OverlayGui>> mLevelGuis;
-	std::unordered_map<Int, std::shared_ptr<OverlayText>> mLevelTexts;
+	std::unordered_map<UnsignedInt, std::shared_ptr<OverlayGui>> mLevelGuis;
+	std::unordered_map<UnsignedInt, std::shared_ptr<OverlayText>> mLevelTexts;
 	Float mLevelAnim;
 
 	std::chrono::system_clock::time_point mClickStartTime;
-	std::unordered_map<UnsignedInt, Int> mPickableObjectRefs;
+	std::unordered_map<UnsignedInt, UnsignedInt> mPickableObjectRefs;
 
 	LS_LevelInfo mLevelInfo;
 	Float mLevelGuiAnim[2];
 
 	LS_CachedVariable<Float, Int> mTimer;
 	LS_CachedVariable<Float, Int> mCoins;
+
+	LS_PowerupView mPuView;
 };
