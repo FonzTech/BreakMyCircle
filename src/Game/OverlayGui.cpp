@@ -121,14 +121,15 @@ Float* OverlayGui::color()
 
 void OverlayGui::updateAspectRatioFactors()
 {
-	if (RoomManager::singleton->mWindowSize.x() < RoomManager::singleton->mWindowSize.y())
+	const auto& w = RoomManager::singleton->getWindowSize();
+	if (w.x() < w.y())
 	{
 		mArs[0] = 1.0f;
-		mArs[1] = Float(RoomManager::singleton->mWindowSize.x()) / Float(RoomManager::singleton->mWindowSize.y());
+		mArs[1] = Float(w.x()) / Float(w.y());
 	}
 	else
 	{
-		mArs[0] = Float(RoomManager::singleton->mWindowSize.y()) / Float(RoomManager::singleton->mWindowSize.x());
+		mArs[0] = Float(w.y()) / Float(w.x());
 		mArs[1] = 1.0f;
 	}
 }

@@ -39,6 +39,8 @@
 #define RESOURCE_TEXTURE_GUI_COIN "tex_gui_coin"
 #define RESOURCE_TEXTURE_GUI_TIME "tex_gui_time"
 #define RESOURCE_TEXTURE_GUI_BUTTON_2X1 "tex_gui_button_2x1"
+#define RESOURCE_TEXTURE_GUI_PU_BOMB "tex_gui_pu_bomb"
+#define RESOURCE_TEXTURE_GUI_PU_PLASMA "tex_gui_pu_plasma"
 #define RESOURCE_TEXTURE_WHITE "tex_white"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"

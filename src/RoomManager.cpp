@@ -75,7 +75,18 @@ RoomManager::~RoomManager()
 
 const Float RoomManager::getWindowAspectRatio() const
 {
-	return Vector2(mWindowSize).aspectRatio();
+	return mAspectRatio;
+}
+
+const Vector2 RoomManager::getWindowSize()
+{
+	return mWindowSize;
+}
+
+const void RoomManager::setWindowSize(const Vector2 & size)
+{
+	mWindowSize = size;
+	mAspectRatio = mWindowSize.aspectRatio();
 }
 
 void RoomManager::clear()

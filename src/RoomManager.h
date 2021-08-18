@@ -110,9 +110,6 @@ public:
 	std::uint32_t mSeed;
 	std::unordered_map<UnsignedInt, BubbleData> mBubbleColors;
 
-	// Window size
-	Vector2i mWindowSize;
-
 	// Game save data
 	SaveData mSaveData;
 
@@ -121,10 +118,17 @@ public:
 	~RoomManager();
 
 	const Float getWindowAspectRatio() const;
+	const Vector2 getWindowSize();
+	const void setWindowSize(const Vector2 & size);
 	void clear();
 	void setup();
 	void prepareRoom(const bool stopBgMusic);
 	void loadRoom(const std::string & name);
 	void createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen);
 	Instantiator getGameObjectFromNoiseValue(const double value);
+
+protected:
+	// Window parameters
+	Vector2 mWindowSize;
+	Float mAspectRatio;
 };

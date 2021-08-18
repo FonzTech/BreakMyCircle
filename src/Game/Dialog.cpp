@@ -77,7 +77,7 @@ void Dialog::update()
 	// Prepare work variables
 	const auto& lbs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
 	const Vector3 p(Float(InputManager::singleton->mMousePosition.x()), Float(InputManager::singleton->mMousePosition.y()), 0.0f);
-	const Vector2 w(Float(RoomManager::singleton->mWindowSize.x()), Float(RoomManager::singleton->mWindowSize.y()));
+	const auto& w = RoomManager::singleton->getWindowSize();
 
 	const bool& clickable = mOpacity >= 1.0f;
 

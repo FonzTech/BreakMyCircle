@@ -48,11 +48,11 @@ const Int OverlayText::getType() const
 
 void OverlayText::update()
 {
-	if (mCurrentWindowSize != RoomManager::singleton->mWindowSize)
+	const auto& w = RoomManager::singleton->getWindowSize();
+	if (mCurrentWindowSize != w)
 	{
-		mCurrentWindowSize = RoomManager::singleton->mWindowSize;
-		mCurrentFloatWindowSize = Vector2{ mCurrentWindowSize };
-		mProjectionMatrix = Matrix3::projection(mCurrentFloatWindowSize);
+		mCurrentWindowSize = w;
+		mProjectionMatrix = Matrix3::projection(mCurrentWindowSize);
 		updateTransformation();
 	}
 }
@@ -100,7 +100,7 @@ void OverlayText::setScale(const Vector2 & scale)
 
 void OverlayText::updateTransformation()
 {
-	mTransformationMatrix = Matrix3::translation(mCurrentFloatWindowSize * mPosition.xy()) * Matrix3::scaling(mScale);
+	mTransformationMatrix = Matrix3::translation(mCurrentWindowSize * mPosition.xy()) * Matrix3::scaling(mScale);
 	/*
 	(*mManipulator)
 		.resetTransformation()

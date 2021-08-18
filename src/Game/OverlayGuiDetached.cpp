@@ -36,11 +36,11 @@ void OverlayGuiDetached::update()
 	OverlayGui::update();
 	
 	// Update projection
-	if (mCurrentWindowSize != RoomManager::singleton->mWindowSize)
+	const auto& w = RoomManager::singleton->getWindowSize();
+	if (mCurrentWindowSize != w)
 	{
-		mCurrentWindowSize = RoomManager::singleton->mWindowSize;
-		mCurrentFloatWindowSize = Vector2{ mCurrentWindowSize };
-		mProjectionMatrix = Matrix4::orthographicProjection(Vector2(mCurrentFloatWindowSize.x(), mCurrentFloatWindowSize.y()), 0.01f, 100.0f);
+		mCurrentWindowSize = w;
+		mProjectionMatrix = Matrix4::orthographicProjection(w, 0.01f, 100.0f);
 	}
 }
 

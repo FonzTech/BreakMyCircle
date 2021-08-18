@@ -23,6 +23,7 @@
 
 # On-going tasks
 
+- Game powerups.
 - Complete level cycle, with start, winning and losing.
 - Small main menu for game.
 - Implement pause/resume system for game. And so the pause menu.

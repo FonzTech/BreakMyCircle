@@ -44,8 +44,7 @@ protected:
 	Resource<FontHolder> mFontHolder;
 	Containers::Pointer<Text::Renderer2D> mText;
 
-	Vector2i mCurrentWindowSize;
-	Vector2 mCurrentFloatWindowSize;
+	Vector2 mCurrentWindowSize;
 
 	Vector2 mScale;
 	Matrix3 mProjectionMatrix;

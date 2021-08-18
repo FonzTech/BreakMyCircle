@@ -25,8 +25,7 @@ protected:
 	Resource<GL::Texture2D> mTexture;
 
 	// Members for projection calculation
-	Vector2i mCurrentWindowSize;
-	Vector2 mCurrentFloatWindowSize;
+	Vector2 mCurrentWindowSize;
 
 	// Projection matrix
 	Matrix4 mProjectionMatrix;
