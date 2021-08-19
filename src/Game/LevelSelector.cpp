@@ -549,12 +549,15 @@ void LevelSelector::update()
 
 		if (lbs == IM_STATE_PRESSED)
 		{
-			const auto& y = Float(InputManager::singleton->mMousePosition.y());
-			const auto& bbox = mScreenButtons[GO_LS_GUI_POWERUP].drawable->getBoundingBox(RoomManager::singleton->getWindowSize());
-
-			if (y > bbox.backBottomLeft().y() && y < bbox.backTopLeft().y())
+			if (mLevelInfo.state == GO_LS_LEVEL_INIT)
 			{
-				mPuView.startX = InputManager::singleton->mMousePosition.x();
+				const auto& y = Float(InputManager::singleton->mMousePosition.y());
+				const auto& bbox = mScreenButtons[GO_LS_GUI_POWERUP].drawable->getBoundingBox(RoomManager::singleton->getWindowSize());
+
+				if (y > bbox.backBottomLeft().y() && y < bbox.backTopLeft().y())
+				{
+					mPuView.startX = InputManager::singleton->mMousePosition.x();
+				}
 			}
 		}
 		else if (lbs >= IM_STATE_PRESSING)
@@ -1250,7 +1253,8 @@ void LevelSelector::windowForCurrentLevelView()
 	mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - d, 0.0f });
 
 	// Powerup title text
-	mLevelTexts[GO_LS_TEXT_POWERUP_TITLE]->setPosition({ 0.0f, 1.05f - d, 0.0f });
+	const bool& canShowPowerups = mLevelInfo.state <= GO_LS_LEVEL_STARTING;
+	mLevelTexts[GO_LS_TEXT_POWERUP_TITLE]->setPosition({ canShowPowerups ? 0.0f : -1000.0f, 1.05f - d, 0.0f });
 
 	// Powerup buttons
 	{
@@ -1258,7 +1262,7 @@ void LevelSelector::windowForCurrentLevelView()
 		const Float yf = 0.91f - d;
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
-			const Float xp = Float(i) * xf + mPuView.scrollX;
+			const Float xp = canShowPowerups ? Float(i) * xf + mPuView.scrollX : -1000.0f;
 
 			// Clickable icon
 			{
@@ -1397,8 +1401,7 @@ void LevelSelector::manageLevelState()
 			if (mTimer.cached != timerInt)
 			{
 				mTimer.cached = timerInt;
-				const auto& str = mTimer.cached >= 0 ? std::to_string(mTimer.cached) + "s" : ":(";
-				mLevelTexts[GO_LS_TEXT_TIME]->setText(str);
+				updateTimeCounter(mTimer.cached);
 			}
 		}
 
@@ -1695,6 +1698,8 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 	mTimer = { 120.0f, 120 };
 	mCoins = { -0.001f, -1 };
 	RoomManager::singleton->mSaveData.coinCurrent = 0;
+
+	updateTimeCounter(mTimer.cached);
 }
 
 void LevelSelector::manageGuiLevelAnim(const UnsignedInt index, const bool increment)
@@ -1707,6 +1712,12 @@ void LevelSelector::manageGuiLevelAnim(const UnsignedInt index, const bool incre
 	{
 		manageBackendAnimationVariable(mLevelGuiAnim[index], 1.0f, increment);
 	}
+}
+
+void LevelSelector::updateTimeCounter(const Int value)
+{
+	const auto& str = value >= 0 ? std::to_string(value) + "s" : ":(";
+	mLevelTexts[GO_LS_TEXT_TIME]->setText(str);
 }
 
 void LevelSelector::closeDialog()
@@ -1776,8 +1787,8 @@ void LevelSelector::createPowerupView()
 
 					{
 						const bool& isEnough = RoomManager::singleton->mSaveData.powerupAmounts[index] > 0;
-						const std::string& text = isEnough ? "Yes" : "Not Enough!";
-						o->addAction("Yes", [this,index]() {
+						const std::string& text = isEnough ? "Yes" : "Not Enough";
+						o->addAction(text, [this,index]() {
 							Debug{} << "You have clicked YES to USE POWERUP";
 
 							// Check if there is one left to use, at least

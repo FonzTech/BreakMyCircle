@@ -151,6 +151,7 @@ private:
 	void startLevel(const UnsignedInt levelId);
 
 	void manageGuiLevelAnim(const UnsignedInt index, const bool increment);
+	void updateTimeCounter(const Int value);
 	void closeDialog();
 
 	void createPowerupView();
