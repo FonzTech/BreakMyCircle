@@ -231,6 +231,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 				// Restore level state to init
 				mLevelInfo.state = GO_LS_LEVEL_RESTORING;
+
+				// Update stats
+				RoomManager::singleton->mSaveData.coinCurrent = 0;
 			}
 		};
 	}
@@ -539,17 +542,18 @@ void LevelSelector::update()
 	windowForSettings();
 
 	// Overlay for current level viewing
-	const bool isViewing = mLevelInfo.currentViewingLevelId != 0U || (mLevelInfo.state == GO_LS_LEVEL_FINISHED && mLevelInfo.repeatLevelId == 0U);
-	manageBackendAnimationVariable(mLevelAnim, 0.8f, isViewing);
+	const bool& isViewingLevel = mLevelInfo.currentViewingLevelId != 0U || (mLevelInfo.state == GO_LS_LEVEL_FINISHED && mLevelInfo.repeatLevelId == 0U);
+	const bool& isViewingSettings = mLevelInfo.state == GO_LS_LEVEL_STARTED && mSettingsOpened;
+	manageBackendAnimationVariable(mLevelAnim, 0.8f, isViewingLevel);
 
-	if (isViewing)
+	if (isViewingLevel || isViewingSettings)
 	{
 		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 		const auto& lbs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
 
 		if (lbs == IM_STATE_PRESSED)
 		{
-			if (mLevelInfo.state == GO_LS_LEVEL_INIT)
+			if (mLevelInfo.state == GO_LS_LEVEL_INIT || isViewingSettings)
 			{
 				const auto& y = Float(InputManager::singleton->mMousePosition.y());
 				const auto& bbox = mScreenButtons[GO_LS_GUI_POWERUP].drawable->getBoundingBox(RoomManager::singleton->getWindowSize());
@@ -719,7 +723,7 @@ void LevelSelector::update()
 	// Handle scrollable scenery
 	if (lbs == IM_STATE_PRESSED)
 	{
-		if (!isViewing && !mSettingsOpened && mLevelInfo.state == GO_LS_LEVEL_INIT && !mLevelEndingAnim)
+		if (!isViewingLevel && !mSettingsOpened && mLevelInfo.state == GO_LS_LEVEL_INIT && !mLevelEndingAnim)
 		{
 			mPrevMousePos = InputManager::singleton->mMousePosition;
 			mClickStartTime = std::chrono::system_clock::now();
@@ -1253,13 +1257,15 @@ void LevelSelector::windowForCurrentLevelView()
 	mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - d, 0.0f });
 
 	// Powerup title text
-	const bool& canShowPowerups = mLevelInfo.state <= GO_LS_LEVEL_STARTING;
-	mLevelTexts[GO_LS_TEXT_POWERUP_TITLE]->setPosition({ canShowPowerups ? 0.0f : -1000.0f, 1.05f - d, 0.0f });
+	const bool& canShowPowerups = mLevelInfo.state <= GO_LS_LEVEL_STARTING || mLevelInfo.state == GO_LS_LEVEL_STARTED;
+	const Float powerupY = mLevelInfo.state <= GO_LS_LEVEL_STARTING ? d : s;
+	mLevelTexts[GO_LS_TEXT_POWERUP_TITLE]->setPosition({ canShowPowerups ? 0.0f : -1000.0f, 1.05f - powerupY, 0.0f });
 
 	// Powerup buttons
+	if (canShowPowerups)
 	{
 		const Float xf = 0.5f - 0.25f * ar;
-		const Float yf = 0.91f - d;
+		const Float yf = 0.91f - powerupY;
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
 			const Float xp = canShowPowerups ? Float(i) * xf + mPuView.scrollX : -1000.0f;
@@ -1300,8 +1306,8 @@ void LevelSelector::windowForCurrentLevelView()
 	// Navigation buttons for level
 	{
 		const bool& isStarted = mLevelInfo.state == GO_LS_LEVEL_STARTED;
-		const auto& cd = -1.5f + d * 1.275f;
-		const auto& cs = -1.5f + s * 1.275f;
+		const auto& cd = -1.5f + d * 1.25f;
+		const auto& cs = -1.5f + s * 1.25f;
 		const auto& xd = 0.15f / ar;
 
 		// Animation for "Replay" button
@@ -1405,24 +1411,6 @@ void LevelSelector::manageLevelState()
 			}
 		}
 
-		// Update coin counter
-		{
-			const auto& value = RoomManager::singleton->mSaveData.coinCurrent;
-			if (mCoins.cached != value)
-			{
-				mCoins.value += mDeltaTime * 10.0f;
-				mCoins.cached = Int(value);
-
-				if (mCoins.cached > value)
-				{
-					mCoins.cached = value;
-				}
-
-				const auto& str = std::to_string(mCoins.cached);
-				mLevelTexts[GO_LS_TEXT_COIN]->setText(str);
-			}
-		}
-
 		// Control animation
 		if (mLevelStartedAnim < 0.0f) // Cycle waste
 		{
@@ -1494,6 +1482,19 @@ void LevelSelector::manageLevelState()
 		}
 
 		break;
+	}
+
+	// Update coin counter
+	{
+		const auto& value = RoomManager::singleton->mSaveData.coinTotal + RoomManager::singleton->mSaveData.coinCurrent;
+		if (mCoins.cached != value)
+		{
+			mCoins.value += (Float(value) - mCoins.value) * 0.25f;
+			mCoins.cached = Int(mCoins.value);
+
+			const auto& str = std::to_string(mCoins.cached);
+			mLevelTexts[GO_LS_TEXT_COIN]->setText(str);
+		}
 	}
 
 	// Animate level GUI
@@ -1577,11 +1578,9 @@ void LevelSelector::finishCurrentLevel(const bool success)
 		// Add coins picked-up in this level to total count
 		RoomManager::singleton->mSaveData.coinTotal += RoomManager::singleton->mSaveData.coinCurrent;
 	}
-	else
-	{
-		// Update GUI
-		mLevelTexts[GO_LS_TEXT_COIN]->setText(":(");
-	}
+
+	// Reset temporary stats
+	RoomManager::singleton->mSaveData.coinCurrent = 0;
 
 	// Play success or failure sound for level end
 	{
@@ -1696,7 +1695,7 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 	mLevelInfo.state = GO_LS_LEVEL_STARTING;
 
 	mTimer = { 120.0f, 120 };
-	mCoins = { -0.001f, -1 };
+	// mCoins = { -0.001f, -1 };
 	RoomManager::singleton->mSaveData.coinCurrent = 0;
 
 	updateTimeCounter(mTimer.cached);
@@ -1760,7 +1759,7 @@ void LevelSelector::createPowerupView()
 			mScreenButtons[GO_LS_GUI_POWERUP + i] = {
 				(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 				[&](UnsignedInt index) {
-					if (mLevelAnim < 0.95f || mScreenButtons[index].drawable->color()[3] < 0.95f || !mDialog.expired())
+					if ((mLevelAnim < 0.95f && mSettingsAnim < 0.95f) || mScreenButtons[index].drawable->color()[3] < 0.95f || !mDialog.expired())
 					{
 						return;
 					}
@@ -1773,21 +1772,22 @@ void LevelSelector::createPowerupView()
 					{
 					case GO_LS_GUI_POWERUP:
 						title = "BOMB POWERUP";
-						message = "You have 10 seconds\nwhere all projectiles\nturn into bombs.";
+						message = "Use a bomb as a\nprojectile. Make your\nway through lots of\nbubbles and such.";
 						break;
 
 					case GO_LS_GUI_POWERUP + 1:
 						title = "PLASMA POWERUP";
-						message = "You have 10 seconds\nwhere all projectiles\nturn into multi-color\nbubbles.";
+						message = "Multi-color projectile\nwhich changes color\nonce it hits a bubble.";
 						break;
 					}
 
 					const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
 					o->setMessage(title + "\n\n" + message);
 
+					if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
 					{
 						const bool& isEnough = RoomManager::singleton->mSaveData.powerupAmounts[index] > 0;
-						const std::string& text = isEnough ? "Yes" : "Not Enough";
+						const std::string& text = isEnough ? "Yes" : "Not Aval.";
 						o->addAction(text, [this,index]() {
 							Debug{} << "You have clicked YES to USE POWERUP";
 
@@ -1813,10 +1813,13 @@ void LevelSelector::createPowerupView()
 						});
 					}
 
-					o->addAction("No", [this]() {
-						Debug{} << "You have clicked NO to USE POWERUP";
-						closeDialog();
-					});
+					{
+						const std::string & text = mLevelInfo.state == GO_LS_LEVEL_STARTED ? "No" : "OK";
+						o->addAction(text, [this]() {
+							Debug{} << "You have clicked NO to USE POWERUP";
+							closeDialog();
+						});
+					}
 
 					mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 				}
