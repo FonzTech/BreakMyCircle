@@ -16,11 +16,11 @@ std::shared_ptr<GameObject> OverlayText::getInstance(const nlohmann::json & para
 	params.at("parent").get_to(parent);
 
 	// Instantiate scenery object
-	std::shared_ptr<OverlayText> p = std::make_shared<OverlayText>(parent, Text::Alignment::MiddleCenter);
+	std::shared_ptr<OverlayText> p = std::make_shared<OverlayText>(parent, Text::Alignment::MiddleCenter, 40);
 	return p;
 }
 
-OverlayText::OverlayText(const Int parentIndex, const Text::Alignment & textAlignment) : GameObject(parentIndex), mScale{1.0f}
+OverlayText::OverlayText(const Int parentIndex, const Text::Alignment & textAlignment, const UnsignedInt textCapacity) : GameObject(parentIndex), mScale{1.0f}
 {
 	// Init members
 	mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -31,7 +31,7 @@ OverlayText::OverlayText(const Int parentIndex, const Text::Alignment & textAlig
 	mFontHolder = CommonUtility::singleton->loadFont(RESOURCE_FONT_UBUNTU_TITLE);
 
 	mText.reset(new Text::Renderer2D(*mFontHolder->font, *mFontHolder->cache, 32.0f, textAlignment));
-	mText->reserve(40, GL::BufferUsage::DynamicDraw, GL::BufferUsage::StaticDraw);
+	mText->reserve(textCapacity, GL::BufferUsage::DynamicDraw, GL::BufferUsage::StaticDraw);
 
 	// Create dummy drawable
 	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
