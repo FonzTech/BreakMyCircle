@@ -77,6 +77,7 @@ public:
 		UnsignedInt maxLevelId;
 		Int coinTotal;
 		Int coinCurrent;
+		std::unordered_map<UnsignedInt, Int> powerupAmounts;
 	};
 
 	// Singleton

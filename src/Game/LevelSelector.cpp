@@ -54,6 +54,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mLevelStartedAnim = 0.0f;
 	mLevelEndingAnim = false;
 
+	// Level info
 	{
 		mLevelInfo.currentViewingLevelId = 0U;
 		mLevelInfo.state = GO_LS_LEVEL_INIT;
@@ -61,16 +62,24 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mLevelInfo.numberOfRetries = 0;
 	}
 
+	// Cached variables for GUI
 	{
 		mTimer = { 0.0f, 0 };
 		mCoins = { 0.0f, 0 };
 	}
 
+	// Powerup view
 	{
 		mPuView.startX = GO_LS_RESET_MOUSE_VALUE;
 		mPuView.scrollX = 0.0f;
+
+		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
+		{
+			mPuView.counts[GO_LS_GUI_POWERUP + i] = { 0, -1 };
+		}
 	}
 
+	// Animation factors
 	mLevelGuiAnim[0] = 0.0f;
 	mLevelGuiAnim[1] = 0.0f;
 
@@ -329,7 +338,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Level number text
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopCenter);
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopCenter, 40);
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -341,7 +350,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Time counter text
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineRight);
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineRight, 10);
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -353,7 +362,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Coin counter text
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineLeft);
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineLeft, 40);
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -365,12 +374,13 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Powerup text
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter);
+		const std::string& text = "Your Powerups";
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(0.9f, 0.9f, 0.9f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
 		go->setScale(Vector2(1.0f));
-		go->setText("Your Powerups");
+		go->setText(text);
 
 		mLevelTexts[GO_LS_TEXT_POWERUP_TITLE] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 	}
@@ -387,15 +397,23 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	}
 
 	// Load audios
-	for (UnsignedInt i = 0; i < 2; ++i)
 	{
-		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(i == 0 ? RESOURCE_AUDIO_SHOT_WIN : RESOURCE_AUDIO_SHOT_LOSE);
-		mPlayables[i == 0 ? GO_LS_AUDIO_WIN : GO_LS_AUDIO_LOSE] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
-		mPlayables[i == 0 ? GO_LS_AUDIO_WIN : GO_LS_AUDIO_LOSE]->source()
-			.setBuffer(buffer)
-			.setMinGain(1.0f)
-			.setMaxGain(1.0f)
-			.setLooping(false);
+		std::unordered_map<Int, std::string> tmpMap = {
+			{ GO_LS_AUDIO_WIN, RESOURCE_AUDIO_SHOT_WIN },
+			{ GO_LS_AUDIO_LOSE, RESOURCE_AUDIO_SHOT_LOSE },
+			{ GO_LS_AUDIO_POWERUP, RESOURCE_AUDIO_POWERUP }
+		};
+
+		for (const auto& it : tmpMap)
+		{
+			Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(it.second);
+			mPlayables[it.first] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+			mPlayables[it.first]->source()
+				.setBuffer(buffer)
+				.setMinGain(1.0f)
+				.setMaxGain(1.0f)
+				.setLooping(false);
+		}
 	}
 
 	// Trigger scenery creation
@@ -526,7 +544,9 @@ void LevelSelector::update()
 
 	if (isViewing)
 	{
+		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 		const auto& lbs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
+
 		if (lbs == IM_STATE_PRESSED)
 		{
 			const auto& y = Float(InputManager::singleton->mMousePosition.y());
@@ -551,7 +571,12 @@ void LevelSelector::update()
 		}
 		else
 		{
-			// Restore original scroll here
+			const Float xf = 0.5f - 0.25f * ar;
+			const Float xi = Math::floor((mPuView.scrollX + xf * 0.5f) / xf);
+
+			const Float xt = Math::clamp(xi * xf, Float(-GO_LS_MAX_POWERUP_COUNT + 1) * xf, 0.0f);
+			const Float d = xt - mPuView.scrollX;
+			mPuView.scrollX += d * 0.25f;
 		}
 	}
 	else
@@ -1233,18 +1258,37 @@ void LevelSelector::windowForCurrentLevelView()
 		const Float yf = 0.91f - d;
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
-			auto& item = mScreenButtons[GO_LS_GUI_POWERUP + i].drawable;
-
 			const Float xp = Float(i) * xf + mPuView.scrollX;
-			const Float alpha = 1.2f - Math::abs(xp) * 5.0f * ar;
-			if (alpha > 0.0f)
+
+			// Clickable icon
 			{
-				item->setPosition({ xp, yf });
-				item->color()[3] = Math::clamp(alpha, 0.0f, 1.0f);
+				const Float alpha = Math::clamp(1.2f - Math::abs(xp) * 5.0f * ar, 0.0f, 1.0f);
+				auto& item = mScreenButtons[GO_LS_GUI_POWERUP + i].drawable;
+				if (alpha > 0.0f)
+				{
+					item->setPosition({ xp, yf });
+					item->color()[3] = alpha;
+				}
+				else
+				{
+					item->setPosition({ -2.0f, yf });
+				}
 			}
-			else
+
+			// Counter
 			{
-				item->setPosition({ -2.0f, yf });
+				const Float alpha = Math::clamp(1.0f - Math::abs(xp) * 10.0f * ar, 0.0f, 1.0f);
+				auto& item = mLevelTexts[GO_LS_TEXT_POWERUP_COUNT + i];
+				if (alpha > 0.0f)
+				{
+					item->setPosition({ xp + 0.115f / ar, yf - 0.06f, 0.0f });
+					item->mColor.data()[3] = alpha;
+					item->mOutlineColor.data()[3] = alpha;
+				}
+				else
+				{
+					item->setPosition({ -2.0f, yf, 0.0f });
+				}
 			}
 		}
 	}
@@ -1299,6 +1343,22 @@ void LevelSelector::manageLevelState()
 			manageGuiLevelAnim(0, true);
 		}
 
+		// Update powerup view counters
+		{
+			const auto& pm = RoomManager::singleton->mSaveData.powerupAmounts;
+			for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
+			{
+				const auto& key = GO_LS_GUI_POWERUP + i;
+
+				mPuView.counts[key].value = RoomManager::singleton->mSaveData.powerupAmounts[key];
+				if (mPuView.counts[key].cached != mPuView.counts[key].value)
+				{
+					mPuView.counts[key].cached = mPuView.counts[key].value;
+					mLevelTexts[key]->setText(std::to_string(mPuView.counts[key].cached) + "x");
+				}
+			}
+		}
+
 		break;
 
 	case GO_LS_LEVEL_STARTING:
@@ -1334,7 +1394,7 @@ void LevelSelector::manageLevelState()
 			
 			// Update timer text
 			const Int timerInt(Math::floor(mTimer.value));
-			if (timerInt != mTimer.cached)
+			if (mTimer.cached != timerInt)
 			{
 				mTimer.cached = timerInt;
 				const auto& str = mTimer.cached >= 0 ? std::to_string(mTimer.cached) + "s" : ":(";
@@ -1345,7 +1405,7 @@ void LevelSelector::manageLevelState()
 		// Update coin counter
 		{
 			const auto& value = RoomManager::singleton->mSaveData.coinCurrent;
-			if (value != mCoins.cached)
+			if (mCoins.cached != value)
 			{
 				mCoins.value += mDeltaTime * 10.0f;
 				mCoins.cached = Int(value);
@@ -1679,22 +1739,89 @@ void LevelSelector::createPowerupView()
 			break;
 		}
 
-		// Create icon
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, tn);
-		o->setPosition({ 2.0f, 2.0f });
-		o->setSize({ 0.15f, 0.15f });
-		o->setAnchor({ 0.0f, 0.0f });
+		// Clickable icon
+		{
+			const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, tn);
+			o->setPosition({ 2.0f, 2.0f });
+			o->setSize({ 0.15f, 0.15f });
+			o->setAnchor({ 0.0f, 0.0f });
 
-		mScreenButtons[GO_LS_GUI_POWERUP + i] = {
-			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[&](UnsignedInt index) {
-				if (mLevelAnim < 0.95f || mScreenButtons[index].drawable->color()[3] < 0.95f)
-				{
-					return;
+			mScreenButtons[GO_LS_GUI_POWERUP + i] = {
+				(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+				[&](UnsignedInt index) {
+					if (mLevelAnim < 0.95f || mScreenButtons[index].drawable->color()[3] < 0.95f || !mDialog.expired())
+					{
+						return;
+					}
+
+					Debug{} << "You have clicked POWERUP" << index;
+
+					// Build dialog
+					std::string title, message;
+					switch (index)
+					{
+					case GO_LS_GUI_POWERUP:
+						title = "BOMB POWERUP";
+						message = "You have 10 seconds\nwhere all projectiles\nturn into bombs.";
+						break;
+
+					case GO_LS_GUI_POWERUP + 1:
+						title = "PLASMA POWERUP";
+						message = "You have 10 seconds\nwhere all projectiles\nturn into multi-color\nbubbles.";
+						break;
+					}
+
+					const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
+					o->setMessage(title + "\n\n" + message);
+
+					{
+						const bool& isEnough = RoomManager::singleton->mSaveData.powerupAmounts[index] > 0;
+						const std::string& text = isEnough ? "Yes" : "Not Enough!";
+						o->addAction("Yes", [this,index]() {
+							Debug{} << "You have clicked YES to USE POWERUP";
+
+							// Check if there is one left to use, at least
+							auto& pm = RoomManager::singleton->mSaveData.powerupAmounts;
+							const auto& it = pm.find(index);
+							if (it->second <= 0)
+							{
+								return;
+							}
+
+							// Use powerup
+							pm[it->first] = it->second - 1;
+
+							{
+								auto& p = mPlayables[GO_LS_AUDIO_POWERUP]->source();
+								p.setOffsetInSeconds(0.0f);
+								p.play();
+							}
+
+							// Close dialog
+							closeDialog();
+						});
+					}
+
+					o->addAction("No", [this]() {
+						Debug{} << "You have clicked NO to USE POWERUP";
+						closeDialog();
+					});
+
+					mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 				}
+			};
+		}
 
-				Debug{} << "You have clicked POWERUP" << index;
-			}
-		};
+		// Counter
+		{
+			const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleRight, 10);
+			go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+			go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+			go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+			go->setScale(Vector2(1.0f));
+			go->setText("-");
+
+			mLevelTexts[GO_LS_TEXT_POWERUP_COUNT + i] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+		}
 	}
 }

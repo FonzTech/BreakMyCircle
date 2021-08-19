@@ -66,6 +66,11 @@ RoomManager::RoomManager()
 	mSaveData.maxLevelId = 10U;
 	mSaveData.coinTotal = 0;
 	mSaveData.coinCurrent = 0;
+	
+	for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
+	{
+		mSaveData.powerupAmounts[GO_LS_GUI_POWERUP + i] = 0;
+	}
 }
 
 RoomManager::~RoomManager()

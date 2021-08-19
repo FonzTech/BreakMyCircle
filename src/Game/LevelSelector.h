@@ -36,6 +36,7 @@
 
 #define GO_LS_AUDIO_WIN 1
 #define GO_LS_AUDIO_LOSE 2
+#define GO_LS_AUDIO_POWERUP 3
 
 #define GO_LS_MAX_POWERUP_COUNT 2
 
@@ -117,17 +118,18 @@ private:
 		bool success;
 	};
 
-	struct LS_PowerupView
-	{
-		Int startX;
-		Float scrollX;
-	};
-
 	template <typename S, typename T>
 	struct LS_CachedVariable
 	{
 		S value;
 		T cached;
+	};
+
+	struct LS_PowerupView
+	{
+		Int startX;
+		Float scrollX;
+		std::unordered_map<UnsignedInt, LS_CachedVariable<Int, Int>> counts;
 	};
 
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);

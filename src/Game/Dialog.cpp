@@ -31,7 +31,7 @@ Dialog::Dialog(const Int parentIndex) : GameObject(parentIndex), mOpened(1.0f), 
 
 	// Create text
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineCenter, 80);
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineCenter, 100);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 0.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
 		go->mPosition = Vector3(0.0f, 0.3f, 0.0f);

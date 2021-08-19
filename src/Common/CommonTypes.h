@@ -61,7 +61,8 @@
 #define RESOURCE_AUDIO_SHOT_PREFIX "shot_"
 #define RESOURCE_AUDIO_SHOT_WIN "end_win"
 #define RESOURCE_AUDIO_SHOT_LOSE "end_lose"
-#define RESOURCE_AUDIO_COIN "COIN"
+#define RESOURCE_AUDIO_COIN "coin"
+#define RESOURCE_AUDIO_POWERUP "powerup"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"
