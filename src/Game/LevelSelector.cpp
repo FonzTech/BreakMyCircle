@@ -354,7 +354,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setScale(Vector2(1.25f));
+		go->setScale(Vector2(1.125f));
 		go->setText("0s");
 
 		mLevelTexts[GO_LS_TEXT_TIME] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
@@ -1201,7 +1201,7 @@ void LevelSelector::windowForSettings()
 		{
 			const auto& p1 = Vector2(-0.65f, -0.44f) + Vector2(0.25f, 0.0f) * d2;
 			const auto& p2 = Vector2(0.4f, 0.76f + 0.05f * dl) * dsl;
-			const auto& p3 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector2(0.0f, -0.2f) * dl : Vector2(0.0f);
+			const auto& p3 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector2(-0.4f, -1.0f) * dl : Vector2(0.0f);
 			drawable->setPosition(p1 + p2 + p3);
 		}
 
