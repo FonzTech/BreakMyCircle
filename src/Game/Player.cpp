@@ -27,7 +27,7 @@ std::shared_ptr<GameObject> Player::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true)
+Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true), mAnimation(0.0f)
 {
 	// Assign parent index
 	mParentIndex = parentIndex;
@@ -38,11 +38,41 @@ Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true)
 		AssetManager().loadAssets(*this, *mShooterManipulator, RESOURCE_SCENE_CANNON_1, this);
 	}
 
+	// Load hidden drawables (for later use)
+	{
+		// Load asset
+		mBombManipulator = new Object3D{ mManipulator.get() };
+		AssetManager().loadAssets(*this, *mBombManipulator, RESOURCE_SCENE_BOMB, this);
+
+		// Keep references
+		for (UnsignedInt i = 0; i < 3; ++i)
+		{
+			mBombDrawables[i] = mDrawables[mDrawables.size() - i - 1].get();
+		}
+
+		// Put "Spark" mesh always at the beginning
+		for (UnsignedInt i = 0; i < 3; ++i)
+		{
+			if (mBombDrawables[i]->mMesh->label() == "SparkV")
+			{
+				if (i != 0)
+				{
+					const auto& p = mBombDrawables[0];
+					mBombDrawables[0] = mBombDrawables[i];
+					mBombDrawables[i] = p;
+				}
+				break;
+			}
+		}
+	}
+
+	/*
 	// Load path for new sphere animation
 	{
 		mProjPath = std::make_unique<LinePath>(RESOURCE_PATH_NEW_SPHERE);
 		mProjPath->mProgress = Float(mProjPath->getSize());
 	}
+	*/
 
 	// Set members
 	mShootAngle = Rad(0.0f);
@@ -57,8 +87,8 @@ Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true)
 	}
 
 	// Create game bubble
-	mSphereManipulator = new Object3D{ mManipulator.get() };
-	CommonUtility::singleton->createGameSphere(this, *mSphereManipulator, mProjColors[0].rgb());
+	mSphereManipulator[0] = new Object3D{ mManipulator.get() };
+	CommonUtility::singleton->createGameSphere(this, *mSphereManipulator[0], mProjColors[0].rgb());
 
 	mSphereDrawables[0] = mDrawables.back().get();
 	mSphereDrawables[0]->mTexture = mProjTextures[0];
@@ -88,8 +118,13 @@ const Int Player::getType() const
 
 void Player::update()
 {
+	/*
 	// Update new projectile path
 	mProjPath->update(mDeltaTime * Float(-mProjPath->getSize()));
+	*/
+
+	// Advance animation
+	mAnimation += mDeltaTime;
 
 	// Update shoot timeline for animation
 	mShootTimeline -= mDeltaTime;
@@ -151,8 +186,10 @@ void Player::update()
 
 				mSphereDrawables[0]->mTexture = mProjTextures[0];
 
+				/*
 				// Reset animation for new projectile
 				mProjPath->mProgress = Float(mProjPath->getSize());
+				*/
 
 				// Play random sound
 				{
@@ -184,19 +221,54 @@ void Player::update()
 		mShooterManipulator->transform(translation);
 	}
 
-	// Sphere manipulation
+	// Projectiles manipulation
 	{
 		// Apply transformations to bubbles
 		// const Vector3 pos = position + mProjPath->getCurrentPosition();
-		const Vector3 pos = mPosition;
-		mSphereManipulator->setTransformation(Matrix4::translation(pos));
+
+		// Check if main projectile is a bomb
+		if (mProjColors[0].rgb() == BUBBLE_BOMB)
+		{
+			// Make bubble invisible
+			(*mSphereManipulator[0])
+				.resetTransformation()
+				.scale(Vector3(0.0f))
+				.translate(Vector3(10000.0f));
+
+			// Make bomb visible
+			(*mBombManipulator)
+				.resetTransformation()
+				.translate(mPosition + Vector3(0.0f, 0.0f, 0.05f));
+
+			// Make spark rotate
+			(*mBombDrawables[0])
+				.resetTransformation()
+				.rotateZ(Deg(Math::floor(mAnimation * 1440.0f / 90.0f) * 90.0f));
+		}
+		// Otherwise, it's an ordinary bubble
+		else
+		{
+			// Make bubble visible
+			(*mSphereManipulator[0])
+				.resetTransformation()
+				.translate(mPosition);
+
+			// Make bomb invisible
+			(*mBombManipulator)
+				.resetTransformation()
+				.scale(Vector3(0.0f))
+				.translate(Vector3(10000.0f));
+		}
 	}
 }
 
 void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
+	const auto& isBubble = baseDrawable == mSphereDrawables[0];
+	const auto& isBomb = baseDrawable == mBombDrawables[0] || baseDrawable == mBombDrawables[1];
+
 	auto& shader = (Shaders::Phong&) baseDrawable->getShader();
-	if (baseDrawable == mSphereDrawables[0])
+	if (isBubble || isBomb)
 	{
 		shader
 			.setLightPosition(mPosition + Vector3(0.0f, 0.0f, 1.0f))
@@ -227,6 +299,11 @@ void Player::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>>
 {
 }
 
+void Player::setPrimaryProjectile(const Color3 & color)
+{
+	mProjColors[0] = color;
+}
+
 std::unique_ptr<std::vector<Color4>> Player::getRandomEligibleColor(const UnsignedInt times)
 {
 	// Create array of bubbles
@@ -251,7 +328,7 @@ std::unique_ptr<std::vector<Color4>> Player::getRandomEligibleColor(const Unsign
 			const Int index = std::rand() % bubbles.size();
 			const auto& color = ((Bubble*)bubbles[index].lock().get())->mAmbientColor;
 
-			if (color == BUBBLE_COIN)
+			if (color == BUBBLE_COIN || color == BUBBLE_BOMB)
 			{
 				continue;
 			}

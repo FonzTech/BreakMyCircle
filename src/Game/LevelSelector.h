@@ -112,7 +112,7 @@ private:
 		std::weak_ptr<GameObject> playerPointer;
 		std::weak_ptr<GameObject> limitLinePointer;
 
-		Float delayedChecks;
+		bool delayedChecks;
 		Vector3 currentLevelPos, nextLevelPos;
 		Float nextLevelAnim;
 		bool success;
@@ -155,6 +155,7 @@ private:
 	void closeDialog();
 
 	void createPowerupView();
+	void usePowerup(const UnsignedInt index);
 
 	std::weak_ptr<Dialog> mDialog;
 

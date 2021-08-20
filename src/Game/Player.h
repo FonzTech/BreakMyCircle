@@ -26,6 +26,8 @@ public:
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
+	void setPrimaryProjectile(const Color3 & color);
+
 	// Class members
 	bool mCanShoot;
 	Float mCameraDist;
@@ -38,8 +40,8 @@ protected:
 	std::unique_ptr<std::vector<Color4>> getRandomEligibleColor(const UnsignedInt times);
 	Resource<GL::Texture2D> getTextureResourceForIndex(const UnsignedInt index);
 
+	// std::unique_ptr<LinePath> mProjPath;
 	std::weak_ptr<GameObject> mProjectile;
-	std::unique_ptr<LinePath> mProjPath;
 	Float mShootTimeline;
 	Rad mShootAngle;
 
@@ -47,7 +49,11 @@ protected:
 	Resource<GL::Texture2D> mProjTextures[2];
 
 	Object3D* mShooterManipulator;
-	Object3D* mSphereManipulator;
+	Object3D* mSphereManipulator[1];
+	Object3D* mBombManipulator;
 
 	BaseDrawable* mSphereDrawables[1];
+	BaseDrawable* mBombDrawables[3];
+
+	Float mAnimation;
 };

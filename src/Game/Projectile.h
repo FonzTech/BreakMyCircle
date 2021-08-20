@@ -43,4 +43,5 @@ protected:
 	Color3 mDiffuseColor;
 
 	Float mSpeed;
+	Float mAnimation;
 };

@@ -4,6 +4,7 @@
 #define RESOURCE_SCENE_LOGO "scenes/logo.glb"
 #define RESOURCE_SCENE_LEVEL_BUTTON "scenes/level_button.glb"
 #define RESOURCE_SCENE_COIN "scenes/coin.glb"
+#define RESOURCE_SCENE_BOMB "scenes/bomb.glb"
 #define RESOURCE_SCENE_CANNON_1 "scenes/cannon_1.glb"
 #define RESOURCE_SCENE_WORLD_1 "scenes/world_1.glb"
 

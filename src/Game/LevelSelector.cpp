@@ -12,6 +12,7 @@
 #include "../Common/CustomRenderers/LSNumberRenderer.h"
 #include "../Game/Player.h"
 #include "../Game/LimitLine.h"
+#include "../Game/Bubble.h"
 
 std::shared_ptr<GameObject> LevelSelector::getInstance(const nlohmann::json & params)
 {
@@ -927,7 +928,7 @@ void LevelSelector::shootCallback(const Int state)
 			Instead, we waste "just a single" cycle to let the bubble explode, then
 			make all the required checks to decide if the player has failed the level.
 		*/
-		mLevelInfo.delayedChecks = 0.6f;
+		mLevelInfo.delayedChecks = true;
 
 		break;
 	}
@@ -1353,22 +1354,6 @@ void LevelSelector::manageLevelState()
 			manageGuiLevelAnim(0, true);
 		}
 
-		// Update powerup view counters
-		{
-			const auto& pm = RoomManager::singleton->mSaveData.powerupAmounts;
-			for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
-			{
-				const auto& key = GO_LS_GUI_POWERUP + i;
-
-				mPuView.counts[key].value = RoomManager::singleton->mSaveData.powerupAmounts[key];
-				if (mPuView.counts[key].cached != mPuView.counts[key].value)
-				{
-					mPuView.counts[key].cached = mPuView.counts[key].value;
-					mLevelTexts[key]->setText(std::to_string(mPuView.counts[key].cached) + "x");
-				}
-			}
-		}
-
 		break;
 
 	case GO_LS_LEVEL_STARTING:
@@ -1422,13 +1407,10 @@ void LevelSelector::manageLevelState()
 		}
 
 		// Finish this level (after I wasted a cycle)
-		if (mLevelInfo.delayedChecks > 0.0f)
+		if (mLevelInfo.delayedChecks)
 		{
-			mLevelInfo.delayedChecks -= mDeltaTime;
-			if (mLevelInfo.delayedChecks <= 0.0f)
-			{
-				checkForLevelEnd();
-			}
+			mLevelInfo.delayedChecks = false;
+			checkForLevelEnd();
 		}
 
 		break;
@@ -1490,10 +1472,27 @@ void LevelSelector::manageLevelState()
 		if (mCoins.cached != value)
 		{
 			mCoins.value += (Float(value) - mCoins.value) * 0.25f;
-			mCoins.cached = Int(mCoins.value);
+			mCoins.cached = Int(mCoins.value + 0.01f); // Add a small factor to avoid floating-point precision errors
 
 			const auto& str = std::to_string(mCoins.cached);
 			mLevelTexts[GO_LS_TEXT_COIN]->setText(str);
+		}
+	}
+
+	// Update powerup view counters
+	if (mSettingsAnim > 0.01f || mLevelAnim > 0.01f)
+	{
+		const auto& pm = RoomManager::singleton->mSaveData.powerupAmounts;
+		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
+		{
+			const auto& key = GO_LS_GUI_POWERUP + i;
+
+			mPuView.counts[key].value = RoomManager::singleton->mSaveData.powerupAmounts[key];
+			if (mPuView.counts[key].cached != mPuView.counts[key].value)
+			{
+				mPuView.counts[key].cached = mPuView.counts[key].value;
+				mLevelTexts[key]->setText(std::to_string(mPuView.counts[key].cached) + "x");
+			}
 		}
 	}
 
@@ -1691,7 +1690,7 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 
 	mLevelInfo.currentViewingLevelId = 0U;
 	mLevelInfo.repeatLevelId = 0U;
-	mLevelInfo.delayedChecks = 0.0f;
+	mLevelInfo.delayedChecks = false;
 	mLevelInfo.state = GO_LS_LEVEL_STARTING;
 
 	mTimer = { 120.0f, 120 };
@@ -1808,8 +1807,11 @@ void LevelSelector::createPowerupView()
 								p.play();
 							}
 
-							// Close dialog
+							usePowerup(index);
+
+							// Close dialog and settings window
 							closeDialog();
+							mScreenButtons[GO_LS_GUI_SETTINGS].callback(GO_LS_GUI_SETTINGS);
 						});
 					}
 
@@ -1837,5 +1839,28 @@ void LevelSelector::createPowerupView()
 
 			mLevelTexts[GO_LS_TEXT_POWERUP_COUNT + i] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 		}
+	}
+}
+
+void LevelSelector::usePowerup(const UnsignedInt index)
+{
+	Debug{} << "Performing action for powerup" << index;
+
+	switch (index)
+	{
+	case GO_LS_GUI_POWERUP:
+		if (mLevelInfo.playerPointer.expired())
+		{
+			Error{} << "Player pointer has expired. This should not happen";
+		}
+		else
+		{
+			const std::shared_ptr<Player> & p = (std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock();
+			p->setPrimaryProjectile(BUBBLE_BOMB);
+		}
+		break;
+
+	default:
+		Debug{} << "No action to take for powerup" << index;
 	}
 }

@@ -3,8 +3,9 @@
 #include <thread>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
-#include "../Graphics/GameDrawable.h"
+#include "../AssetManager.h"
 #include "../RoomManager.h"
+#include "../Graphics/GameDrawable.h"
 #include "../Common/CommonUtility.h"
 #include "Bubble.h"
 #include "FallingBubble.h"
@@ -29,7 +30,7 @@ std::shared_ptr<GameObject> Projectile::getInstance(const nlohmann::json & param
 	return nullptr;
 }
 
-Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : GameObject(parentIndex)
+Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : GameObject(parentIndex), mAnimation(0.0f)
 {
 	// Initialize members
 	mAmbientColor = ambientColor;
@@ -42,7 +43,14 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 	mDiffuseColor = 0xffffff_rgbf;
 
 	// Create game bubble
-	CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
+	if (mAmbientColor == BUBBLE_BOMB)
+	{
+		AssetManager().loadAssets(*this, *mManipulator, RESOURCE_SCENE_BOMB, this);
+	}
+	else
+	{
+		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
+	}
 }
 
 const Int Projectile::getType() const
@@ -82,8 +90,14 @@ void Projectile::update()
 		snapToGrid();
 	}
 
+	// Advance animation
+	mAnimation -= mVelocity[0];
+
 	// Upgrade transformations
-	mDrawables.at(0)->setTransformation(Matrix4::translation(mPosition));
+	(*mManipulator)
+		.resetTransformation()
+		.rotateZ(Deg(mAnimation * 10.0f))
+		.translate(mPosition);
 }
 
 void Projectile::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)

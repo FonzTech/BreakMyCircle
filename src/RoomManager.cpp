@@ -61,6 +61,7 @@ RoomManager::RoomManager()
 	mBubbleColors[BUBBLE_COLOR_ORANGE.toSrgbInt()] = { BUBBLE_COLOR_ORANGE, RESOURCE_TEXTURE_BUBBLE_ORANGE };
 	mBubbleColors[BUBBLE_COLOR_CYAN.toSrgbInt()] = { BUBBLE_COLOR_CYAN, RESOURCE_TEXTURE_BUBBLE_CYAN };
 	mBubbleColors[BUBBLE_COIN.toSrgbInt()] = { BUBBLE_COIN, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
+	mBubbleColors[BUBBLE_BOMB.toSrgbInt()] = { BUBBLE_BOMB, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
 
 	// Initialize game save data
 	mSaveData.maxLevelId = 10U;
@@ -69,7 +70,11 @@ RoomManager::RoomManager()
 	
 	for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 	{
+#if NDEBUG or _DEBUG
+		mSaveData.powerupAmounts[GO_LS_GUI_POWERUP + i] = 10;
+#else
 		mSaveData.powerupAmounts[GO_LS_GUI_POWERUP + i] = 0;
+#endif
 	}
 }
 
@@ -205,22 +210,40 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 			Float y = (Float) i;
 			Float x = (Float) j;
 
-			// Get noise value at this position
-			const double dx(1.0f / fSquare * x);
-			const double dy(1.0f / fSquare * y);
-			const double value = dy > 0.01 ? perlin.accumulatedOctaveNoise2D_0_1(dx, dy, 8) : 1.0;
-
 			// Work with noise value to get the actual in-game object
-			const Instantiator d = getGameObjectFromNoiseValue(value);
-			const auto &it = gameObjectCreators.find(d.key);
+			std::unique_ptr<Instantiator> pi = nullptr;
+			{
+				// Get noise value at this position
+				double dx(1.0f / fSquare * x);
+				double dy(1.0f / fSquare * y);
+
+				// Get valid instantiator
+				while (true)
+				{
+					const double value = dy > 0.01 ? perlin.accumulatedOctaveNoise2D_0_1(dx, dy, 8) : 1.0;
+					pi = getGameObjectFromNoiseValue(value);
+					if (pi != nullptr)
+					{
+						break;
+					}
+
+					dx += 0.01;
+					dy += 0.01;
+
+					dx -= Math::floor(dx);
+					dy -= Math::floor(dy);
+				}
+			}
+
+			const auto &it = gameObjectCreators.find(pi->key);
 			if (it == gameObjectCreators.end())
 			{
-				printf("Could not find instantiator function for type %u. Skipping it.\n", d.key);
+				printf("Could not find instantiator function for type %u. Skipping it.\n", pi->key);
 				continue;
 			}
 
 			const auto& fx = it->second;
-			const auto& gameObject = fx(*d.params);
+			const auto& gameObject = fx(*pi->params);
 
 			// Get position for object
 			Float startX;
@@ -228,7 +251,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 			{
 				if (j == xlen - 1)
 				{
-					break;
+					continue;
 				}
 				startX = 2.0f;
 			}
@@ -295,14 +318,20 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	*/
 }
 
-RoomManager::Instantiator RoomManager::getGameObjectFromNoiseValue(const double value)
+std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseValue(const double value)
 {
-	Instantiator d;
+	std::unique_ptr<Instantiator> d = nullptr;
 
 	if (value >= 0.0)
 	{
 		const Int index = Int(Math::round(value * double(mBubbleColors.size())));
 		const auto& it = std::next(std::begin(mBubbleColors), index % mBubbleColors.size());;
+
+		if (it->first == BUBBLE_BOMB.toSrgbInt())
+		{
+			return d;
+		}
+		d = std::make_unique<Instantiator>();
 		 
 		nlohmann::json params;
 		params["parent"] = GOL_PERSP_SECOND;
@@ -321,8 +350,8 @@ RoomManager::Instantiator RoomManager::getGameObjectFromNoiseValue(const double 
 			params["color"]["b"] = it->second.color.b();
 		}
 		
-		d.key = GOT_BUBBLE;
-		d.params = std::make_unique<nlohmann::json>(params);
+		d->key = GOT_BUBBLE;
+		d->params = std::make_unique<nlohmann::json>(params);
 	}
 	return d;
 }
