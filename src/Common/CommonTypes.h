@@ -15,6 +15,7 @@
 #define RESOURCE_MESH_CUBE "mesh_plane_cube"
 
 #define RESOURCE_TEXTURE_SPARKLES "tex_sparkles"
+#define RESOURCE_TEXTURE_EXPLOSION "tex_explosion"
 #define RESOURCE_TEXTURE_BUBBLE_RED "tex_bubble_red"
 #define RESOURCE_TEXTURE_BUBBLE_GREEN "tex_bubble_green"
 #define RESOURCE_TEXTURE_BUBBLE_BLUE "tex_bubble_blue"
@@ -64,6 +65,7 @@
 #define RESOURCE_AUDIO_SHOT_LOSE "end_lose"
 #define RESOURCE_AUDIO_COIN "coin"
 #define RESOURCE_AUDIO_POWERUP "powerup"
+#define RESOURCE_AUDIO_EXLPOSION "explosion"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"

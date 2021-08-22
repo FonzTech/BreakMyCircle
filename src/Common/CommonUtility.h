@@ -18,6 +18,7 @@
 #include <Magnum/Text/AbstractFont.h>
 #include <Magnum/Text/DistanceFieldGlyphCache.h>
 #include <Magnum/Shaders/Flat.h>
+#include <Magnum/Math/Vector.h>
 #include <nlohmann/json.hpp>
 
 #include "CommonTypes.h"
@@ -52,6 +53,18 @@ public:
 
 	// Clear method
 	void clear();
+
+	// Get squared distance between vectors
+	template <std::size_t size>
+	constexpr Float getDistanceSquared(const Math::Vector<size, Float> & p1, const Math::Vector<size, Float> & p2)
+	{
+		Float a = 0.0f;
+		for (UnsignedInt i = 0; i < size; ++i)
+		{
+			a += Math::pow(p2.data()[i] - p1.data()[i], 2.0f);
+		}
+		return a;
+	}
 
 	// Read vector from JSON
 	template <std::size_t S, class T>

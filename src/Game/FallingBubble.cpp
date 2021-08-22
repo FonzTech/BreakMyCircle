@@ -29,21 +29,17 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 	mMaxVerticalSpeed = maxVerticalSpeed;
 
 	// Create sparkle plane
-	switch (mCustomType)
+	if (mCustomType == GO_FB_TYPE_BUBBLE)
 	{
-	case GO_FB_TYPE_BUBBLE:
-
 		// Init members
 		mVelocity = { 0.0f };
 		mDelay = Float(std::rand() % 250) * 0.001f;
 
 		// Create bubble
 		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
-
-		break;
-
-	case GO_FB_TYPE_SPARK:
-
+	}
+	else if (mCustomType == GO_FB_TYPE_SPARK)
+	{
 		// Create assets
 		{
 			// Get sparkles texture
@@ -61,18 +57,39 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 			mWrapper.parameters.columns = 4.0f;
 			mWrapper.speed = 16.0f;
 		}
-		break;
-
-	case GO_FB_TYPE_COIN:
-
+	}
+	else if (mCustomType == GO_FB_TYPE_COIN)
+	{
 		// Init members
 		mVelocity = { 0.0f };
 		mDelay = 0.0f;
 
 		// Load assets
 		AssetManager().loadAssets(*this, *mManipulator, RESOURCE_SCENE_COIN, this);
+	}
+	else if (mCustomType == GO_FB_TYPE_BOMB)
+	{
+		// Init members
+		mVelocity = { 0.0f };
+		mDelay = 0.0f;
 
-		break;
+		// Create assets
+		{
+			// Get sparkles texture
+			Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_EXPLOSION);
+
+			// Create plane
+			std::shared_ptr<GameDrawable<SpriteShader>> td = CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this);
+			mDrawables.emplace_back(td);
+
+			// Create shader data wrapper
+			mWrapper.shader = &td->getShader();
+			mWrapper.parameters.index = 0.0f;
+			mWrapper.parameters.total = 16.0f;
+			mWrapper.parameters.rows = 4.0f;
+			mWrapper.parameters.columns = 4.0f;
+			mWrapper.speed = 16.0f;
+		}
 	}
 }
 
@@ -95,11 +112,10 @@ void FallingBubble::update()
 		}
 		else
 		{
-			if (mPlayables.size() > 0 && mPlayables[0]->source().state() == Audio::Source::State::Initial)
-			{
-				mPlayables[0]->source().play();
-			}
+			// Play sound
+			playPrimarySound();
 
+			// Raise velocity
 			if (mVelocity.y() > mMaxVerticalSpeed)
 			{
 				mVelocity += { 0.0f, -2.0f, 0.0f };
@@ -124,10 +140,7 @@ void FallingBubble::update()
 	case GO_FB_TYPE_COIN:
 
 		// Play sound
-		if (mPlayables.size() > 0 && mPlayables[0]->source().state() == Audio::Source::State::Initial)
-		{
-			mPlayables[0]->source().play();
-		}
+		playPrimarySound();
 
 		// Update position
 		{
@@ -161,19 +174,23 @@ void FallingBubble::update()
 
 	case GO_FB_TYPE_SPARK:
 
-		if (mWrapper.parameters.index >= mWrapper.parameters.total)
-		{
-			mDestroyMe = true;
-		}
-		else
-		{
-			mWrapper.parameters.index += mDeltaTime * mWrapper.speed;
-		}
+		checkForSpriteEnding();
 
-		// Apply transformations
 		(*mManipulator)
 			.resetTransformation()
 			.scale(Vector3(3.0f, 3.0f, 1.0f))
+			.translate(mPosition);
+
+		break;
+
+	case GO_FB_TYPE_BOMB:
+
+		playPrimarySound();
+		checkForSpriteEnding();
+
+		(*mManipulator)
+			.resetTransformation()
+			.scale(Vector3(8.0f, 8.0f, 1.0f))
 			.translate(mPosition);
 
 		break;
@@ -182,7 +199,7 @@ void FallingBubble::update()
 
 void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (mCustomType == GO_FB_TYPE_SPARK)
+	if (mCustomType == GO_FB_TYPE_SPARK || mCustomType == GO_FB_TYPE_BOMB)
 	{
 		((SpriteShader&)baseDrawable->getShader())
 			.bindTexture(*baseDrawable->mTexture)
@@ -214,21 +231,25 @@ void FallingBubble::collidedWith(const std::unique_ptr<std::unordered_set<GameOb
 {
 }
 
-std::shared_ptr<Audio::Playable3D>& FallingBubble::buildBubbleSound()
+std::shared_ptr<Audio::Playable3D>& FallingBubble::buildSound()
 {
 	std::string filename;
 	switch (mCustomType)
 	{
-	case GO_FB_TYPE_COIN:
-		filename = RESOURCE_AUDIO_COIN;
+	case GO_FB_TYPE_BUBBLE:
+		filename = RESOURCE_AUDIO_BUBBLE_FALL;
 		break;
 
 	case GO_FB_TYPE_SPARK:
 		filename = RESOURCE_AUDIO_BUBBLE_POP;
 		break;
 
-	case GO_FB_TYPE_BUBBLE:
-		filename = RESOURCE_AUDIO_BUBBLE_FALL;
+	case GO_FB_TYPE_COIN:
+		filename = RESOURCE_AUDIO_COIN;
+		break;
+
+	case GO_FB_TYPE_BOMB:
+		filename = RESOURCE_AUDIO_EXLPOSION;
 		break;
 	}
 
@@ -240,4 +261,24 @@ std::shared_ptr<Audio::Playable3D>& FallingBubble::buildBubbleSound()
 		.setMaxGain(1.0f)
 		.setLooping(false);
 	return mPlayables[0];
+}
+
+void FallingBubble::checkForSpriteEnding()
+{
+	if (mWrapper.parameters.index >= mWrapper.parameters.total)
+	{
+		mDestroyMe = true;
+	}
+	else
+	{
+		mWrapper.parameters.index += mDeltaTime * mWrapper.speed;
+	}
+}
+
+void FallingBubble::playPrimarySound()
+{
+	if (mPlayables.size() > 0 && mPlayables[0]->source().state() == Audio::Source::State::Initial)
+	{
+		mPlayables[0]->source().play();
+	}
 }

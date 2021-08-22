@@ -37,8 +37,10 @@ protected:
 	void snapToGrid();
 	void updateBBox();
 
-	Int getRowIndexByBubble();
-	Float getSnappedYPos();
+	const Int getRowIndexByBubble() const;
+	const Float getSnappedYPos() const;
+	const Float getSquaredRadiusForExplosion() const;
+	const void playStompSound();
 
 	Color3 mDiffuseColor;
 

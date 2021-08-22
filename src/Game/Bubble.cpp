@@ -150,64 +150,95 @@ void Bubble::playStompSound()
 		.play();
 }
 
-bool Bubble::destroyNearbyBubbles()
+bool Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
 {
-	auto future = std::async(std::launch::async, [this]() {
-		// Check for nearby collisions
-		BubbleCollisionGroup bg;
-		bg.insert(this);
-		Bubble::destroyNearbyBubblesImpl(&bg);
+	// Data for later
+	std::unique_ptr<std::queue<GraphNode>> fps = nullptr;
 
-		// Empty list for positions for future popping bubbles
-		std::unique_ptr<std::queue<GraphNode>> fps = std::make_unique<std::queue<GraphNode>>();
+	// Check if destroy was forced
+	if (force)
+	{
+		// Create graph
+		fps = std::make_unique<std::queue<GraphNode>>();
 
-		// Work on bubble collision group
-		#if NDEBUG or _DEBUG
-		printf("Collided bubbles of color %d are %d\n", mAmbientColor.toSrgbInt(), bg.size());
-		#endif
-
-		if (bg.size() >= MINIMUM_BUBBLE_TRAIL_SIZE)
+		// Create graph node
 		{
-			for (auto& b : bg)
-			{
-				{
-					GraphNode gn;
-					gn.position = b->mPosition;
-					gn.color = b->mAmbientColor;
-					fps->push(gn);
-				}
-
-				b->mDestroyMe = true;
-			}
+			GraphNode gn;
+			gn.position = mPosition;
+			gn.color = mAmbientColor;
+			fps->push(gn);
 		}
 
-		// Return the list
-		return fps;
-	});
-	auto fps = future.get();
+		// Destroy this bubble
+		mDestroyMe = true;
+	}
+	// Make nearby bubbles with the same color explode
+	else
+	{
+		auto future = std::async(std::launch::async, [&]() {
+			// Check for nearby collisions
+			BubbleCollisionGroup bg;
+			bg.insert(this);
+			destroyNearbyBubblesImpl(&bg);
+
+			// Empty list for positions for future popping bubbles
+			std::unique_ptr<std::queue<GraphNode>> fps = std::make_unique<std::queue<GraphNode>>();
+
+			// Work on bubble collision group
+#if NDEBUG or _DEBUG
+			printf("Collided bubbles of color %d are %d\n", mAmbientColor.toSrgbInt(), bg.size());
+#endif
+
+			if (bg.size() >= MINIMUM_BUBBLE_TRAIL_SIZE)
+			{
+				for (auto& b : bg)
+				{
+					{
+						GraphNode gn;
+						gn.position = b->mPosition;
+						gn.color = b->mAmbientColor;
+						fps->push(gn);
+					}
+
+					b->mDestroyMe = true;
+				}
+			}
+
+			// Return the list
+			return fps;
+		});
+
+		fps = future.get();
+	}
+
 	bool nonZero = fps->size() > 0;
 
-	Float posZ = 0.15f;
+	Float posZ = offsetZ;
 	if (!fps->empty())
 	{
-		bool playSound = true;
+		bool playSound = !force;
 		while (!fps->empty())
 		{
-			auto& gn = fps->front();
+			// Get a node from graph
+			const auto& gn = fps->front();
 
-			std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, GO_FB_TYPE_SPARK);
+			// Create sparkle
+			const std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, GO_FB_TYPE_SPARK);
 			ib->mPosition = gn.position + Vector3(0.0f, 0.0f, posZ);
 			RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
 
-			fps->pop();
-
-			posZ += 0.1f;
-
+			// Play sound only once
 			if (playSound)
 			{
-				ib->buildBubbleSound()->source().play();
+				ib->buildSound()->source().play();
 				playSound = false;
 			}
+
+			// Increment work variable
+			posZ += 0.05f;
+
+			// Remove from graph
+			fps->pop();
 		}
 	}
 
@@ -247,7 +278,7 @@ void Bubble::destroyDisjointBubbles()
 	auto future = std::async(std::launch::async, [this]() {
 		// Create list of bubbles
 		std::unordered_set<Bubble*> group;
-		for (auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+		for (const auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
 		{
 			if (go->getType() != GOT_BUBBLE || go->mDestroyMe)
 			{
@@ -305,7 +336,7 @@ void Bubble::destroyDisjointBubbles()
 		// Get front node from graph
 		auto& gn = fps->front();
 
-		// Create "eye-candy" bubble
+		// Create "eye-candy" effect
 		const auto& customType = getCustomTypeForFallingBubble(gn.color);
 		std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, customType);
 		ib->mPosition = gn.position;
@@ -319,7 +350,7 @@ void Bubble::destroyDisjointBubbles()
 			// Let "coin" sound play only once
 			if (coinSound)
 			{
-				ib->buildBubbleSound();
+				ib->buildSound();
 				coinSound = false;
 			}
 
@@ -328,7 +359,7 @@ void Bubble::destroyDisjointBubbles()
 		}
 		else
 		{
-			ib->buildBubbleSound();
+			ib->buildSound();
 		}
 
 		// Add to room

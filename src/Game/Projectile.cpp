@@ -51,6 +51,18 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 	{
 		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
 	}
+
+	// Load stomp sound
+	{
+		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(RESOURCE_AUDIO_BUBBLE_STOMP);
+		mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+		mPlayables[0]->source()
+			.setBuffer(buffer)
+			.setMinGain(1.0f)
+			.setMaxGain(1.0f)
+			.setLooping(false)
+			.play();
+	}
 }
 
 const Int Projectile::getType() const
@@ -68,11 +80,15 @@ void Projectile::update()
 	{
 		mPosition[0] = LEFT_X + 0.01f;
 		mVelocity[0] *= -1.0f;
+
+		playStompSound();
 	}
 	else if (mPosition.x() > RIGHT_X && mVelocity.x() > 0.0f)
 	{
 		mPosition[0] = RIGHT_X - 0.01f;
 		mVelocity[0] *= -1.0f;
+
+		playStompSound();
 	}
 
 	// Update bounding box
@@ -131,36 +147,81 @@ void Projectile::snapToGrid()
 		0.0f
 	};
 
-	// Correct position to protect against overlaps
-	std::thread tjob(&Projectile::adjustPosition, this);
-	tjob.join();
-
-	// Create new bubbles with the same color
-	std::shared_ptr<Bubble> b = std::make_shared<Bubble>(mParentIndex, mAmbientColor);
-	b->mPosition = mPosition;
-	b->updateBBox();
-
-	// Apply ripple effect
-	for (auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+	// Check if projectile is a bomb
+	if (mAmbientColor == BUBBLE_BOMB)
 	{
-		if (go != b && go->getType() == GOT_BUBBLE)
+		// Create explosion sprite
 		{
-			((Bubble*)go.get())->applyRippleEffect(mPosition);
+			const std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, 0xffffff_rgbf, GO_FB_TYPE_BOMB);
+			ib->mPosition = mPosition + Vector3(0.0f, 0.0f, 0.5f);
+			ib->buildSound();
+			RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
 		}
-	}
 
-	// Destroy nearby bubbles and disjoint bubble groups
-	if (b->destroyNearbyBubbles())
-	{
-		b->destroyDisjointBubbles();
+		// Force destroy of nearby bubbles
+		{
+			std::vector<std::shared_ptr<Bubble>> bubbles;
+			for (auto& item : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+			{
+				if (item->getType() == GOT_BUBBLE)
+				{
+					bubbles.push_back((std::shared_ptr<Bubble>&)item);
+				}
+			}
+
+			std::shared_ptr<Bubble> destroyLater = nullptr;
+			Float offsetZ = 0.0f;
+
+			const Float r = getSquaredRadiusForExplosion();
+			for (auto& item : bubbles)
+			{
+				const Float d = CommonUtility::singleton->getDistanceSquared<3>(item->mPosition, mPosition);
+				if (d <= r && item->mAmbientColor != BUBBLE_COIN && item->destroyNearbyBubbles(true, offsetZ))
+				{
+					destroyLater = item;
+					offsetZ += 0.05f;
+				}
+			}
+
+			if (destroyLater != nullptr)
+			{
+				destroyLater->destroyDisjointBubbles();
+			}
+		}
 	}
 	else
 	{
-		b->playStompSound();
-	}
+		// Correct position to protect against overlaps
+		std::thread tjob(&Projectile::adjustPosition, this);
+		tjob.join();
 
-	// Add to room
-	RoomManager::singleton->mGoLayers[mParentIndex].push_back(b);
+		// Create new bubbles with the same color
+		std::shared_ptr<Bubble> b = std::make_shared<Bubble>(mParentIndex, mAmbientColor);
+		b->mPosition = mPosition;
+		b->updateBBox();
+
+		// Apply ripple effect
+		for (auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+		{
+			if (go != b && go->getType() == GOT_BUBBLE)
+			{
+				((Bubble*)go.get())->applyRippleEffect(mPosition);
+			}
+		}
+
+		// Destroy nearby bubbles and disjoint bubble groups
+		if (b->destroyNearbyBubbles(false, 0.0f))
+		{
+			b->destroyDisjointBubbles();
+		}
+		else
+		{
+			b->playStompSound();
+		}
+
+		// Add to room
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(b);
+	}
 
 	// Launch callback
 	if (!mShootCallback.expired())
@@ -184,7 +245,7 @@ void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObjec
 	snapToGrid();
 }
 
-Int Projectile::getRowIndexByBubble()
+const Int Projectile::getRowIndexByBubble() const
 {
 	return std::abs(Int(getSnappedYPos() * 0.5f));
 }
@@ -195,7 +256,7 @@ void Projectile::adjustPosition()
 	Float toLeftX = IMPOSSIBLE_PROJECTILE_XPOS;
 	Float toRightX = IMPOSSIBLE_PROJECTILE_XPOS;
 
-	for (auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+	for (const auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
 	{
 		if (go.get() == this || go->mPosition.y() != mPosition.y())
 		{
@@ -230,7 +291,20 @@ void Projectile::adjustPosition()
 	}
 }
 
-Float Projectile::getSnappedYPos()
+const Float Projectile::getSnappedYPos() const
 {
-	return round(mPosition.y() / 2.0f) * 2.0f;
+	return Math::round(mPosition.y() / 2.0f) * 2.0f;
+}
+
+const Float Projectile::getSquaredRadiusForExplosion() const
+{
+	return 32.0f;
+}
+
+const void Projectile::playStompSound()
+{
+	printf("qqqqq\n");
+	mPlayables[0]->source()
+		.setOffsetInBytes(0)
+		.play();
 }

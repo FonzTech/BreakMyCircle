@@ -1410,7 +1410,7 @@ void LevelSelector::manageLevelState()
 		if (mLevelInfo.delayedChecks)
 		{
 			mLevelInfo.delayedChecks = false;
-			checkForLevelEnd();
+			checkForLevelEnd();	
 		}
 
 		break;

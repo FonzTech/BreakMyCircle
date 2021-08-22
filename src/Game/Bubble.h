@@ -57,6 +57,13 @@ public:
 		Int attached;
 	};
 
+	// Struct for explosion data
+	struct Explosion
+	{
+		Vector3 position;
+		Float radius;
+	};
+
 	// Typedef for alias
 	typedef std::unordered_set<Bubble*, Bubble::HashByColorAndPos, Bubble::EqualByColorAndPos> BubbleCollisionGroup;
 
@@ -72,7 +79,7 @@ public:
 	void applyRippleEffect(const Vector3& center);
 	void playStompSound();
 
-	bool destroyNearbyBubbles();
+	bool destroyNearbyBubbles(const bool force, const Float offsetZ);
 	void destroyDisjointBubbles();
 
 	void destroyNearbyBubblesImpl(BubbleCollisionGroup* group);

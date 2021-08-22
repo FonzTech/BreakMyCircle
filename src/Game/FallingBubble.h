@@ -3,6 +3,7 @@
 #define GO_FB_TYPE_BUBBLE 1
 #define GO_FB_TYPE_SPARK 2
 #define GO_FB_TYPE_COIN 3
+#define GO_FB_TYPE_BOMB 4
 
 #include <unordered_set>
 #include <nlohmann/json.hpp>
@@ -27,12 +28,15 @@ public:
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
-	std::shared_ptr<Audio::Playable3D>& buildBubbleSound();
+	std::shared_ptr<Audio::Playable3D>& buildSound();
 
 	Int mCustomType;
 	Vector3 mVelocity;
 
 private:
+	void checkForSpriteEnding();
+	void playPrimarySound();
+
 	Color3 mAmbientColor;
 	Float mDelay;
 	Float mMaxVerticalSpeed;
