@@ -83,6 +83,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	// Animation factors
 	mLevelGuiAnim[0] = 0.0f;
 	mLevelGuiAnim[1] = 0.0f;
+	mLevelGuiAnim[2] = 0.0f;
 
 	// Create sky plane
 	createSkyPlane();
@@ -109,20 +110,39 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				// Close level details screen
 				if (mLevelInfo.currentViewingLevelId != 0U)
 				{
+					// Reset current viewing level ID
 					mLevelInfo.currentViewingLevelId = 0U;
+
+					// Play sound
+					mPlayables[GO_LS_AUDIO_PAUSE_OUT]->source()
+						.setOffsetInBytes(0)
+						.play();
 				}
 				// If already closed, open/close the settings window
 				else if (mLevelInfo.state < GO_LS_LEVEL_FINISHED)
 				{
+					Int index;
+
 					mSettingsOpened = !mSettingsOpened;
 					if (mSettingsOpened)
 					{
+						index = GO_LS_AUDIO_PAUSE_IN;
 						if (!mLevelInfo.playerPointer.expired())
 						{
 							((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = false;
 						}
 					}
+					else
+					{
+						index = GO_LS_AUDIO_PAUSE_OUT;
+					}
 
+					// Play sound
+					mPlayables[index]->source()
+						.setOffsetInBytes(0)
+						.play();
+
+					// Debug print
 					Debug{} << "You have" << (mSettingsOpened ? "opened" : "closed") << "SETTINGS";
 				}
 			}
@@ -405,7 +425,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		std::unordered_map<Int, std::string> tmpMap = {
 			{ GO_LS_AUDIO_WIN, RESOURCE_AUDIO_SHOT_WIN },
 			{ GO_LS_AUDIO_LOSE, RESOURCE_AUDIO_SHOT_LOSE },
-			{ GO_LS_AUDIO_POWERUP, RESOURCE_AUDIO_POWERUP }
+			{ GO_LS_AUDIO_POWERUP, RESOURCE_AUDIO_POWERUP },
+			{ GO_LS_AUDIO_PAUSE_IN, RESOURCE_AUDIO_PAUSE_IN },
+			{ GO_LS_AUDIO_PAUSE_OUT, RESOURCE_AUDIO_PAUSE_OUT }
 		};
 
 		for (const auto& it : tmpMap)
@@ -829,7 +851,13 @@ void LevelSelector::update()
 							{
 								if (spo->levelIndex < RoomManager::singleton->mSaveData.maxLevelId)
 								{
+									// Open level window
 									clickLevelButton(spo->levelIndex);
+
+									// Play sound
+									mPlayables[GO_LS_AUDIO_PAUSE_OUT]->source()
+										.setOffsetInBytes(0)
+										.play();
 								}
 								else
 								{
@@ -1391,8 +1419,12 @@ void LevelSelector::manageLevelState()
 			const Int timerInt(Math::floor(mTimer.value));
 			if (mTimer.cached != timerInt)
 			{
+				// Update time counter
 				mTimer.cached = timerInt;
 				updateTimeCounter(mTimer.cached);
+
+				// Update animation factor
+				mLevelGuiAnim[2] = 1.0f;
 			}
 		}
 
@@ -1411,6 +1443,16 @@ void LevelSelector::manageLevelState()
 		{
 			mLevelInfo.delayedChecks = false;
 			checkForLevelEnd();	
+		}
+
+		// Manage GUI level animation for timer
+		manageBackendAnimationVariable(mLevelGuiAnim[2], 1.0f, false);
+
+		{
+			const Float x = mTimer.cached >= 0 && mTimer.cached <= 15 ? 1.0f - mLevelGuiAnim[2] * 0.5f : 1.0f;
+			const auto& c = mLevelTexts[GO_LS_TEXT_TIME]->mColor.data();
+			c[1] = x;
+			c[2] = x;
 		}
 
 		break;
@@ -1686,6 +1728,13 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 	// Start the selected level
 	Debug{} << "User wants to play level" << levelId;
 
+	// Play sound
+	mPlayables[GO_LS_AUDIO_PAUSE_OUT]->source()
+		.setOffsetInBytes(0)
+		.play();
+
+	// Set state for level
+
 	mLevelEndingAnim = false;
 
 	mLevelInfo.currentViewingLevelId = 0U;
@@ -1800,14 +1849,12 @@ void LevelSelector::createPowerupView()
 
 							// Use powerup
 							pm[it->first] = it->second - 1;
-
-							{
-								auto& p = mPlayables[GO_LS_AUDIO_POWERUP]->source();
-								p.setOffsetInSeconds(0.0f);
-								p.play();
-							}
-
 							usePowerup(index);
+
+							// Play sound
+							mPlayables[GO_LS_AUDIO_POWERUP]->source()
+								.setOffsetInBytes(0)
+								.play();
 
 							// Close dialog and settings window
 							closeDialog();

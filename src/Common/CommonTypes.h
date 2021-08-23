@@ -65,7 +65,9 @@
 #define RESOURCE_AUDIO_SHOT_LOSE "end_lose"
 #define RESOURCE_AUDIO_COIN "coin"
 #define RESOURCE_AUDIO_POWERUP "powerup"
-#define RESOURCE_AUDIO_EXLPOSION "explosion"
+#define RESOURCE_AUDIO_EXPLOSION "explosion"
+#define RESOURCE_AUDIO_PAUSE_IN "pause_in"
+#define RESOURCE_AUDIO_PAUSE_OUT "pause_out"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"

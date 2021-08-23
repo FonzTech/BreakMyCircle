@@ -37,6 +37,8 @@
 #define GO_LS_AUDIO_WIN 1
 #define GO_LS_AUDIO_LOSE 2
 #define GO_LS_AUDIO_POWERUP 3
+#define GO_LS_AUDIO_PAUSE_IN 4
+#define GO_LS_AUDIO_PAUSE_OUT 5
 
 #define GO_LS_MAX_POWERUP_COUNT 2
 
@@ -186,7 +188,7 @@ private:
 	std::unordered_map<UnsignedInt, UnsignedInt> mPickableObjectRefs;
 
 	LS_LevelInfo mLevelInfo;
-	Float mLevelGuiAnim[2];
+	Float mLevelGuiAnim[3];
 
 	LS_CachedVariable<Float, Int> mTimer;
 	LS_CachedVariable<Float, Int> mCoins;

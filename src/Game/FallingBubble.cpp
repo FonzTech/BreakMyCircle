@@ -249,7 +249,7 @@ std::shared_ptr<Audio::Playable3D>& FallingBubble::buildSound()
 		break;
 
 	case GO_FB_TYPE_BOMB:
-		filename = RESOURCE_AUDIO_EXLPOSION;
+		filename = RESOURCE_AUDIO_EXPLOSION;
 		break;
 	}
 
