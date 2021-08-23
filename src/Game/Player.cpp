@@ -27,10 +27,14 @@ std::shared_ptr<GameObject> Player::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true), mAnimation(0.0f)
+Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true)
 {
 	// Assign parent index
 	mParentIndex = parentIndex;
+
+	// Initialize members
+	mAnimation[0] = 0.0f;
+	mAnimation[1] = 0.0f;
 
 	// Load asset as first drawable
 	{
@@ -86,12 +90,15 @@ Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true), mAnimatio
 		mProjTextures[1] = getTextureResourceForIndex(1);
 	}
 
-	// Create game bubble
-	mSphereManipulator[0] = new Object3D{ mManipulator.get() };
-	CommonUtility::singleton->createGameSphere(this, *mSphereManipulator[0], mProjColors[0].rgb());
+	// Create game bubbles
+	for (UnsignedInt i = 0; i < 2; ++i)
+	{
+		mSphereManipulator[i] = new Object3D{ mManipulator.get() };
+		CommonUtility::singleton->createGameSphere(this, *mSphereManipulator[i], mProjColors[i].rgb());
 
-	mSphereDrawables[0] = mDrawables.back().get();
-	mSphereDrawables[0]->mTexture = mProjTextures[0];
+		mSphereDrawables[i] = mDrawables.back().get();
+		mSphereDrawables[i]->mTexture = mProjTextures[i];
+	}
 
 	// Load sound effects
 	for (UnsignedInt i = 0; i < 3; ++i)
@@ -124,7 +131,7 @@ void Player::update()
 	*/
 
 	// Advance animation
-	mAnimation += mDeltaTime;
+	mAnimation[0] += mDeltaTime;
 
 	// Update shoot timeline for animation
 	mShootTimeline -= mDeltaTime;
@@ -204,6 +211,9 @@ void Player::update()
 				{
 					mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_STARTED);
 				}
+
+				// Reset animation factor
+				mAnimation[1] = 1.0f;
 			}
 		}
 	}
@@ -221,7 +231,7 @@ void Player::update()
 		mShooterManipulator->transform(translation);
 	}
 
-	// Projectiles manipulation
+	// Primary projectile
 	{
 		// Apply transformations to bubbles
 		// const Vector3 pos = position + mProjPath->getCurrentPosition();
@@ -243,7 +253,7 @@ void Player::update()
 			// Make spark rotate
 			(*mBombDrawables[0])
 				.resetTransformation()
-				.rotateZ(Deg(Math::floor(mAnimation * 1440.0f / 90.0f) * 90.0f));
+				.rotateZ(Deg(Math::floor(mAnimation[0] * 1440.0f / 90.0f) * 90.0f));
 		}
 		// Otherwise, it's an ordinary bubble
 		else
@@ -251,7 +261,8 @@ void Player::update()
 			// Make bubble visible
 			(*mSphereManipulator[0])
 				.resetTransformation()
-				.translate(mPosition);
+				.scale(Vector3(1.0f + mAnimation[1] * 0.5f))
+				.translate(mPosition + Vector3(6.0f * mAnimation[1], 0.0f, 0.0f));
 
 			// Make bomb invisible
 			(*mBombManipulator)
@@ -260,22 +271,38 @@ void Player::update()
 				.translate(Vector3(10000.0f));
 		}
 	}
+
+	// Secondary projectile
+	{
+		mAnimation[1] -= mDeltaTime * 2.0f;
+		if (mAnimation[1] < 0.0f)
+		{
+			mAnimation[1] = 0.0f;
+		}
+
+		{
+			(*mSphereManipulator[1])
+				.resetTransformation()
+				.scale(Vector3(1.5f - mAnimation[1] * 1.5f))
+				.translate(mPosition + Vector3(6.0f, 0.0f, 0.0f));
+		}
+	}
 }
 
 void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	const auto& isBubble = baseDrawable == mSphereDrawables[0];
+	const auto& isBubble = baseDrawable == mSphereDrawables[0] || baseDrawable == mSphereDrawables[1];
 	const auto& isBomb = baseDrawable == mBombDrawables[0] || baseDrawable == mBombDrawables[1];
 
 	auto& shader = (Shaders::Phong&) baseDrawable->getShader();
 	if (isBubble || isBomb)
 	{
 		shader
-			.setLightPosition(mPosition + Vector3(0.0f, 0.0f, 1.0f))
+			.setLightPosition(mPosition + Vector3(-1.0f, 2.0f, 10.0f))
 			.setLightColor(0x202020_rgbf)
 			.setSpecularColor(0xffffff00_rgbaf)
-			.setAmbientColor(0xc0c0c0_rgbf)
-			.setDiffuseColor(0x202020_rgbf);
+			.setAmbientColor(0x909090_rgbf)
+			.setDiffuseColor(0x909090_rgbf);
 	}
 	else
 	{

@@ -49,11 +49,11 @@ protected:
 	Resource<GL::Texture2D> mProjTextures[2];
 
 	Object3D* mShooterManipulator;
-	Object3D* mSphereManipulator[1];
+	Object3D* mSphereManipulator[2];
 	Object3D* mBombManipulator;
 
-	BaseDrawable* mSphereDrawables[1];
+	BaseDrawable* mSphereDrawables[2];
 	BaseDrawable* mBombDrawables[3];
 
-	Float mAnimation;
+	Float mAnimation[2];
 };
