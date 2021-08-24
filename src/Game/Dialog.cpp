@@ -82,7 +82,7 @@ void Dialog::update()
 	const bool& clickable = mOpacity >= 1.0f;
 
 	// Set background color
-	mBackground->color()[3] = mOpacity * 0.91f;
+	mBackground->color()[3] = mOpacity * 0.8f;
 
 	// Set message color
 	mText->mColor.data()[3] = mOpacity;

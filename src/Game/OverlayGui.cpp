@@ -28,7 +28,7 @@ OverlayGui::OverlayGui(const Int parentIndex, const std::string & textureName) :
 	mParentIndex = parentIndex;
 
 	// Get assets
-	Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForFlatShader();
+	Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D>(RESOURCE_MESH_PLANE_FLAT);
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> shader = CommonUtility::singleton->getFlat3DShader();
 	Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(textureName);
 

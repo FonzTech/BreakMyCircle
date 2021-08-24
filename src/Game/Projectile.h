@@ -22,7 +22,9 @@ public:
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
+
 	void adjustPosition();
+	void setCustomTexture(GL::Texture2D & texture);
 
 	// Class members
 	Color3 mAmbientColor;
@@ -34,7 +36,7 @@ public:
 protected:
 	static Float LEFT_X, RIGHT_X, MID_X;
 
-	void snapToGrid();
+	void snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects);
 	void updateBBox();
 
 	const Int getRowIndexByBubble() const;
@@ -43,6 +45,7 @@ protected:
 	const void playStompSound();
 
 	Color3 mDiffuseColor;
+	GL::Texture2D* mCustomTexture;
 
 	Float mSpeed;
 	Float mAnimation;

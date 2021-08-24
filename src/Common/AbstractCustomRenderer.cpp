@@ -4,6 +4,7 @@
 #include <Magnum/GL/Framebuffer.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
 #include <Magnum/GL/TextureFormat.h>
+#include <Magnum/GL/Renderer.h>
 
 #include "../RoomManager.h"
 
@@ -18,6 +19,7 @@ void AbstractCustomRenderer::renderTexture()
 	mFramebuffer
 		.clearColor(0, mClearColor)
 		.bind();
+	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::One);
 
 	// Custom draw
 	renderInternal();
@@ -34,6 +36,7 @@ void AbstractCustomRenderer::renderTexture()
 			RoomManager::singleton->mGoLayers[parentIndex].frameBuffer->bind();
 		}
 	}
+	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::One);
 }
 
 GL::Texture2D &AbstractCustomRenderer::getRenderedTexture()

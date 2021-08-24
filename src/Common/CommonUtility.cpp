@@ -10,11 +10,7 @@
 #include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/Trade/AbstractImporter.h>
 #include <Magnum/Trade/ImageData.h>
-#include <Magnum/GL/Mesh.h>
 #include <Magnum/GL/TextureFormat.h>
-#include <Magnum/Primitives/Plane.h>
-#include <Magnum/MeshTools/Interleave.h>
-#include <Magnum/MeshTools/CompressIndices.h>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Math/Math.h>
 #include <Magnum/Text/AbstractFont.h>
@@ -141,6 +137,11 @@ bool CommonUtility::stringEndsWith(const std::string& data, const std::string& s
 	return data.find(suffix, data.size() - suffix.size()) != std::string::npos;
 }
 
+bool CommonUtility::isBubbleColorValid(const Color3 & color)
+{
+	return color.r() > 0.001f || color.g() > 0.001f || color.b() < 0.04f;
+}
+
 void CommonUtility::createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color)
 {
 	// Create game bubble
@@ -158,31 +159,6 @@ void CommonUtility::createGameSphere(GameObject* gameObject, Object3D & manipula
 	// Load texture
 	Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(it->second.textureKey);
 	gameObject->mDrawables.back()->mTexture = resTexture;
-}
-
-Resource<GL::Mesh> CommonUtility::getPlaneMeshForFlatShader()
-{
-	// Get required resource
-	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_PLANE_FLAT) };
-
-	if (!resMesh)
-	{
-		// Create flat plane
-		Trade::MeshData plane = Primitives::planeSolid(Primitives::PlaneFlag::TextureCoordinates);
-
-		GL::Buffer vertices;
-		vertices.setData(MeshTools::interleave(plane.positions3DAsArray(), plane.textureCoordinates2DAsArray()));
-
-		GL::Mesh mesh;
-		mesh.setPrimitive(plane.primitive())
-			.setCount(plane.vertexCount())
-			.addVertexBuffer(std::move(vertices), 0, Shaders::Flat3D::Position{}, Shaders::Flat3D::TextureCoordinates{});
-
-		// Add to resources
-		CommonUtility::singleton->manager.set(resMesh.key(), std::move(mesh));
-	}
-
-	return resMesh;
 }
 
 std::shared_ptr<GameDrawable<SpriteShader>> CommonUtility::createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback)
@@ -230,19 +206,15 @@ std::shared_ptr<GameDrawable<SpriteShader>> CommonUtility::createSpriteDrawable(
 
 Resource<GL::AbstractShaderProgram, Shaders::Flat3D> CommonUtility::getFlat3DShader()
 {
-	// Get required resource
-	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> resShader{ CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, Shaders::Flat3D>(RESOURCE_SHADER_FLAT3D) };
-
-	if (!resShader)
-	{
-		// Create shader
+	return getSpecializedShader<Shaders::Flat3D>(RESOURCE_SHADER_FLAT3D, [] {
 		const auto& flags = Shaders::Flat3D::Flag::Textured | Shaders::Flat3D::Flag::AlphaMask;
-		std::unique_ptr<GL::AbstractShaderProgram> shader = std::make_unique<Shaders::Flat3D>(flags);
+		return (std::unique_ptr<GL::AbstractShaderProgram>) std::make_unique<Shaders::Flat3D>(flags);
+	});
+}
 
-		// Add to resources
-		Containers::Pointer<GL::AbstractShaderProgram> p = std::move(shader);
-		CommonUtility::singleton->manager.set(resShader.key(), std::move(p));
-	}
-
-	return resShader;
+Resource<GL::AbstractShaderProgram, PlasmaShader> CommonUtility::getPlasmaShader()
+{
+	return getSpecializedShader<PlasmaShader>(RESOURCE_SHADER_PLASMA, [] {
+		return (std::unique_ptr<GL::AbstractShaderProgram>) std::make_unique<PlasmaShader>();
+	});
 }

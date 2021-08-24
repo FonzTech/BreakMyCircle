@@ -103,7 +103,7 @@ void Projectile::update()
 	// Check if projectile reached the top ceiling
 	else if (mPosition.y() > 0.0f)
 	{
-		snapToGrid();
+		snapToGrid(nullptr);
 	}
 
 	// Advance animation
@@ -127,11 +127,11 @@ void Projectile::draw(BaseDrawable* baseDrawable, const Matrix4& transformationM
 		.setTransformationMatrix(transformationMatrix)
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())
-		.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
+		.bindTextures(mCustomTexture != nullptr ? mCustomTexture : baseDrawable->mTexture, mCustomTexture != nullptr ? mCustomTexture : baseDrawable->mTexture, nullptr, nullptr)
 		.draw(*baseDrawable->mMesh);
 }
 
-void Projectile::snapToGrid()
+void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
 	// Stop this projectile
 	mVelocity = Vector3(0.0f);
@@ -146,6 +146,33 @@ void Projectile::snapToGrid()
 		getSnappedYPos(),
 		0.0f
 	};
+
+	// Mutate the color, if this projectile is a plasma bubble
+	if (mAmbientColor == BUBBLE_PLASMA)
+	{
+		bool assignRandomColor = true;
+		if (gameObjects != nullptr && gameObjects->size() > 0)
+		{
+			for (const auto& item : *gameObjects)
+			{
+				if (item->getType() == GOT_BUBBLE)
+				{
+					mAmbientColor = ((Bubble*)item)->mAmbientColor;
+					assignRandomColor = false;
+				}
+			}
+		}
+
+		while (assignRandomColor)
+		{
+			const auto& it = std::next(std::begin(RoomManager::singleton->mBubbleColors), std::rand() % RoomManager::singleton->mBubbleColors.size());
+			if (CommonUtility::singleton->isBubbleColorValid(it->second.color))
+			{
+				mAmbientColor = it->second.color;
+				break;
+			}
+		}
+	}
 
 	// Check if projectile is a bomb
 	if (mAmbientColor == BUBBLE_BOMB)
@@ -242,7 +269,7 @@ void Projectile::updateBBox()
 void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
 	// Bubble* bubble = (Bubble*) *gameObjects->begin();
-	snapToGrid();
+	snapToGrid(gameObjects);
 }
 
 const Int Projectile::getRowIndexByBubble() const
@@ -291,6 +318,11 @@ void Projectile::adjustPosition()
 	}
 }
 
+void Projectile::setCustomTexture(GL::Texture2D & texture)
+{
+	mCustomTexture = &texture;
+}
+
 const Float Projectile::getSnappedYPos() const
 {
 	return Math::round(mPosition.y() / 2.0f) * 2.0f;
@@ -303,7 +335,6 @@ const Float Projectile::getSquaredRadiusForExplosion() const
 
 const void Projectile::playStompSound()
 {
-	printf("qqqqq\n");
 	mPlayables[0]->source()
 		.setOffsetInBytes(0)
 		.play();

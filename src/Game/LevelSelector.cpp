@@ -986,7 +986,7 @@ constexpr void LevelSelector::manageBackendAnimationVariable(Float & variable, c
 
 void LevelSelector::createSkyPlane()
 {
-	Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForFlatShader();
+	Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D>(RESOURCE_MESH_PLANE_FLAT);
 	Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SKYBOX_1_PX);
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> resShader = CommonUtility::singleton->getFlat3DShader();
 
@@ -1141,10 +1141,10 @@ void LevelSelector::handleScrollableScenery()
 					LSNumberRenderer nr(Vector2i(32), nt);
 
 					// Render to texture
-					GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+					// GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::DestinationAlpha);
 					nr.renderTexture();
 					GL::Texture2D & texture = nr.getRenderedTexture();
-					GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+					// GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::DestinationAlpha);
 
 					// Save to resource manager
 					CommonUtility::singleton->manager.set(key, std::move(texture));
@@ -1894,18 +1894,22 @@ void LevelSelector::usePowerup(const UnsignedInt index)
 {
 	Debug{} << "Performing action for powerup" << index;
 
+	if (mLevelInfo.playerPointer.expired())
+	{
+		Error{} << "Player pointer has expired. This should not happen";
+		return;
+	}
+
+	const std::shared_ptr<Player> player = (std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock();
+
 	switch (index)
 	{
 	case GO_LS_GUI_POWERUP:
-		if (mLevelInfo.playerPointer.expired())
-		{
-			Error{} << "Player pointer has expired. This should not happen";
-		}
-		else
-		{
-			const std::shared_ptr<Player> & p = (std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock();
-			p->setPrimaryProjectile(BUBBLE_BOMB);
-		}
+		player->setPrimaryProjectile(BUBBLE_BOMB);
+		break;
+
+	case GO_LS_GUI_POWERUP + 1U:
+		player->setPrimaryProjectile(BUBBLE_PLASMA);
 		break;
 
 	default:

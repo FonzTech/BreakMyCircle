@@ -27,7 +27,7 @@ std::shared_ptr<GameObject> Player::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true)
+Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vector2i(32)), mCanShoot(true)
 {
 	// Assign parent index
 	mParentIndex = parentIndex;
@@ -86,18 +86,21 @@ Player::Player(const Int parentIndex) : GameObject(), mCanShoot(true)
 		mProjColors[0] = list->at(0);
 		mProjColors[1] = list->at(1);
 
+		/*
 		mProjTextures[0] = getTextureResourceForIndex(0);
 		mProjTextures[1] = getTextureResourceForIndex(1);
+		*/
 	}
 
 	// Create game bubbles
 	for (UnsignedInt i = 0; i < 2; ++i)
 	{
 		mSphereManipulator[i] = new Object3D{ mManipulator.get() };
-		CommonUtility::singleton->createGameSphere(this, *mSphereManipulator[i], mProjColors[i].rgb());
+		CommonUtility::singleton->createGameSphere(this, *mSphereManipulator[i], mProjColors[i]);
 
 		mSphereDrawables[i] = mDrawables.back().get();
-		mSphereDrawables[i]->mTexture = mProjTextures[i];
+		mSphereDrawables[i]->mTexture = getTextureResourceForIndex(i);
+		// mSphereDrawables[i]->mTexture = mProjTextures[i];
 	}
 
 	// Load sound effects
@@ -130,7 +133,8 @@ void Player::update()
 	mProjPath->update(mDeltaTime * Float(-mProjPath->getSize()));
 	*/
 
-	// Advance animation
+	// Advance animations
+	mPlasmaSquareRenderer.update(mDeltaTime);
 	mAnimation[0] += mDeltaTime;
 
 	// Update shoot timeline for animation
@@ -171,9 +175,14 @@ void Player::update()
 			if (mProjectile.expired())
 			{
 				// Create projectile
-				std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mParentIndex, mProjColors[0].rgb());
+				std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mParentIndex, mProjColors[0]);
 				go->mPosition = mPosition;
 				go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
+
+				if (mProjColors[0] == BUBBLE_PLASMA)
+				{
+					go->setCustomTexture(mPlasmaSquareRenderer.getRenderedTexture());
+				}
 
 				// Assign shoot callback
 				if (!mShootCallback.expired())
@@ -188,10 +197,14 @@ void Player::update()
 				mProjColors[0] = mProjColors[1];
 				mProjColors[1] = getRandomEligibleColor(1)->at(0);
 
+				setupProjectile(0);
+
+				/*
 				mProjTextures[0] = mProjTextures[1];
 				mProjTextures[1] = getTextureResourceForIndex(1);
 
 				mSphereDrawables[0]->mTexture = mProjTextures[0];
+				*/
 
 				/*
 				// Reset animation for new projectile
@@ -236,8 +249,8 @@ void Player::update()
 		// Apply transformations to bubbles
 		// const Vector3 pos = position + mProjPath->getCurrentPosition();
 
-		// Check if main projectile is a bomb
-		if (mProjColors[0].rgb() == BUBBLE_BOMB)
+		// Main - Plasma bubble
+		if (mProjColors[0] == BUBBLE_BOMB)
 		{
 			// Make bubble invisible
 			(*mSphereManipulator[0])
@@ -255,7 +268,7 @@ void Player::update()
 				.resetTransformation()
 				.rotateZ(Deg(Math::floor(mAnimation[0] * 1440.0f / 90.0f) * 90.0f));
 		}
-		// Otherwise, it's an ordinary bubble
+		// Otherwise, it's an ordinary bubble / plasma bubble
 		else
 		{
 			// Make bubble visible
@@ -291,6 +304,7 @@ void Player::update()
 
 void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
+	// Setup light shading
 	const auto& isBubble = baseDrawable == mSphereDrawables[0] || baseDrawable == mSphereDrawables[1];
 	const auto& isBomb = baseDrawable == mBombDrawables[0] || baseDrawable == mBombDrawables[1];
 
@@ -314,24 +328,44 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 			.setDiffuseColor(0xffffff_rgbf);
 	}
 
+	// Setup matrixes
 	shader
 		.setTransformationMatrix(transformationMatrix)
 		.setNormalMatrix(transformationMatrix.normalMatrix())
-		.setProjectionMatrix(camera.projectionMatrix())
-		.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
-		.draw(*baseDrawable->mMesh);
+		.setProjectionMatrix(camera.projectionMatrix());
+
+	// Bind textures
+	if (baseDrawable == mSphereDrawables[0] && mProjColors[0] == BUBBLE_PLASMA)
+	{
+		mPlasmaSquareRenderer.renderTexture();
+		GL::Texture2D &texture = mPlasmaSquareRenderer.getRenderedTexture();
+		shader.bindTextures(&texture, &texture, nullptr, nullptr);
+	}
+	else
+	{
+		shader.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr);
+	}
+
+	// Draw mesh using setup shader
+	shader.draw(*baseDrawable->mMesh);
 }
 
 void Player::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
 }
 
+void Player::setupProjectile(const Int index)
+{
+	mSphereDrawables[index]->mTexture = getTextureResourceForIndex(index);
+}
+
 void Player::setPrimaryProjectile(const Color3 & color)
 {
 	mProjColors[0] = color;
+	setupProjectile(0);
 }
 
-std::unique_ptr<std::vector<Color4>> Player::getRandomEligibleColor(const UnsignedInt times)
+std::unique_ptr<std::vector<Color3>> Player::getRandomEligibleColor(const UnsignedInt times)
 {
 	// Create array of bubbles
 	std::vector<std::weak_ptr<GameObject>> bubbles;
@@ -344,7 +378,7 @@ std::unique_ptr<std::vector<Color4>> Player::getRandomEligibleColor(const Unsign
 	}
 
 	// Create list
-	std::unique_ptr<std::vector<Color4>> list = std::make_unique<std::vector<Color4>>();
+	std::unique_ptr<std::vector<Color3>> list = std::make_unique<std::vector<Color3>>();
 
 	// Check for array size
 	if (bubbles.size())
@@ -355,18 +389,18 @@ std::unique_ptr<std::vector<Color4>> Player::getRandomEligibleColor(const Unsign
 			const Int index = std::rand() % bubbles.size();
 			const auto& color = ((Bubble*)bubbles[index].lock().get())->mAmbientColor;
 
-			if (color == BUBBLE_COIN || color == BUBBLE_BOMB)
+			if (CommonUtility::singleton->isBubbleColorValid(color))
 			{
 				continue;
 			}
 
-			list->emplace_back(color.r(), color.g(), color.b());
+			list->emplace_back(color);
 			++i;
 		}
 	}
 	else
 	{
-		list->emplace_back(0x00000000_rgbaf);
+		list->emplace_back(0x000000_rgbf);
 	}
 
 	// Return list
@@ -376,5 +410,10 @@ std::unique_ptr<std::vector<Color4>> Player::getRandomEligibleColor(const Unsign
 Resource<GL::Texture2D> Player::getTextureResourceForIndex(const UnsignedInt index)
 {
 	// ALERT: No validity checks are performed!!
-	return CommonUtility::singleton->loadTexture(RoomManager::singleton->mBubbleColors[mProjColors[index].rgb().toSrgbInt()].textureKey);
+	const auto& color = RoomManager::singleton->mBubbleColors[mProjColors[index].toSrgbInt()];
+	const auto& rk = color.textureKey;
+
+	Debug{} << "Loading texture" << rk << "for player projectile with index" << index;
+
+	return CommonUtility::singleton->loadTexture(rk);
 }

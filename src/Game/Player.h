@@ -11,7 +11,7 @@
 #include "../GameObject.h"
 #include "../Game/Callbacks/IShootCallback.h"
 #include "../Graphics/BaseDrawable.h"
-#include "../Common/LinePath.h"
+#include "../Common/CustomRenderers/PlasmaSquareRenderer.h"
 
 class Player : public GameObject
 {
@@ -26,6 +26,7 @@ public:
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
+	void setupProjectile(const Int index);
 	void setPrimaryProjectile(const Color3 & color);
 
 	// Class members
@@ -36,17 +37,17 @@ public:
 	std::weak_ptr<IShootCallback> mShootCallback;
 
 protected:
-
-	std::unique_ptr<std::vector<Color4>> getRandomEligibleColor(const UnsignedInt times);
+	std::unique_ptr<std::vector<Color3>> getRandomEligibleColor(const UnsignedInt times);
 	Resource<GL::Texture2D> getTextureResourceForIndex(const UnsignedInt index);
+
+	PlasmaSquareRenderer mPlasmaSquareRenderer;
 
 	// std::unique_ptr<LinePath> mProjPath;
 	std::weak_ptr<GameObject> mProjectile;
 	Float mShootTimeline;
 	Rad mShootAngle;
 
-	Color4 mProjColors[2];
-	Resource<GL::Texture2D> mProjTextures[2];
+	Color3 mProjColors[2];
 
 	Object3D* mShooterManipulator;
 	Object3D* mSphereManipulator[2];

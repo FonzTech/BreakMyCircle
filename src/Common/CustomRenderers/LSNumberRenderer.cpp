@@ -4,7 +4,7 @@
 LSNumberRenderer::LSNumberRenderer(const Vector2i & size, const std::string & text) : AbstractCustomRenderer(size, Color4(1.0f, 1.0f, 1.0f, 1.0f))
 {
 	// Create overlay gui
-	mOverlayGui = std::make_shared<OverlayGuiDetached>(-1, RESOURCE_TEXTURE_WHITE);
+	mOverlayGui = std::make_shared<OverlayGuiDetached>(-1, RESOURCE_TEXTURE_WHITE, GO_OGD_FLAT);
 	mOverlayGui->setPosition({ -0.0f, 0.0f });
 	mOverlayGui->setSize({ 1.0f, 1.0f });
 	mOverlayGui->setAnchor({ 0.0f, 0.0f });

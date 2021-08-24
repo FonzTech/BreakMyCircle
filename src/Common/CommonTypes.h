@@ -12,6 +12,7 @@
 #define RESOURCE_MESH_PLANE_WATER "mesh_plane_water"
 #define RESOURCE_MESH_SAND_FLOOR "mesh_plane_sand_floor"
 #define RESOURCE_MESH_PLANE_FLAT "mesh_plane_flat"
+#define RESOURCE_MESH_PLANE_PLASMA "mesh_plane_plasma"
 #define RESOURCE_MESH_CUBE "mesh_plane_cube"
 
 #define RESOURCE_TEXTURE_SPARKLES "tex_sparkles"
@@ -53,6 +54,7 @@
 #define RESOURCE_SHADER_WATER "shader_water"
 #define RESOURCE_SHADER_CUBEMAP "shader_cubemap"
 #define RESOURCE_SHADER_FLAT3D "shader_flat3d"
+#define RESOURCE_SHADER_PLASMA "shader_plasma"
 #define RESOURCE_SHADER_DISTANCE_FIELD_VECTOR "shader_distance_field_vector"
 
 #define RESOURCE_FONT_UBUNTU_TITLE "ubuntu-title"

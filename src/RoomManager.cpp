@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <unordered_set>
+#include <Corrade/Utility/Directory.h>
 #include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
@@ -62,6 +63,7 @@ RoomManager::RoomManager() : mCurrentBoundParentIndex(-1)
 	mBubbleColors[BUBBLE_COLOR_CYAN.toSrgbInt()] = { BUBBLE_COLOR_CYAN, RESOURCE_TEXTURE_BUBBLE_CYAN };
 	mBubbleColors[BUBBLE_COIN.toSrgbInt()] = { BUBBLE_COIN, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
 	mBubbleColors[BUBBLE_BOMB.toSrgbInt()] = { BUBBLE_BOMB, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
+	mBubbleColors[BUBBLE_PLASMA.toSrgbInt()] = { BUBBLE_PLASMA, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
 
 	// Initialize game save data
 	mSaveData.maxLevelId = 10U;
@@ -156,12 +158,12 @@ void RoomManager::prepareRoom(const bool stopBgMusic)
 void RoomManager::loadRoom(const std::string & name)
 {
 	// Load room from file
-	auto content = Utility::Directory::readString("rooms/" + name + ".txt");
-	auto roomData = nlohmann::json::parse(content);
+	const auto& content = Utility::Directory::readString("rooms/" + name + ".txt");
+	const auto& roomData = nlohmann::json::parse(content);
 
 	// Load audio
 	{
-		auto it = roomData.find("bgmusic");
+		const auto& it = roomData.find("bgmusic");
 		if (it != roomData.end())
 		{
 			std::string bgmusic = it->get<std::string>();
@@ -175,8 +177,8 @@ void RoomManager::loadRoom(const std::string & name)
 	}
 
 	// Iterate through list
-	const std::vector<nlohmann::json> list = roomData["objects"].get<std::vector<nlohmann::json>>();
-	for (auto& item : list)
+	const std::vector<nlohmann::json> & list = roomData["objects"].get<std::vector<nlohmann::json>>();
+	for (const auto& item : list)
 	{
 		// Get type
 		Int parent, type;
@@ -309,7 +311,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	for (UnsignedInt i = 0; i < 2; ++i)
 	{
 		const Float xp = i ? len + 50.0f : -50.0f;
-		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 0.0f, 0.0f, 0.0f, 0.3f }, GO_LL_TYPE_BLACK);
+		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 0.0f, 0.0f, 0.0f, 0.2f }, GO_LL_TYPE_BLACK);
 		p->mPosition = { xp, player->mPosition.y() + 56.0f, 0.0f };
 		p->setScale(Vector3(50.0f, 50.0f, 1.0f));
 		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
@@ -335,7 +337,7 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 	if (value >= 0.0)
 	{
 		const Int index = Int(Math::round(value * double(mBubbleColors.size())));
-		const auto& it = std::next(std::begin(mBubbleColors), index % mBubbleColors.size());;
+		const auto& it = std::next(std::begin(mBubbleColors), index % mBubbleColors.size());
 
 		if (it->first == BUBBLE_BOMB.toSrgbInt())
 		{

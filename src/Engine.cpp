@@ -42,7 +42,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	// GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
 	GL::Renderer::enable(GL::Renderer::Feature::Blending);
 	// GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
-	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
+	// GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::DestinationAlpha);
 	GL::Renderer::setBlendEquation(GL::Renderer::BlendEquation::Add, GL::Renderer::BlendEquation::Add);
 
 	// Set clear color
@@ -120,6 +120,7 @@ void Engine::tickEvent()
 
 		// Enable renderer features
 		GL::Renderer::setFeature(GL::Renderer::Feature::DepthTest, currentGol->depthTestEnabled);
+		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::One);
 
 		// Set projection for camera on this layer
 		RoomManager::singleton->mCamera->setProjectionMatrix(currentGol->projectionMatrix);
