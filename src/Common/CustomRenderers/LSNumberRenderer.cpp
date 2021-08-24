@@ -1,7 +1,7 @@
 #include "LSNumberRenderer.h"
 #include "../../RoomManager.h"
 
-LSNumberRenderer::LSNumberRenderer(const Int parentIndex, const Vector2i & size, const std::string & text) : AbstractCustomRenderer(parentIndex, size, Color4(1.0f, 1.0f, 1.0f, 1.0f))
+LSNumberRenderer::LSNumberRenderer(const Vector2i & size, const std::string & text) : AbstractCustomRenderer(size, Color4(1.0f, 1.0f, 1.0f, 1.0f))
 {
 	// Create overlay gui
 	mOverlayGui = std::make_shared<OverlayGuiDetached>(-1, RESOURCE_TEXTURE_WHITE);
@@ -18,7 +18,7 @@ LSNumberRenderer::LSNumberRenderer(const Int parentIndex, const Vector2i & size,
 	mOverlayText->setText(text);
 }
 
-void LSNumberRenderer::render()
+void LSNumberRenderer::renderInternal()
 {
 	mOverlayGui->drawDetached();
 	mOverlayText->drawDetached();

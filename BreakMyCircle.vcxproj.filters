@@ -147,6 +147,12 @@
     <ClCompile Include="src\Game\Dialog.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
+    <ClCompile Include="src\Shaders\PlasmaShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Common\CustomRenderers\PlasmaSquareRenderer.cpp">
+      <Filter>Source Files\Common\CustomRenderers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\RoomManager.h">
@@ -256,6 +262,12 @@
     </ClInclude>
     <ClInclude Include="src\Game\Dialog.h">
       <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shaders\PlasmaShader.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Common\CustomRenderers\PlasmaSquareRenderer.h">
+      <Filter>Header Files\Common\CustomRenderers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

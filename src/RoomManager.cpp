@@ -24,7 +24,7 @@ using namespace Magnum::Math::Literals;
 
 std::unique_ptr<RoomManager> RoomManager::singleton = nullptr;
 
-RoomManager::RoomManager()
+RoomManager::RoomManager() : mCurrentBoundParentIndex(-1)
 {
 	// Create audio manager
 	mAudioContext = std::make_unique<Audio::Context>(
@@ -97,6 +97,16 @@ const void RoomManager::setWindowSize(const Vector2 & size)
 {
 	mWindowSize = size;
 	mAspectRatio = mWindowSize.aspectRatio();
+}
+
+const Int RoomManager::getCurrentBoundParentIndex() const
+{
+	return mCurrentBoundParentIndex;
+}
+
+const void RoomManager::setCurrentBoundParentIndex(const Int parentIndex)
+{
+	mCurrentBoundParentIndex = parentIndex;
 }
 
 void RoomManager::clear()

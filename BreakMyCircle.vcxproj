@@ -161,6 +161,7 @@
     <ClCompile Include="src\Audio\StreamedAudioPlayable.cpp" />
     <ClCompile Include="src\Common\AbstractCustomRenderer.cpp" />
     <ClCompile Include="src\Common\CustomRenderers\LSNumberRenderer.cpp" />
+    <ClCompile Include="src\Common\CustomRenderers\PlasmaSquareRenderer.cpp" />
     <ClCompile Include="src\Game\Bubble.cpp" />
     <ClCompile Include="src\Game\Dialog.cpp" />
     <ClCompile Include="src\Game\LevelSelector.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="src\Game\Player.cpp" />
     <ClCompile Include="src\Game\Projectile.cpp" />
     <ClCompile Include="src\Game\Scenery.cpp" />
+    <ClCompile Include="src\Shaders\PlasmaShader.cpp" />
     <ClCompile Include="src\Shaders\ScreenQuadShader.cpp" />
     <ClCompile Include="src\Game\Skybox.cpp" />
     <ClCompile Include="src\Shaders\SpriteShader.cpp" />
@@ -194,6 +196,7 @@
     <ClInclude Include="src\Audio\StreamedAudioPlayable.h" />
     <ClInclude Include="src\Common\AbstractCustomRenderer.h" />
     <ClInclude Include="src\Common\CustomRenderers\LSNumberRenderer.h" />
+    <ClInclude Include="src\Common\CustomRenderers\PlasmaSquareRenderer.h" />
     <ClInclude Include="src\Game\Bubble.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\GameObject.h" />
@@ -220,6 +223,7 @@
     <ClInclude Include="src\Common\PerlinNoise.hpp" />
     <ClInclude Include="src\Game\Projectile.h" />
     <ClInclude Include="src\Game\Scenery.h" />
+    <ClInclude Include="src\Shaders\PlasmaShader.h" />
     <ClInclude Include="src\Shaders\ScreenQuadShader.h" />
     <ClInclude Include="src\Game\Skybox.h" />
     <ClInclude Include="src\Shaders\SpriteShader.h" />

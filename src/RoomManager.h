@@ -31,13 +31,6 @@ typedef std::vector<std::shared_ptr<GameObject>> GameObjectList;
 class RoomManager
 {
 public:
-	// Instantiator data holder
-	struct Instantiator
-	{
-		UnsignedInt key;
-		std::unique_ptr<nlohmann::json> params;
-	};
-
 	// Game Object layer data holder
 	struct GameObjectsLayer
 	{
@@ -119,17 +112,32 @@ public:
 	~RoomManager();
 
 	const Float getWindowAspectRatio() const;
+
 	const Vector2 getWindowSize();
 	const void setWindowSize(const Vector2 & size);
+
+	const Int getCurrentBoundParentIndex() const;
+	const void setCurrentBoundParentIndex(const Int parentIndex);
+
 	void clear();
 	void setup();
 	void prepareRoom(const bool stopBgMusic);
 	void loadRoom(const std::string & name);
 	void createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen);
-	std::unique_ptr<RoomManager::Instantiator> getGameObjectFromNoiseValue(const double value);
 
 protected:
+	// Instantiator data holder
+	struct Instantiator
+	{
+		UnsignedInt key;
+		std::unique_ptr<nlohmann::json> params;
+	};
+
+	// Methods
+	std::unique_ptr<RoomManager::Instantiator> getGameObjectFromNoiseValue(const double value);
+
 	// Window parameters
+	Int mCurrentBoundParentIndex;
 	Vector2 mWindowSize;
 	Float mAspectRatio;
 };

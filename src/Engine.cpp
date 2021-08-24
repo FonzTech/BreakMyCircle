@@ -85,6 +85,7 @@ void Engine::tickEvent()
 	for (const auto& index : GO_LAYERS)
 	{
 		// Get layer's framebuffer
+		RoomManager::singleton->setCurrentBoundParentIndex(index);
 		currentGol = &RoomManager::singleton->mGoLayers[index];
 
 		if (index == GOL_PERSP_FIRST)
@@ -185,6 +186,7 @@ void Engine::tickEvent()
 	}
 
 	// Redraw main frame buffer
+	RoomManager::singleton->setCurrentBoundParentIndex(-1);
 	{
 		// Bind default window framebuffer
 		GL::defaultFramebuffer

@@ -1138,11 +1138,12 @@ void LevelSelector::handleScrollableScenery()
 				if (!bs.texture)
 				{
 					// Create renderer
-					LSNumberRenderer nr(mParentIndex, Vector2i(32), nt);
+					LSNumberRenderer nr(Vector2i(32), nt);
 
 					// Render to texture
 					GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
-					GL::Texture2D & texture = nr.getRenderedTexture(true);
+					nr.renderTexture();
+					GL::Texture2D & texture = nr.getRenderedTexture();
 					GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 
 					// Save to resource manager

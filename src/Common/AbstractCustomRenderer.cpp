@@ -1,30 +1,43 @@
 #include "AbstractCustomRenderer.h"
 
 #include <Corrade/Corrade.h>
+#include <Magnum/GL/Framebuffer.h>
+#include <Magnum/GL/DefaultFramebuffer.h>
 #include <Magnum/GL/TextureFormat.h>
 
 #include "../RoomManager.h"
 
-AbstractCustomRenderer::AbstractCustomRenderer(const Int parentIndex, const Vector2i & size, const Color4 & clearColor) : mParentIndex(parentIndex), mSize(size), mClearColor(clearColor), mFramebuffer(Range2Di({}, size))
+AbstractCustomRenderer::AbstractCustomRenderer(const Vector2i & size, const Color4 & clearColor) : mSize(size), mClearColor(clearColor), mFramebuffer(Range2Di({}, size))
 {
 	setup();
 }
 
-GL::Texture2D &AbstractCustomRenderer::getRenderedTexture(const bool forceRender)
+void AbstractCustomRenderer::renderTexture()
 {
-	if (forceRender)
+	// Bind custom framebuffer
+	mFramebuffer
+		.clearColor(0, mClearColor)
+		.bind();
+
+	// Custom draw
+	renderInternal();
+
+	// Restore original bound framebuffer (WITHOUT clear or anything like that)
 	{
-		// Bind custom framebuffer
-		mFramebuffer
-			.clearColor(0, mClearColor)
-			.bind();
-
-		// Custom draw
-		render();
-
-		// Restore original bound framebuffer (WITHOUT clear or anything like that)
-		RoomManager::singleton->mGoLayers[mParentIndex].frameBuffer->bind();
+		const Int parentIndex = RoomManager::singleton->getCurrentBoundParentIndex();
+		if (parentIndex == -1)
+		{
+			GL::defaultFramebuffer.bind();
+		}
+		else
+		{
+			RoomManager::singleton->mGoLayers[parentIndex].frameBuffer->bind();
+		}
 	}
+}
+
+GL::Texture2D &AbstractCustomRenderer::getRenderedTexture()
+{
 	return mTexture;
 }
 

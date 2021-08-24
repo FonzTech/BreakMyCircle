@@ -10,15 +10,15 @@ using namespace Magnum;
 class AbstractCustomRenderer
 {
 public:
-	AbstractCustomRenderer(const Int parentIndex, const Vector2i & size, const Color4 & clearColor);
+	AbstractCustomRenderer(const Vector2i & size, const Color4 & clearColor);
 
-	GL::Texture2D & getRenderedTexture(const bool forceRender);
+	void renderTexture();
+	GL::Texture2D & getRenderedTexture();
 
 protected:
 	void setup();
-	virtual void render() = 0;
-
-	Int mParentIndex;
+	virtual void renderInternal() = 0;
+	
 	Vector2i mSize;
 	Color4 mClearColor;
 
