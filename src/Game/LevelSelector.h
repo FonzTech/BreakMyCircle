@@ -25,6 +25,8 @@
 #define GO_LS_GUI_EXIT 6U
 #define GO_LS_GUI_COIN 7U
 #define GO_LS_GUI_TIME 8U
+#define GO_LS_GUI_BGMUSIC 9U
+#define GO_LS_GUI_SFX 10U
 #define GO_LS_GUI_STAR 100U
 #define GO_LS_GUI_POWERUP 1000U
 

@@ -345,6 +345,36 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		};
 	}
 
+	// Create "BG Music" button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_BGMUSIC);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_BGMUSIC] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this](UnsignedInt index) {
+				Debug{} << "You have clicked BGMUSIC";
+			}
+		};
+	}
+
+	// Create "SFX" button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SFX);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_SFX] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this](UnsignedInt index) {
+				Debug{} << "You have clicked SFX";
+			}
+		};
+	}
+
 	// Three stars
 	for (UnsignedInt i = 0; i < 3; ++i)
 	{
@@ -1237,6 +1267,7 @@ void LevelSelector::windowForCommon()
 
 void LevelSelector::windowForSettings()
 {
+	const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 	const auto& ds = mCbEaseInOut.value(mSettingsAnim)[1];
 	const auto& dl = mCbEaseInOut.value(mLevelAnim)[1];
 
@@ -1275,6 +1306,13 @@ void LevelSelector::windowForSettings()
 			}
 		}
 	}
+
+	// BG Music and SFX buttons
+	{
+		const auto& y = ds * 0.2f;
+		mScreenButtons[GO_LS_GUI_BGMUSIC].drawable->setPosition(Vector2(-0.1f / ar, -0.6f + y));
+		mScreenButtons[GO_LS_GUI_SFX].drawable->setPosition(Vector2(0.1f / ar, -0.6f + y));
+	}
 }
 
 void LevelSelector::windowForCurrentLevelView()
@@ -1300,7 +1338,10 @@ void LevelSelector::windowForCurrentLevelView()
 	}
 
 	// Level text
-	mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - d - s, 0.0f });
+	{
+		const auto& lx = mLevelInfo.state == GO_LS_LEVEL_INIT ? s * 0.95f : s;
+		mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - d - lx, 0.0f });
+	}
 
 	// Powerup title text
 	const bool& canShowPowerups = mLevelInfo.state <= GO_LS_LEVEL_STARTING || mLevelInfo.state == GO_LS_LEVEL_STARTED;
