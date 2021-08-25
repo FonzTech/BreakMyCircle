@@ -218,3 +218,10 @@ Resource<GL::AbstractShaderProgram, PlasmaShader> CommonUtility::getPlasmaShader
 		return (std::unique_ptr<GL::AbstractShaderProgram>) std::make_unique<PlasmaShader>();
 	});
 }
+
+Resource<GL::AbstractShaderProgram, WaterShader> CommonUtility::getWaterShader()
+{
+	return getSpecializedShader<WaterShader>(RESOURCE_SHADER_WATER, [] {
+		return (std::unique_ptr<GL::AbstractShaderProgram>) std::make_unique<WaterShader>();
+	});
+}

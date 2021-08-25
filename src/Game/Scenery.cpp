@@ -42,29 +42,41 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
 
 	// Apply transformations
-	{
-		const auto& m = Matrix4::translation(mPosition);
-		mManipulatorList[0]->setTransformation(m);
-	}
+	(*mManipulatorList[0])
+		.resetTransformation()
+		.translate(mPosition);
 
-	{
-		const auto& m = Matrix4::scaling(Vector3(50.0f, 25.0f, 1.0f));
-		mManipulatorList[1]->setTransformation(m);
-		mManipulatorList[1]->rotateX(90.0_degf);
-		mManipulatorList[1]->translate(mPosition + Vector3(0.0f, 0.3f, 0.0f));
-	}
+	(*mManipulatorList[1])
+		.resetTransformation()
+		.scale(Vector3(50.0f, 25.0f, 1.0f))
+		.rotateX(90.0_degf)
+		.translate(mPosition + Vector3(0.0f, 0.3f, 0.0f));
 
 	// Load assets
 	{
 		AssetManager am(RESOURCE_SHADER_COLORED_PHONG_2, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE_2, 2);
-		am.loadAssets(*this, *mManipulatorList[0], RESOURCE_SCENE_WORLD_1, this);
+
+		std::string rk;
+		switch (modelIndex)
+		{
+		case 0:
+			createWaterDrawable();
+			rk = RESOURCE_SCENE_WORLD_1;
+			break;
+
+		case 1:
+			mManipulatorList[0]->translate(Vector3(0.0f, 0.3f, 0.0f));
+			rk = RESOURCE_SCENE_WORLD_2;
+			break;
+
+		case 2:
+			mManipulatorList[0]->translate(Vector3(0.0f, 0.3f, 0.0f));
+			rk = RESOURCE_SCENE_WORLD_3;
+			break;
+		}
+
+		am.loadAssets(*this, *mManipulatorList[0], rk, this);
 	}
-
-	// Create water drawable
-	createWaterDrawable();
-
-	// Set camera position for scenery
-	mPosition = Vector3(0.0f);
 
 	/*
 	{
@@ -153,8 +165,7 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 	const auto& it = mWaterHolders.find(baseDrawable);
 	if (it != mWaterHolders.end())
 	{
-		WaterShader& shader = (WaterShader&) baseDrawable->getShader();
-		shader
+		((WaterShader&)baseDrawable->getShader())
 			.setTransformationMatrix(transformationMatrix)
 			.setProjectionMatrix(camera.projectionMatrix())
 			.setFrame(it->second.parameters.frame)
@@ -176,14 +187,14 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 			// Create array of light positions
 			std::vector<Vector3> source;
 
-			source.emplace_back(8.0f, 20.0f, 10.0f);
-			source.emplace_back(8.0f, -40.0f, 10.0f);
+			source.emplace_back(-8.0f, 20.0f, -15.0f);
+			source.emplace_back(30.0f, -20.0f, 5.0f);
 
 			destLightColors.emplace_back(0xffffff00_rgbaf);
 			destLightColors.emplace_back(0xffffff00_rgbaf);
 
 			// Create map function
-			auto mapFx = [&](const decltype(source)::value_type & vector)
+			const auto& mapFx = [&](const decltype(source)::value_type & vector)
 			{
 				return camera.cameraMatrix().transformPoint(mPosition + vector);
 			};
@@ -193,7 +204,8 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 		}
 
 		// Draw through shader
-		Shaders::Phong& shader = (Shaders::Phong&) baseDrawable->getShader();
+		auto& shader = (Shaders::Phong&) baseDrawable->getShader();
+
 		shader
 			.setLightPositions(destLightPos)
 			.setLightColors(destLightColors)
@@ -218,39 +230,9 @@ void Scenery::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>
 
 void Scenery::createWaterDrawable()
 {
-	// Create plane
-	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_PLANE_WATER) };
-
-	if (!resMesh)
-	{
-		// Create test mesh
-		Trade::MeshData meshData = Primitives::planeSolid(Primitives::PlaneFlag::TextureCoordinates);
-
-		GL::Buffer vertices;
-		vertices.setData(MeshTools::interleave(meshData.positions3DAsArray(), meshData.textureCoordinates2DAsArray()));
-
-		GL::Mesh mesh;
-		mesh
-			.setPrimitive(meshData.primitive())
-			.setCount(meshData.vertexCount())
-			.addVertexBuffer(std::move(vertices), 0, WaterShader::Position{}, WaterShader::TextureCoordinates{});
-
-		// Add to resources
-		CommonUtility::singleton->manager.set(resMesh.key(), std::move(mesh));
-	}
-
-	// Create shader
-	Resource<GL::AbstractShaderProgram, WaterShader> resShader{ CommonUtility::singleton->manager.get<GL::AbstractShaderProgram, WaterShader>(RESOURCE_SHADER_WATER) };
-
-	if (!resShader)
-	{
-		// Create shader
-		std::unique_ptr<GL::AbstractShaderProgram> shader = std::make_unique<WaterShader>();
-
-		// Add to resources
-		Containers::Pointer<GL::AbstractShaderProgram> p = std::move(shader);
-		CommonUtility::singleton->manager.set(resShader.key(), std::move(p));
-	}
+	// Get mesh and shader
+	Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<WaterShader>(RESOURCE_MESH_PLANE_WATER);
+	Resource<GL::AbstractShaderProgram, WaterShader> resShader = CommonUtility::singleton->getWaterShader();
 
 	// Create new water object
 	auto wdh = WaterDrawableHolder();

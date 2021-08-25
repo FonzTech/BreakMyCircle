@@ -32,7 +32,23 @@ std::unordered_map<Int, std::array<Vector3, 6>> LevelSelector::sLevelButtonPosit
 		Vector3(6.51419f, 1.49128f, 6.6865f),
 		Vector3(8.33671f, 1.35076f, 1.32174f),
 		Vector3(7.63514f, 1.35076f, -3.6977f),
-		Vector3(-4.86925f, 1.17022f, -3.6977f),
+		Vector3(-4.86925f, 1.17022f, -3.6977f)
+	}),
+	std::make_pair(1, std::array<Vector3, 6>{
+		Vector3(6.9727f, 0.3f, 20.1046),
+		Vector3(0.221052f, 0.3f, 12.0666),
+		Vector3(-6.41381f, 0.3f, 5.51524f),
+		Vector3(-7.93295f, 0.3f, -4.16931f),
+		Vector3(-1.2867f, 0.3f, -11.4327f),
+		Vector3(5.35956f, 0.3f, -19.2658f)
+	}),
+	std::make_pair(2, std::array<Vector3, 6>{
+		Vector3(6.9727f, 0.3f, 20.1046),
+		Vector3(0.221052f, 0.3f, 12.0666),
+		Vector3(-6.41381f, 0.3f, 5.51524f),
+		Vector3(-7.93295f, 0.3f, -4.16931f),
+		Vector3(-1.2867f, 0.3f, -11.4327f),
+		Vector3(5.35956f, 0.3f, -19.2658f)
 	})
 };
 
@@ -1075,7 +1091,7 @@ void LevelSelector::handleScrollableScenery()
 
 		// Avoid scenes which are already what they should be (island, forest, desert, etc...)
 		// const Int modelIndex = (yp[i] % 1) + 1;
-		const Int modelIndex = 0;
+		const Int modelIndex = Int(Math::floor(Float(Math::abs(yp)) / 2.0f)) % 3;
 
 		const auto& it = mSceneries.find(yp);
 		if (it != mSceneries.end())

@@ -28,6 +28,7 @@
 #include "../Graphics/GameDrawable.h"
 #include "../Shaders/SpriteShader.h"
 #include "../Shaders/PlasmaShader.h"
+#include "../Shaders/WaterShader.h"
 #include "../GameObject.h"
 
 using namespace Magnum;
@@ -159,4 +160,5 @@ public:
 	std::shared_ptr<GameDrawable<SpriteShader>> createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> getFlat3DShader();
 	Resource<GL::AbstractShaderProgram, PlasmaShader> getPlasmaShader();
+	Resource<GL::AbstractShaderProgram, WaterShader> getWaterShader();
 };
