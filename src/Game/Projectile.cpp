@@ -30,7 +30,7 @@ std::shared_ptr<GameObject> Projectile::getInstance(const nlohmann::json & param
 	return nullptr;
 }
 
-Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : GameObject(parentIndex), mAnimation(0.0f)
+Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : GameObject(parentIndex), mAnimation(0.0f), mCustomTexture(nullptr)
 {
 	// Initialize members
 	mAmbientColor = ambientColor;
