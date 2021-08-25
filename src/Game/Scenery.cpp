@@ -179,37 +179,13 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 	}
 	else
 	{
-		// Create array of transformed light positions
-		std::vector<Vector3> destLightPos;
-		std::vector<Color4> destLightColors;
-
-		{
-			// Create array of light positions
-			std::vector<Vector3> source;
-
-			source.emplace_back(-8.0f, 20.0f, -15.0f);
-			source.emplace_back(30.0f, -20.0f, 5.0f);
-
-			destLightColors.emplace_back(0xffffff00_rgbaf);
-			destLightColors.emplace_back(0xffffff00_rgbaf);
-
-			// Create map function
-			const auto& mapFx = [&](const decltype(source)::value_type & vector)
-			{
-				return camera.cameraMatrix().transformPoint(mPosition + vector);
-			};
-
-			// Apply array mapping to all its elements
-			std::transform(source.begin(), source.end(), std::back_inserter(destLightPos), mapFx);
-		}
-
 		// Draw through shader
 		auto& shader = (Shaders::Phong&) baseDrawable->getShader();
 
 		shader
-			.setLightPositions(destLightPos)
-			.setLightColors(destLightColors)
-			.setSpecularColor(0xffffff00_rgbaf)
+			.setLightPositions({ { -15.0f, 25.0f, -10.0f }, { 30.0f, 50.0f, 25.0f } })
+			.setLightColors({ 0xc0c0c000_rgbaf, 0xc0c0c000_rgbaf })
+			.setSpecularColor(0xc0c0c000_rgbaf)
 			.setAmbientColor(0x444444ff_rgbaf)
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
