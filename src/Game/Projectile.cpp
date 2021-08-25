@@ -142,7 +142,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 	// Snap to grid
 	Float offset = thisRowIndex % 2 ? 0.0f : 1.0f;
 	mPosition = {
-		round((mPosition.x() - offset) / 2.0f) * 2.0f + offset,
+		Math::round((mPosition.x() - offset) / 2.0f) * 2.0f + offset,
 		getSnappedYPos(),
 		0.0f
 	};

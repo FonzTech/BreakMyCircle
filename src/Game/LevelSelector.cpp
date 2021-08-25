@@ -367,7 +367,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
 		go->setScale(Vector2(1.25f));
-		go->setText("Level X");
+		go->setText("Settings");
 
 		mLevelTexts[GO_LS_TEXT_LEVEL] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 	}
@@ -1284,7 +1284,7 @@ void LevelSelector::windowForCurrentLevelView()
 	}
 
 	// Level text
-	mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - d, 0.0f });
+	mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - d - s, 0.0f });
 
 	// Powerup title text
 	const bool& canShowPowerups = mLevelInfo.state <= GO_LS_LEVEL_STARTING || mLevelInfo.state == GO_LS_LEVEL_STARTED;
@@ -1495,7 +1495,11 @@ void LevelSelector::manageLevelState()
 		// Reset level state when animation has finished
 		if (mLevelAnim <= 0.0f)
 		{
+			// Reset level state
 			mLevelInfo.state = GO_LS_LEVEL_INIT;
+
+			// Set pause text
+			mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Settings");
 		}
 
 		// Animate jump to new level
