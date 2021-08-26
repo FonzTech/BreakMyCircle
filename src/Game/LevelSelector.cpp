@@ -1469,21 +1469,9 @@ void LevelSelector::manageLevelState()
 		else if (!mSettingsOpened)
 		{
 			// Decrement only when "Start Level" animation has finished
-			if (mLevelStartedAnim >= 1.0f)
+			if (mLevelStartedAnim >= 1.0f && mTimer.value >= -1500.0f)
 			{
 				mTimer.value -= mDeltaTime;
-			}
-			
-			// Update timer text
-			const Int timerInt(Math::floor(mTimer.value));
-			if (mTimer.cached != timerInt)
-			{
-				// Update time counter
-				mTimer.cached = timerInt;
-				updateTimeCounter(mTimer.cached);
-
-				// Update animation factor
-				mLevelGuiAnim[2] = 1.0f;
 			}
 		}
 
@@ -1495,6 +1483,20 @@ void LevelSelector::manageLevelState()
 		else
 		{
 			manageBackendAnimationVariable(mLevelStartedAnim, 1.0f, !mLevelEndingAnim);
+		}
+
+		// Update timer text
+		{
+			const Int timerInt(Math::floor(mTimer.value));
+			if (mTimer.cached != timerInt)
+			{
+				// Update time counter
+				mTimer.cached = timerInt;
+				updateTimeCounter(mTimer.cached);
+
+				// Update animation factor
+				mLevelGuiAnim[2] = 1.0f;
+			}
 		}
 
 		// Finish this level (after I wasted a cycle)
@@ -1704,6 +1706,9 @@ void LevelSelector::finishCurrentLevel(const bool success)
 
 void LevelSelector::prepareForReplay()
 {
+	// Reset texts
+	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(mLevelInfo.repeatLevelId));
+
 	// Reset variable for "current viewing level window"
 	mLevelInfo.currentViewingLevelId = mLevelInfo.repeatLevelId;
 
@@ -1739,7 +1744,7 @@ void LevelSelector::checkForLevelEnd()
 	}
 
 	// Check if any bubble has reached the limit line
-	bool lose = mTimer.value < 0.0f;
+	bool lose = mTimer.value >= -1000.0f && mTimer.value < 0.0f;
 	bool win = !lose;
 
 	if (mLevelInfo.limitLinePointer.expired())
@@ -1820,7 +1825,7 @@ void LevelSelector::manageGuiLevelAnim(const UnsignedInt index, const bool incre
 
 void LevelSelector::updateTimeCounter(const Int value)
 {
-	const auto& str = value >= 0 ? std::to_string(value) + "s" : ":(";
+	const auto& str = mTimer.value <= -1999.0f ? "stop" : value >= 0 ? std::to_string(value) + "s" : ":(";
 	mLevelTexts[GO_LS_TEXT_TIME]->setText(str);
 }
 
@@ -1851,6 +1856,14 @@ void LevelSelector::createPowerupView()
 
 		case 1:
 			tn = RESOURCE_TEXTURE_GUI_PU_PLASMA;
+			break;
+
+		case 2:
+			tn = RESOURCE_TEXTURE_GUI_PU_TIME;
+			break;
+
+		case 3:
+			tn = RESOURCE_TEXTURE_GUI_PU_ELECTRIC;
 			break;
 		}
 
@@ -1883,6 +1896,16 @@ void LevelSelector::createPowerupView()
 					case GO_LS_GUI_POWERUP + 1:
 						title = "PLASMA POWERUP";
 						message = "Multi-color projectile\nwhich changes color\nonce it hits a bubble.";
+						break;
+
+					case GO_LS_GUI_POWERUP + 2:
+						title = "TIME POWERUP";
+						message = "Freeze the time\nfor the entire\nlevel. Do whatever\nyou want.";
+						break;
+
+					case GO_LS_GUI_POWERUP + 3:
+						title = "ELECTRIC POWERUP";
+						message = "Delete up to five\nbubbles with the\nsame color once it\nhits a bubble.";
 						break;
 					}
 
@@ -1964,6 +1987,14 @@ void LevelSelector::usePowerup(const UnsignedInt index)
 
 	case GO_LS_GUI_POWERUP + 1U:
 		player->setPrimaryProjectile(BUBBLE_PLASMA);
+		break;
+
+	case GO_LS_GUI_POWERUP + 2U:
+		mTimer.value = -2000.0f;
+		break;
+
+	case GO_LS_GUI_POWERUP + 3U:
+		player->setPrimaryProjectile(BUBBLE_ELECTRIC);
 		break;
 
 	default:

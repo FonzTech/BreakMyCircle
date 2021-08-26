@@ -5,6 +5,7 @@
 #define BUBBLE_COIN 0x000001_rgbf
 #define BUBBLE_BOMB 0x000002_rgbf
 #define BUBBLE_PLASMA 0x000003_rgbf
+#define BUBBLE_ELECTRIC 0x000004_rgbf
 #define BUBBLE_COLOR_RED 0xff0000_rgbf
 #define BUBBLE_COLOR_GREEN 0x00ff00_rgbf
 #define BUBBLE_COLOR_BLUE 0x0000ff_rgbf

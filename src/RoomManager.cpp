@@ -64,6 +64,7 @@ RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
 	mBubbleColors[BUBBLE_COIN.toSrgbInt()] = { BUBBLE_COIN, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
 	mBubbleColors[BUBBLE_BOMB.toSrgbInt()] = { BUBBLE_BOMB, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
 	mBubbleColors[BUBBLE_PLASMA.toSrgbInt()] = { BUBBLE_PLASMA, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
+	mBubbleColors[BUBBLE_ELECTRIC.toSrgbInt()] = { BUBBLE_ELECTRIC, RESOURCE_TEXTURE_WHITE };
 
 	// Initialize game save data
 	mSaveData.maxLevelId = 10U;
@@ -311,6 +312,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 		const auto& p = std::make_shared<Player>(GOL_PERSP_SECOND, shootCallback);
 		p->mPosition = { fSquare, -13.0f - len, 0.0f };
 		p->mCameraDist = (50.0f / (1.0f / ar) * 0.95f) + fSquare;
+		p->postConstruct();
 		player = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p, true);
 	}
 
@@ -320,7 +322,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	// Create player limit line, just above the player
 	{
 		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 1.0f, 0.0f, 0.0f, 1.0f }, GO_LL_TYPE_RED);
-		p->mPosition = { fSquare, player->mPosition.y() + 6.0f, 0.0f };
+		p->mPosition = { fSquare, player->mPosition.y() + 6.0f, 0.1f };
 		p->setScale(Vector3(100.0f, 0.2f, 1.0f));
 		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
 	}
@@ -357,7 +359,7 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		const Int index = Int(Math::round(value * double(mBubbleColors.size())));
 		const auto& it = std::next(std::begin(mBubbleColors), index % mBubbleColors.size());
 
-		if (it->first == BUBBLE_BOMB.toSrgbInt())
+		if (!CommonUtility::singleton->isBubbleColorValid(it->second.color))
 		{
 			return d;
 		}

@@ -42,7 +42,7 @@
 #define GO_LS_AUDIO_PAUSE_IN 4
 #define GO_LS_AUDIO_PAUSE_OUT 5
 
-#define GO_LS_MAX_POWERUP_COUNT 2
+#define GO_LS_MAX_POWERUP_COUNT 4
 
 #include <array>
 #include <vector>

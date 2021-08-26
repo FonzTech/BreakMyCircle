@@ -19,6 +19,8 @@
 
 #define RESOURCE_TEXTURE_SPARKLES "tex_sparkles"
 #define RESOURCE_TEXTURE_EXPLOSION "tex_explosion"
+#define RESOURCE_TEXTURE_LIGHTNING "tex_lightning"
+#define RESOURCE_TEXTURE_LIGHTORB "tex_lightorb"
 #define RESOURCE_TEXTURE_BUBBLE_RED "tex_bubble_red"
 #define RESOURCE_TEXTURE_BUBBLE_GREEN "tex_bubble_green"
 #define RESOURCE_TEXTURE_BUBBLE_BLUE "tex_bubble_blue"
@@ -50,6 +52,8 @@
 #define RESOURCE_TEXTURE_GUI_BUTTON_2X1 "tex_gui_button_2x1"
 #define RESOURCE_TEXTURE_GUI_PU_BOMB "tex_gui_pu_bomb"
 #define RESOURCE_TEXTURE_GUI_PU_PLASMA "tex_gui_pu_plasma"
+#define RESOURCE_TEXTURE_GUI_PU_TIME "tex_gui_pu_time"
+#define RESOURCE_TEXTURE_GUI_PU_ELECTRIC "tex_gui_pu_electric"
 #define RESOURCE_TEXTURE_WHITE "tex_white"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"
@@ -93,6 +97,7 @@
 #define GOT_OVERLAY_GUI_DETACHED 11
 #define GOT_LIMIT_LINE 12
 #define GOT_DIALOG 12
+#define GOT_ELECTRIC_BALL 13
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>

@@ -228,17 +228,11 @@ void Player::update()
 	}
 
 	// Shooter manipulation
-	{
-		// Compute transformations
-		Matrix4 translation = Matrix4::translation(mPosition);
-		Float finalAngle(Deg(mShootAngle) + Deg(90.0f));
-
-		// Apply transformations to shooter
-		mShooterManipulator->setTransformation(Matrix4());
-		mShooterManipulator->transform(Matrix4::rotationX(Deg(90.0f)));
-		mShooterManipulator->transform(Matrix4::rotationZ(Deg(finalAngle)));
-		mShooterManipulator->transform(translation);
-	}
+	(*mShooterManipulator)
+		.resetTransformation()
+		.rotateX(Deg(90.0f))
+		.rotateZ(Deg(mShootAngle) + Deg(90.0f))
+		.translate(mPosition);
 
 	// Primary projectile
 	{
@@ -263,6 +257,32 @@ void Player::update()
 			(*mBombDrawables[0])
 				.resetTransformation()
 				.rotateZ(Deg(Math::floor(mAnimation[0] * 1440.0f / 90.0f) * 90.0f));
+
+			// Make electric bubble invisible
+			mElectricBall->mPosition = Vector3(10000.0f);
+		}
+		// Main - Electric bubble
+		else if (mProjColors[0] == BUBBLE_ELECTRIC)
+		{
+			// Make bubble invisible
+			(*mSphereManipulator[0])
+				.resetTransformation()
+				.scale(Vector3(0.0f))
+				.translate(Vector3(10000.0f));
+
+			// Make bomb invisible
+			(*mBombManipulator)
+				.resetTransformation()
+				.scale(Vector3(0.0f))
+				.translate(Vector3(10000.0f));
+
+			// Make spark rotate
+			(*mBombDrawables[0])
+				.resetTransformation()
+				.rotateZ(Deg(Math::floor(mAnimation[0] * 1440.0f / 90.0f) * 90.0f));
+
+			// Make electric bubble visible
+			mElectricBall->mPosition = mPosition;
 		}
 		// Otherwise, it's an ordinary bubble / plasma bubble
 		else
@@ -278,6 +298,9 @@ void Player::update()
 				.resetTransformation()
 				.scale(Vector3(0.0f))
 				.translate(Vector3(10000.0f));
+
+			// Make electric bubble invisible
+			mElectricBall->mPosition = Vector3(10000.0f);
 		}
 	}
 
@@ -350,6 +373,13 @@ void Player::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>>
 {
 }
 
+void Player::postConstruct()
+{
+	const std::shared_ptr<ElectricBall> go = std::make_shared<ElectricBall>(mParentIndex);
+	mElectricBall = (std::shared_ptr<ElectricBall>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
+	mElectricBall->mPosition = Vector3(10000.0f);
+}
+
 void Player::setupProjectile(const Int index)
 {
 	mSphereDrawables[index]->mTexture = getTextureResourceForIndex(index);
@@ -385,7 +415,7 @@ std::unique_ptr<std::vector<Color3>> Player::getRandomEligibleColor(const Unsign
 			const Int index = std::rand() % bubbles.size();
 			const auto& color = ((Bubble*)bubbles[index].lock().get())->mAmbientColor;
 
-			if (CommonUtility::singleton->isBubbleColorValid(color))
+			if (!CommonUtility::singleton->isBubbleColorValid(color))
 			{
 				continue;
 			}

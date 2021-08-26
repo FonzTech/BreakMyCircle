@@ -7,6 +7,7 @@
 
 #include "../GameObject.h"
 #include "../Game/Callbacks/IShootCallback.h"
+#include "../Game/ElectricBall.h"
 #include "../Graphics/GameDrawable.h"
 
 class Projectile : public GameObject
@@ -17,6 +18,7 @@ public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	Projectile(const Int parentIndex, const Color3& ambientColor);
+	~Projectile();
 
 	const Int getType() const override;
 	void update() override;
@@ -43,6 +45,8 @@ protected:
 	const Float getSnappedYPos() const;
 	const Float getSquaredRadiusForExplosion() const;
 	const void playStompSound();
+
+	std::shared_ptr<ElectricBall> mElectricBall;
 
 	Color3 mDiffuseColor;
 	GL::Texture2D* mCustomTexture;

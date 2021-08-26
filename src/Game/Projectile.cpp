@@ -47,6 +47,11 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 	{
 		AssetManager().loadAssets(*this, *mManipulator, RESOURCE_SCENE_BOMB, this);
 	}
+	else if (mAmbientColor == BUBBLE_ELECTRIC)
+	{
+		const std::shared_ptr<ElectricBall> go = std::make_shared<ElectricBall>(mParentIndex);
+		mElectricBall = (std::shared_ptr<ElectricBall>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
+	}
 	else
 	{
 		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
@@ -64,6 +69,15 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 	}
 }
 
+Projectile::~Projectile()
+{
+	if (mElectricBall != nullptr)
+	{
+		mElectricBall->mDestroyMe = true;
+		mElectricBall = nullptr;
+	}
+}
+
 const Int Projectile::getType() const
 {
 	return GOT_PROJECTILE;
@@ -73,6 +87,12 @@ void Projectile::update()
 {
 	// Affect position by velocity
 	mPosition += mVelocity * mDeltaTime * mSpeed;
+
+	// Setup electric ball, if required
+	if (mElectricBall != nullptr)
+	{
+		mElectricBall->mPosition = mPosition;
+	}
 
 	// Bounce against side walls
 	if (mPosition.x() <= LEFT_X && mVelocity.x() < 0.0f)

@@ -40,23 +40,20 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 	}
 	else if (mCustomType == GO_FB_TYPE_SPARK)
 	{
-		// Create assets
-		{
-			// Get sparkles texture
-			Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SPARKLES);
+		// Get sparkles texture
+		Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SPARKLES);
 
-			// Create plane
-			std::shared_ptr<GameDrawable<SpriteShader>> td = CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this);
-			mDrawables.emplace_back(td);
+		// Create plane
+		std::shared_ptr<GameDrawable<SpriteShader>> td = CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this);
+		mDrawables.emplace_back(td);
 
-			// Create shader data wrapper
-			mWrapper.shader = &td->getShader();
-			mWrapper.parameters.index = 0.0f;
-			mWrapper.parameters.total = 16.0f;
-			mWrapper.parameters.rows = 4.0f;
-			mWrapper.parameters.columns = 4.0f;
-			mWrapper.speed = 16.0f;
-		}
+		// Create shader data wrapper
+		mWrapper.shader = &td->getShader();
+		mWrapper.parameters.index = 0.0f;
+		mWrapper.parameters.total = 16.0f;
+		mWrapper.parameters.rows = 4.0f;
+		mWrapper.parameters.columns = 4.0f;
+		mWrapper.speed = 16.0f;
 	}
 	else if (mCustomType == GO_FB_TYPE_COIN)
 	{

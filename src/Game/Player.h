@@ -8,10 +8,11 @@
 #include <Magnum/Math/Color.h>
 #include <Magnum/Timeline.h>
 
+#include "../Common/CustomRenderers/PlasmaSquareRenderer.h"
 #include "../GameObject.h"
 #include "../Game/Callbacks/IShootCallback.h"
+#include "../Game/ElectricBall.h"
 #include "../Graphics/BaseDrawable.h"
-#include "../Common/CustomRenderers/PlasmaSquareRenderer.h"
 
 class Player : public GameObject
 {
@@ -26,6 +27,7 @@ public:
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
+	void postConstruct();
 	void setupProjectile(const Int index);
 	void setPrimaryProjectile(const Color3 & color);
 
@@ -41,6 +43,7 @@ protected:
 	Resource<GL::Texture2D> getTextureResourceForIndex(const UnsignedInt index);
 
 	PlasmaSquareRenderer mPlasmaSquareRenderer;
+	std::shared_ptr<ElectricBall> mElectricBall;
 
 	// std::unique_ptr<LinePath> mProjPath;
 	std::weak_ptr<GameObject> mProjectile;

@@ -139,7 +139,7 @@ bool CommonUtility::stringEndsWith(const std::string& data, const std::string& s
 
 bool CommonUtility::isBubbleColorValid(const Color3 & color)
 {
-	return color.r() > 0.001f || color.g() > 0.001f || color.b() < 0.04f;
+	return color.r() > 0.001f || color.g() > 0.001f || color.b() > 0.04f;
 }
 
 void CommonUtility::createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color)
