@@ -13,9 +13,9 @@ StreamedAudioPlayable::StreamedAudioPlayable(Object3D* object) : mObject(object)
 
 StreamedAudioPlayable::~StreamedAudioPlayable()
 {
-	mBgMusicStream = nullptr;
-	mBgMusicThread = nullptr;
-	mBgMusicPlayable = nullptr;
+	mStream = nullptr;
+	mThread = nullptr;
+	mPlayable = nullptr;
 }
 
 void StreamedAudioPlayable::clear()
@@ -24,37 +24,37 @@ void StreamedAudioPlayable::clear()
 	mLive = false;
 
 	// Wait until the thread finishes
-	while (mBgMusicThread != nullptr);
+	while (mThread != nullptr);
 
 	// Remove references to buffer and playable object
-	if (mBgMusicPlayable != nullptr)
+	if (mPlayable != nullptr)
 	{
-		mBgMusicPlayable->source()
+		mPlayable->source()
 			.stop()
 			.setBuffer(nullptr);
 
-		mBgMusicPlayable = nullptr;
+		mPlayable = nullptr;
 	}
 }
 
 void StreamedAudioPlayable::loadAudio(const std::string & filename)
 {
 	// Create and load stream
-	mBgMusicStream = std::make_unique<StreamedAudioBuffer>();
-	mBgMusicStream->openAudio(filename);
+	mStream = std::make_unique<StreamedAudioBuffer>();
+	mStream->openAudio(filename);
 
 	// Create and detach thread
-	mBgMusicThread = std::make_unique<std::thread>([&]()
+	mThread = std::make_unique<std::thread>([&]()
 	{
-		const Int limit = AS_BUFFER_SIZE / mBgMusicStream->getNumberOfChannels() - 256;
+		const Int limit = AS_BUFFER_SIZE / mStream->getNumberOfChannels() - 256;
 		while (mLive)
 		{
-			if (mBgMusicPlayable == nullptr)
+			if (mPlayable == nullptr)
 			{
 				continue;
 			}
 
-			auto& source = mBgMusicPlayable->source();
+			auto& source = mPlayable->source();
 			const bool b1 = source.state() == Audio::Source::State::Stopped;
 			const bool b2 = source.state() == Audio::Source::State::Playing && source.offsetInSamples() >= limit;
 			if (b1 || b2) 
@@ -66,26 +66,24 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 
 				source.setBuffer(nullptr);
 
-				if (mBgMusicPlayable != nullptr)
+				if (mPlayable != nullptr)
 				{
-					mBgMusicStream->feed();
-					source.setBuffer(&mBgMusicStream->getFrontBuffer());
+					mStream->feed();
+					source.setBuffer(&mStream->getFrontBuffer());
 					source.setOffsetInSamples(0);
 					source.play();
 				}
 			}
 			std::this_thread::sleep_for(20ms);
 		}
-		mBgMusicThread = nullptr;
+		mThread = nullptr;
 	});
-	mBgMusicThread->detach();
+	mThread->detach();
 
 	// Create playable resource with buffer
-	mBgMusicPlayable = std::make_unique<Audio::Playable3D>(*mObject, &RoomManager::singleton->mAudioPlayables);
-	mBgMusicPlayable->source()
-		.setBuffer(&mBgMusicStream->getFrontBuffer())
-		.setMinGain(1.0f)
-		.setMaxGain(1.0f)
+	mPlayable = std::make_unique<Audio::Playable3D>(*mObject, &RoomManager::singleton->mAudioPlayables);
+	mPlayable->source()
+		.setBuffer(&mStream->getFrontBuffer())
 		.setLooping(false)
 		.play();
 
@@ -93,5 +91,5 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 
 std::unique_ptr<Audio::Playable3D>& StreamedAudioPlayable::playable()
 {
-	return mBgMusicPlayable;
+	return mPlayable;
 }

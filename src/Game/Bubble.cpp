@@ -144,10 +144,9 @@ void Bubble::playStompSound()
 	mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
 	mPlayables[0]->source()
 		.setBuffer(buffer)
-		.setMinGain(1.0f)
-		.setMaxGain(1.0f)
-		.setLooping(false)
-		.play();
+		.setLooping(false);
+
+	playSfxAudio(0);
 }
 
 bool Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
@@ -230,7 +229,8 @@ bool Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
 			// Play sound only once
 			if (playSound)
 			{
-				ib->buildSound()->source().play();
+				ib->buildSound();
+				ib->playSfxAudio(0);
 				playSound = false;
 			}
 

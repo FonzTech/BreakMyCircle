@@ -110,8 +110,6 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 		mPlayables[i] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
 		mPlayables[i]->source()
 			.setBuffer(buffer)
-			.setMinGain(1.0f)
-			.setMaxGain(1.0f)
 			.setLooping(false);
 	}
 }
@@ -214,9 +212,7 @@ void Player::update()
 				// Play random sound
 				{
 					const UnsignedInt index = std::rand() % 3;
-					mPlayables[index]->source()
-						.setOffsetInSamples(0)
-						.play();
+					playSfxAudio(index);
 				}
 
 				// Launch callback

@@ -30,3 +30,13 @@ GameObject::~GameObject()
 	// De-reference manipulator
 	mManipulator = nullptr;
 }
+
+const void GameObject::playSfxAudio(const Int index, const Float offset)
+{
+	const Float level = RoomManager::singleton->getSfxGain();
+	(*mPlayables[index])
+		.setGain(level)
+		.source()
+			.setOffsetInSeconds(offset)
+			.play();
+}

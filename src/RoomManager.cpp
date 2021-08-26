@@ -25,7 +25,7 @@ using namespace Magnum::Math::Literals;
 
 std::unique_ptr<RoomManager> RoomManager::singleton = nullptr;
 
-RoomManager::RoomManager() : mCurrentBoundParentIndex(-1)
+RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
 {
 	// Create audio manager
 	mAudioContext = std::make_unique<Audio::Context>(
@@ -111,6 +111,26 @@ const void RoomManager::setCurrentBoundParentIndex(const Int parentIndex)
 	mCurrentBoundParentIndex = parentIndex;
 }
 
+const Float RoomManager::getBgMusicGain() const
+{
+	return mBgMusic->playable()->gain();
+}
+
+const void RoomManager::setBgMusicGain(const Float level)
+{
+	mBgMusic->playable()->setGain(level);
+}
+
+const Float RoomManager::getSfxGain() const
+{
+	return mSfxLevel;
+}
+
+const void RoomManager::setSfxGain(const Float level)
+{
+	mSfxLevel = level;
+}
+
 void RoomManager::clear()
 {
 	// Clear all layers and their children
@@ -170,9 +190,7 @@ void RoomManager::loadRoom(const std::string & name)
 
 			mBgMusic = std::make_unique<StreamedAudioPlayable>(&mCameraObject);
 			mBgMusic->loadAudio(bgmusic);
-			mBgMusic->playable()->source()
-				.setMinGain(0.25f)
-				.setMaxGain(0.25f);
+			mBgMusic->playable()->setGain(0.25f);
 		}
 	}
 

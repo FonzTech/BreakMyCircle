@@ -130,9 +130,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 					mLevelInfo.currentViewingLevelId = 0U;
 
 					// Play sound
-					mPlayables[GO_LS_AUDIO_PAUSE_OUT]->source()
-						.setOffsetInBytes(0)
-						.play();
+					playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
 				}
 				// If already closed, open/close the settings window
 				else if (mLevelInfo.state < GO_LS_LEVEL_FINISHED)
@@ -154,9 +152,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 					}
 
 					// Play sound
-					mPlayables[index]->source()
-						.setOffsetInBytes(0)
-						.play();
+					playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
 
 					// Debug print
 					Debug{} << "You have" << (mSettingsOpened ? "opened" : "closed") << "SETTINGS";
@@ -347,7 +343,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Create "BG Music" button
 	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_BGMUSIC);
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_BGMUSIC_ON);
 		o->setPosition({ -2.0f, 0.5f });
 		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 0.0f, 0.0f });
@@ -356,13 +352,18 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 			[this](UnsignedInt index) {
 				Debug{} << "You have clicked BGMUSIC";
+
+				const Float level = RoomManager::singleton->getBgMusicGain() >= 0.1f ? 0.0f : 0.25f;
+				RoomManager::singleton->setBgMusicGain(level);
+
+				mScreenButtons[GO_LS_GUI_BGMUSIC].drawable->setTexture(RoomManager::singleton->getBgMusicGain() > 0.01f ? RESOURCE_TEXTURE_GUI_BGMUSIC_ON : RESOURCE_TEXTURE_GUI_BGMUSIC_OFF);
 			}
 		};
 	}
 
 	// Create "SFX" button
 	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SFX);
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SFX_ON);
 		o->setPosition({ -2.0f, 0.5f });
 		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 0.0f, 0.0f });
@@ -371,6 +372,11 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 			[this](UnsignedInt index) {
 				Debug{} << "You have clicked SFX";
+
+				const Float level = RoomManager::singleton->getSfxGain() >= 0.99f ? 0.0f : 1.0f;
+				RoomManager::singleton->setSfxGain(level);
+
+				mScreenButtons[GO_LS_GUI_SFX].drawable->setTexture(RoomManager::singleton->getSfxGain() > 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
 			}
 		};
 	}
@@ -482,8 +488,6 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			mPlayables[it.first] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
 			mPlayables[it.first]->source()
 				.setBuffer(buffer)
-				.setMinGain(1.0f)
-				.setMaxGain(1.0f)
 				.setLooping(false);
 		}
 	}
@@ -901,9 +905,7 @@ void LevelSelector::update()
 									clickLevelButton(spo->levelIndex);
 
 									// Play sound
-									mPlayables[GO_LS_AUDIO_PAUSE_OUT]->source()
-										.setOffsetInBytes(0)
-										.play();
+									playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
 								}
 								else
 								{
@@ -1309,9 +1311,8 @@ void LevelSelector::windowForSettings()
 
 	// BG Music and SFX buttons
 	{
-		const auto& y = ds * 0.2f;
-		mScreenButtons[GO_LS_GUI_BGMUSIC].drawable->setPosition(Vector2(-0.1f / ar, -0.6f + y));
-		mScreenButtons[GO_LS_GUI_SFX].drawable->setPosition(Vector2(0.1f / ar, -0.6f + y));
+		mScreenButtons[GO_LS_GUI_BGMUSIC].drawable->setPosition(Vector2(-0.1f / ar, -1.4f + ds));
+		mScreenButtons[GO_LS_GUI_SFX].drawable->setPosition(Vector2(0.1f / ar, -1.4f + ds));
 	}
 }
 
@@ -1686,11 +1687,7 @@ void LevelSelector::finishCurrentLevel(const bool success)
 	RoomManager::singleton->mSaveData.coinCurrent = 0;
 
 	// Play success or failure sound for level end
-	{
-		auto& p = mPlayables[mLevelInfo.success ? GO_LS_AUDIO_WIN : GO_LS_AUDIO_LOSE]->source();
-		p.setOffsetInSeconds(0.0f);
-		p.play();
-	}
+	playSfxAudio(mLevelInfo.success ? GO_LS_AUDIO_WIN : GO_LS_AUDIO_LOSE);
 
 	// Prevent player from shooting
 	if (!mLevelInfo.playerPointer.expired())
@@ -1791,9 +1788,7 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 	Debug{} << "User wants to play level" << levelId;
 
 	// Play sound
-	mPlayables[GO_LS_AUDIO_PAUSE_OUT]->source()
-		.setOffsetInBytes(0)
-		.play();
+	playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
 
 	// Set state for level
 
@@ -1914,9 +1909,7 @@ void LevelSelector::createPowerupView()
 							usePowerup(index);
 
 							// Play sound
-							mPlayables[GO_LS_AUDIO_POWERUP]->source()
-								.setOffsetInBytes(0)
-								.play();
+							playSfxAudio(GO_LS_AUDIO_POWERUP);
 
 							// Close dialog and settings window
 							closeDialog();

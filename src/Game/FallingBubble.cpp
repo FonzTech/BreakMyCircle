@@ -257,8 +257,6 @@ std::shared_ptr<Audio::Playable3D>& FallingBubble::buildSound()
 	mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
 	mPlayables[0]->source()
 		.setBuffer(buffer)
-		.setMinGain(1.0f)
-		.setMaxGain(1.0f)
 		.setLooping(false);
 	return mPlayables[0];
 }
@@ -279,6 +277,6 @@ void FallingBubble::playPrimarySound()
 {
 	if (mPlayables.size() > 0 && mPlayables[0]->source().state() == Audio::Source::State::Initial)
 	{
-		mPlayables[0]->source().play();
+		playSfxAudio(0);
 	}
 }

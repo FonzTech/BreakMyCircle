@@ -42,4 +42,6 @@ public:
 	virtual const Int getType() const = 0;
 	virtual void update() = 0;
 	virtual void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) = 0;
+
+	const void playSfxAudio(const Int index, const Float offset = 0.0f);
 };

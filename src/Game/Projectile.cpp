@@ -58,10 +58,9 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 		mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
 		mPlayables[0]->source()
 			.setBuffer(buffer)
-			.setMinGain(1.0f)
-			.setMaxGain(1.0f)
-			.setLooping(false)
-			.play();
+			.setLooping(false);
+
+		playSfxAudio(0);
 	}
 }
 
@@ -335,7 +334,5 @@ const Float Projectile::getSquaredRadiusForExplosion() const
 
 const void Projectile::playStompSound()
 {
-	mPlayables[0]->source()
-		.setOffsetInBytes(0)
-		.play();
+	playSfxAudio(0);
 }

@@ -25,7 +25,7 @@ protected:
 	bool mLive;
 	Object3D* mObject;
 
-	std::unique_ptr<std::thread> mBgMusicThread;
-	std::unique_ptr<StreamedAudioBuffer> mBgMusicStream;
-	std::unique_ptr<Audio::Playable3D> mBgMusicPlayable;
+	std::unique_ptr<std::thread> mThread;
+	std::unique_ptr<StreamedAudioBuffer> mStream;
+	std::unique_ptr<Audio::Playable3D> mPlayable;
 };
