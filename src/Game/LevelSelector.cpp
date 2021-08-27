@@ -238,9 +238,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 					Int yi, yf;
 
 					{
-						const Int sli(Float(mLevelInfo.selectedLevelId - 1U));
+						const Float sli(Float(mLevelInfo.selectedLevelId - 1U));
 						yi = Int(Math::floor(sli / 6.0f));
-						yf = Int(sli - yi + 1);
+						yf = Int(Int(sli) - yi * 6) + 1;
 					}
 
 					// Wrap index to next scenery
@@ -249,6 +249,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 						++yi;
 						yf = 0;
 					}
+					printf("qqqq %d %d\n", yi, yf);
 
 					// Iterator check before continuing
 					const auto& bs = mSceneries.find(-yi);
@@ -1718,7 +1719,10 @@ void LevelSelector::finishCurrentLevel(const bool success)
 		mLevelInfo.numberOfRetries = 0;
 
 		// Increment maximum level ID
-		++RoomManager::singleton->mSaveData.maxLevelId;
+		if (mLevelInfo.selectedLevelId == RoomManager::singleton->mSaveData.maxLevelId - 1)
+		{
+			++RoomManager::singleton->mSaveData.maxLevelId;
+		}
 
 		// Add coins picked-up in this level to total count
 		RoomManager::singleton->mSaveData.coinTotal += RoomManager::singleton->mSaveData.coinCurrent;
