@@ -35,43 +35,16 @@ ElectricBall::ElectricBall(const Int parentIndex) : GameObject(parentIndex)
 
 		for (UnsignedInt i = 0; i < 4; ++i)
 		{
-			mListManipulators[i] = new Object3D{ mManipulator.get() };
+			mPieces[i].manipulator = new Object3D{ mManipulator.get() };
+			mPieces[i].angleCurrent = Deg(2.0f);
+			mPieces[i].angleLimit = Deg(1.0f);
 
-			std::shared_ptr<GameDrawable<SpriteShader>> td = CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mListManipulators[i], resTexture, this);
+			std::shared_ptr<GameDrawable<SpriteShader>> td = CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mPieces[i].manipulator, resTexture, this);
 			mDrawables.emplace_back(td);
-
-			switch (i)
-			{
-			case 0:
-				(*mListManipulators[i])
-					.scale(Vector3(2.0f, 20.0f, 1.0f))
-					.translate(Vector3(0.0f, -21.0f, 0.8f));
-				break;
-
-			case 1:
-				(*mListManipulators[i])
-					.scale(Vector3(2.0f, 20.0f, 1.0f))
-					.translate(Vector3(0.0f, 21.0f, 0.8f));
-				break;
-
-			case 2:
-				(*mListManipulators[i])
-					.scale(Vector3(2.0f, 20.0f, 1.0f))
-					.rotateZ(Deg(-90.0f))
-					.translate(Vector3(-21.0f, 0.0f, 0.8f));
-				break;
-
-			case 3:
-				(*mListManipulators[i])
-					.scale(Vector3(2.0f, 20.0f, 1.0f))
-					.rotateZ(Deg(-90.0f))
-					.translate(Vector3(21.0f, 0.0f, 0.8f));
-				break;
-			}
 		}
 	}
 
-	// Create lightorb 
+	// Create lightorb
 	{
 		// Load assets
 		Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D>(RESOURCE_MESH_PLANE_FLAT);
@@ -79,12 +52,12 @@ ElectricBall::ElectricBall(const Int parentIndex) : GameObject(parentIndex)
 		Resource<GL::AbstractShaderProgram, Shaders::Flat3D> resShader = CommonUtility::singleton->getFlat3DShader();
 
 		// Create child manipulator
-		mListManipulators[4] = new Object3D{ mManipulator.get() };
+		mOrbManipulator = new Object3D{ mManipulator.get() };
 
 		// Create drawable
 		auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
 		std::shared_ptr<GameDrawable<Shaders::Flat3D>> d = std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, resShader, resMesh, resTexture);
-		d->setParent(mListManipulators[4]);
+		d->setParent(mOrbManipulator);
 		d->setDrawCallback(this);
 		mDrawables.emplace_back(d);
 	}
@@ -95,6 +68,15 @@ ElectricBall::ElectricBall(const Int parentIndex) : GameObject(parentIndex)
 	mWrapper.parameters.rows = 1.0f;
 	mWrapper.parameters.columns = 8.0f;
 	mWrapper.speed = 12.0f;
+
+	// Load audio
+	{
+		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(RESOURCE_AUDIO_ELECTRIC);
+		mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+		mPlayables[0]->source()
+			.setBuffer(buffer)
+			.setLooping(true);
+	}
 }
 
 const Int ElectricBall::getType() const
@@ -105,14 +87,36 @@ const Int ElectricBall::getType() const
 void ElectricBall::update()
 {
 	// Apply transformations
-	(*mListManipulators[4])
+	(*mOrbManipulator)
 		.resetTransformation()
-		.scale(Vector3(4.0f, 4.0f, 1.0f))
-		.translate(Vector3(0.0f, 0.0f, 0.4f));
+		.scale(Vector3(3.0f, 3.0f, 1.0f))
+		.rotateZ(Deg(Math::floor(mWrapper.parameters.index) * 45.0f))
+		.translate(Vector3(0.0f, 0.0f, 0.6f));
 
 	(*mManipulator)
 		.resetTransformation()
 		.translate(mPosition);
+
+	for (UnsignedInt i = 0; i < 4; ++i)
+	{
+		// Advance animation
+		mPieces[i].angleCurrent += Deg(mDeltaTime * 8.0f) + Deg(std::rand() % 10 > 8 ? 3.0f : 0.0f);
+
+		// Check for animation end
+		if (mPieces[i].angleCurrent > mPieces[i].angleLimit)
+		{
+			const Deg angle(Float(std::rand() % 15) - 15.0f);
+			mPieces[i].angleCurrent = angle + Deg(Float(i) * 90.0f);
+			mPieces[i].angleLimit = mPieces[i].angleCurrent + Deg(15.0f + Float(std::rand() % 15));
+		}
+
+		const Rad rads(mPieces[i].angleCurrent - Deg(90.0f));
+		(*mPieces[i].manipulator)
+			.resetTransformation()
+			.scale(Vector3(2.0f, 20.0f, 1.0f))
+			.rotateZ(mPieces[i].angleCurrent)
+			.translate(Vector3(Math::cos(rads) * -21.0f, Math::sin(rads) * -21.0f, 0.3f));
+	}
 
 	// Manage sprite animation
 	mWrapper.parameters.index += mDeltaTime * mWrapper.speed;

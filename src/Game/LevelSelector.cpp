@@ -107,6 +107,17 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	// Create overlay eye-candy drawables
 	mLevelAnim = 0.0f;
 
+	// White glow quad
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_WHITE);
+		o->setPosition({ 0.0f, 0.0f });
+		o->setSize({ 1.0f, 1.0f });
+		o->setAnchor({ 0.0f, 0.0f });
+		o->setColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+
+		mLevelGuis[GO_LS_GUI_WHITEGLOW] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+
 	// Create "Settings" button
 	{
 		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SETTINGS);
@@ -479,7 +490,8 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			{ GO_LS_AUDIO_LOSE, RESOURCE_AUDIO_SHOT_LOSE },
 			{ GO_LS_AUDIO_POWERUP, RESOURCE_AUDIO_POWERUP },
 			{ GO_LS_AUDIO_PAUSE_IN, RESOURCE_AUDIO_PAUSE_IN },
-			{ GO_LS_AUDIO_PAUSE_OUT, RESOURCE_AUDIO_PAUSE_OUT }
+			{ GO_LS_AUDIO_PAUSE_OUT, RESOURCE_AUDIO_PAUSE_OUT },
+			{ GO_LS_AUDIO_EXPLOSION, RESOURCE_AUDIO_EXPLOSION }
 		};
 
 		for (const auto& it : tmpMap)
@@ -542,6 +554,19 @@ const Int LevelSelector::getType() const
 
 void LevelSelector::update()
 {
+	// Handle white glow
+	{
+		Float* c = mLevelGuis[GO_LS_GUI_WHITEGLOW]->color();
+		if (c[3] > 0.0f)
+		{
+			c[3] -= mDeltaTime;
+			if (c[3] < 0.0f)
+			{
+				c[3] = 0.0f;
+			}
+		}
+	}
+
 	// Manage player "can shoot" state
 	if (!mLevelInfo.playerPointer.expired())
 	{
@@ -990,7 +1015,7 @@ void LevelSelector::collidedWith(const std::unique_ptr<std::unordered_set<GameOb
 {
 }
 
-void LevelSelector::shootCallback(const Int state)
+void LevelSelector::shootCallback(const Int state, const Color3 & preColor, const Color3 & postColor)
 {
 	switch (state)
 	{
@@ -1005,6 +1030,13 @@ void LevelSelector::shootCallback(const Int state)
 			make all the required checks to decide if the player has failed the level.
 		*/
 		mLevelInfo.delayedChecks = true;
+
+		// Launch white glow
+		if (preColor == BUBBLE_ELECTRIC)
+		{
+			mLevelGuis[GO_LS_GUI_WHITEGLOW]->color()[3] = 1.0f;
+			playSfxAudio(GO_LS_AUDIO_EXPLOSION);
+		}
 
 		break;
 	}
@@ -1905,7 +1937,7 @@ void LevelSelector::createPowerupView()
 
 					case GO_LS_GUI_POWERUP + 3:
 						title = "ELECTRIC POWERUP";
-						message = "Delete up to five\nbubbles with the\nsame color once it\nhits a bubble.";
+						message = "Delete up to three\nbubbles with the\nsame color once it\nhits a bubble.";
 						break;
 					}
 

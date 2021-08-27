@@ -27,6 +27,7 @@
 #define GO_LS_GUI_TIME 8U
 #define GO_LS_GUI_BGMUSIC 9U
 #define GO_LS_GUI_SFX 10U
+#define GO_LS_GUI_WHITEGLOW 11U
 #define GO_LS_GUI_STAR 100U
 #define GO_LS_GUI_POWERUP 1000U
 
@@ -41,6 +42,7 @@
 #define GO_LS_AUDIO_POWERUP 3
 #define GO_LS_AUDIO_PAUSE_IN 4
 #define GO_LS_AUDIO_PAUSE_OUT 5
+#define GO_LS_AUDIO_EXPLOSION 6
 
 #define GO_LS_MAX_POWERUP_COUNT 4
 
@@ -76,7 +78,7 @@ public:
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
-	void shootCallback(const Int state) override;
+	void shootCallback(const Int state, const Color3 & preColor, const Color3 & postColor) override;
 
 private:
 	static std::unordered_map<Int, std::array<Vector3, 6>> sLevelButtonPositions;

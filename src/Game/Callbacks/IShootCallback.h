@@ -10,5 +10,5 @@ using namespace Magnum;
 class IShootCallback
 {
 public:
-	virtual void shootCallback(const Int state) = 0;
+	virtual void shootCallback(const Int state, const Color3 & preColor, const Color3 & postColor) = 0;
 };

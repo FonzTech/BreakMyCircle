@@ -20,7 +20,15 @@ public:
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
 protected:
+	struct Pieces
+	{
+		Object3D* manipulator;
+		Deg angleCurrent;
+		Deg angleLimit;
+	};
+
 	SpriteShaderDataView mWrapper;
 
-	Object3D* mListManipulators[5];
+	Pieces mPieces[4];
+	Object3D* mOrbManipulator;
 };

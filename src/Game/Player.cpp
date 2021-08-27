@@ -27,7 +27,7 @@ std::shared_ptr<GameObject> Player::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vector2i(32)), mCanShoot(true)
+Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vector2i(32)), mCanShoot(true), mElectricBall(nullptr)
 {
 	// Assign parent index
 	mParentIndex = parentIndex;
@@ -218,7 +218,7 @@ void Player::update()
 				// Launch callback
 				if (!mShootCallback.expired())
 				{
-					mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_STARTED);
+					mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_STARTED, go->mAmbientColor, go->mAmbientColor);
 				}
 
 				// Reset animation factor
@@ -260,6 +260,7 @@ void Player::update()
 
 			// Make electric bubble invisible
 			mElectricBall->mPosition = Vector3(10000.0f);
+			mElectricBall->mPlayables[0]->source().setMaxGain(0.0f);
 		}
 		// Main - Electric bubble
 		else if (mProjColors[0] == BUBBLE_ELECTRIC)
@@ -283,6 +284,7 @@ void Player::update()
 
 			// Make electric bubble visible
 			mElectricBall->mPosition = mPosition;
+			mElectricBall->mPlayables[0]->source().setMaxGain(1.0f);
 		}
 		// Otherwise, it's an ordinary bubble / plasma bubble
 		else
@@ -301,6 +303,7 @@ void Player::update()
 
 			// Make electric bubble invisible
 			mElectricBall->mPosition = Vector3(10000.0f);
+			mElectricBall->mPlayables[0]->source().setMaxGain(0.0f);
 		}
 	}
 
@@ -378,6 +381,7 @@ void Player::postConstruct()
 	const std::shared_ptr<ElectricBall> go = std::make_shared<ElectricBall>(mParentIndex);
 	mElectricBall = (std::shared_ptr<ElectricBall>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
 	mElectricBall->mPosition = Vector3(10000.0f);
+	mElectricBall->mPlayables[0]->source().play();
 }
 
 void Player::setupProjectile(const Int index)

@@ -51,6 +51,7 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 	{
 		const std::shared_ptr<ElectricBall> go = std::make_shared<ElectricBall>(mParentIndex);
 		mElectricBall = (std::shared_ptr<ElectricBall>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
+		mElectricBall->mPlayables[0]->source().play();
 	}
 	else
 	{
@@ -156,6 +157,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 	mVelocity = Vector3(0.0f);
 
 	// Get row index
+	const Color3 preColor = mAmbientColor;
 	const Int thisRowIndex = getRowIndexByBubble();
 
 	// Snap to grid
@@ -166,8 +168,8 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		0.0f
 	};
 
-	// Mutate the color, if this projectile is a plasma bubble
-	if (mAmbientColor == BUBBLE_PLASMA)
+	// Mutate the color, if this projectile is a plasma or electric bubble
+	if (mAmbientColor == BUBBLE_PLASMA || mAmbientColor == BUBBLE_ELECTRIC)
 	{
 		bool assignRandomColor = true;
 		if (gameObjects != nullptr && gameObjects->size() > 0)
@@ -235,6 +237,35 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 			}
 		}
 	}
+	// Check if projectile is an electric bubble
+	else if (mAmbientColor == BUBBLE_ELECTRIC)
+	{
+		std::vector<std::shared_ptr<Bubble>> bubbles;
+		for (auto& item : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+		{
+			if (item->getType() == GOT_BUBBLE)
+			{
+				const std::shared_ptr<Bubble> b = (std::shared_ptr<Bubble>&)item;
+				if (b->mAmbientColor == mAmbientColor)
+				{
+					bubbles.push_back(b);
+					if (bubbles.size() >= 3)
+					{
+						break;
+					}
+				}
+			}
+		}
+
+		// Destroy nearby bubbles and disjoint bubble groups
+		for (auto& b : bubbles)
+		{
+			if (b->destroyNearbyBubbles(false, 0.0f))
+			{
+				b->destroyDisjointBubbles();
+			}
+		}
+	}
 	else
 	{
 		// Correct position to protect against overlaps
@@ -272,7 +303,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 	// Launch callback
 	if (!mShootCallback.expired())
 	{
-		mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_FINISHED);
+		mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_FINISHED, preColor, mAmbientColor);
 	}
 
 	// Destroy me
