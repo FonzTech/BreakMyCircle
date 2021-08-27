@@ -485,13 +485,16 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Load audios
 	{
-		std::unordered_map<Int, std::string> tmpMap = {
+		const std::unordered_map<Int, std::string> tmpMap = {
 			{ GO_LS_AUDIO_WIN, RESOURCE_AUDIO_SHOT_WIN },
 			{ GO_LS_AUDIO_LOSE, RESOURCE_AUDIO_SHOT_LOSE },
 			{ GO_LS_AUDIO_POWERUP, RESOURCE_AUDIO_POWERUP },
 			{ GO_LS_AUDIO_PAUSE_IN, RESOURCE_AUDIO_PAUSE_IN },
 			{ GO_LS_AUDIO_PAUSE_OUT, RESOURCE_AUDIO_PAUSE_OUT },
-			{ GO_LS_AUDIO_EXPLOSION, RESOURCE_AUDIO_EXPLOSION }
+			{ GO_LS_AUDIO_EXPLOSION, RESOURCE_AUDIO_EXPLOSION },
+			{ GO_LS_AUDIO_STAR, RESOURCE_AUDIO_STAR_PREFIX + std::string("1") },
+			{ GO_LS_AUDIO_STAR + 1, RESOURCE_AUDIO_STAR_PREFIX + std::string("2") },
+			{ GO_LS_AUDIO_STAR + 2, RESOURCE_AUDIO_STAR_PREFIX + std::string("3") }
 		};
 
 		for (const auto& it : tmpMap)
@@ -1587,6 +1590,32 @@ void LevelSelector::manageLevelState()
 		if (mLevelGuiAnim[1] >= 0.99f)
 		{
 			manageGuiLevelAnim(3, true, 0.5f);
+
+			// Play sound effects
+			if (mLevelGuiAnim[3] >= 0.875f)
+			{
+				if (mLevelInfo.playedScore == 2)
+				{
+					playSfxAudio(GO_LS_AUDIO_STAR + 2);
+					++mLevelInfo.playedScore;
+				}
+			}
+			else if (mLevelGuiAnim[3] >= 0.625f)
+			{
+				if (mLevelInfo.playedScore == 1)
+				{
+					playSfxAudio(GO_LS_AUDIO_STAR + 1);
+					++mLevelInfo.playedScore;
+				}
+			}
+			else if (mLevelGuiAnim[3] >= 0.375f)
+			{
+				if (mLevelInfo.playedScore == 0)
+				{
+					playSfxAudio(GO_LS_AUDIO_STAR);
+					++mLevelInfo.playedScore;
+				}
+			}
 		}
 
 		// Prevent player from shooting
@@ -1742,6 +1771,7 @@ void LevelSelector::finishCurrentLevel(const bool success)
 
 		// Compute correct score
 		mLevelInfo.score = computeScore();
+		mLevelInfo.playedScore = 0;
 	}
 
 	// Reset temporary stats

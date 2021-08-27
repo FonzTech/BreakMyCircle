@@ -81,6 +81,7 @@
 #define RESOURCE_AUDIO_PAUSE_IN "pause_in"
 #define RESOURCE_AUDIO_PAUSE_OUT "pause_out"
 #define RESOURCE_AUDIO_ELECTRIC "electric"
+#define RESOURCE_AUDIO_STAR_PREFIX "star_"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"

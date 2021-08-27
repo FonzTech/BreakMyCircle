@@ -45,6 +45,7 @@
 #define GO_LS_AUDIO_PAUSE_IN 4
 #define GO_LS_AUDIO_PAUSE_OUT 5
 #define GO_LS_AUDIO_EXPLOSION 6
+#define GO_LS_AUDIO_STAR 1000
 
 #define GO_LS_MAX_POWERUP_COUNT 4
 
@@ -117,6 +118,7 @@ private:
 		Int state;
 		Int numberOfRetries;
 		Int score;
+		Int playedScore;
 		int32_t difficulty;
 		Float startingTime;
 
