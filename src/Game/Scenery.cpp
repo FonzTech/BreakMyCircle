@@ -191,7 +191,8 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 			.setAmbientColor(0xffffff_rgbf)
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
-			.setProjectionMatrix(camera.projectionMatrix());
+			.setProjectionMatrix(camera.projectionMatrix())
+			.setObjectId(0U);
 
 		if (baseDrawable->mTexture != nullptr)
 		{

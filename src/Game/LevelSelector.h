@@ -149,7 +149,7 @@ private:
 	void createSkyPlane();
 	void handleScrollableCameraPosition(const Vector3 & delta);
 	void handleScrollableScenery();
-	void clickLevelButton(const UnsignedInt id);
+	void clickLevelButton(const LS_ScenerySelector * sc, const LS_PickableObject * po);
 
 	void windowForCommon();
 	void windowForSettings();

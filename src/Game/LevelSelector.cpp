@@ -151,10 +151,17 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 					mSettingsOpened = !mSettingsOpened;
 					if (mSettingsOpened)
 					{
+						// Game logic
 						index = GO_LS_AUDIO_PAUSE_IN;
 						if (!mLevelInfo.playerPointer.expired())
 						{
 							((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = false;
+						}
+
+						// Set pause text
+						if (mLevelInfo.state <= GO_LS_LEVEL_INIT)
+						{
+							mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Settings");
 						}
 					}
 					else
@@ -266,7 +273,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 					}
 					const auto& bp = bs->second.buttons.at(yf).position;
 
-					// Set parameters to later animation
+					// Set parameters for later animation
 					mLevelInfo.currentLevelPos = mPosition;
 
 					const Vector3 sp = bs->second.scenery->mPosition;
@@ -936,7 +943,7 @@ void LevelSelector::update()
 								if (spo->levelIndex < RoomManager::singleton->mSaveData.maxLevelId)
 								{
 									// Open level window
-									clickLevelButton(spo->levelIndex);
+									clickLevelButton(&it2->second, spo);
 
 									// Play sound
 									playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
@@ -1269,16 +1276,20 @@ void LevelSelector::handleScrollableScenery()
 	}
 }
 
-void LevelSelector::clickLevelButton(const UnsignedInt id)
+void LevelSelector::clickLevelButton(const LS_ScenerySelector * sc, const LS_PickableObject * po)
 {
-	Debug{} << "You have clicked level" << id;
+	Debug{} << "You have clicked level" << po->levelIndex;
 
 	// Set current level identifier
-	mLevelInfo.currentViewingLevelId = id;
-	mLevelInfo.selectedLevelId = id;
+	mLevelInfo.currentViewingLevelId = po->levelIndex;
+	mLevelInfo.selectedLevelId = po->levelIndex;
 
 	// Set text for selected level
-	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(id));
+	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(po->levelIndex));
+
+	// Set parameters for animation
+	mLevelInfo.currentLevelPos = mPosition;
+	mLevelInfo.nextLevelPos = sc->scenery->mPosition + po->position + Vector3(0.0f, 0.0f, -8.0f);
 }
 
 void LevelSelector::windowForCommon()
@@ -1376,7 +1387,7 @@ void LevelSelector::windowForCurrentLevelView()
 		const Float yp = mLevelInfo.score - 1 >= i ? 1.25f - d : 2.0f;
 		drawable->setPosition({ -xp + xp * Float(i), yp });
 
-		const Float s = Math::clamp(mLevelGuiAnim[3] - Float(i) * 0.25f - 0.25f, 0.0f, 0.25f) * 0.4f;
+		const Float s = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Math::clamp(mLevelGuiAnim[3] - Float(i) * 0.25f - 0.25f, 0.0f, 0.25f) * 0.4f : 0.1f;
 		drawable->setSize(Vector2(s));
 	}
 
@@ -1487,6 +1498,14 @@ void LevelSelector::manageLevelState()
 		if (mLevelButtonScaleAnim > 0.0f)
 		{
 			manageGuiLevelAnim(0, true);
+		}
+
+		// Animate when a level is clicked
+		if (mLevelInfo.currentViewingLevelId != 0U)
+		{
+			const auto oldPosition = mPosition;
+			mPosition = mLevelInfo.currentLevelPos + (mLevelInfo.nextLevelPos - mLevelInfo.currentLevelPos) * mLevelAnim;
+			handleScrollableCameraPosition(mPosition - oldPosition);
 		}
 
 		break;
@@ -1637,9 +1656,6 @@ void LevelSelector::manageLevelState()
 		{
 			// Reset level state
 			mLevelInfo.state = GO_LS_LEVEL_INIT;
-
-			// Set pause text
-			mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Settings");
 		}
 
 		// Animate jump to new level
@@ -2053,12 +2069,13 @@ void LevelSelector::createPowerupView()
 					}
 
 					{
-						const std::string & text = mLevelInfo.state == GO_LS_LEVEL_STARTED ? "No" : "OK";
+						const bool isNo = mLevelInfo.state == GO_LS_LEVEL_STARTED;
+						const std::string & text = isNo ? "No" : "OK";
 						o->addAction(text, [this]() {
 							Debug{} << "You have clicked NO to USE POWERUP";
 							closeDialog();
 						},
-							Vector3(0.0f, -0.1f, 0.0f)
+							Vector3(0.0f, isNo ? -0.1f : -0.2f, 0.0f)
 						);
 					}
 
