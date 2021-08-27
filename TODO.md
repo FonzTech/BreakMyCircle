@@ -20,11 +20,12 @@
 - ~~Orthographic layers with GUI engine.~~
 - ~~Intro screen with logo and various effects, to be melt with level screen.~~
 - ~~Animate camera for every scenery available in the game.~~
+- ~~Game powerups.~~
+- ~~Complete level cycle, with start, winning and losing.~~
+- ~~Small main menu for game.~~
+- ~~Implement pause/resume system for game. And so the pause menu.~~
+- ~~Score system based on time and difficulty.~~
 
 # On-going tasks
 
-- Game powerups.
-- Complete level cycle, with start, winning and losing.
-- Small main menu for game.
-- Implement pause/resume system for game. And so the pause menu.
-- Procedural level generation.
+- Procedural level generation with difficulty.
