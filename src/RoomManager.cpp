@@ -74,7 +74,7 @@ RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
 	for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 	{
 #if NDEBUG or _DEBUG
-		mSaveData.powerupAmounts[GO_LS_GUI_POWERUP + i] = 10;
+		mSaveData.powerupAmounts[GO_LS_GUI_POWERUP + i] = 2;
 #else
 		mSaveData.powerupAmounts[GO_LS_GUI_POWERUP + i] = 0;
 #endif

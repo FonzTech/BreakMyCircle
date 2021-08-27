@@ -262,6 +262,7 @@ void FallingBubble::checkForSpriteEnding()
 {
 	if (mWrapper.parameters.index >= mWrapper.parameters.total)
 	{
+		mWrapper.parameters.index = mWrapper.parameters.total - 0.01f;
 		mDestroyMe = true;
 	}
 	else

@@ -162,6 +162,7 @@ private:
 
 	void createPowerupView();
 	void usePowerup(const UnsignedInt index);
+	void watchAdForPowerup(const UnsignedInt index);
 
 	std::weak_ptr<Dialog> mDialog;
 

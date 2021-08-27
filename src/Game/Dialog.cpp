@@ -13,7 +13,7 @@ std::shared_ptr<GameObject> Dialog::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Dialog::Dialog(const Int parentIndex) : GameObject(parentIndex), mOpened(1.0f), mOpacity(0.0f), mClickIndex(-1)
+Dialog::Dialog(const Int parentIndex, const UnsignedInt textCapacity) : GameObject(parentIndex), mOpened(1.0f), mOpacity(0.0f), mClickIndex(-1)
 {
 	// Assign members
 	mParentIndex = parentIndex;
@@ -31,7 +31,7 @@ Dialog::Dialog(const Int parentIndex) : GameObject(parentIndex), mOpened(1.0f), 
 
 	// Create text
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineCenter, 100);
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineCenter, textCapacity);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 0.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
 		go->mPosition = Vector3(0.0f, 0.3f, 0.0f);
@@ -132,18 +132,23 @@ void Dialog::setMessage(const std::string & text)
 	mText->setText(text);
 }
 
-void Dialog::addAction(const std::string & text, const std::function<void()> & callback)
+void Dialog::setTextPosition(const Vector3 & position)
+{
+	mText->setPosition(position);
+}
+
+void Dialog::addAction(const std::string & text, const std::function<void()> & callback, const Vector3 & offset)
 {
 	const Float index(Float(mActions.size()) + 1.0f);
 	const Float yp = -0.15f * index;
 
 	const std::shared_ptr<OverlayGui> buttonGui = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_GUI_BUTTON_2X1);
-	buttonGui->setPosition({ 0.0f, yp });
+	buttonGui->setPosition(Vector2(0.0f, yp) + offset.xy());
 	buttonGui->setSize({ 0.2f, 0.1f });
 	buttonGui->setAnchor({ 0.0f, 0.0f });
 
 	const std::shared_ptr<OverlayText> buttonText = std::make_shared<OverlayText>(mParentIndex, Text::Alignment::MiddleCenter, 10);
-	buttonText->mPosition = Vector3(0.0f, yp, 0.0f);
+	buttonText->mPosition = Vector3(0.0f, yp, 0.0f) + offset;
 	buttonText->mColor = Color4(1.0f, 1.0f, 1.0f, 0.0f);
 	buttonText->mOutlineColor = Color4(0.81f, 0.42f, 0.14f, 0.0f);
 	buttonText->setScale(Vector2(1.0f));

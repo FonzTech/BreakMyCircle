@@ -19,7 +19,7 @@ class Dialog : public GameObject
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	Dialog(const Int parentIndex);
+	Dialog(const Int parentIndex, const UnsignedInt textCapacity = 100);
 	~Dialog();
 
 	const Int getType() const override;
@@ -28,7 +28,8 @@ public:
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
 	void setMessage(const std::string & text);
-	void addAction(const std::string & text, const std::function<void()> & callback);
+	void setTextPosition(const Vector3 & position);
+	void addAction(const std::string & text, const std::function<void()> & callback, const Vector3 & offset = Vector3(0.0f));
 	void closeDialog();
 
 protected:

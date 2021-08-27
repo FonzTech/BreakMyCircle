@@ -1349,8 +1349,9 @@ void LevelSelector::windowForSettings()
 
 	// BG Music and SFX buttons
 	{
-		mScreenButtons[GO_LS_GUI_BGMUSIC].drawable->setPosition(Vector2(-0.1f / ar, -1.4f + ds));
-		mScreenButtons[GO_LS_GUI_SFX].drawable->setPosition(Vector2(0.1f / ar, -1.4f + ds));
+		const Float y = mLevelInfo.state == GO_LS_LEVEL_INIT ? 1.2f - ds * 1.125f : (-1.4f + ds);
+		mScreenButtons[GO_LS_GUI_BGMUSIC].drawable->setPosition(Vector2(-0.1f / ar, y));
+		mScreenButtons[GO_LS_GUI_SFX].drawable->setPosition(Vector2(0.1f / ar, y));
 	}
 }
 
@@ -1947,13 +1948,15 @@ void LevelSelector::createPowerupView()
 						break;
 					}
 
-					const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
-					o->setMessage(title + "\n\n" + message);
+					message = title + "\n\n" + message + "\n\nYou can earn more\npowerups by watching\nrewarded video ads.";
+					const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST, message.length());
+					o->setTextPosition({ 0.0f, 0.4f, 0.0f });
+					o->setMessage(message);
 
 					if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
 					{
 						const bool& isEnough = RoomManager::singleton->mSaveData.powerupAmounts[index] > 0;
-						const std::string& text = isEnough ? "Yes" : "Not Aval.";
+						const std::string& text = isEnough ? "Yes" : "Watch Ad";
 						o->addAction(text, [this,index]() {
 							Debug{} << "You have clicked YES to USE POWERUP";
 
@@ -1962,6 +1965,7 @@ void LevelSelector::createPowerupView()
 							const auto& it = pm.find(index);
 							if (it->second <= 0)
 							{
+								watchAdForPowerup(index);
 								return;
 							}
 
@@ -1975,7 +1979,9 @@ void LevelSelector::createPowerupView()
 							// Close dialog and settings window
 							closeDialog();
 							mScreenButtons[GO_LS_GUI_SETTINGS].callback(GO_LS_GUI_SETTINGS);
-						});
+						},
+							Vector3(0.0f, -0.1f, 0.0f)
+						);
 					}
 
 					{
@@ -1983,7 +1989,9 @@ void LevelSelector::createPowerupView()
 						o->addAction(text, [this]() {
 							Debug{} << "You have clicked NO to USE POWERUP";
 							closeDialog();
-						});
+						},
+							Vector3(0.0f, -0.1f, 0.0f)
+						);
 					}
 
 					mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
@@ -2038,4 +2046,9 @@ void LevelSelector::usePowerup(const UnsignedInt index)
 	default:
 		Debug{} << "No action to take for powerup" << index;
 	}
+}
+
+void LevelSelector::watchAdForPowerup(const UnsignedInt index)
+{
+	Debug{} << "Trigger REWARDED AD for Powerup" << index;
 }
