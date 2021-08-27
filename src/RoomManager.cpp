@@ -223,7 +223,7 @@ void RoomManager::loadRoom(const std::string & name)
 	}
 }
 
-void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen)
+void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen, const int32_t difficulty)
 {
 	// Delete game level layer
 	mGoLayers[GOL_PERSP_SECOND].list->clear();
@@ -251,7 +251,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 				// Get valid instantiator
 				while (true)
 				{
-					const double value = dy > 0.01 ? perlin.accumulatedOctaveNoise2D_0_1(dx, dy, 8) : 1.0;
+					const double value = dy > 0.01 ? perlin.accumulatedOctaveNoise2D_0_1(dx, dy, difficulty) : 1.0;
 					pi = getGameObjectFromNoiseValue(value);
 					if (pi != nullptr)
 					{

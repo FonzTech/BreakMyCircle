@@ -249,7 +249,6 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 						++yi;
 						yf = 0;
 					}
-					printf("qqqq %d %d\n", yi, yf);
 
 					// Iterator check before continuing
 					const auto& bs = mSceneries.find(-yi);
@@ -396,7 +395,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	// Three stars
 	for (UnsignedInt i = 0; i < 3; ++i)
 	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_STAR_GRAY);
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_STAR);
 		o->setPosition({ 2.0f, 2.0f });
 		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 0.0f, 0.0f });
@@ -1368,8 +1367,14 @@ void LevelSelector::windowForCurrentLevelView()
 	// Score stars
 	for (UnsignedInt i = 0; i < 3; ++i)
 	{
+		const auto& drawable = mLevelGuis[GO_LS_GUI_STAR + i];
+
 		const Float xp = 0.2f / (ar / 0.5625f);
-		mLevelGuis[GO_LS_GUI_STAR + i]->setPosition({ -xp + xp * Float(i), 1.25f - d });
+		const Float yp = mLevelInfo.score - 1 >= i ? 1.25f - d : 2.0f;
+		drawable->setPosition({ -xp + xp * Float(i), yp });
+
+		const Float s = Math::clamp(mLevelGuiAnim[3] - Float(i) * 0.25f - 0.25f, 0.0f, 0.25f) * 0.4f;
+		drawable->setSize(Vector2(s));
 	}
 
 	// Play button
@@ -1488,7 +1493,7 @@ void LevelSelector::manageLevelState()
 		// Create level room on animation end
 		if (mLevelButtonScaleAnim <= 0.0f)
 		{
-			createLevelRoom();
+			createLevelRoom(8);
 		}
 
 		break;
@@ -1578,6 +1583,12 @@ void LevelSelector::manageLevelState()
 		animate[0] = true;
 		animate[1] = true;
 
+		// Animate stars
+		if (mLevelGuiAnim[1] >= 0.99f)
+		{
+			manageGuiLevelAnim(3, true, 0.5f);
+		}
+
 		// Prevent player from shooting
 		if (!mLevelInfo.playerPointer.expired())
 		{
@@ -1664,11 +1675,13 @@ void LevelSelector::manageLevelState()
 	}
 }
 
-void LevelSelector::createLevelRoom()
+void LevelSelector::createLevelRoom(const int32_t difficulty)
 {
 	// Level is started
-	RoomManager::singleton->createLevelRoom(shared_from_this(), 8, 7);
+	RoomManager::singleton->createLevelRoom(shared_from_this(), 8, 7, difficulty);
 	mLevelInfo.state = GO_LS_LEVEL_STARTED;
+	mLevelInfo.score = 0.0f;
+	mLevelInfo.difficulty = difficulty;
 
 	// Get player pointer
 	for (const auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
@@ -1726,6 +1739,9 @@ void LevelSelector::finishCurrentLevel(const bool success)
 
 		// Add coins picked-up in this level to total count
 		RoomManager::singleton->mSaveData.coinTotal += RoomManager::singleton->mSaveData.coinCurrent;
+
+		// Compute correct score
+		mLevelInfo.score = computeScore();
 	}
 
 	// Reset temporary stats
@@ -1846,15 +1862,33 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 	mLevelInfo.repeatLevelId = 0U;
 	mLevelInfo.delayedChecks = false;
 	mLevelInfo.state = GO_LS_LEVEL_STARTING;
+	mLevelInfo.startingTime = 120.0f;
 
-	mTimer = { 120.0f, 120 };
+	mTimer = { mLevelInfo.startingTime, Int(mLevelInfo.startingTime) };
 	// mCoins = { -0.001f, -1 };
 	RoomManager::singleton->mSaveData.coinCurrent = 0;
 
 	updateTimeCounter(mTimer.cached);
+
+	// Reset GUI animation factors
+	mLevelGuiAnim[3] = 0.0f;
 }
 
-void LevelSelector::manageGuiLevelAnim(const UnsignedInt index, const bool increment)
+Int LevelSelector::computeScore()
+{
+	const Float d(mLevelInfo.difficulty);
+	if (mTimer.value > mLevelInfo.startingTime - d * 4.0f)
+	{
+		return 3;
+	}
+	else if (mTimer.value > mLevelInfo.startingTime - d * 2.0f)
+	{
+		return 2;
+	}
+	return 1;
+}
+
+void LevelSelector::manageGuiLevelAnim(const UnsignedInt index, const bool increment, const Float factor)
 {
 	if (mLevelGuiAnim[index] < 0.0f)
 	{
@@ -1862,7 +1896,7 @@ void LevelSelector::manageGuiLevelAnim(const UnsignedInt index, const bool incre
 	}
 	else
 	{
-		manageBackendAnimationVariable(mLevelGuiAnim[index], 1.0f, increment);
+		manageBackendAnimationVariable(mLevelGuiAnim[index], factor, increment);
 	}
 }
 

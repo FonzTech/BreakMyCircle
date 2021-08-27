@@ -44,7 +44,7 @@
 #define RESOURCE_TEXTURE_GUI_SFX_ON "tex_gui_sfx_on"
 #define RESOURCE_TEXTURE_GUI_SFX_OFF "tex_gui_sfx_off"
 #define RESOURCE_TEXTURE_GUI_LEVEL_PANEL "tex_gui_level_panel"
-#define RESOURCE_TEXTURE_GUI_STAR_GRAY "tex_gui_star_gray"
+#define RESOURCE_TEXTURE_GUI_STAR "tex_gui_star"
 #define RESOURCE_TEXTURE_GUI_BACK_ARROW "tex_gui_back_arrow"
 #define RESOURCE_TEXTURE_GUI_PLAY "tex_gui_play"
 #define RESOURCE_TEXTURE_GUI_COIN "tex_gui_coin"

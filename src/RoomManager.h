@@ -129,7 +129,7 @@ public:
 	void setup();
 	void prepareRoom(const bool stopBgMusic);
 	void loadRoom(const std::string & name);
-	void createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen);
+	void createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen, const int32_t difficulty);
 
 protected:
 	// Instantiator data holder

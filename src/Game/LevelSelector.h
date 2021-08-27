@@ -10,6 +10,8 @@
 
 #define GO_LS_MESH_PLATFORM "PlatformV"
 
+#define GO_LS_MAX_DIFFICULTY 30
+
 #define GO_LS_TEXT_LEVEL 0U
 #define GO_LS_TEXT_TIME 1U
 #define GO_LS_TEXT_COIN 2U
@@ -114,6 +116,9 @@ private:
 		UnsignedInt selectedLevelId;
 		Int state;
 		Int numberOfRetries;
+		Int score;
+		int32_t difficulty;
+		Float startingTime;
 
 		std::weak_ptr<GameObject> playerPointer;
 		std::weak_ptr<GameObject> limitLinePointer;
@@ -149,14 +154,15 @@ private:
 	void windowForCurrentLevelView();
 
 	void manageLevelState();
-	void createLevelRoom();
+	void createLevelRoom(const int32_t difficulty);
 	void finishCurrentLevel(const bool success);
 	void prepareForReplay();
 	void replayCurrentLevel();
 	void checkForLevelEnd();
 	void startLevel(const UnsignedInt levelId);
+	Int computeScore();
 
-	void manageGuiLevelAnim(const UnsignedInt index, const bool increment);
+	void manageGuiLevelAnim(const UnsignedInt index, const bool increment, const Float factor = 1.0f);
 	void updateTimeCounter(const Int value);
 	void closeDialog();
 
@@ -193,7 +199,7 @@ private:
 	std::unordered_map<UnsignedInt, UnsignedInt> mPickableObjectRefs;
 
 	LS_LevelInfo mLevelInfo;
-	Float mLevelGuiAnim[3];
+	Float mLevelGuiAnim[4];
 
 	LS_CachedVariable<Float, Int> mTimer;
 	LS_CachedVariable<Float, Int> mCoins;
