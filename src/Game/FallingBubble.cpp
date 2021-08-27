@@ -260,9 +260,8 @@ std::shared_ptr<Audio::Playable3D>& FallingBubble::buildSound()
 
 void FallingBubble::checkForSpriteEnding()
 {
-	if (mWrapper.parameters.index >= mWrapper.parameters.total)
+	if (mWrapper.parameters.index >= mWrapper.parameters.total - 0.5f)
 	{
-		mWrapper.parameters.index = mWrapper.parameters.total - 0.01f;
 		mDestroyMe = true;
 	}
 	else
