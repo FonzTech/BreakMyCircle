@@ -593,6 +593,12 @@ void LevelSelector::update()
 		return;
 	}
 
+	// Set light position for all sceneries
+	for (auto& item : mSceneries)
+	{
+		item.second.scenery->setLightPosition(mPosition);
+	}
+
 	// Manage level state
 	manageLevelState();
 

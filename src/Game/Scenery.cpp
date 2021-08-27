@@ -35,6 +35,7 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 	// mCubicBezier = std::make_unique<CubicBezier2D>(Vector2(0.0f, 0.0f), Vector2(0.11f, -0.02f), Vector2(0.0f, 1.01f), Vector2(1.0f));
 	mParentIndex = parentIndex;
 	mModelIndex = modelIndex;
+	mLightPosition = Vector3(0.0f);
 	mFrame = 0.0f;
 
 	// Fill manipulator list
@@ -54,7 +55,7 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 
 	// Load assets
 	{
-		AssetManager am(RESOURCE_SHADER_COLORED_PHONG_2, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE_2, 2);
+		AssetManager am(RESOURCE_SHADER_COLORED_PHONG, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE, 1);
 
 		std::string rk;
 		switch (modelIndex)
@@ -183,10 +184,11 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 		auto& shader = (Shaders::Phong&) baseDrawable->getShader();
 
 		shader
-			.setLightPositions({ { -15.0f, 25.0f, -10.0f }, { 30.0f, 50.0f, 25.0f } })
-			.setLightColors({ 0xc0c0c000_rgbaf, 0xc0c0c000_rgbaf })
+			.setLightPosition(mLightPosition + Vector3(0.0f, 10.0f, 0.0f))
+			.setLightColor(0xc0c0c000_rgbaf)
 			.setSpecularColor(0xc0c0c000_rgbaf)
-			.setAmbientColor(0x444444ff_rgbaf)
+			.setDiffuseColor(0x808080_rgbf)
+			.setAmbientColor(0xffffff_rgbf)
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
 			.setProjectionMatrix(camera.projectionMatrix());
@@ -252,6 +254,11 @@ void Scenery::createWaterDrawable(const WaterDrawableHolder & fromWdh)
 const Int Scenery::getModelIndex() const
 {
 	return mModelIndex;
+}
+
+const void Scenery::setLightPosition(const Vector3 & lightPosition)
+{
+	mLightPosition = lightPosition;
 }
 
 const void Scenery::animateInGameCamera()

@@ -23,6 +23,7 @@ public:
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
 	const Int getModelIndex() const;
+	const void setLightPosition(const Vector3 & lightPosition);
 	const void animateInGameCamera();
 
 protected:
@@ -42,6 +43,7 @@ protected:
 	// Object data
 	Int mModelIndex;
 	bool mAnimateInGameCamera;
+	Vector3 mLightPosition;
 
 	// Animation
 	Float mFrame;
