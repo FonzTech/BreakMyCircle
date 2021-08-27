@@ -77,6 +77,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mLevelInfo.state = GO_LS_LEVEL_INIT;
 		mLevelInfo.nextLevelAnim = 0.0f;
 		mLevelInfo.numberOfRetries = 0;
+		mLevelInfo.score = 0;
 	}
 
 	// Cached variables for GUI
