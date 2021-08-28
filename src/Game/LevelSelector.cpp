@@ -1532,7 +1532,7 @@ void LevelSelector::manageLevelState()
 		// Create level room on animation end
 		if (mLevelButtonScaleAnim <= 0.0f)
 		{
-			createLevelRoom(8);
+			createLevelRoom();
 		}
 
 		break;
@@ -1737,8 +1737,14 @@ void LevelSelector::manageLevelState()
 	}
 }
 
-void LevelSelector::createLevelRoom(const int32_t difficulty)
+void LevelSelector::createLevelRoom()
 {
+	// Debug print
+	Debug{} << "Creating level room for" << mLevelInfo.selectedLevelId;
+
+	// Compute right difficulty factor
+	const int32_t difficulty = 8;
+
 	// Level is started
 	RoomManager::singleton->createLevelRoom(shared_from_this(), 8, 7, difficulty);
 	mLevelInfo.state = GO_LS_LEVEL_STARTED;

@@ -161,7 +161,7 @@ private:
 	void windowForCurrentLevelView();
 
 	void manageLevelState();
-	void createLevelRoom(const int32_t difficulty);
+	void createLevelRoom();
 	void finishCurrentLevel(const bool success);
 	void prepareForReplay();
 	void replayCurrentLevel();
