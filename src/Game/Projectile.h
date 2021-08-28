@@ -43,7 +43,7 @@ protected:
 
 	const Int getRowIndexByBubble() const;
 	const Float getSnappedYPos() const;
-	const Float getSquaredRadiusForExplosion() const;
+	const Float getRadiusForExplosion() const;
 	const void playStompSound();
 
 	std::shared_ptr<ElectricBall> mElectricBall;

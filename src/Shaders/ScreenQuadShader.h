@@ -1,5 +1,7 @@
 #pragma once
 
+#define TEXTURE_UNIT_DEPTHSTENCIL_OFFSET 55
+
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/GL/Texture.h>
 #include <Magnum/GL/AbstractShaderProgram.h>
@@ -16,11 +18,8 @@ public:
 
 	explicit ScreenQuadShader();
 
-	ScreenQuadShader& bindTexture(const Int layer, GL::Texture2D & texture)
-	{
-		texture.bind(layer);
-		return *this;
-	}
+	ScreenQuadShader& bindColorTexture(const Int layer, GL::Texture2D & texture);
+	ScreenQuadShader& bindDepthStencilTexture(const Int layer, GL::Texture2D & texture);
 
 private:
 

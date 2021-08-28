@@ -28,4 +28,8 @@
 
 # On-going tasks
 
+- "Vote This App" and "Other Games" buttons Settings in level selector.
 - Procedural level generation with difficulty.
+- Random congratulations with graphics and sounds during bubble hits.
+- Place random pickups around the map.
+- Random help tooltips in level selector.

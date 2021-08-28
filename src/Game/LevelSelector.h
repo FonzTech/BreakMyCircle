@@ -179,8 +179,10 @@ private:
 
 	std::weak_ptr<Dialog> mDialog;
 
+#ifdef GO_LS_SKY_PLANE_ENABLED
 	std::shared_ptr<GameDrawable<Shaders::Flat3D>> mSkyPlane;
 	Object3D* mSkyManipulator;
+#endif
 
 	Vector2i mPrevMousePos;
 	Vector3 mScrollVelocity;

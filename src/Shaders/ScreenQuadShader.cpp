@@ -34,9 +34,10 @@ void ScreenQuadShader::setupShader()
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(link());
 
-	setUniform(uniformLocation("textureGolPrespFirst"), GOL_PERSP_FIRST);
-	setUniform(uniformLocation("textureGolPrespSecond"), GOL_PERSP_SECOND);
-	setUniform(uniformLocation("textureGolOrthoFirst"), GOL_ORTHO_FIRST);
+	setUniform(uniformLocation("colorPerspFirst"), GOL_PERSP_FIRST);
+	setUniform(uniformLocation("depthStencilPerspFirst"), GOL_PERSP_FIRST + TEXTURE_UNIT_DEPTHSTENCIL_OFFSET);
+	setUniform(uniformLocation("colorPerspSecond"), GOL_PERSP_SECOND);
+	setUniform(uniformLocation("colorOrthoFirst"), GOL_ORTHO_FIRST);
 }
 
 void ScreenQuadShader::setupMesh()
@@ -62,4 +63,16 @@ void ScreenQuadShader::setupMesh()
 		.addVertexBuffer(std::move(buffer), 0,
 			ScreenQuadShader::Position{},
 			ScreenQuadShader::TextureCoordinates{});
+}
+
+ScreenQuadShader& ScreenQuadShader::bindColorTexture(const Int layer, GL::Texture2D & texture)
+{
+	texture.bind(layer);
+	return *this;
+}
+
+ScreenQuadShader& ScreenQuadShader::bindDepthStencilTexture(const Int layer, GL::Texture2D & texture)
+{
+	texture.bind(layer + TEXTURE_UNIT_DEPTHSTENCIL_OFFSET);
+	return *this;
 }

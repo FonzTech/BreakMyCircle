@@ -40,7 +40,8 @@ public:
 		Matrix4 projectionMatrix;
 		Vector3 cameraEye, cameraTarget;
 		std::unique_ptr<GL::Framebuffer> frameBuffer;
-		std::unique_ptr<GL::Texture2D> fbTexture;
+		std::unique_ptr<GL::Texture2D> colorTexture;
+		std::unique_ptr<GL::Texture2D> depthTexture;
 		std::unique_ptr<GameObjectList> list;
 		std::unique_ptr<SceneGraph::DrawableGroup3D> drawables;
 

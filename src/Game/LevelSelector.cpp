@@ -3,6 +3,7 @@
 #include <utility>
 #include <Magnum/Math/Math.h>
 #include <Magnum/Math/Constants.h>
+#include <Magnum/Math/Bezier.h>
 #include <Magnum/GL/Renderer.h>
 
 #include "../RoomManager.h"
@@ -485,9 +486,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Set camera parameters
 	{
-		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
+		const auto& ar = QuadraticBezier2D(Vector2(0.0f), Vector2(-0.5f, 1.0f), Vector2(1.0f)).value(RoomManager::singleton->getWindowAspectRatio())[1];
 		auto& layer = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
-		layer.cameraEye = mPosition + Vector3(0.0f, 9.0f + 4.0f * ar, 12.0f + 15.0f * ar);
+		layer.cameraEye = mPosition + Vector3(0.0f, 16.0f * ar, 20.0f * ar);
 		layer.cameraTarget = mPosition;
 	}
 
@@ -637,11 +638,13 @@ void LevelSelector::update()
 	}
 #endif
 
+#ifdef GO_LS_SKY_PLANE_ENABLED
 	// Update sky plane
 	(*mSkyManipulator)
 		.resetTransformation()
 		.scale(Vector3(GO_LS_SCENERY_LENGTH, GO_LS_SCENERY_LENGTH, 1.0f))
 		.translate(mPosition + Vector3(0.0f, 0.0f, -GO_LS_SKYPLANE_DISTANCE));
+#endif
 
 	// Check if there is any on-going action on top
 	if (mLevelInfo.state == GO_LS_LEVEL_INIT && RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->size() > 0)
@@ -1002,6 +1005,7 @@ void LevelSelector::update()
 
 void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
+#ifdef GO_LS_SKY_PLANE_ENABLED
 	if (baseDrawable == mSkyPlane.get())
 	{
 		((Shaders::Flat3D&)baseDrawable->getShader())
@@ -1011,6 +1015,7 @@ void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 			.draw(*baseDrawable->mMesh);
 	}
 	else
+#endif
 	{
 		UnsignedInt levelIndex = 0U;
 		const auto& it = mPickableObjectRefs.find(baseDrawable->getObjectId());
@@ -1090,6 +1095,7 @@ constexpr void LevelSelector::manageBackendAnimationVariable(Float & variable, c
 
 void LevelSelector::createSkyPlane()
 {
+#ifdef GO_LS_SKY_PLANE_ENABLED
 	Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D>(RESOURCE_MESH_PLANE_FLAT);
 	Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SKYBOX_1_PX);
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> resShader = CommonUtility::singleton->getFlat3DShader();
@@ -1101,6 +1107,7 @@ void LevelSelector::createSkyPlane()
 	mSkyPlane->setParent(mSkyManipulator);
 	mSkyPlane->setDrawCallback(this);
 	mDrawables.emplace_back(mSkyPlane);
+#endif
 }
 
 void LevelSelector::handleScrollableCameraPosition(const Vector3 & delta)

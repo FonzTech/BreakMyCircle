@@ -114,7 +114,7 @@ void Engine::tickEvent()
 		}
 
 		(*currentGol->frameBuffer)
-			.clear(GL::FramebufferClear::Depth)
+			.clear(GL::FramebufferClear::Depth | GL::FramebufferClear::Stencil)
 			.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f))
 			.bind();
 
@@ -212,9 +212,10 @@ void Engine::drawEvent()
 	{
 		// Draw screen quad
 		mScreenQuadShader
-			.bindTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].fbTexture)
-			.bindTexture(GOL_PERSP_SECOND, *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].fbTexture)
-			.bindTexture(GOL_ORTHO_FIRST, *RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].fbTexture)
+			.bindColorTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].colorTexture)
+			.bindDepthStencilTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].depthTexture)
+			.bindColorTexture(GOL_PERSP_SECOND, *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].colorTexture)
+			.bindColorTexture(GOL_ORTHO_FIRST, *RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture)
 			.draw(mScreenQuadShader.mMesh);
 
 		// Swap buffers
@@ -396,25 +397,24 @@ void Engine::upsertGameObjectLayers()
 		// Get size for window framebuffer
 		const auto& size = GL::defaultFramebuffer.viewport().size();
 
-		// Create main texture to attach layer
-		layer->fbTexture = std::make_unique<GL::Texture2D>();
-		layer->fbTexture->setStorage(1, GL::TextureFormat::RGBA8, size);
-
-		GL::Renderbuffer colorBuffer;
-		colorBuffer.setStorage(GL::RenderbufferFormat::RGBA8, size);
-
 		// Create framebuffer and attach color buffers
 		layer->frameBuffer = std::make_unique<GL::Framebuffer>(Range2Di({}, size));
-		layer->frameBuffer->attachTexture(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, *layer->fbTexture, 0);
-		// layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, colorBuffer);
+
+		{
+			// Create main texture to attach layer
+			layer->colorTexture = std::make_unique<GL::Texture2D>();
+			layer->colorTexture->setStorage(1, GL::TextureFormat::RGBA8, size);
+			layer->frameBuffer->attachTexture(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, *layer->colorTexture, 0);
+			// layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, colorBuffer);
+		}
 
 		// Attach depth buffers only for 3D layers
 		if (layer->depthTestEnabled)
 		{
-			GL::Renderbuffer depthStencilBuffer;
-			depthStencilBuffer.setStorage(GL::RenderbufferFormat::Depth24Stencil8, size);
-
-			layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::BufferAttachment::DepthStencil, depthStencilBuffer);
+			layer->depthTexture = std::make_unique<GL::Texture2D>();
+			layer->depthTexture->setStorage(1, GL::TextureFormat::Depth24Stencil8, size);
+			layer->depthTexture->setCompareMode(GL::SamplerCompareMode::None);
+			layer->frameBuffer->attachTexture(GL::Framebuffer::BufferAttachment::DepthStencil, *layer->depthTexture, 0);
 		}
 
 		// Attach Object ID buffer, but only for "Perspective First"

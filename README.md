@@ -45,3 +45,4 @@ The `OverlayText` is *NOT ALWAYS* detached anymore. A dummy drawable is added to
 - It's highly advised to use `WaterShader` for "square" drawables.
 - ~~Blending between `OverlayText` and `OverlayGui` is incorrect due to the blending function used. This can be fixed, but it's a time consuming task. Please, avoid this.~~
 - Transformations for `OverlayText` is only computed automatically on the first update. Later times, the method `setPosition` must be called to trigger transformations update. Otherwise the object will be rendered with out-of-date transformations.
+- The `screen_quad.frag` shader program has an hard-coded effect to resemble a fog, which is very tighted to this specific game appearance.

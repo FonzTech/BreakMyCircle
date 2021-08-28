@@ -220,10 +220,10 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 			std::shared_ptr<Bubble> destroyLater = nullptr;
 			Float offsetZ = 0.0f;
 
-			const Float r = getSquaredRadiusForExplosion();
+			const Float r = getRadiusForExplosion();
 			for (auto& item : bubbles)
 			{
-				const Float d = CommonUtility::singleton->getDistanceSquared<3>(item->mPosition, mPosition);
+				const Float d = Math::abs((item->mPosition - mPosition).length());
 				if (d <= r && item->mAmbientColor != BUBBLE_COIN && item->destroyNearbyBubbles(true, offsetZ))
 				{
 					destroyLater = item;
@@ -378,9 +378,9 @@ const Float Projectile::getSnappedYPos() const
 	return Math::round(mPosition.y() / 2.0f) * 2.0f;
 }
 
-const Float Projectile::getSquaredRadiusForExplosion() const
+const Float Projectile::getRadiusForExplosion() const
 {
-	return 32.0f;
+	return 6.0f;
 }
 
 const void Projectile::playStompSound()
