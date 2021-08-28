@@ -78,16 +78,27 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	// Set camera parameters
 	setCameraParameters();
 
-	// Create overlay text
+	// Create overlay texts
 	{
 		const std::string& text = "Tap here to begin";
 		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
-		go->mPosition = Vector3(0.0f, -0.25f, 0.0f);
+		go->mPosition = Vector3(0.0f, -0.15f, 0.0f);
 		go->mColor.data()[3] = 0.0f;
 		go->mOutlineColor.data()[3] = 0.0f;
 		go->setText(text);
 
 		mTexts[0] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+
+	{
+		const std::string& text = "Created by\nFonzTech";
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
+		go->mPosition = Vector3(0.0f, -0.4f, 0.0f);
+		go->mColor = Color4(1.0f, 0.5f, 0.5f, 0.0f);
+		go->mOutlineColor.data()[3] = 0.0f;
+		go->setText(text);
+
+		mTexts[1] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 	}
 
 	// Build animations
@@ -167,34 +178,44 @@ void Logo::update()
 			// Handle its text
 			for (UnsignedInt i = 0; i < 2; ++i)
 			{
-				auto* p = &(i ? mTexts[0]->mOutlineColor : mTexts[0]->mColor).data()[3];
-
-				if (mIntroBubbles)
+				for (UnsignedInt j = 0; j < 2; ++j)
 				{
-					*p += mDeltaTime;
-				}
-				else
-				{
-					*p -= mDeltaTime;
-					mLogoZoom += mDeltaTime;
+					auto* p = &(j ? mTexts[i]->mOutlineColor : mTexts[i]->mColor).data()[3];
 
-					for (UnsignedInt i = 0; i < 3; ++i)
+					if (mIntroBubbles)
 					{
-						mLogoObjects[i]->translate(Vector3(0.0f, 0.0f, Math::sin(Rad(mLogoZoom)) * -0.06f));
+						*p += mDeltaTime;
 					}
-				}
-
-				if (*p > 1.0f)
-				{
-					*p = 1.0f;
-				}
-				else if (*p < -0.15f)
-				{
-					for (auto& item : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+					else
 					{
-						item->mDestroyMe = true;
+						*p -= mDeltaTime;
+
+						if (i == 0 && j == 0)
+						{
+							mLogoZoom += mDeltaTime;
+
+							for (UnsignedInt k = 0; k < 3; ++k)
+							{
+								mLogoObjects[k]->translate(Vector3(0.0f, 0.0f, Math::sin(Rad(mLogoZoom)) * -0.12f));
+							}
+						}
 					}
-					return;
+
+					if (*p > 1.0f)
+					{
+						*p = 1.0f;
+					}
+					else if (*p < -0.15f)
+					{
+						if (i == 0 && j == 0)
+						{
+							for (auto& item : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+							{
+								item->mDestroyMe = true;
+							}
+							return;
+						}
+					}
 				}
 			}
 		}
