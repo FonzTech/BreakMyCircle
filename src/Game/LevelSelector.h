@@ -91,10 +91,15 @@ private:
 		std::vector<std::weak_ptr<BaseDrawable>> drawables;
 		Vector3 position;
 		Float scale;
-		bool selectable;
 		UnsignedInt levelIndex;
 		UnsignedInt objectId;
 		Resource<GL::Texture2D> texture;
+	};
+
+	struct LS_PickableObjectRef
+	{
+		Int sceneryIndex;
+		Int objectIndex;
 	};
 
 	struct LS_ScenerySelector
@@ -198,7 +203,7 @@ private:
 	Float mLevelAnim;
 
 	std::chrono::system_clock::time_point mClickStartTime;
-	std::unordered_map<UnsignedInt, UnsignedInt> mPickableObjectRefs;
+	std::unordered_map<UnsignedInt, LS_PickableObjectRef> mPickableObjectRefs;
 
 	LS_LevelInfo mLevelInfo;
 	Float mLevelGuiAnim[4];

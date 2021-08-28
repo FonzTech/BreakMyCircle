@@ -921,7 +921,7 @@ void LevelSelector::update()
 					const auto& it = mPickableObjectRefs.find(oid);
 					if (it != mPickableObjectRefs.end())
 					{
-						const auto& it2 = mSceneries.find(it->second);
+						const auto& it2 = mSceneries.find(it->second.sceneryIndex);
 						if (it2 == mSceneries.end())
 						{
 							Error{} << "Scenery from PickableObjectRef" << it2->first << "was not found. This should not happen";
@@ -1012,7 +1012,14 @@ void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 	}
 	else
 	{
-		const auto& color = baseDrawable->getObjectId() < RoomManager::singleton->mSaveData.maxLevelId ? 0xc0c0c0_rgbf : 0x404040_rgbf;
+		UnsignedInt levelIndex = 0U;
+		const auto& it = mPickableObjectRefs.find(baseDrawable->getObjectId());
+		if (it != mPickableObjectRefs.end())
+		{
+			levelIndex = mSceneries[it->second.sceneryIndex].buttons[it->second.objectIndex].levelIndex;
+		}
+
+		const auto& color = levelIndex < RoomManager::singleton->mSaveData.maxLevelId ? 0xc0c0c0_rgbf : 0x404040_rgbf;
 		((Shaders::Phong&)baseDrawable->getShader())
 			.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(0.0f, 6.0f, 0.0f)))
 			.setLightColor(0xc0c0c0_rgbf)
@@ -1218,17 +1225,18 @@ void LevelSelector::handleScrollableScenery()
 			auto& bs = mSceneries[yp].buttons.back();
 			
 			// Compute object identifier
-			const UnsignedInt objectId = UnsignedInt(-yp) * 6U + UnsignedInt(i + 1);
-			mPickableObjectRefs[objectId] = yp;
+			const UnsignedInt objectId = UnsignedInt(-yp) * 6U + UnsignedInt(i + 1) + 100U;
+			const UnsignedInt levelIndex = objectId - 100U;
 
-			bs.levelIndex = objectId;
+			mPickableObjectRefs[objectId] = { yp, Int(mSceneries[yp].buttons.size()) - 1 };
+
+			bs.levelIndex = levelIndex;
 			bs.objectId = objectId;
 			bs.scale = 0.0f;
-			bs.selectable = false;
 
 			// Create and save texture
 			{
-				const auto& nt = std::to_string(Int(objectId));
+				const auto& nt = std::to_string(Int(bs.levelIndex));
 				const auto& key = "tex_ls_" + nt;
 
 				bs.texture = CommonUtility::singleton->manager.get<GL::Texture2D>(key);
@@ -1388,7 +1396,15 @@ void LevelSelector::windowForCurrentLevelView()
 		const Float yp = mLevelInfo.score - 1 >= i ? 1.25f - d : 2.0f;
 		drawable->setPosition({ -xp + xp * Float(i), yp });
 
-		const Float s = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Math::clamp(mLevelGuiAnim[3] - Float(i) * 0.25f - 0.25f, 0.0f, 0.25f) * 0.4f : 0.1f;
+		Float s;
+		if (mLevelInfo.state >= GO_LS_LEVEL_FINISHED)
+		{
+			s = mLevelInfo.score >= i + 1 ? Math::clamp(mLevelGuiAnim[3] - Float(i) * 0.25f - 0.25f, 0.0f, 0.25f) * 0.4f : 0.0f;
+		}
+		else
+		{
+			s = mLevelInfo.score >= i + 1 ? 0.1f : 0.0f;
+		}
 		drawable->setSize(Vector2(s));
 	}
 
@@ -1726,7 +1742,7 @@ void LevelSelector::createLevelRoom(const int32_t difficulty)
 	// Level is started
 	RoomManager::singleton->createLevelRoom(shared_from_this(), 8, 7, difficulty);
 	mLevelInfo.state = GO_LS_LEVEL_STARTED;
-	mLevelInfo.score = 0.0f;
+	mLevelInfo.score = 0;
 	mLevelInfo.difficulty = difficulty;
 
 	// Get player pointer
