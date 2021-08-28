@@ -4,8 +4,11 @@ Puzzle Bobble-like game for PC and Mobile. Currently in development. This projec
 
 ## Dependencies
 
-- Magnum Engine: [https://magnum.graphics/](https://magnum.graphics/)
 - Corrade: [https://github.com/mosra/corrade](https://github.com/mosra/corrade)
+- Magnum Graphics: [https://magnum.graphics/](https://magnum.graphics/)
+- Magnum Plugins: [https://github.com/mosra/magnum-plugins](https://github.com/mosra/magnum-plugins)
+- OpenAL Soft: [https://github.com/kcat/openal-soft](https://github.com/kcat/openal-soft)
+- SDL2 (for Windows only): [https://www.libsdl.org/](https://www.libsdl.org/)
 
 ## Technical Notes
 
