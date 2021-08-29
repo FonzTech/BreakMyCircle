@@ -114,7 +114,7 @@ private:
 	struct LS_ScreenButton
 	{
 		std::shared_ptr<AbstractGuiElement> drawable;
-		std::function<void(UnsignedInt)> callback;
+		std::function<bool(UnsignedInt)> callback;
 	};
 
 	struct LS_LevelInfo

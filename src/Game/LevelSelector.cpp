@@ -133,7 +133,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				// Avoid inconsistencies
 				if (mLevelEndingAnim)
 				{
-					return;
+					return false;
 				}
 
 				// Close level details screen
@@ -177,6 +177,8 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 					// Debug print
 					Debug{} << "You have" << (mSettingsOpened ? "opened" : "closed") << "SETTINGS";
 				}
+
+				return true;
 			}
 		};
 	}
@@ -205,7 +207,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 				if (!mDialog.expired())
 				{
-					return;
+					return false;
 				}
 
 				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
@@ -224,6 +226,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				});
 
 				mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+				return true;
 			}
 		};
 	}
@@ -264,14 +267,14 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 					if (bs == mSceneries.end())
 					{
 						Error{} << "No Scenery found with index" << yi;
-						return;
+						return false;
 					}
 
 					// Check for consistency
 					if (yf >= bs->second.buttons.size())
 					{
 						Error{} << "Button index" << yf << "is greater than size" << bs->second.buttons.size();
-						return;
+						return false;
 					}
 					const auto& bp = bs->second.buttons.at(yf).position;
 
@@ -287,6 +290,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 				// Update stats
 				RoomManager::singleton->mSaveData.coinCurrent = 0;
+				return true; 
 			}
 		};
 	}
@@ -302,6 +306,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 			[this](UnsignedInt index) {
 				Debug{} << "You have clicked SHARE";
+				return true;
 			}
 		};
 	}
@@ -318,6 +323,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			[this](UnsignedInt index) {
 				mLevelInfo.numberOfRetries = 0;
 				startLevel(mLevelInfo.currentViewingLevelId);
+				return true;
 			}
 		};
 	}
@@ -336,7 +342,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 				if (!mDialog.expired())
 				{
-					return;
+					return false;
 				}
 
 				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
@@ -357,6 +363,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				});
 
 				mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+				return true;
 			}
 		};
 	}
@@ -377,6 +384,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				RoomManager::singleton->setBgMusicGain(level);
 
 				((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_BGMUSIC].drawable)->setTexture(RoomManager::singleton->getBgMusicGain() > 0.01f ? RESOURCE_TEXTURE_GUI_BGMUSIC_ON : RESOURCE_TEXTURE_GUI_BGMUSIC_OFF);
+				return true;
 			}
 		};
 	}
@@ -397,6 +405,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				RoomManager::singleton->setSfxGain(level);
 
 				((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_SFX].drawable)->setTexture(RoomManager::singleton->getSfxGain() > 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
+				return true;
 			}
 		};
 	}
@@ -743,9 +752,8 @@ void LevelSelector::update()
 				mClickIndex = it->first;
 				break;
 			}
-			else if (lbs == IM_STATE_RELEASED && mClickIndex == it->first)
+			else if (lbs == IM_STATE_RELEASED && mClickIndex == it->first && it->second.callback(it->first))
 			{
-				it->second.callback(it->first);
 				break;
 			}
 		}
@@ -1998,7 +2006,7 @@ void LevelSelector::createPowerupView()
 				[&](UnsignedInt index) {
 					if ((mLevelAnim < 0.95f && mSettingsAnim < 0.95f) || ((std::shared_ptr<OverlayGui>&)mScreenButtons[index].drawable)->color()[3] < 0.95f || !mDialog.expired())
 					{
-						return;
+						return false;
 					}
 
 					Debug{} << "You have clicked POWERUP" << index;
@@ -2076,6 +2084,7 @@ void LevelSelector::createPowerupView()
 					}
 
 					mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+					return true;
 				}
 			};
 		}
@@ -2202,10 +2211,11 @@ void LevelSelector::createTexts()
 			// Avoid inconsistencies
 			if (!mSettingsOpened)
 			{
-				return;
+				return false;
 			}
 
 			Debug{} << "You have clicked VOTE ME";
+			return true;
 		}
 		};
 	}
@@ -2226,10 +2236,11 @@ void LevelSelector::createTexts()
 			// Avoid inconsistencies
 			if (!mSettingsOpened)
 			{
-				return;
+				return false;
 			}
 
 			Debug{} << "You have clicked OTHER APPS";
+			return true;
 		}
 		};
 	}
