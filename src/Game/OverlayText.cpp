@@ -81,11 +81,16 @@ void OverlayText::setText(const std::string & text)
 
 	Int xct = 0;
 	Int xcf = 0;
-	Int yc = 0;
+	Int yc = 1;
 
-	for (auto it = text.begin(); it != text.end(); ++it)
+	for (auto it = text.begin(); true; ++it)
 	{
-		if (*it == '\n')
+		if (it == text.end())
+		{
+			xcf = Math::max(xcf, xct);
+			break;
+		}
+		else if (*it == '\n')
 		{
 			++yc;
 			xcf = Math::max(xcf, xct);
@@ -123,7 +128,7 @@ void OverlayText::updateTransformations()
 		mProjectionMatrix = Matrix3();
 	}
 
-	const Vector2 s = mSize * Vector2(mTextSize) * Vector2(0.05f, 0.1f);
+	const Vector2 s = mSize * mTextSize * (0.02f / mAspectRatio);
 	const Range2D r = {
 		mPosition.xy() - s,
 		mPosition.xy() + s
