@@ -376,7 +376,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				const Float level = RoomManager::singleton->getBgMusicGain() >= 0.1f ? 0.0f : 0.25f;
 				RoomManager::singleton->setBgMusicGain(level);
 
-				mScreenButtons[GO_LS_GUI_BGMUSIC].drawable->setTexture(RoomManager::singleton->getBgMusicGain() > 0.01f ? RESOURCE_TEXTURE_GUI_BGMUSIC_ON : RESOURCE_TEXTURE_GUI_BGMUSIC_OFF);
+				((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_BGMUSIC].drawable)->setTexture(RoomManager::singleton->getBgMusicGain() > 0.01f ? RESOURCE_TEXTURE_GUI_BGMUSIC_ON : RESOURCE_TEXTURE_GUI_BGMUSIC_OFF);
 			}
 		};
 	}
@@ -396,7 +396,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 				const Float level = RoomManager::singleton->getSfxGain() >= 0.99f ? 0.0f : 1.0f;
 				RoomManager::singleton->setSfxGain(level);
 
-				mScreenButtons[GO_LS_GUI_SFX].drawable->setTexture(RoomManager::singleton->getSfxGain() > 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
+				((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_SFX].drawable)->setTexture(RoomManager::singleton->getSfxGain() > 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
 			}
 		};
 	}
@@ -432,54 +432,8 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mLevelGuis[GO_LS_GUI_TIME] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 	}
 
-	// Level number text
-	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopCenter, 40);
-		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
-		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setScale(Vector2(1.25f));
-		go->setText("Settings");
-
-		mLevelTexts[GO_LS_TEXT_LEVEL] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
-	}
-
-	// Time counter text
-	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineRight, 10);
-		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
-		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setScale(Vector2(1.125f));
-		go->setText("0s");
-
-		mLevelTexts[GO_LS_TEXT_TIME] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
-	}
-
-	// Coin counter text
-	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineLeft, 40);
-		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
-		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setScale(Vector2(1.15f));
-		go->setText("0");
-
-		mLevelTexts[GO_LS_TEXT_COIN] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
-	}
-
-	// Powerup text
-	{
-		const std::string& text = "Your Powerups";
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
-		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
-		go->mColor = Color4(0.9f, 0.9f, 0.9f, 1.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setScale(Vector2(1.0f));
-		go->setText(text);
-
-		mLevelTexts[GO_LS_TEXT_POWERUP_TITLE] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
-	}
+	// Create texts
+	createTexts();
 
 	// Create powerup view
 	createPowerupView();
@@ -1322,15 +1276,15 @@ void LevelSelector::windowForCommon()
 	{
 		const auto& dx = 0.2f * d0;
 		mLevelGuis[GO_LS_GUI_COIN]->setPosition({ -0.425f, 0.66f - dx });
-		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.36f, 0.63f - dx, 0.0f });
+		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.36f, 0.63f - dx });
 	}
 
 	// Time icon and text
 	{
-		const auto& p1 = Vector3(0.35f, -0.725f + ds * 0.25f, 0.0f);
+		const auto& p1 = Vector2(0.35f, -0.725f + ds * 0.25f);
 		const auto& p2 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector3(0.0f, -0.2f, 0.0f) * d1 : Vector3(0.0f);
 
-		mLevelGuis[GO_LS_GUI_TIME]->setPosition(p1.xy() + Vector2(0.06f, 0.03f));
+		mLevelGuis[GO_LS_GUI_TIME]->setPosition(p1 + Vector2(0.06f, 0.03f));
 		mLevelTexts[GO_LS_TEXT_TIME]->setPosition(p1);
 	}
 }
@@ -1346,7 +1300,7 @@ void LevelSelector::windowForSettings()
 		const auto& d2 = mCbEaseInOut.value(mLevelGuiAnim[0])[1];
 		const auto& dsl = ds + dl;
 
-		const auto& drawable = mScreenButtons[GO_LS_GUI_SETTINGS].drawable;
+		const auto& drawable = ((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_SETTINGS].drawable);
 
 		// Position
 		{
@@ -1382,6 +1336,18 @@ void LevelSelector::windowForSettings()
 		const Float y = mLevelInfo.state == GO_LS_LEVEL_INIT ? 1.2f - ds * 1.125f : (-1.4f + ds);
 		mScreenButtons[GO_LS_GUI_BGMUSIC].drawable->setPosition(Vector2(-0.1f / ar, y));
 		mScreenButtons[GO_LS_GUI_SFX].drawable->setPosition(Vector2(0.1f / ar, y));
+	}
+
+	// Vote Me text
+	{
+		const Float y = mLevelInfo.state == GO_LS_LEVEL_INIT ? 1.285f - ds * 1.35f : -2.0f;
+		mScreenButtons[GO_LS_TEXT_VOTE_ME].drawable->setPosition(Vector2(0.0f, y));
+	}
+
+	// Other Apps text
+	{
+		const Float y = mLevelInfo.state == GO_LS_LEVEL_INIT ? 1.285f - ds * 1.425f : -2.0f;
+		mScreenButtons[GO_LS_TEXT_OTHER_APPS].drawable->setPosition(Vector2(0.0f, y));
 	}
 }
 
@@ -1424,13 +1390,13 @@ void LevelSelector::windowForCurrentLevelView()
 	// Level text
 	{
 		const auto& lx = mLevelInfo.state == GO_LS_LEVEL_INIT ? s * 0.95f : s;
-		mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - d - lx, 0.0f });
+		mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - d - lx });
 	}
 
 	// Powerup title text
 	const bool& canShowPowerups = mLevelInfo.state <= GO_LS_LEVEL_STARTING || mLevelInfo.state == GO_LS_LEVEL_STARTED;
 	const Float powerupY = mLevelInfo.state <= GO_LS_LEVEL_STARTING ? d : s;
-	mLevelTexts[GO_LS_TEXT_POWERUP_TITLE]->setPosition({ canShowPowerups ? 0.0f : -1000.0f, 1.05f - powerupY, 0.0f });
+	mLevelTexts[GO_LS_TEXT_POWERUP_TITLE]->setPosition({ canShowPowerups ? 0.0f : -1000.0f, 1.05f - powerupY });
 
 	// Powerup buttons
 	if (canShowPowerups)
@@ -1444,7 +1410,7 @@ void LevelSelector::windowForCurrentLevelView()
 			// Clickable icon
 			{
 				const Float alpha = Math::clamp(1.2f - Math::abs(xp) * 5.0f * ar, 0.0f, 1.0f);
-				auto& item = mScreenButtons[GO_LS_GUI_POWERUP + i].drawable;
+				auto& item = (std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_POWERUP + i].drawable;
 				if (alpha > 0.0f)
 				{
 					item->setPosition({ xp, yf });
@@ -1462,13 +1428,13 @@ void LevelSelector::windowForCurrentLevelView()
 				auto& item = mLevelTexts[GO_LS_TEXT_POWERUP_COUNT + i];
 				if (alpha > 0.0f)
 				{
-					item->setPosition({ xp + 0.115f / ar, yf - 0.06f, 0.0f });
+					item->setPosition({ xp + 0.115f / ar, yf - 0.06f });
 					item->mColor.data()[3] = alpha;
 					item->mOutlineColor.data()[3] = alpha;
 				}
 				else
 				{
-					item->setPosition({ -2.0f, yf, 0.0f });
+					item->setPosition({ -2.0f, yf });
 				}
 			}
 		}
@@ -2030,7 +1996,7 @@ void LevelSelector::createPowerupView()
 			mScreenButtons[GO_LS_GUI_POWERUP + i] = {
 				(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
 				[&](UnsignedInt index) {
-					if ((mLevelAnim < 0.95f && mSettingsAnim < 0.95f) || mScreenButtons[index].drawable->color()[3] < 0.95f || !mDialog.expired())
+					if ((mLevelAnim < 0.95f && mSettingsAnim < 0.95f) || ((std::shared_ptr<OverlayGui>&)mScreenButtons[index].drawable)->color()[3] < 0.95f || !mDialog.expired())
 					{
 						return;
 					}
@@ -2120,7 +2086,7 @@ void LevelSelector::createPowerupView()
 			go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 			go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 			go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-			go->setScale(Vector2(1.0f));
+			go->setSize(Vector2(1.0f));
 			go->setText("-");
 
 			mLevelTexts[GO_LS_TEXT_POWERUP_COUNT + i] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
@@ -2166,4 +2132,105 @@ void LevelSelector::usePowerup(const UnsignedInt index)
 void LevelSelector::watchAdForPowerup(const UnsignedInt index)
 {
 	Debug{} << "Trigger REWARDED AD for Powerup" << index;
+}
+
+void LevelSelector::createTexts()
+{
+
+	// Level number text
+	{
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopCenter, 40);
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setSize(Vector2(1.25f));
+		go->setText("Settings");
+
+		mLevelTexts[GO_LS_TEXT_LEVEL] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+
+	// Time counter text
+	{
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineRight, 10);
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setSize(Vector2(1.125f));
+		go->setText("0s");
+
+		mLevelTexts[GO_LS_TEXT_TIME] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+
+	// Coin counter text
+	{
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineLeft, 40);
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setSize(Vector2(1.15f));
+		go->setText("0");
+
+		mLevelTexts[GO_LS_TEXT_COIN] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+
+	// Powerup text
+	{
+		const std::string& text = "Your Powerups";
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(0.9f, 0.9f, 0.9f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setSize(Vector2(1.0f));
+		go->setText(text);
+
+		mLevelTexts[GO_LS_TEXT_POWERUP_TITLE] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+
+	// Vote This App text
+	{
+		const std::string& text = "> Vote This App";
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(0.6f, 1.0f, 0.6f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setSize(Vector2(1.0f));
+		go->setText(text);
+
+		mScreenButtons[GO_LS_TEXT_VOTE_ME] = {
+			(std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true),
+			[this](UnsignedInt index) {
+			// Avoid inconsistencies
+			if (!mSettingsOpened)
+			{
+				return;
+			}
+
+			Debug{} << "You have clicked VOTE ME";
+		}
+		};
+	}
+
+	// Other Apps text
+	{
+		const std::string& text = "> Other Apps";
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(1.0f, 0.6f, 0.6f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setSize(Vector2(1.0f));
+		go->setText(text);
+
+		mScreenButtons[GO_LS_TEXT_OTHER_APPS] = {
+			(std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true),
+			[this](UnsignedInt index) {
+			// Avoid inconsistencies
+			if (!mSettingsOpened)
+			{
+				return;
+			}
+
+			Debug{} << "You have clicked OTHER APPS";
+		}
+		};
+	}
 }

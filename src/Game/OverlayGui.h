@@ -3,12 +3,11 @@
 #include <memory>
 #include <nlohmann/json.hpp>
 
-#include <Magnum/Shaders/Flat.h>
-#include "../GameObject.h"
+#include "../Game/AbstractGuiElement.h"
 
 using namespace Magnum;
 
-class OverlayGui : public GameObject
+class OverlayGui : public AbstractGuiElement
 {
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
@@ -21,13 +20,11 @@ public:
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
+	Range3D getBoundingBox(const Vector2 & windowSize) override;
 
-	void setPosition(const Vector2 & position);
-	void setSize(const Vector2 & size);
 	void setRotationInDegrees(const Float rotation);
 	void setAnchor(const Vector2 & anchor);
 	void setColor(const Color4 & color);
-	Range3D getBoundingBox(const Vector2 & windowSize);
 
 	const Resource<GL::Texture2D> & getTextureResource() const;
 	const void setTexture(const std::string & textureName);
@@ -35,12 +32,8 @@ public:
 	const Vector2 getSize() const;
 
 protected:
-	void updateAspectRatioFactors();
-	void updateTransformations();
+	void updateTransformations() override;
 
-	Float mArs[2];
-	Color4 mColor;
 	Rad mRotation;
-	Vector2 mSize;
 	Vector2 mAnchor;
 };

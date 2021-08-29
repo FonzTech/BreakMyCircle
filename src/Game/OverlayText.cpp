@@ -20,10 +20,9 @@ std::shared_ptr<GameObject> OverlayText::getInstance(const nlohmann::json & para
 	return p;
 }
 
-OverlayText::OverlayText(const Int parentIndex, const Text::Alignment & textAlignment, const UnsignedInt textCapacity) : GameObject(parentIndex), mScale{1.0f}
+OverlayText::OverlayText(const Int parentIndex, const Text::Alignment & textAlignment, const UnsignedInt textCapacity) : AbstractGuiElement(parentIndex)
 {
 	// Init members
-	mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 	mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
 	mOutlineRange = Vector2(0.5f, 0.3f);
 
@@ -48,20 +47,15 @@ const Int OverlayText::getType() const
 
 void OverlayText::update()
 {
-	const auto& w = RoomManager::singleton->getWindowSize();
-	if (mCurrentWindowSize != w)
-	{
-		mCurrentWindowSize = w;
-		mProjectionMatrix = Matrix3::projection(mCurrentWindowSize);
-		updateTransformation();
-	}
+	updateAspectRatioFactors();
+	updateTransformations();
 }
 
 void OverlayText::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 	if (mColor.a() > 0.0f || mOutlineColor.a() > 0.0f)
 	{
-		((Shaders::DistanceFieldVector2D&)mDrawables.at(0)->getShader())
+		((Shaders::DistanceFieldVector2D&)baseDrawable->getShader())
 			.bindVectorTexture(mFontHolder->cache->texture())
 			.setTransformationProjectionMatrix(mProjectionMatrix * mTransformationMatrix)
 			.setColor(mColor)
@@ -84,23 +78,60 @@ void OverlayText::drawDetached()
 void OverlayText::setText(const std::string & text)
 {
 	mText->render(text);
+
+	Int xct = 0;
+	Int xcf = 0;
+	Int yc = 0;
+
+	for (auto it = text.begin(); it != text.end(); ++it)
+	{
+		if (*it == '\n')
+		{
+			++yc;
+			xcf = Math::max(xcf, xct);
+			xct = 0;
+		}
+		else
+		{
+			++xct;
+		}
+	}
+
+	mTextSize = Vector2(Float(xcf), Float(yc));
 }
 
-void OverlayText::setPosition(const Vector3 & position)
+Range3D OverlayText::getBoundingBox(const Vector2 & windowSize)
 {
-	mPosition = position;
-	updateTransformation();
+	const auto& s = Vector3(windowSize, 1.0f);
+	const auto& o = s * 0.5f;
+	return Range3D{
+		{ mBbox.min().x() * s.x() + o.x(), s.y() - (mBbox.max().y() * s.y() + o.y()), mBbox.min().z() * s.z() + o.z() },
+		{ mBbox.max().x() * s.x() + o.x(), s.y() - (mBbox.min().y() * s.y() + o.y()), mBbox.max().z() * s.z() + o.z() }
+	};
 }
 
-void OverlayText::setScale(const Vector2 & scale)
+void OverlayText::updateTransformations()
 {
-	mScale = scale;
-	updateTransformation();
-}
+	if (mCustomCanvasSize.x() >= 0.0f)
+	{
+		const auto& ws = mCustomCanvasSize.x() >= 1.0f ? mCustomCanvasSize : RoomManager::singleton->getWindowSize();
+		mProjectionMatrix = Matrix3::projection(ws);
+		mTransformationMatrix = Matrix3::translation(mPosition.xy() * ws) * Matrix3::scaling(mSize);
+	}
+	else
+	{
+		mProjectionMatrix = Matrix3();
+	}
 
-void OverlayText::updateTransformation()
-{
-	mTransformationMatrix = Matrix3::translation(mCurrentWindowSize * mPosition.xy()) * Matrix3::scaling(mScale);
+	const Vector2 s = mSize * Vector2(mTextSize) * Vector2(0.05f, 0.1f);
+	const Range2D r = {
+		mPosition.xy() - s,
+		mPosition.xy() + s
+	};
+	mBbox = Range3D{
+		{ r.min().x(), r.min().y(), -1.0f },
+		{ r.max().x(), r.max().y(), 1.0f }
+	};
 	/*
 	(*mManipulator)
 		.resetTransformation()

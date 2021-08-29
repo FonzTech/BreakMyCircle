@@ -162,6 +162,7 @@
     <ClCompile Include="src\Common\AbstractCustomRenderer.cpp" />
     <ClCompile Include="src\Common\CustomRenderers\LSNumberRenderer.cpp" />
     <ClCompile Include="src\Common\CustomRenderers\PlasmaSquareRenderer.cpp" />
+    <ClCompile Include="src\Game\AbstractGuiElement.cpp" />
     <ClCompile Include="src\Game\Bubble.cpp" />
     <ClCompile Include="src\Game\Dialog.cpp" />
     <ClCompile Include="src\Game\ElectricBall.cpp" />
@@ -198,6 +199,7 @@
     <ClInclude Include="src\Common\AbstractCustomRenderer.h" />
     <ClInclude Include="src\Common\CustomRenderers\LSNumberRenderer.h" />
     <ClInclude Include="src\Common\CustomRenderers\PlasmaSquareRenderer.h" />
+    <ClInclude Include="src\Game\AbstractGuiElement.h" />
     <ClInclude Include="src\Game\Bubble.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\GameObject.h" />

@@ -35,7 +35,7 @@ Dialog::Dialog(const Int parentIndex, const UnsignedInt textCapacity) : GameObje
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 0.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
 		go->mPosition = Vector3(0.0f, 0.3f, 0.0f);
-		go->setScale(Vector2(1.0f));
+		go->setSize(Vector2(1.0f));
 		go->setText("---");
 
 		mText = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
@@ -134,7 +134,7 @@ void Dialog::setMessage(const std::string & text)
 
 void Dialog::setTextPosition(const Vector3 & position)
 {
-	mText->setPosition(position);
+	mText->setPosition(position.xy());
 }
 
 void Dialog::addAction(const std::string & text, const std::function<void()> & callback, const Vector3 & offset)
@@ -151,7 +151,7 @@ void Dialog::addAction(const std::string & text, const std::function<void()> & c
 	buttonText->mPosition = Vector3(0.0f, yp, 0.0f) + offset;
 	buttonText->mColor = Color4(1.0f, 1.0f, 1.0f, 0.0f);
 	buttonText->mOutlineColor = Color4(0.81f, 0.42f, 0.14f, 0.0f);
-	buttonText->setScale(Vector2(1.0f));
+	buttonText->setSize(Vector2(1.0f));
 	buttonText->setText(text);
 
 	mActions.push_back({

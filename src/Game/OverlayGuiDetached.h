@@ -30,9 +30,6 @@ protected:
 	Resource<GL::Texture2D> mTexture;
 	GL::AbstractShaderProgram* mShader;
 
-	// Members for projection calculation
-	Vector2 mCurrentWindowSize;
-
 	// Projection matrix
 	Matrix4 mProjectionMatrix;
 };

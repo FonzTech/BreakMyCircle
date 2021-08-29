@@ -3,6 +3,7 @@
 #include <Magnum/Primitives/Plane.h>
 #include <Magnum/MeshTools/Interleave.h>
 #include <Magnum/MeshTools/CompressIndices.h>
+#include <Magnum/Shaders/Flat.h>
 
 #include "../Common/CommonUtility.h"
 #include "../RoomManager.h"
@@ -18,7 +19,7 @@ std::shared_ptr<GameObject> OverlayGui::getInstance(const nlohmann::json & param
 	return p;
 }
 
-OverlayGui::OverlayGui(const Int parentIndex) : GameObject(parentIndex), mColor(1.0f, 1.0f, 1.0f, 1.0f), mRotation(Deg(0.0f))
+OverlayGui::OverlayGui(const Int parentIndex) : AbstractGuiElement(parentIndex), mRotation(Deg(0.0f))
 {
 }
 
@@ -48,6 +49,7 @@ const Int OverlayGui::getType() const
 
 void OverlayGui::update()
 {
+	updateAspectRatioFactors();
 	updateTransformations();
 }
 
@@ -63,18 +65,6 @@ void OverlayGui::draw(BaseDrawable* baseDrawable, const Matrix4& transformationM
 
 void OverlayGui::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
-}
-
-void OverlayGui::setPosition(const Vector2 & position)
-{
-	updateAspectRatioFactors();
-	mPosition = Vector3(position.x(), position.y(), 0.0f);
-}
-
-void OverlayGui::setSize(const Vector2 & size)
-{
-	updateAspectRatioFactors();
-	mSize = size;
 }
 
 void OverlayGui::setRotationInDegrees(const Float rotation)
@@ -124,30 +114,15 @@ const Vector2 OverlayGui::getSize() const
 	return mSize;
 }
 
-void OverlayGui::updateAspectRatioFactors()
-{
-	const auto& w = RoomManager::singleton->getWindowSize();
-	if (w.x() < w.y())
-	{
-		mArs[0] = 1.0f;
-		mArs[1] = Float(w.x()) / Float(w.y());
-	}
-	else
-	{
-		mArs[0] = Float(w.y()) / Float(w.x());
-		mArs[1] = 1.0f;
-	}
-}
-
 void OverlayGui::updateTransformations()
 {
-	const Float ar = RoomManager::singleton->getWindowAspectRatio();
-	const Vector2 size = mSize / 1.77f / ar;
+	const Float ar = mAspectRatio.aspectRatio();
+	const Vector2 size = mSize / 1.77f * ar;
 
 	Vector2 tp(mPosition.xy());
-	tp += Vector2(mAnchor.x() * mArs[0], mAnchor.y() * mArs[1]) * size;
+	tp += mAnchor * mAspectRatio * size;
 
-	Vector2 ts(size.x() * mArs[0], size.y() * mArs[1]);
+	Vector2 ts = size * mAspectRatio;
 
 	(*mManipulator)
 		.resetTransformation()

@@ -17,6 +17,8 @@
 #define GO_LS_TEXT_COIN 2U
 #define GO_LS_TEXT_POWERUP_TITLE 3U
 #define GO_LS_TEXT_POWERUP_COUNT 1000U
+#define GO_LS_TEXT_VOTE_ME 200U
+#define GO_LS_TEXT_OTHER_APPS 201U
 
 #define GO_LS_GUI_LEVEL_PANEL 0U
 #define GO_LS_GUI_SETTINGS 1U
@@ -111,7 +113,7 @@ private:
 
 	struct LS_ScreenButton
 	{
-		std::shared_ptr<OverlayGui> drawable;
+		std::shared_ptr<AbstractGuiElement> drawable;
 		std::function<void(UnsignedInt)> callback;
 	};
 
@@ -176,6 +178,8 @@ private:
 	void createPowerupView();
 	void usePowerup(const UnsignedInt index);
 	void watchAdForPowerup(const UnsignedInt index);
+
+	void createTexts();
 
 	std::weak_ptr<Dialog> mDialog;
 

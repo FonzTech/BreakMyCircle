@@ -9,13 +9,13 @@
 #include <Magnum/GL/AbstractShaderProgram.h>
 #include <Magnum/Shaders/DistanceFieldVector.h>
 
-#include "../GameObject.h"
+#include "../Game/AbstractGuiElement.h"
 #include "../Common/CommonUtility.h"
 #include "../Graphics/IDrawDetached.h"
 
 using namespace Magnum;
 
-class OverlayText : public GameObject, public IDrawDetached
+class OverlayText : public AbstractGuiElement, public IDrawDetached
 {
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
@@ -29,24 +29,21 @@ public:
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 	void drawDetached() override;
 
-	void setText(const std::string & text);
-	void setPosition(const Vector3 & position);
-	void setScale(const Vector2 & scale);
+	Range3D getBoundingBox(const Vector2 & windowSize) override;
 
-	Color4 mColor;
+	void setText(const std::string & text);
+
 	Color4 mOutlineColor;
 	Vector2 mOutlineRange;
+	Vector2 mTextSize;
 
 protected:
-	void updateTransformation();
+	void updateTransformations() override;
 	Resource<GL::AbstractShaderProgram, Shaders::DistanceFieldVector2D> getShader();
 
 	Resource<FontHolder> mFontHolder;
 	Containers::Pointer<Text::Renderer2D> mText;
 
-	Vector2 mCurrentWindowSize;
-
-	Vector2 mScale;
 	Matrix3 mProjectionMatrix;
 	Matrix3 mTransformationMatrix;
 };

@@ -5,21 +5,27 @@ LSNumberRenderer::LSNumberRenderer(const Vector2i & size, const std::string & te
 {
 	// Create overlay gui
 	mOverlayGui = std::make_shared<OverlayGuiDetached>(-1, RESOURCE_TEXTURE_WHITE, GO_OGD_FLAT);
-	mOverlayGui->setPosition({ -0.0f, 0.0f });
-	mOverlayGui->setSize({ 1.0f, 1.0f });
+	mOverlayGui->setPosition({ 0.0f, 0.0f });
+	mOverlayGui->setSize(Vector2(3.0f));
 	mOverlayGui->setAnchor({ 0.0f, 0.0f });
+	mOverlayGui->setIdentityCanvasSize();
 
 	// Create overlay text
 	mOverlayText = std::make_shared<OverlayText>(-1, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
 	mOverlayText->mPosition = Vector3(0.0f);
-	mOverlayText->setScale(Vector2(0.055f - 0.01f * Float(text.length())));
+	mOverlayText->setSize(Vector2(0.75f - 0.035f * Float(text.length())));
 	mOverlayText->mColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-	mOverlayText->mOutlineRange = Vector2(0.6f, 1.0f);
+	mOverlayText->mOutlineColor = Color4(0.0f);
+	mOverlayText->mOutlineRange = Vector2(0.5f, 1.0f);
 	mOverlayText->setText(text);
+	mOverlayText->setCustomCanvasSize(Vector2(size));
 }
 
 void LSNumberRenderer::renderInternal()
 {
+	mOverlayGui->update();
+	mOverlayText->update();
+
 	mOverlayGui->drawDetached();
 	mOverlayText->drawDetached();
 }

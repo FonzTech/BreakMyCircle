@@ -5,8 +5,6 @@
 #include "../RoomManager.h"
 #include "../Common/CommonUtility.h"
 
-using namespace Magnum;
-
 std::shared_ptr<GameObject> LimitLine::getInstance(const nlohmann::json & params)
 {
 	// No default constructor exists for this class!!
