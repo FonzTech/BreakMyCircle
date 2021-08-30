@@ -21,6 +21,11 @@ void AbstractGuiElement::setSize(const Vector2 & size)
 	mSize = size;
 }
 
+void AbstractGuiElement::setAnchor(const Vector2 & anchor)
+{
+	mAnchor = anchor;
+}
+
 void AbstractGuiElement::updateAspectRatioFactors()
 {
 	if (mCustomCanvasSize.x() <= -1.0f)

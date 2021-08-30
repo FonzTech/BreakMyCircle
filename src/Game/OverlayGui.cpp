@@ -69,14 +69,7 @@ void OverlayGui::collidedWith(const std::unique_ptr<std::unordered_set<GameObjec
 
 void OverlayGui::setRotationInDegrees(const Float rotation)
 {
-	updateAspectRatioFactors();
 	mRotation = Rad(Deg(rotation));
-}
-
-void OverlayGui::setAnchor(const Vector2 & anchor)
-{
-	updateAspectRatioFactors();
-	mAnchor = anchor;
 }
 
 void OverlayGui::setColor(const Color4 & color)
@@ -120,9 +113,9 @@ void OverlayGui::updateTransformations()
 	const Vector2 size = mSize / 1.77f * ar;
 
 	Vector2 tp(mPosition.xy());
-	tp += mAnchor * mAspectRatio * size;
+	tp += mAnchor * size / Vector2(1.0f, ar);
 
-	Vector2 ts = size * mAspectRatio;
+	Vector2 ts = mAspectRatio * size;
 
 	(*mManipulator)
 		.resetTransformation()

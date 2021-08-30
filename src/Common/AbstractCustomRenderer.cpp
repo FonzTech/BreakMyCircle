@@ -19,6 +19,7 @@ void AbstractCustomRenderer::renderTexture()
 	mFramebuffer
 		.clearColor(0, mClearColor)
 		.bind();
+	GL::Renderer::enable(GL::Renderer::Feature::Blending);
 	GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::One);
 
 	// Custom draw

@@ -38,9 +38,8 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	// Start timeline
 	mTimeline.start();
 
-	// Enable renderer features
+	// Set renderer features
 	// GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
-	GL::Renderer::enable(GL::Renderer::Feature::Blending);
 	// GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 	// GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::DestinationAlpha);
 	GL::Renderer::setBlendEquation(GL::Renderer::BlendEquation::Add, GL::Renderer::BlendEquation::Add);
@@ -118,7 +117,8 @@ void Engine::tickEvent()
 			.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f))
 			.bind();
 
-		// Enable renderer features
+		// Set renderer features
+		GL::Renderer::enable(GL::Renderer::Feature::Blending);
 		GL::Renderer::setFeature(GL::Renderer::Feature::DepthTest, currentGol->depthTestEnabled);
 		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::One);
 
@@ -193,6 +193,11 @@ void Engine::tickEvent()
 		GL::defaultFramebuffer
 			.clear(GL::FramebufferClear::Color | GL::FramebufferClear::Depth)
 			.bind();
+
+		// Set renderer features
+		GL::Renderer::enable(GL::Renderer::Feature::Blending);
+		GL::Renderer::setFeature(GL::Renderer::Feature::DepthTest, false);
+		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::One);
 
 		// Redraw
 #ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT

@@ -79,6 +79,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mLevelInfo.nextLevelAnim = 0.0f;
 		mLevelInfo.numberOfRetries = 0;
 		mLevelInfo.score = 0;
+		mLevelInfo.lastLevelPos = Vector3(0.0f);
 	}
 
 	// Cached variables for GUI
@@ -99,9 +100,10 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	}
 
 	// Animation factors
-	mLevelGuiAnim[0] = 0.0f;
-	mLevelGuiAnim[1] = 0.0f;
-	mLevelGuiAnim[2] = 0.0f;
+	for (UnsignedInt i = 0; i < sizeof(mLevelGuiAnim) / sizeof(mLevelGuiAnim[0]); ++i)
+	{
+		mLevelGuiAnim[i] = 0.0f;
+	}
 
 	// Create sky plane
 	createSkyPlane();
@@ -109,337 +111,8 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	// Create overlay eye-candy drawables
 	mLevelAnim = 0.0f;
 
-	// White glow quad
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_WHITE);
-		o->setPosition({ 0.0f, 0.0f });
-		o->setSize({ 1.0f, 1.0f });
-		o->setAnchor({ 0.0f, 0.0f });
-		o->setColor({ 1.0f, 1.0f, 1.0f, 0.0f });
-
-		mLevelGuis[GO_LS_GUI_WHITEGLOW] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
-	}
-
-	// Create "Settings" button
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SETTINGS);
-		o->setPosition({ -2.0f, 0.5f });
-		o->setSize({ 0.1f, 0.1f });
-		o->setAnchor({ 0.0f, -0.0f });
-
-		mScreenButtons[GO_LS_GUI_SETTINGS] = {
-			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this](UnsignedInt index) {
-				// Avoid inconsistencies
-				if (mLevelEndingAnim)
-				{
-					return false;
-				}
-
-				// Close level details screen
-				if (mLevelInfo.currentViewingLevelId != 0U)
-				{
-					// Reset current viewing level ID
-					mLevelInfo.currentViewingLevelId = 0U;
-
-					// Play sound
-					playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
-				}
-				// If already closed, open/close the settings window
-				else if (mLevelInfo.state < GO_LS_LEVEL_FINISHED)
-				{
-					Int index;
-
-					mSettingsOpened = !mSettingsOpened;
-					if (mSettingsOpened)
-					{
-						// Game logic
-						index = GO_LS_AUDIO_PAUSE_IN;
-						if (!mLevelInfo.playerPointer.expired())
-						{
-							((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = false;
-						}
-
-						// Set pause text
-						if (mLevelInfo.state <= GO_LS_LEVEL_INIT)
-						{
-							mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Settings");
-						}
-					}
-					else
-					{
-						index = GO_LS_AUDIO_PAUSE_OUT;
-					}
-
-					// Play sound
-					playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
-
-					// Debug print
-					Debug{} << "You have" << (mSettingsOpened ? "opened" : "closed") << "SETTINGS";
-				}
-
-				return true;
-			}
-		};
-	}
-
-	// Level panel (after the "Settings" button, so this panel appears on top of it)
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_LEVEL_PANEL);
-		o->setPosition({ 2.0f, 2.0f });
-		o->setSize({ 0.45f, 0.45f });
-		o->setAnchor({ 0.0f, 0.0f });
-
-		mLevelGuis[GO_LS_GUI_LEVEL_PANEL] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
-	}
-
-	// Create "Replay" button
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_REPLAY);
-		o->setPosition({ -2.0f, 0.5f });
-		o->setSize({ 0.1f, 0.1f });
-		o->setAnchor({ 0.0f, 0.0f });
-
-		mScreenButtons[GO_LS_GUI_REPLAY] = {
-			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this](UnsignedInt index) {
-				Debug{} << "You have clicked REPLAY";
-
-				if (!mDialog.expired())
-				{
-					return false;
-				}
-
-				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
-				o->setMessage("Do you really\nwant to restart\nthis level?");
-				o->addAction("Yes", [this]() {
-					Debug{} << "You have clicked YES to REPLAY";
-					if (mLevelInfo.state == GO_LS_LEVEL_STARTED || mLevelInfo.state == GO_LS_LEVEL_FINISHED)
-					{
-						closeDialog();
-						replayCurrentLevel();
-					}
-				});
-				o->addAction("No", [this]() {
-					Debug{} << "You have clicked NO to REPLAY";
-					closeDialog();
-				});
-
-				mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
-				return true;
-			}
-		};
-	}
-
-	// Create "Next" button
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_NEXT);
-		o->setPosition({ -2.0f, 0.5f });
-		o->setSize({ 0.1f, 0.1f });
-		o->setAnchor({ 0.0f, 0.0f });
-
-		mScreenButtons[GO_LS_GUI_NEXT] = {
-			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this](UnsignedInt index) {
-				Debug{} << "You have clicked NEXT";
-
-				// Get position to animate to  (next level)
-				if (mLevelInfo.success)
-				{
-					// Get next index
-					Int yi, yf;
-
-					{
-						const Float sli(Float(mLevelInfo.selectedLevelId - 1U));
-						yi = Int(Math::floor(sli / 6.0f));
-						yf = Int(Int(sli) - yi * 6) + 1;
-					}
-
-					// Wrap index to next scenery
-					if (yf >= 6)
-					{
-						++yi;
-						yf = 0;
-					}
-
-					// Iterator check before continuing
-					const auto& bs = mSceneries.find(-yi);
-					if (bs == mSceneries.end())
-					{
-						Error{} << "No Scenery found with index" << yi;
-						return false;
-					}
-
-					// Check for consistency
-					if (yf >= bs->second.buttons.size())
-					{
-						Error{} << "Button index" << yf << "is greater than size" << bs->second.buttons.size();
-						return false;
-					}
-					const auto& bp = bs->second.buttons.at(yf).position;
-
-					// Set parameters for later animation
-					mLevelInfo.currentLevelPos = mPosition;
-
-					const Vector3 sp = bs->second.scenery->mPosition;
-					mLevelInfo.nextLevelPos = Vector3(sp.x(), 0.0f, sp.z()) + Vector3(bp.x(), 0.0f, bp.z() - 8.0f);
-				}
-
-				// Restore level state to init
-				mLevelInfo.state = GO_LS_LEVEL_RESTORING;
-
-				// Update stats
-				RoomManager::singleton->mSaveData.coinCurrent = 0;
-				return true; 
-			}
-		};
-	}
-
-	// Create "Share" button
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SHARE);
-		o->setPosition({ -2.0f, 0.5f });
-		o->setSize({ 0.1f, 0.1f });
-		o->setAnchor({ 0.0f, 0.0f });
-
-		mScreenButtons[GO_LS_GUI_SHARE] = {
-			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this](UnsignedInt index) {
-				Debug{} << "You have clicked SHARE";
-				return true;
-			}
-		};
-	}
-
-	// Play button
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_PLAY);
-		o->setPosition({ 2.0f, 2.0f });
-		o->setSize({ 0.25f, 0.125f });
-		o->setAnchor({ 0.0f, 0.0f });
-
-		mScreenButtons[GO_LS_GUI_PLAY] = {
-			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this](UnsignedInt index) {
-				mLevelInfo.numberOfRetries = 0;
-				startLevel(mLevelInfo.currentViewingLevelId);
-				return true;
-			}
-		};
-	}
-
-	// Create "Exit" button
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_EXIT);
-		o->setPosition({ -2.0f, 0.5f });
-		o->setSize({ 0.1f, 0.1f });
-		o->setAnchor({ 0.0f, 0.0f });
-
-		mScreenButtons[GO_LS_GUI_EXIT] = {
-			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this](UnsignedInt index) {
-				Debug{} << "You have clicked EXIT";
-
-				if (!mDialog.expired())
-				{
-					return false;
-				}
-
-				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
-				o->setMessage("Do you really\nwant to exit\nthis level?");
-				o->addAction("Yes", [this]() {
-					Debug{} << "You have clicked YES to EXIT";
-
-					// Set variable flag for level ending
-					if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
-					{
-						closeDialog();
-						mLevelEndingAnim = true;
-					}
-				});
-				o->addAction("No", [this]() {
-					Debug{} << "You have clicked NO to EXIT";
-					closeDialog();
-				});
-
-				mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
-				return true;
-			}
-		};
-	}
-
-	// Create "BG Music" button
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_BGMUSIC_ON);
-		o->setPosition({ -2.0f, 0.5f });
-		o->setSize({ 0.1f, 0.1f });
-		o->setAnchor({ 0.0f, 0.0f });
-
-		mScreenButtons[GO_LS_GUI_BGMUSIC] = {
-			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this](UnsignedInt index) {
-				Debug{} << "You have clicked BGMUSIC";
-
-				const Float level = RoomManager::singleton->getBgMusicGain() >= 0.1f ? 0.0f : 0.25f;
-				RoomManager::singleton->setBgMusicGain(level);
-
-				((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_BGMUSIC].drawable)->setTexture(RoomManager::singleton->getBgMusicGain() > 0.01f ? RESOURCE_TEXTURE_GUI_BGMUSIC_ON : RESOURCE_TEXTURE_GUI_BGMUSIC_OFF);
-				return true;
-			}
-		};
-	}
-
-	// Create "SFX" button
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SFX_ON);
-		o->setPosition({ -2.0f, 0.5f });
-		o->setSize({ 0.1f, 0.1f });
-		o->setAnchor({ 0.0f, 0.0f });
-
-		mScreenButtons[GO_LS_GUI_SFX] = {
-			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
-			[this](UnsignedInt index) {
-				Debug{} << "You have clicked SFX";
-
-				const Float level = RoomManager::singleton->getSfxGain() >= 0.99f ? 0.0f : 1.0f;
-				RoomManager::singleton->setSfxGain(level);
-
-				((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_SFX].drawable)->setTexture(RoomManager::singleton->getSfxGain() > 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
-				return true;
-			}
-		};
-	}
-
-	// Three stars
-	for (UnsignedInt i = 0; i < 3; ++i)
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_STAR);
-		o->setPosition({ 2.0f, 2.0f });
-		o->setSize({ 0.1f, 0.1f });
-		o->setAnchor({ 0.0f, 0.0f });
-
-		mLevelGuis[GO_LS_GUI_STAR + i] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
-	}
-
-	// Coin icon
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_COIN);
-		o->setPosition({ 2.0f, 2.0f });
-		o->setSize({ 0.0625f, 0.0625f });
-		o->setAnchor({ 0.0f, 0.0f });
-
-		mLevelGuis[GO_LS_GUI_COIN] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
-	}
-
-	// Timer icon
-	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_TIME);
-		o->setPosition({ 2.0f, 2.0f });
-		o->setSize({ 0.08f, 0.08f });
-		o->setAnchor({ 0.0f, 0.0f });
-
-		mLevelGuis[GO_LS_GUI_TIME] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
-	}
+	// Create GUIs
+	createGuis();
 
 	// Create texts
 	createTexts();
@@ -772,6 +445,12 @@ void LevelSelector::update()
 		{
 			for (auto it2 = it->second.buttons.begin(); it2 != it->second.buttons.end(); ++it2)
 			{
+				// Set last level position
+				if (it2->levelIndex == RoomManager::singleton->mSaveData.maxLevelId - 1)
+				{
+					mLevelInfo.lastLevelPos = it->second.scenery->mPosition + it2->position;
+				}
+
 				// Control animation
 				{
 					const auto& pz = it2->position.z() + it->second.scenery->mPosition.z();
@@ -932,9 +611,6 @@ void LevelSelector::update()
 
 	if (!mScrollVelocity.isZero())
 	{
-		// Scroll scenery
-		handleScrollableScenery();
-
 		// Increment by delta
 		const auto mOldPosition = mPosition;
 		mPosition += mScrollVelocity;
@@ -962,6 +638,9 @@ void LevelSelector::update()
 
 		// Scroll camera
 		handleScrollableCameraPosition(mPosition - mOldPosition);
+
+		// Scroll scenery
+		handleScrollableScenery();
 	}
 }
 
@@ -1283,18 +962,21 @@ void LevelSelector::windowForCommon()
 	// Coin icon and text
 	{
 		const auto& dx = 0.2f * d0;
-		mLevelGuis[GO_LS_GUI_COIN]->setPosition({ -0.425f, 0.66f - dx });
-		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.36f, 0.63f - dx });
+		mLevelGuis[GO_LS_GUI_COIN]->setPosition({ -0.49f, 0.69f - dx });
+		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.5f, 0.7f - dx });
 	}
 
 	// Time icon and text
 	{
-		const auto& p1 = Vector2(0.35f, -0.725f + ds * 0.25f);
+		const auto& p1 = Vector2(0.49f, -0.74f + ds * 0.25f);
 		const auto& p2 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector3(0.0f, -0.2f, 0.0f) * d1 : Vector3(0.0f);
 
-		mLevelGuis[GO_LS_GUI_TIME]->setPosition(p1 + Vector2(0.06f, 0.03f));
+		mLevelGuis[GO_LS_GUI_TIME]->setPosition(p1);
 		mLevelTexts[GO_LS_TEXT_TIME]->setPosition(p1);
 	}
+
+	// Scroll back
+	mScreenButtons[GO_LS_GUI_SCROLL_BACK].drawable->setPosition(Vector2(0.5f, -0.75f + 0.25f * mLevelGuiAnim[4]));
 }
 
 void LevelSelector::windowForSettings()
@@ -1310,12 +992,16 @@ void LevelSelector::windowForSettings()
 
 		const auto& drawable = ((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_SETTINGS].drawable);
 
-		// Position
+		// Position and Anchor
 		{
-			const auto& p1 = Vector2(-0.65f, -0.44f) + Vector2(0.25f, 0.0f) * d2;
-			const auto& p2 = Vector2(0.4f, 0.76f + 0.05f * dl) * dsl;
-			const auto& p3 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector2(-0.4f, -1.0f) * dl : Vector2(0.0f);
+			const auto& p1 = Vector2(-0.75f, -0.5f) + Vector2(0.25f, 0.0f) * d2;
+			const auto& p2 = Vector2(0.5f, 0.8f) * dsl;
+			const auto& p3 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector2(-0.5f, -1.0f) * dl : Vector2(0.0f);
 			drawable->setPosition(p1 + p2 + p3);
+
+			const auto& a1 = Vector2(1.0f);
+			const auto& a2 = Vector2(-1.0f) * dsl;
+			drawable->setAnchor(a1 + a2);
 		}
 
 		// Rotation
@@ -1485,7 +1171,7 @@ void LevelSelector::windowForCurrentLevelView()
 void LevelSelector::manageLevelState()
 {
 	// Variables for later
-	bool animate[2] = { false, false };
+	bool animate[3] = { false, false, false };
 
 	// Control level state
 	switch (mLevelInfo.state)
@@ -1504,7 +1190,11 @@ void LevelSelector::manageLevelState()
 			const auto oldPosition = mPosition;
 			mPosition = mLevelInfo.currentLevelPos + (mLevelInfo.nextLevelPos - mLevelInfo.currentLevelPos) * mLevelAnim;
 			handleScrollableCameraPosition(mPosition - oldPosition);
+			handleScrollableScenery();
 		}
+
+		// Check for distance between last level and current scroll position
+		animate[2] = Math::abs((mPosition - mLevelInfo.currentLevelPos).length()) > 50.0f;
 
 		break;
 
@@ -1662,6 +1352,7 @@ void LevelSelector::manageLevelState()
 			const auto oldPosition = mPosition;
 			mPosition = mLevelInfo.currentLevelPos + (mLevelInfo.nextLevelPos - mLevelInfo.currentLevelPos) * (1.0f - mLevelAnim);
 			handleScrollableCameraPosition(mPosition - oldPosition);
+			handleScrollableScenery();
 		}
 
 		break;
@@ -1697,8 +1388,9 @@ void LevelSelector::manageLevelState()
 		}
 	}
 
-	// Animate level GUI
+	// Animate level GUIs
 	manageGuiLevelAnim(1, animate[0]);
+	manageGuiLevelAnim(4, animate[2]);
 
 	// Animate camera, if requested
 	if (animate[1])
@@ -2164,6 +1856,7 @@ void LevelSelector::createTexts()
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setAnchor(Vector2(-0.9f, 0.65f));
 		go->setSize(Vector2(1.125f));
 		go->setText("0s");
 
@@ -2172,10 +1865,11 @@ void LevelSelector::createTexts()
 
 	// Coin counter text
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineLeft, 40);
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopLeft, 40);
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setAnchor(Vector2(3.5f, -1.0f));
 		go->setSize(Vector2(1.15f));
 		go->setText("0");
 
@@ -2240,6 +1934,371 @@ void LevelSelector::createTexts()
 			}
 
 			Debug{} << "You have clicked OTHER APPS";
+			return true;
+		}
+		};
+	}
+}
+
+void LevelSelector::createGuis()
+{
+	// White glow quad
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_WHITE);
+		o->setPosition({ 0.0f, 0.0f });
+		o->setSize({ 1.0f, 1.0f });
+		o->setAnchor({ 0.0f, 0.0f });
+		o->setColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+
+		mLevelGuis[GO_LS_GUI_WHITEGLOW] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+
+	// Create "Settings" button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SETTINGS);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, -0.0f });
+
+		mScreenButtons[GO_LS_GUI_SETTINGS] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this](UnsignedInt index) {
+			// Avoid inconsistencies
+			if (mLevelEndingAnim)
+			{
+				return false;
+			}
+
+			// Close level details screen
+			if (mLevelInfo.currentViewingLevelId != 0U)
+			{
+				// Reset current viewing level ID
+				mLevelInfo.currentViewingLevelId = 0U;
+
+				// Play sound
+				playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
+			}
+			// If already closed, open/close the settings window
+			else if (mLevelInfo.state < GO_LS_LEVEL_FINISHED)
+			{
+				Int index;
+
+				mSettingsOpened = !mSettingsOpened;
+				if (mSettingsOpened)
+				{
+					// Game logic
+					index = GO_LS_AUDIO_PAUSE_IN;
+					if (!mLevelInfo.playerPointer.expired())
+					{
+						((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = false;
+					}
+
+					// Set pause text
+					if (mLevelInfo.state <= GO_LS_LEVEL_INIT)
+					{
+						mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Settings");
+					}
+				}
+				else
+				{
+					index = GO_LS_AUDIO_PAUSE_OUT;
+				}
+
+				// Play sound
+				playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
+
+				// Debug print
+				Debug{} << "You have" << (mSettingsOpened ? "opened" : "closed") << "SETTINGS";
+			}
+
+			return true;
+		}
+		};
+	}
+
+	// Level panel (after the "Settings" button, so this panel appears on top of it)
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_LEVEL_PANEL);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.45f, 0.45f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mLevelGuis[GO_LS_GUI_LEVEL_PANEL] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+
+	// Create "Replay" button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_REPLAY);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_REPLAY] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this](UnsignedInt index) {
+				Debug{} << "You have clicked REPLAY";
+
+				if (!mDialog.expired())
+				{
+					return false;
+				}
+
+				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
+				o->setMessage("Do you really\nwant to restart\nthis level?");
+				o->addAction("Yes", [this]() {
+					Debug{} << "You have clicked YES to REPLAY";
+					if (mLevelInfo.state == GO_LS_LEVEL_STARTED || mLevelInfo.state == GO_LS_LEVEL_FINISHED)
+					{
+						closeDialog();
+						replayCurrentLevel();
+					}
+				});
+				o->addAction("No", [this]() {
+					Debug{} << "You have clicked NO to REPLAY";
+					closeDialog();
+				});
+
+				mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+				return true;
+			}
+		};
+	}
+
+	// Create "Next" button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_NEXT);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_NEXT] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this](UnsignedInt index) {
+				Debug{} << "You have clicked NEXT";
+
+				// Get position to animate to  (next level)
+				if (mLevelInfo.success)
+				{
+					// Get next index
+					Int yi, yf;
+
+					{
+						const Float sli(Float(mLevelInfo.selectedLevelId - 1U));
+						yi = Int(Math::floor(sli / 6.0f));
+						yf = Int(Int(sli) - yi * 6) + 1;
+					}
+
+					// Wrap index to next scenery
+					if (yf >= 6)
+					{
+						++yi;
+						yf = 0;
+					}
+
+					// Iterator check before continuing
+					const auto& bs = mSceneries.find(-yi);
+					if (bs == mSceneries.end())
+					{
+						Error{} << "No Scenery found with index" << yi;
+						return false;
+					}
+
+					// Check for consistency
+					if (yf >= bs->second.buttons.size())
+					{
+						Error{} << "Button index" << yf << "is greater than size" << bs->second.buttons.size();
+						return false;
+					}
+					const auto& bp = bs->second.buttons.at(yf).position;
+
+					// Set parameters for later animation
+					mLevelInfo.currentLevelPos = mPosition;
+
+					const Vector3 sp = bs->second.scenery->mPosition;
+					mLevelInfo.nextLevelPos = Vector3(sp.x(), 0.0f, sp.z()) + Vector3(bp.x(), 0.0f, bp.z() - 8.0f);
+				}
+
+				// Restore level state to init
+				mLevelInfo.state = GO_LS_LEVEL_RESTORING;
+
+				// Update stats
+				RoomManager::singleton->mSaveData.coinCurrent = 0;
+				return true;
+			}
+		};
+	}
+
+	// Create "Share" button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SHARE);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_SHARE] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this](UnsignedInt index) {
+				Debug{} << "You have clicked SHARE";
+				return true;
+			}
+		};
+	}
+
+	// Play button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_PLAY);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.25f, 0.125f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_PLAY] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this](UnsignedInt index) {
+				mLevelInfo.numberOfRetries = 0;
+				startLevel(mLevelInfo.currentViewingLevelId);
+				return true;
+			}
+		};
+	}
+
+	// Create "Exit" button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_EXIT);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_EXIT] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this](UnsignedInt index) {
+				Debug{} << "You have clicked EXIT";
+
+				if (!mDialog.expired())
+				{
+					return false;
+				}
+
+				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
+				o->setMessage("Do you really\nwant to exit\nthis level?");
+				o->addAction("Yes", [this]() {
+					Debug{} << "You have clicked YES to EXIT";
+
+					// Set variable flag for level ending
+					if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
+					{
+						closeDialog();
+						mLevelEndingAnim = true;
+					}
+				});
+				o->addAction("No", [this]() {
+					Debug{} << "You have clicked NO to EXIT";
+					closeDialog();
+				});
+
+				mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+				return true;
+			}
+		};
+	}
+
+	// Create "BG Music" button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_BGMUSIC_ON);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_BGMUSIC] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this](UnsignedInt index) {
+				Debug{} << "You have clicked BGMUSIC";
+
+				const Float level = RoomManager::singleton->getBgMusicGain() >= 0.1f ? 0.0f : 0.25f;
+				RoomManager::singleton->setBgMusicGain(level);
+
+				((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_BGMUSIC].drawable)->setTexture(RoomManager::singleton->getBgMusicGain() > 0.01f ? RESOURCE_TEXTURE_GUI_BGMUSIC_ON : RESOURCE_TEXTURE_GUI_BGMUSIC_OFF);
+				return true;
+			}
+		};
+	}
+
+	// Create "SFX" button
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SFX_ON);
+		o->setPosition({ -2.0f, 0.5f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mScreenButtons[GO_LS_GUI_SFX] = {
+			(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this](UnsignedInt index) {
+				Debug{} << "You have clicked SFX";
+
+				const Float level = RoomManager::singleton->getSfxGain() >= 0.99f ? 0.0f : 1.0f;
+				RoomManager::singleton->setSfxGain(level);
+
+				((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_SFX].drawable)->setTexture(RoomManager::singleton->getSfxGain() > 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
+				return true;
+			}
+		};
+	}
+
+	// Three stars
+	for (UnsignedInt i = 0; i < 3; ++i)
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_STAR);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mLevelGuis[GO_LS_GUI_STAR + i] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+
+	// Coin icon
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_COIN);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.0625f, 0.0625f });
+		o->setAnchor(Vector2(1.0f, -1.0f));
+
+		mLevelGuis[GO_LS_GUI_COIN] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+
+	// Timer icon
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_TIME);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.08f, 0.08f });
+		o->setAnchor({ -1.0f, 1.0f });
+
+		mLevelGuis[GO_LS_GUI_TIME] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+
+	// Scroll Back text
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SCROLL_BACK);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ -1.0f, 1.0f });
+
+		mScreenButtons[GO_LS_GUI_SCROLL_BACK] = {
+			(std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true),
+			[this](UnsignedInt index) {
+			// Avoid inconsistencies
+			if (mSettingsOpened || mLevelAnim > 0.01f || mLevelInfo.state != GO_LS_LEVEL_INIT)
+			{
+				return false;
+			}
+
+			Debug{} << "You have clicked SCROLL BACK";
+
+			mLevelGuis[GO_LS_GUI_WHITEGLOW]->color()[3] = 1.0f;
+
+			const auto oldPosition = mPosition;
+			mPosition = Vector3(mLevelInfo.lastLevelPos.x(), 0.0f, mLevelInfo.lastLevelPos.z() - 8.0f);
+			handleScrollableCameraPosition(mPosition - oldPosition);
+			handleScrollableScenery();
+
 			return true;
 		}
 		};

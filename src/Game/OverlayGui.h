@@ -23,7 +23,6 @@ public:
 	Range3D getBoundingBox(const Vector2 & windowSize) override;
 
 	void setRotationInDegrees(const Float rotation);
-	void setAnchor(const Vector2 & anchor);
 	void setColor(const Color4 & color);
 
 	const Resource<GL::Texture2D> & getTextureResource() const;
@@ -35,5 +34,4 @@ protected:
 	void updateTransformations() override;
 
 	Rad mRotation;
-	Vector2 mAnchor;
 };

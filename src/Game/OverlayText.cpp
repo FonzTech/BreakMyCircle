@@ -117,21 +117,26 @@ Range3D OverlayText::getBoundingBox(const Vector2 & windowSize)
 
 void OverlayText::updateTransformations()
 {
+	const Float ar = mAspectRatio.aspectRatio();
+	const Vector2 s1 = mSize * mTextSize;
+	const Vector2 s2 = s1 * (0.02f / mAspectRatio);
+
 	if (mCustomCanvasSize.x() >= 0.0f)
 	{
 		const auto& ws = mCustomCanvasSize.x() >= 1.0f ? mCustomCanvasSize : RoomManager::singleton->getWindowSize();
 		mProjectionMatrix = Matrix3::projection(ws);
-		mTransformationMatrix = Matrix3::translation(mPosition.xy() * ws) * Matrix3::scaling(mSize);
+
+		const auto& tp = (mPosition.xy() + mAnchor * s1 * Vector2(ar, 1.0f) * 0.02f) * ws;
+		mTransformationMatrix = Matrix3::translation(tp) * Matrix3::scaling(mSize);
 	}
 	else
 	{
 		mProjectionMatrix = Matrix3();
 	}
 
-	const Vector2 s = mSize * mTextSize * (0.02f / mAspectRatio);
 	const Range2D r = {
-		mPosition.xy() - s,
-		mPosition.xy() + s
+		mPosition.xy() - s2,
+		mPosition.xy() + s2
 	};
 	mBbox = Range3D{
 		{ r.min().x(), r.min().y(), -1.0f },

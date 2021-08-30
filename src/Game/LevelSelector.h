@@ -32,6 +32,7 @@
 #define GO_LS_GUI_BGMUSIC 9U
 #define GO_LS_GUI_SFX 10U
 #define GO_LS_GUI_WHITEGLOW 11U
+#define GO_LS_GUI_SCROLL_BACK 12U
 #define GO_LS_GUI_STAR 100U
 #define GO_LS_GUI_POWERUP 1000U
 
@@ -128,6 +129,7 @@ private:
 		Int playedScore;
 		int32_t difficulty;
 		Float startingTime;
+		Vector3 lastLevelPos;
 
 		std::weak_ptr<GameObject> playerPointer;
 		std::weak_ptr<GameObject> limitLinePointer;
@@ -179,6 +181,7 @@ private:
 	void usePowerup(const UnsignedInt index);
 	void watchAdForPowerup(const UnsignedInt index);
 
+	void createGuis();
 	void createTexts();
 
 	std::weak_ptr<Dialog> mDialog;
@@ -212,7 +215,7 @@ private:
 	std::unordered_map<UnsignedInt, LS_PickableObjectRef> mPickableObjectRefs;
 
 	LS_LevelInfo mLevelInfo;
-	Float mLevelGuiAnim[4];
+	Float mLevelGuiAnim[5];
 
 	LS_CachedVariable<Float, Int> mTimer;
 	LS_CachedVariable<Float, Int> mCoins;

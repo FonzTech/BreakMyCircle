@@ -19,6 +19,7 @@ public:
 
 	void setPosition(const Vector2 & position);
 	void setSize(const Vector2 & size);
+	void setAnchor(const Vector2 & anchor);
 
 	void resetCustomCanvasSize();
 	void setCustomCanvasSize(const Vector2 & size);
@@ -32,6 +33,7 @@ protected:
 
 	void updateAspectRatioFactors();
 
+	Vector2 mAnchor;
 	Vector2 mAspectRatio;
 	Vector2 mCustomCanvasSize;
 };

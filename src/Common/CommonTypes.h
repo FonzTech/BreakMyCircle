@@ -49,6 +49,7 @@
 #define RESOURCE_TEXTURE_GUI_PLAY "tex_gui_play"
 #define RESOURCE_TEXTURE_GUI_COIN "tex_gui_coin"
 #define RESOURCE_TEXTURE_GUI_TIME "tex_gui_time"
+#define RESOURCE_TEXTURE_GUI_SCROLL_BACK "tex_gui_scroll_back"
 #define RESOURCE_TEXTURE_GUI_BUTTON_2X1 "tex_gui_button_2x1"
 #define RESOURCE_TEXTURE_GUI_PU_BOMB "tex_gui_pu_bomb"
 #define RESOURCE_TEXTURE_GUI_PU_PLASMA "tex_gui_pu_plasma"
