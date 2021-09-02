@@ -53,7 +53,7 @@ void OverlayText::update()
 
 void OverlayText::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (mColor.a() > 0.0f || mOutlineColor.a() > 0.0f)
+	if (mColor.a() > 0.0f || mOutlineColor.a() > 0.0f || mSize.length() != 0.0f)
 	{
 		((Shaders::DistanceFieldVector2D&)baseDrawable->getShader())
 			.bindVectorTexture(mFontHolder->cache->texture())
@@ -121,17 +121,35 @@ void OverlayText::updateTransformations()
 	const Vector2 s1 = mSize * mTextSize;
 	const Vector2 s2 = s1 * (0.02f / mAspectRatio);
 
-	if (mCustomCanvasSize.x() >= 0.0f)
 	{
-		const auto& ws = mCustomCanvasSize.x() >= 1.0f ? mCustomCanvasSize : RoomManager::singleton->getWindowSize();
-		mProjectionMatrix = Matrix3::projection(ws);
+		Vector2 ws;
+		Float scaleFactor;
+
+		if (mCustomCanvasSize.x() >= 0.0f)
+		{
+			if (mCustomCanvasSize.x() >= 1.0f)
+			{
+				ws = mCustomCanvasSize;
+				scaleFactor = 1.0f;
+			}
+			else
+			{
+				ws = RoomManager::singleton->getWindowSize();
+				scaleFactor = ws.y() / 768.0f;
+			}
+
+			mProjectionMatrix = Matrix3::projection(ws);
+		}
+		else
+		{
+			ws = mCustomCanvasSize;
+			mProjectionMatrix = Matrix3();
+			scaleFactor = 1.0f;
+		}
+
 
 		const auto& tp = (mPosition.xy() + mAnchor * s1 * Vector2(ar, 1.0f) * 0.02f) * ws;
-		mTransformationMatrix = Matrix3::translation(tp) * Matrix3::scaling(mSize);
-	}
-	else
-	{
-		mProjectionMatrix = Matrix3();
+		mTransformationMatrix = Matrix3::translation(tp) * Matrix3::scaling(mSize * scaleFactor);
 	}
 
 	const Range2D r = {

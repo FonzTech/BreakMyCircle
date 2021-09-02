@@ -81,10 +81,10 @@ public:
 	void applyRippleEffect(const Vector3& center);
 	void playStompSound();
 
-	bool destroyNearbyBubbles(const bool force, const Float offsetZ);
-	void destroyDisjointBubbles();
+	Int destroyNearbyBubbles(const bool force, const Float offsetZ);
+	Int destroyDisjointBubbles();
 
-	void destroyNearbyBubblesImpl(BubbleCollisionGroup* group);
+	Int destroyNearbyBubblesImpl(BubbleCollisionGroup* group);
 	std::unique_ptr<Graph> destroyDisjointBubblesImpl(std::unordered_set<Bubble*> & group);
 
 	Color3 mAmbientColor;

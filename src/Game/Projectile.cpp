@@ -196,12 +196,13 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 	}
 
 	// Check if projectile is a bomb
+	Int shootAmount = 0;
 	if (mAmbientColor == BUBBLE_BOMB)
 	{
 		// Create explosion sprite
 		{
 			const std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, 0xffffff_rgbf, GO_FB_TYPE_BOMB);
-			ib->mPosition = mPosition + Vector3(0.0f, 0.0f, 0.5f);
+			ib->mPosition = mPosition + Vector3(0.0f, 0.0f, 1.0f);
 			ib->buildSound();
 			RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
 		}
@@ -218,7 +219,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 			}
 
 			std::shared_ptr<Bubble> destroyLater = nullptr;
-			Float offsetZ = 0.0f;
+			Float offsetZ = 0.3f;
 
 			const Float r = getRadiusForExplosion();
 			for (auto& item : bubbles)
@@ -260,9 +261,9 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		// Destroy nearby bubbles and disjoint bubble groups
 		for (auto& b : bubbles)
 		{
-			if (b->destroyNearbyBubbles(false, 0.0f))
+			if (shootAmount = b->destroyNearbyBubbles(false, 0.3f))
 			{
-				b->destroyDisjointBubbles();
+				shootAmount += b->destroyDisjointBubbles();
 			}
 		}
 	}
@@ -287,9 +288,9 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		}
 
 		// Destroy nearby bubbles and disjoint bubble groups
-		if (b->destroyNearbyBubbles(false, 0.0f))
+		if (shootAmount = b->destroyNearbyBubbles(false, 0.3f))
 		{
-			b->destroyDisjointBubbles();
+			shootAmount += b->destroyDisjointBubbles();
 		}
 		else
 		{
@@ -303,7 +304,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 	// Launch callback
 	if (!mShootCallback.expired())
 	{
-		mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_FINISHED, preColor, mAmbientColor);
+		mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_FINISHED, preColor, mAmbientColor, shootAmount);
 	}
 
 	// Destroy me

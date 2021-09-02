@@ -149,7 +149,7 @@ void Bubble::playStompSound()
 	playSfxAudio(0);
 }
 
-bool Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
+Int Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
 {
 	// Data for later
 	std::unique_ptr<std::queue<GraphNode>> fps = nullptr;
@@ -210,7 +210,7 @@ bool Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
 		fps = future.get();
 	}
 
-	bool nonZero = fps->size() > 0;
+	Int shootAmount = Int(fps->size());
 
 	Float posZ = offsetZ;
 	if (!fps->empty())
@@ -242,7 +242,7 @@ bool Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
 		}
 	}
 
-	return nonZero;
+	return shootAmount;
 }
 
 /*
@@ -253,7 +253,7 @@ bool Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
 	adjacency matrix/list can be updated with a lookup by key,
 	using bubble position (node coordinates).
 */
-void Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
+Int Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
 {
 	// Cycle through all collided game objects
 	Range3D eb = { mPosition - Vector3(1.5f), mPosition + Vector3(1.5f) };
@@ -271,9 +271,10 @@ void Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
 		group->insert(bubble);
 		bubble->destroyNearbyBubblesImpl(group);
 	}
+	return group->size();
 }
 
-void Bubble::destroyDisjointBubbles()
+Int Bubble::destroyDisjointBubbles()
 {
 	auto future = std::async(std::launch::async, [this]() {
 		// Create list of bubbles
@@ -331,6 +332,7 @@ void Bubble::destroyDisjointBubbles()
 	auto fps = future.get();
 
 	bool coinSound = true;
+	Int shootAmount = Int(fps->size());
 	while (!fps->empty())
 	{
 		// Get front node from graph
@@ -368,6 +370,8 @@ void Bubble::destroyDisjointBubbles()
 		// Remove from graph
 		fps->pop();
 	}
+
+	return shootAmount;
 }
 
 std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered_set<Bubble*> & group)

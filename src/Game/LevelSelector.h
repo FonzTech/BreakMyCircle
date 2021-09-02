@@ -84,7 +84,7 @@ public:
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
-	void shootCallback(const Int state, const Color3 & preColor, const Color3 & postColor) override;
+	void shootCallback(const Int state, const Color3 & preColor, const Color3 & postColor, const Int amount) override;
 
 private:
 	static std::unordered_map<Int, std::array<Vector3, 6>> sLevelButtonPositions;

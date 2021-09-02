@@ -218,7 +218,7 @@ void Player::update()
 				// Launch callback
 				if (!mShootCallback.expired())
 				{
-					mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_STARTED, go->mAmbientColor, go->mAmbientColor);
+					mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_STARTED, go->mAmbientColor, go->mAmbientColor, 0);
 				}
 
 				// Reset animation factor

@@ -14,6 +14,7 @@
 #include "../Game/Player.h"
 #include "../Game/LimitLine.h"
 #include "../Game/Bubble.h"
+#include "../Game/Congrats.h"
 
 std::shared_ptr<GameObject> LevelSelector::getInstance(const nlohmann::json & params)
 {
@@ -685,7 +686,7 @@ void LevelSelector::collidedWith(const std::unique_ptr<std::unordered_set<GameOb
 {
 }
 
-void LevelSelector::shootCallback(const Int state, const Color3 & preColor, const Color3 & postColor)
+void LevelSelector::shootCallback(const Int state, const Color3 & preColor, const Color3 & postColor, const Int amount)
 {
 	switch (state)
 	{
@@ -706,6 +707,13 @@ void LevelSelector::shootCallback(const Int state, const Color3 & preColor, cons
 		{
 			mLevelGuis[GO_LS_GUI_WHITEGLOW]->color()[3] = 1.0f;
 			playSfxAudio(GO_LS_AUDIO_EXPLOSION);
+		}
+		
+		// Congratulations
+		if (amount >= 5)
+		{
+			std::shared_ptr<Congrats> go = std::make_unique<Congrats>(GOL_ORTHO_FIRST, Int(std::rand() % 5));
+			RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go);
 		}
 
 		break;

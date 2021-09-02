@@ -55,6 +55,7 @@
 #define RESOURCE_TEXTURE_GUI_PU_PLASMA "tex_gui_pu_plasma"
 #define RESOURCE_TEXTURE_GUI_PU_TIME "tex_gui_pu_time"
 #define RESOURCE_TEXTURE_GUI_PU_ELECTRIC "tex_gui_pu_electric"
+#define RESOURCE_TEXTURE_GUI_CONGRATS "tex_gui_congrats"
 #define RESOURCE_TEXTURE_WHITE "tex_white"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"
@@ -83,6 +84,7 @@
 #define RESOURCE_AUDIO_PAUSE_OUT "pause_out"
 #define RESOURCE_AUDIO_ELECTRIC "electric"
 #define RESOURCE_AUDIO_STAR_PREFIX "star_"
+#define RESOURCE_AUDIO_CONGRATS_PREFIX "congrats_"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"
@@ -101,6 +103,7 @@
 #define GOT_LIMIT_LINE 12
 #define GOT_DIALOG 12
 #define GOT_ELECTRIC_BALL 13
+#define GOT_CONGRATS 14
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>

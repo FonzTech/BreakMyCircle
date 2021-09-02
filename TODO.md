@@ -25,11 +25,11 @@
 - ~~Small main menu for game.~~
 - ~~Implement pause/resume system for game. And so the pause menu.~~
 - ~~Score system based on time and difficulty.~~
+- ~~"Vote This App" and "Other Games" buttons Settings in level selector.~~
 
 # On-going tasks
 
-- "Vote This App" and "Other Games" buttons Settings in level selector.
-- Procedural level generation with difficulty.
 - Random congratulations with graphics and sounds during bubble hits.
+- Procedural level generation with difficulty.
 - Place random pickups around the map.
 - Random help tooltips in level selector.
