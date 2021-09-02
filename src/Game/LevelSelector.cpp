@@ -1202,7 +1202,7 @@ void LevelSelector::manageLevelState()
 		}
 
 		// Check for distance between last level and current scroll position
-		animate[2] = Math::abs((mPosition - mLevelInfo.currentLevelPos).length()) > 50.0f;
+		animate[2] = (mPosition - mLevelInfo.lastLevelPos).length() > 50.0f;
 
 		break;
 
