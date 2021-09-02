@@ -1003,7 +1003,7 @@ void LevelSelector::windowForSettings()
 		// Position and Anchor
 		{
 			const auto& p1 = Vector2(-0.75f, -0.5f) + Vector2(0.25f, 0.0f) * d2;
-			const auto& p2 = Vector2(0.5f, 0.8f) * dsl;
+			const auto& p2 = Vector2(0.5f, 0.85f) * dsl;
 			const auto& p3 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector2(-0.5f, -1.0f) * dl : Vector2(0.0f);
 			drawable->setPosition(p1 + p2 + p3);
 
