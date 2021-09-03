@@ -978,7 +978,7 @@ void LevelSelector::windowForCommon()
 	}
 
 	// Scroll back
-	mScreenButtons[GO_LS_GUI_SCROLL_BACK].drawable->setPosition(Vector2(0.5f, -0.75f + 0.25f * mLevelGuiAnim[4]));
+	mScreenButtons[GO_LS_GUI_SCROLL_BACK].drawable->setPosition(Vector2(0.5f, -0.75f + 0.25f * (mLevelGuiAnim[4] - mSettingsAnim - mLevelAnim)));
 }
 
 void LevelSelector::windowForSettings()
@@ -1085,8 +1085,15 @@ void LevelSelector::windowForCurrentLevelView()
 
 	// Level text
 	{
-		const auto& lx = mLevelInfo.state == GO_LS_LEVEL_INIT ? s * 0.95f : s;
-		mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - d - lx });
+		const auto& sx = mLevelInfo.state == GO_LS_LEVEL_INIT ? s * 0.95f : s;
+		// const auto& dx = mLevelInfo.state >= GO_LS_LEVEL_FINISHED && !mLevelInfo.success ? d * 0.95f : d;
+		mLevelTexts[GO_LS_TEXT_LEVEL]->setPosition({ 0.0f, 1.175f - d - sx });
+	}
+
+	// Sad emoji
+	{
+		const auto& dx = mLevelInfo.state >= GO_LS_LEVEL_FINISHED && !mLevelInfo.success ? d * 1.25f : 0.0f;
+		mLevelGuis[GO_LS_GUI_SAD]->setPosition({ 0.0f, 1.175f - dx });
 	}
 
 	// Powerup title text
@@ -2319,5 +2326,15 @@ void LevelSelector::createGuis()
 			return true;
 		}
 		};
+	}
+
+	// Sad emoji
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SAD);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.1f, 0.1f });
+		o->setAnchor({ 0.0f, 0.0f });
+
+		mLevelGuis[GO_LS_GUI_SAD] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 	}
 }

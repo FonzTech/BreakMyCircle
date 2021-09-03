@@ -78,7 +78,7 @@ public:
 	static std::unique_ptr<RoomManager> singleton;
 
 	// Function creator mapper for room loader
-	std::unordered_map<UnsignedInt, std::function<std::shared_ptr<GameObject>(const nlohmann::json & params)>> gameObjectCreators;
+	std::unordered_map<Int, std::function<std::shared_ptr<GameObject>(const nlohmann::json & params)>> gameObjectCreators;
 
 	// Scene
 	Scene3D mScene;
@@ -135,7 +135,7 @@ protected:
 	// Instantiator data holder
 	struct Instantiator
 	{
-		UnsignedInt key;
+		Int key;
 		std::unique_ptr<nlohmann::json> params;
 	};
 

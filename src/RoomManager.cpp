@@ -253,23 +253,33 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 				double dx = x / xlen / frequency;
 				double dy = y / ylen / frequency;
 
+				const double ox = double(std::rand() % (8 + iSeed) * ((iSeed % 48) + 1)) * 0.1;
+				const double oy = double(std::rand() % (8 + iSeed) * ((iSeed % 64) + 1)) * 0.15;
+
 				// Get valid instantiator
 				while (true)
 				{
-					const double ox = double(std::rand() % (8 + iSeed) * ((iSeed % 48) + 1)) * 0.1;
-					const double oy = double(std::rand() % (8 + iSeed) * ((iSeed % 64) + 1)) * 0.15;
 					const double value = perlin.accumulatedOctaveNoise2D_0_1(dx + ox, dy + oy, octaves);
 					pi = getGameObjectFromNoiseValue(value);
 					if (pi != nullptr)
 					{
-						break;
+						// Check if object is a bubble
+						const auto& c1 = pi->params->find("color");
+						if (c1 == pi->params->end())
+						{
+							break;
+						}
+
+						// Don't place any bubble coin at the top (because they can't be exploded without powerups)
+						const auto& c2 = c1->find("int");
+						if (*c2 != BUBBLE_COIN.toSrgbInt() || i > 1)
+						{
+							break;
+						}
 					}
 
 					dx += 0.01;
 					dy += 0.01;
-
-					dx -= Math::floor(dx);
-					dy -= Math::floor(dy);
 				}
 			}
 
@@ -366,7 +376,7 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		const Int index = Int(Math::round(value * mBubbleColors.size()));
 		const auto& it = std::next(std::begin(mBubbleColors), index % mBubbleColors.size());
 
-		if (!CommonUtility::singleton->isBubbleColorValid(it->second.color))
+		if (it->second.color != BUBBLE_COIN && !CommonUtility::singleton->isBubbleColorValid(it->second.color))
 		{
 			return d;
 		}
@@ -376,14 +386,17 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		params["parent"] = GOL_PERSP_SECOND;
 		params["color"] = {};
 
-		if (value == 0.5)
+		if (value >= 0.95)
 		{
-			params["color"]["r"] = mBubbleColors[BUBBLE_COIN.toSrgbInt()].color.r();
-			params["color"]["g"] = mBubbleColors[BUBBLE_COIN.toSrgbInt()].color.g();
-			params["color"]["b"] = mBubbleColors[BUBBLE_COIN.toSrgbInt()].color.b();
+			const auto k = BUBBLE_COIN.toSrgbInt();
+			params["color"]["int"] = k;
+			params["color"]["r"] = mBubbleColors[k].color.r();
+			params["color"]["g"] = mBubbleColors[k].color.g();
+			params["color"]["b"] = mBubbleColors[k].color.b();
 		}
 		else
 		{
+			params["color"]["int"] = it->second.color.toSrgbInt();
 			params["color"]["r"] = it->second.color.r();
 			params["color"]["g"] = it->second.color.g();
 			params["color"]["b"] = it->second.color.b();

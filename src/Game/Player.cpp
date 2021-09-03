@@ -99,7 +99,7 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 		CommonUtility::singleton->createGameSphere(this, *mSphereManipulator[i], mProjColors[i]);
 
 		mSphereDrawables[i] = mDrawables.back().get();
-		mSphereDrawables[i]->mTexture = getTextureResourceForIndex(i);
+		setupProjectile(i);
 		// mSphereDrawables[i]->mTexture = mProjTextures[i];
 	}
 
@@ -196,6 +196,7 @@ void Player::update()
 				mProjColors[1] = getRandomEligibleColor(1)->at(0);
 
 				setupProjectile(0);
+				setupProjectile(1);
 
 				/*
 				mProjTextures[0] = mProjTextures[1];

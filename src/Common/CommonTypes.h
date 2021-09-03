@@ -56,6 +56,7 @@
 #define RESOURCE_TEXTURE_GUI_PU_TIME "tex_gui_pu_time"
 #define RESOURCE_TEXTURE_GUI_PU_ELECTRIC "tex_gui_pu_electric"
 #define RESOURCE_TEXTURE_GUI_CONGRATS "tex_gui_congrats"
+#define RESOURCE_TEXTURE_GUI_SAD "tex_gui_sad"
 #define RESOURCE_TEXTURE_WHITE "tex_white"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"
