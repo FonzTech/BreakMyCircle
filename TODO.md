@@ -29,9 +29,9 @@
 - ~~Random congratulations with graphics and sounds during bubble hits.~~
 - ~~Procedural level generation with difficulty.~~
 - ~~Improve level failure screen.~~
+- ~~Wall 3D model to avoid seam between different world scenes in level selector.~~
 
 # On-going tasks
 
 - Place random pickups around the map (to make use of coins).
-- Wall 3D model to avoid seam between different world scenes in level selector.
 - Random help tooltips in level selector.
