@@ -305,7 +305,7 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 		#if NDEBUG or _DEBUG
 		else
 		{
-			printf("Found mesh %d (%p) without setCount being called on.\n", objectData->instance(), assets.meshes[objectData->instance()]);
+			Debug{} << "Found mesh" << objectData->instance() << "(" << &(assets.meshes[objectData->instance()]) << ") without setCount being called on";
 		}
 		#endif
 	}

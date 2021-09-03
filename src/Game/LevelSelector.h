@@ -1,7 +1,6 @@
 #pragma once
 
 #define GO_LS_SCENERY_LENGTH 50.0f
-#define GO_LS_SKYPLANE_DISTANCE GO_LS_SCENERY_LENGTH * 1.5f
 #define GO_LS_MAX_SCROLL_THRESHOLD 0.01f
 #define GO_LS_MAX_SCROLL_VELOCITY 0.025f
 #define GO_LS_MAX_SCROLL_VELOCITY_MAX (GO_LS_MAX_SCROLL_VELOCITY * GO_LS_SCENERY_LENGTH)
@@ -9,8 +8,6 @@
 #define GO_LS_CLICK_TAP_MAX_DELAY 0.3
 
 #define GO_LS_MESH_PLATFORM "PlatformV"
-
-#define GO_LS_MAX_DIFFICULTY 30
 
 #define GO_LS_TEXT_LEVEL 0U
 #define GO_LS_TEXT_TIME 1U
@@ -127,7 +124,7 @@ private:
 		Int numberOfRetries;
 		Int score;
 		Int playedScore;
-		int32_t difficulty;
+		Float difficulty;
 		Float startingTime;
 		Vector3 lastLevelPos;
 
@@ -172,6 +169,7 @@ private:
 	void checkForLevelEnd();
 	void startLevel(const UnsignedInt levelId);
 	Int computeScore();
+	Int getModelIndex(const Int yp);
 
 	void manageGuiLevelAnim(const UnsignedInt index, const bool increment, const Float factor = 1.0f);
 	void updateTimeCounter(const Int value);

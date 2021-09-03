@@ -102,7 +102,6 @@ public:
 	std::unique_ptr<CollisionManager> mCollisionManager;
 
 	// Members for randomizer
-	std::uint32_t mSeed;
 	std::unordered_map<UnsignedInt, BubbleData> mBubbleColors;
 
 	// Game save data
@@ -130,7 +129,7 @@ public:
 	void setup();
 	void prepareRoom(const bool stopBgMusic);
 	void loadRoom(const std::string & name);
-	void createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen, const int32_t difficulty);
+	void createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen, const std::uint32_t seed, const std::int32_t octaves, const double frequency);
 
 protected:
 	// Instantiator data holder

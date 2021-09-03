@@ -67,7 +67,11 @@ RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
 	mBubbleColors[BUBBLE_ELECTRIC.toSrgbInt()] = { BUBBLE_ELECTRIC, RESOURCE_TEXTURE_WHITE };
 
 	// Initialize game save data
-	mSaveData.maxLevelId = 10U;
+#if NDEBUG or _DEBUG
+	mSaveData.maxLevelId = 100U;
+#else
+	mSaveData.maxLevelId = 2U;
+#endif
 	mSaveData.coinTotal = 0;
 	mSaveData.coinCurrent = 0;
 	
@@ -223,35 +227,38 @@ void RoomManager::loadRoom(const std::string & name)
 	}
 }
 
-void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen, const int32_t difficulty)
+void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen, const std::uint32_t seed, const std::int32_t octaves, const double frequency)
 {
 	// Delete game level layer
 	mGoLayers[GOL_PERSP_SECOND].list->clear();
 
 	// Create bubbles
-	const siv::PerlinNoise perlin(mSeed);
+	const siv::PerlinNoise perlin(seed);
 
 	const Float fSquare(xlen);
+	const Int iSeed(seed);
 
 	for (Int i = 0; i < ylen; ++i)
 	{
 		for (Int j = 0; j < xlen; ++j)
 		{
 			// Working variables
-			Float y = (Float) i;
-			Float x = (Float) j;
+			double y = (double) i;
+			double x = (double) j;
 
 			// Work with noise value to get the actual in-game object
 			std::unique_ptr<Instantiator> pi = nullptr;
 			{
 				// Get noise value at this position
-				double dx(1.0f / fSquare * x);
-				double dy(1.0f / fSquare * y);
+				double dx = x / xlen / frequency;
+				double dy = y / ylen / frequency;
 
 				// Get valid instantiator
 				while (true)
 				{
-					const double value = dy > 0.01 ? perlin.accumulatedOctaveNoise2D_0_1(dx, dy, difficulty) : 1.0;
+					const double ox = double(std::rand() % (8 + iSeed) * ((iSeed % 48) + 1)) * 0.1;
+					const double oy = double(std::rand() % (8 + iSeed) * ((iSeed % 64) + 1)) * 0.15;
+					const double value = perlin.accumulatedOctaveNoise2D_0_1(dx + ox, dy + oy, octaves);
 					pi = getGameObjectFromNoiseValue(value);
 					if (pi != nullptr)
 					{
@@ -291,7 +298,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 				startX = 1.0f;
 			}
 
-			Vector3 position = { startX + x * 2.0f, y * -2.0f, 0.0f };
+			Vector3 position = { startX + Float(x) * 2.0f, Float(y) * -2.0f, 0.0f };
 
 			gameObject->mPosition = position;
 			RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(gameObject);
@@ -356,7 +363,7 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 
 	if (value >= 0.0)
 	{
-		const Int index = Int(Math::round(value * double(mBubbleColors.size())));
+		const Int index = Int(Math::round(value * mBubbleColors.size()));
 		const auto& it = std::next(std::begin(mBubbleColors), index % mBubbleColors.size());
 
 		if (!CommonUtility::singleton->isBubbleColorValid(it->second.color))

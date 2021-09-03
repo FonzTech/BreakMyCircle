@@ -13,7 +13,7 @@ LSNumberRenderer::LSNumberRenderer(const Vector2i & size, const std::string & te
 	// Create overlay text
 	mOverlayText = std::make_shared<OverlayText>(-1, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
 	mOverlayText->mPosition = Vector3(0.0f);
-	mOverlayText->setSize(Vector2(0.75f - 0.035f * Float(text.length())));
+	mOverlayText->setSize(Vector2(0.75f - 0.125f * Float(text.length())));
 	mOverlayText->mColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
 	mOverlayText->mOutlineColor = Color4(0.0f);
 	mOverlayText->mOutlineRange = Vector2(0.5f, 1.0f);

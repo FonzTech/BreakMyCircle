@@ -37,16 +37,16 @@ std::unordered_map<Int, std::array<Vector3, 6>> LevelSelector::sLevelButtonPosit
 		Vector3(-4.86925f, 1.17022f, -3.6977f)
 	}),
 	std::make_pair(1, std::array<Vector3, 6>{
-		Vector3(6.9727f, 0.3f, 20.1046),
-		Vector3(0.221052f, 0.3f, 12.0666),
+		Vector3(6.9727f, 0.3f, 20.1046f),
+		Vector3(0.221052f, 0.3f, 12.0666f),
 		Vector3(-6.41381f, 0.3f, 5.51524f),
 		Vector3(-7.93295f, 0.3f, -4.16931f),
 		Vector3(-1.2867f, 0.3f, -11.4327f),
 		Vector3(5.35956f, 0.3f, -19.2658f)
 	}),
 	std::make_pair(2, std::array<Vector3, 6>{
-		Vector3(6.9727f, 0.3f, 20.1046),
-		Vector3(0.221052f, 0.3f, 12.0666),
+		Vector3(6.9727f, 0.3f, 20.1046f),
+		Vector3(0.221052f, 0.3f, 12.0666f),
 		Vector3(-6.41381f, 0.3f, 5.51524f),
 		Vector3(-7.93295f, 0.3f, -4.16931f),
 		Vector3(-1.2867f, 0.3f, -11.4327f),
@@ -250,7 +250,7 @@ void LevelSelector::update()
 
 	// Manage level state
 	manageLevelState();
-
+	
 #if NDEBUG or _DEBUG
 	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
 	{
@@ -446,12 +446,6 @@ void LevelSelector::update()
 		{
 			for (auto it2 = it->second.buttons.begin(); it2 != it->second.buttons.end(); ++it2)
 			{
-				// Set last level position
-				if (it2->levelIndex == RoomManager::singleton->mSaveData.maxLevelId - 1)
-				{
-					mLevelInfo.lastLevelPos = it->second.scenery->mPosition + it2->position;
-				}
-
 				// Control animation
 				{
 					const auto& pz = it2->position.z() + it->second.scenery->mPosition.z();
@@ -835,7 +829,7 @@ void LevelSelector::handleScrollableScenery()
 
 		// Avoid scenes which are already what they should be (island, forest, desert, etc...)
 		// const Int modelIndex = (yp[i] % 1) + 1;
-		const Int modelIndex = Int(Math::floor(Float(Math::abs(yp)) / 2.0f)) % 3;
+		const Int modelIndex = getModelIndex(yp);
 
 		const auto& it = mSceneries.find(yp);
 		if (it != mSceneries.end())
@@ -1063,7 +1057,7 @@ void LevelSelector::windowForCurrentLevelView()
 	//const auto& p = mLevelInfo.state == GO_LS_LEVEL_STARTED ? s * 0.96f : 0.0f;
 
 	// Score stars
-	for (UnsignedInt i = 0; i < 3; ++i)
+	for (Int i = 0; i < 3; ++i)
 	{
 		const auto& drawable = mLevelGuis[GO_LS_GUI_STAR + i];
 
@@ -1202,6 +1196,12 @@ void LevelSelector::manageLevelState()
 		}
 
 		// Check for distance between last level and current scroll position
+		{
+			const auto& zp = Math::floor(Float(RoomManager::singleton->mSaveData.maxLevelId - 2) / 6.0f) * -GO_LS_SCENERY_LENGTH;
+			const auto& zf = (RoomManager::singleton->mSaveData.maxLevelId - 2) % 6U;
+			mLevelInfo.lastLevelPos = Vector3(0.0f, 0.0f, zp) + sLevelButtonPositions[getModelIndex(Int(zp))][zf];
+		}
+
 		animate[2] = (mPosition - mLevelInfo.lastLevelPos).length() > 50.0f;
 
 		break;
@@ -1423,14 +1423,17 @@ void LevelSelector::createLevelRoom()
 	// Debug print
 	Debug{} << "Creating level room for" << mLevelInfo.selectedLevelId;
 
-	// Compute right difficulty factor
-	const int32_t difficulty = 8;
-
 	// Level is started
-	RoomManager::singleton->createLevelRoom(shared_from_this(), 8, 7, difficulty);
+	{
+		RoomManager::singleton->createLevelRoom(shared_from_this(), 8, 7, mLevelInfo.selectedLevelId, 8.0, 32.0);
+
+		// Set difficulty and starting time
+		mLevelInfo.difficulty = 8.0f + Float(mLevelInfo.selectedLevelId % 56U);
+	}
+
+	// Reset level state
 	mLevelInfo.state = GO_LS_LEVEL_STARTED;
 	mLevelInfo.score = 0;
-	mLevelInfo.difficulty = difficulty;
 
 	// Get player pointer
 	for (const auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
@@ -1612,9 +1615,10 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 	mLevelInfo.repeatLevelId = 0U;
 	mLevelInfo.delayedChecks = false;
 	mLevelInfo.state = GO_LS_LEVEL_STARTING;
-	mLevelInfo.startingTime = 120.0f;
+	mLevelInfo.startingTime = 120.0f + Math::floor(Float(mLevelInfo.selectedLevelId % 56U) / 5.0f) * 10.0f;
 
 	mTimer = { mLevelInfo.startingTime, Int(mLevelInfo.startingTime) };
+
 	// mCoins = { -0.001f, -1 };
 	RoomManager::singleton->mSaveData.coinCurrent = 0;
 
@@ -1636,6 +1640,11 @@ Int LevelSelector::computeScore()
 		return 2;
 	}
 	return 1;
+}
+
+Int LevelSelector::getModelIndex(const Int yp)
+{
+	return Int(Math::floor(Float(Math::abs(yp)) / 2.0f)) % 3;
 }
 
 void LevelSelector::manageGuiLevelAnim(const UnsignedInt index, const bool increment, const Float factor)
