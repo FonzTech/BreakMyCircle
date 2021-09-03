@@ -41,26 +41,27 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 	// Fill manipulator list
 	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
 	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
+	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
 
 	// Apply transformations
 	(*mManipulatorList[0])
 		.resetTransformation()
 		.translate(mPosition);
 
-	(*mManipulatorList[1])
-		.resetTransformation()
-		.scale(Vector3(50.0f, 25.0f, 1.0f))
-		.rotateX(90.0_degf)
-		.translate(mPosition + Vector3(0.0f, 0.3f, 0.0f));
-
 	// Load assets
-	{
-		AssetManager am(RESOURCE_SHADER_COLORED_PHONG, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE, 1);
+	AssetManager am(RESOURCE_SHADER_COLORED_PHONG, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE, 1);
 
+	{
 		std::string rk;
 		switch (modelIndex)
 		{
 		case 0:
+			(*mManipulatorList[1])
+				.resetTransformation()
+				.scale(Vector3(50.0f, 25.0f, 1.0f))
+				.rotateX(90.0_degf)
+				.translate(mPosition + Vector3(0.0f, 0.3f, 0.0f));
+
 			createWaterDrawable();
 			rk = RESOURCE_SCENE_WORLD_1;
 			break;
@@ -77,6 +78,15 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 		}
 
 		am.loadAssets(*this, *mManipulatorList[0], rk, this);
+	}
+
+	// Load world wall
+	{
+		(*mManipulatorList[2])
+			.resetTransformation()
+			.translate(mPosition + Vector3(0.0f, 0.6f, -25.0f));
+
+		am.loadAssets(*this, *mManipulatorList[2], RESOURCE_SCENE_WORLD_WALL, this);
 	}
 
 	/*

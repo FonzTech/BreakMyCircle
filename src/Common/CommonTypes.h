@@ -9,6 +9,7 @@
 #define RESOURCE_SCENE_WORLD_1 "scenes/world_1.glb"
 #define RESOURCE_SCENE_WORLD_2 "scenes/world_2.glb"
 #define RESOURCE_SCENE_WORLD_3 "scenes/world_3.glb"
+#define RESOURCE_SCENE_WORLD_WALL "scenes/world_wall.glb"
 
 #define RESOURCE_MESH_PLANE_SPRITE "mesh_plane_sprite"
 #define RESOURCE_MESH_PLANE_WATER "mesh_plane_water"
