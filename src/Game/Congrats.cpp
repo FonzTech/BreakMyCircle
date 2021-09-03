@@ -61,8 +61,8 @@ Congrats::Congrats(const Int parentIndex, const Int customType) : GameObject(par
 		mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
 		mPlayables[0]->source()
 			.setBuffer(buffer)
-			.setLooping(false)
-			.play();
+			.setLooping(false);
+		playSfxAudio(0);
 	}
 }
 
