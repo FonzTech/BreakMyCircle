@@ -194,7 +194,7 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 		auto& shader = (Shaders::Phong&) baseDrawable->getShader();
 
 		shader
-			.setLightPosition(mLightPosition + Vector3(0.0f, 10.0f, 0.0f))
+			.setLightPosition(Vector3(0.0f, 6.0f, 5.0f) - mLightPosition)
 			.setLightColor(0xc0c0c000_rgbaf)
 			.setSpecularColor(0xc0c0c000_rgbaf)
 			.setDiffuseColor(0x808080ff_rgbaf)

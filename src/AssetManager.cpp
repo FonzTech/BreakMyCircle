@@ -223,6 +223,16 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 		{
 			processChildrenAssets(gameObject, assets, *importer, manipulator, objectId, drawCallback);
 		}
+
+		// Sort by trasparency
+		std::sort(gameObject.mDrawables.begin(), gameObject.mDrawables.end(), [](const std::shared_ptr<BaseDrawable>& a, const std::shared_ptr<BaseDrawable>& b) -> bool {
+			if (a->mMesh.state() == ResourceState::Final && CommonUtility::singleton->stringEndsWith(a->mMesh->label(), "VT"))
+			{
+				a->mMesh->setLabel(a->mMesh->label() + "P");
+				return true;
+			}
+			return false;
+		});
 	}
 	else if (!assets.meshes.empty() && assets.meshes[0])
 	{
@@ -236,8 +246,8 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 
 void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets& assets, Trade::AbstractImporter& importer, Object3D& parent, UnsignedInt i, IDrawCallback* drawCallback)
 {
+	const std::string name = importer.object3DName(i);
 	{
-		const std::string name = importer.object3DName(i);
 		Debug{} << "Importing object" << i << name;
 		if (CommonUtility::singleton->stringEndsWith(name, "_AvoidMe"))
 		{

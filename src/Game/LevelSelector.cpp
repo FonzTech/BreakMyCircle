@@ -223,10 +223,17 @@ void LevelSelector::update()
 		Float* c = mLevelGuis[GO_LS_GUI_WHITEGLOW]->color();
 		if (c[3] > 0.0f)
 		{
-			c[3] -= mDeltaTime;
-			if (c[3] < 0.0f)
+			if (c[3] >= 100.0f)
 			{
-				c[3] = 0.0f;
+				c[3] = 1.0f;
+			}
+			else
+			{
+				c[3] -= mDeltaTime;
+				if (c[3] < 0.0f)
+				{
+					c[3] = 0.0f;
+				}
 			}
 		}
 	}
@@ -2424,7 +2431,7 @@ void LevelSelector::createGuis()
 
 			Debug{} << "You have clicked SCROLL BACK";
 
-			mLevelGuis[GO_LS_GUI_WHITEGLOW]->color()[3] = 1.0f;
+			mLevelGuis[GO_LS_GUI_WHITEGLOW]->color()[3] = 100.0f;
 
 			const auto oldPosition = mPosition;
 			mPosition = Vector3(mLevelInfo.lastLevelPos.x(), 0.0f, mLevelInfo.lastLevelPos.z() - 8.0f);
