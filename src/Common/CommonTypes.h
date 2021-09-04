@@ -106,6 +106,7 @@
 #define GOT_DIALOG 12
 #define GOT_ELECTRIC_BALL 13
 #define GOT_CONGRATS 14
+#define GOT_MAPPICKUP 15
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>

@@ -46,6 +46,7 @@
 #define GO_LS_AUDIO_PAUSE_IN 4
 #define GO_LS_AUDIO_PAUSE_OUT 5
 #define GO_LS_AUDIO_EXPLOSION 6
+#define GO_LS_AUDIO_COIN 7
 #define GO_LS_AUDIO_STAR 1000
 
 #define GO_LS_MAX_POWERUP_COUNT 4
@@ -61,6 +62,7 @@
 
 #include "../GameObject.h"
 #include "../Game/Dialog.h"
+#include "../Game/MapPickup.h"
 #include "../Game/Callbacks/IShootCallback.h"
 #include "../Graphics/BaseDrawable.h"
 #include "OverlayGui.h"
@@ -105,7 +107,7 @@ private:
 
 	struct LS_ScenerySelector
 	{
-		std::shared_ptr<Scenery> scenery;
+		std::weak_ptr<Scenery> scenery;
 		std::vector<LS_PickableObject> buttons;
 		Object3D* manipulator;
 	};
@@ -136,6 +138,12 @@ private:
 		Vector3 currentLevelPos, nextLevelPos;
 		Float nextLevelAnim;
 		bool success;
+	};
+
+	struct LS_PickupHandler
+	{
+		Float timer;
+		std::unordered_map<UnsignedInt, std::weak_ptr<MapPickup>> pickups;
 	};
 
 	template <typename S, typename T>
@@ -220,4 +228,5 @@ private:
 	LS_CachedVariable<Float, Int> mCoins;
 
 	LS_PowerupView mPuView;
+	LS_PickupHandler mPickupHandler;
 };

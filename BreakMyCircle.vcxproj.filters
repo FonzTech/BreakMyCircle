@@ -162,6 +162,9 @@
     <ClCompile Include="src\Game\Congrats.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
+    <ClCompile Include="src\Game\MapPickup.cpp">
+      <Filter>Source Files\Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\RoomManager.h">
@@ -285,6 +288,9 @@
       <Filter>Header Files\Game</Filter>
     </ClInclude>
     <ClInclude Include="src\Game\Congrats.h">
+      <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game\MapPickup.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
   </ItemGroup>

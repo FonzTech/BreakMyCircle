@@ -100,6 +100,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		}
 	}
 
+	// Powerup handler
+	mPickupHandler.timer = -1000.0f;
+
 	// Animation factors
 	for (UnsignedInt i = 0; i < sizeof(mLevelGuiAnim) / sizeof(mLevelGuiAnim[0]); ++i)
 	{
@@ -138,6 +141,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			{ GO_LS_AUDIO_PAUSE_IN, RESOURCE_AUDIO_PAUSE_IN },
 			{ GO_LS_AUDIO_PAUSE_OUT, RESOURCE_AUDIO_PAUSE_OUT },
 			{ GO_LS_AUDIO_EXPLOSION, RESOURCE_AUDIO_EXPLOSION },
+			{ GO_LS_AUDIO_COIN, RESOURCE_AUDIO_COIN },
 			{ GO_LS_AUDIO_STAR, RESOURCE_AUDIO_STAR_PREFIX + std::string("1") },
 			{ GO_LS_AUDIO_STAR + 1, RESOURCE_AUDIO_STAR_PREFIX + std::string("2") },
 			{ GO_LS_AUDIO_STAR + 2, RESOURCE_AUDIO_STAR_PREFIX + std::string("3") }
@@ -172,12 +176,23 @@ LevelSelector::~LevelSelector()
 
 	for (auto& item : mSceneries)
 	{
-		item.second.scenery->mDestroyMe = true;
+		if (!item.second.scenery.expired())
+		{
+			item.second.scenery.lock()->mDestroyMe = true;
+		}
 	}
 
 	for (auto& item : mScreenButtons)
 	{
 		item.second.drawable->mDestroyMe = true;
+	}
+
+	for (auto& item : mPickupHandler.pickups)
+	{
+		if (!item.second.expired())
+		{
+			item.second.lock()->mDestroyMe = true;
+		}
 	}
 
 	// Destroy dialog, if present
@@ -245,7 +260,10 @@ void LevelSelector::update()
 	// Set light position for all sceneries
 	for (auto& item : mSceneries)
 	{
-		item.second.scenery->setLightPosition(mPosition);
+		if (!item.second.scenery.expired())
+		{
+			item.second.scenery.lock()->setLightPosition(mPosition);
+		}
 	}
 
 	// Manage level state
@@ -447,8 +465,9 @@ void LevelSelector::update()
 			for (auto it2 = it->second.buttons.begin(); it2 != it->second.buttons.end(); ++it2)
 			{
 				// Control animation
+				if (!it->second.scenery.expired())
 				{
-					const auto& pz = it2->position.z() + it->second.scenery->mPosition.z();
+					const auto& pz = it2->position.z() + it->second.scenery.lock()->mPosition.z();
 					const auto& c = mPosition.z() > pz - 25.0f && mPosition.z() < pz + 25.0f;
 					manageBackendAnimationVariable(it2->scale, 1.0f, c);
 				}
@@ -557,45 +576,66 @@ void LevelSelector::update()
 				const std::chrono::duration<double> diff = std::chrono::system_clock::now() - mClickStartTime;
 				if (diff.count() < GO_LS_CLICK_TAP_MAX_DELAY)
 				{
-					const auto& it = mPickableObjectRefs.find(oid);
-					if (it != mPickableObjectRefs.end())
+					const auto& ita = mPickupHandler.pickups.find(oid);
+					if (ita != mPickupHandler.pickups.end())
 					{
-						const auto& it2 = mSceneries.find(it->second.sceneryIndex);
-						if (it2 == mSceneries.end())
+						const auto& lpf = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
+						const auto& cameraDist = Math::abs(lpf.cameraEye.z() - lpf.cameraTarget.z()) * 0.5f;
+
+						if (!ita->second.expired())
 						{
-							Error{} << "Scenery from PickableObjectRef" << it2->first << "was not found. This should not happen";
-						}
-						else
-						{
-							// Check for clicked level index in the referenced scenery
-							LS_PickableObject* spo = nullptr;
-							for (auto& po : it2->second.buttons)
+							const auto& pu = ita->second.lock();
+							if (pu->isPickupable() && (pu->mPosition - (mPosition + Vector3(0.0f, 0.0f, cameraDist))).length() < 10.0f)
 							{
-								if (po.objectId == oid)
-								{
-									spo = &po;
-								}
+								pu->setDestroyState(true);
+
+								playSfxAudio(GO_LS_AUDIO_COIN);
+								++RoomManager::singleton->mSaveData.coinTotal;
 							}
-
-							// Trigger level selection
-							if (spo != nullptr)
+						}
+					}
+					else
+					{
+						const auto& itb = mPickableObjectRefs.find(oid);
+						if (itb != mPickableObjectRefs.end())
+						{
+							const auto& it2 = mSceneries.find(itb->second.sceneryIndex);
+							if (it2 == mSceneries.end())
 							{
-								if (spo->levelIndex < RoomManager::singleton->mSaveData.maxLevelId)
-								{
-									// Open level window
-									clickLevelButton(&it2->second, spo);
-
-									// Play sound
-									playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
-								}
-								else
-								{
-									Debug{} << "Max level ID is" << RoomManager::singleton->mSaveData.maxLevelId << "and user has selected level ID" << spo->levelIndex;
-								}
+								Error{} << "Scenery from PickableObjectRef" << it2->first << "was not found. This should not happen";
 							}
 							else
 							{
-								Error{} << "No corresponding object for identifier" << oid << "was found in scenery" << it2->first;
+								// Check for clicked level index in the referenced scenery
+								LS_PickableObject* spo = nullptr;
+								for (auto& po : it2->second.buttons)
+								{
+									if (po.objectId == oid)
+									{
+										spo = &po;
+									}
+								}
+
+								// Trigger level selection
+								if (spo != nullptr)
+								{
+									if (spo->levelIndex < RoomManager::singleton->mSaveData.maxLevelId)
+									{
+										// Open level window
+										clickLevelButton(&it2->second, spo);
+
+										// Play sound
+										playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
+									}
+									else
+									{
+										Debug{} << "Max level ID is" << RoomManager::singleton->mSaveData.maxLevelId << "and user has selected level ID" << spo->levelIndex;
+									}
+								}
+								else
+								{
+									Error{} << "No corresponding object for identifier" << oid << "was found in scenery" << it2->first;
+								}
 							}
 						}
 					}
@@ -809,7 +849,10 @@ void LevelSelector::handleScrollableScenery()
 		// Erase this scenery AT THE END
 		if (erase)
 		{
-			it->second.scenery->mDestroyMe = true;
+			if (!it->second.scenery.expired())
+			{
+				it->second.scenery.lock()->mDestroyMe = true;
+			}
 			it = mSceneries.erase(it);
 		}
 		else
@@ -834,7 +877,7 @@ void LevelSelector::handleScrollableScenery()
 		const auto& it = mSceneries.find(yp);
 		if (it != mSceneries.end())
 		{
-			if (it->second.scenery->getModelIndex() == modelIndex)
+			if (!it->second.scenery.expired() && it->second.scenery.lock()->getModelIndex() == modelIndex)
 			{
 				continue;
 			}
@@ -948,7 +991,15 @@ void LevelSelector::clickLevelButton(const LS_ScenerySelector * sc, const LS_Pic
 
 	// Set parameters for animation
 	mLevelInfo.currentLevelPos = mPosition;
-	mLevelInfo.nextLevelPos = sc->scenery->mPosition + po->position + Vector3(0.0f, 0.0f, -8.0f);
+
+	if (sc->scenery.expired())
+	{
+		Error{} << "Weak Ptr for Scenery was expired. This should not happen!";
+	}
+	else
+	{
+		mLevelInfo.nextLevelPos = sc->scenery.lock()->mPosition + po->position + Vector3(0.0f, 0.0f, -8.0f);
+	}
 }
 
 void LevelSelector::windowForCommon()
@@ -1210,6 +1261,56 @@ void LevelSelector::manageLevelState()
 		}
 
 		animate[2] = (mPosition - mLevelInfo.lastLevelPos).length() > 50.0f;
+
+		// Manage pickups on map screen
+		if (mLevelButtonScaleAnim >= 0.99f && !mSettingsOpened && mLevelInfo.currentViewingLevelId == 0U)
+		{
+			if (mPickupHandler.timer < 0.0f)
+			{
+				if (mPickupHandler.timer > -900.0f)
+				{
+					if (false && mPickupHandler.pickups.size() >= 3 || false && std::rand() % 10 < 7)
+					{
+						if (mPickupHandler.pickups.size() > 0)
+						{
+							const auto& it = std::next(std::begin(mPickupHandler.pickups), std::rand() % mPickupHandler.pickups.size());
+							if (!it->second.expired())
+							{
+								const auto& ptr = it->second.lock();
+								ptr->mAmbientColor = 0xff8080_rgbf;
+								ptr->setDestroyState(true);
+							}
+						}
+					}
+					else
+					{
+						const auto& pk = 50 + Int(mPickupHandler.pickups.size());
+						const auto& it = mPickupHandler.pickups.find(pk);
+						if (it == mPickupHandler.pickups.end())
+						{
+							const auto& go = std::make_shared<MapPickup>(GOL_PERSP_FIRST, GO_MP_TYPE_COIN);
+							go->setObjectId(pk);
+
+							{
+								const Float xp = 5.0f + Float(std::rand() % 150) * (std::rand() % 2 ? 0.1f : -0.1f);
+								const Float zp = mPosition.z() - 50.0f + Float(std::rand() % 1000) * 0.1f;
+								go->mPosition = Vector3(xp, 2.0f, zp);
+							}
+
+							Debug{} << "New COIN map pickup created at position (" << go->mPosition.x() << ", " << go->mPosition.z() << ")";
+							mPickupHandler.pickups[pk] = (std::shared_ptr<MapPickup>&) RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(go, true);
+						}
+					}
+				}
+
+				mPickupHandler.timer = 10.0f + Float(std::rand() % 10);
+				Debug{} << "Map pickup timer has expired. Reset to" << mPickupHandler.timer;
+			}
+			else
+			{
+				mPickupHandler.timer -= mDeltaTime;
+			}
+		}
 
 		break;
 
@@ -2138,8 +2239,15 @@ void LevelSelector::createGuis()
 					// Set parameters for later animation
 					mLevelInfo.currentLevelPos = mPosition;
 
-					const Vector3 sp = bs->second.scenery->mPosition;
-					mLevelInfo.nextLevelPos = Vector3(sp.x(), 0.0f, sp.z()) + Vector3(bp.x(), 0.0f, bp.z() - 8.0f);
+					if (bs->second.scenery.expired())
+					{
+						Error{} << "Weak Ptr for Scenery was expired in NEXT. This should not happen!";
+					}
+					else
+					{
+						const Vector3 sp = bs->second.scenery.lock()->mPosition;
+						mLevelInfo.nextLevelPos = Vector3(sp.x(), 0.0f, sp.z()) + Vector3(bp.x(), 0.0f, bp.z() - 8.0f);
+					}
 				}
 
 				// Restore level state to init

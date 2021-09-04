@@ -30,8 +30,9 @@
 - ~~Procedural level generation with difficulty.~~
 - ~~Improve level failure screen.~~
 - ~~Wall 3D model to avoid seam between different world scenes in level selector.~~
+- ~~Place random pickups around the map (to make use of coins).~~
 
 # On-going tasks
 
-- Place random pickups around the map (to make use of coins).
+- Edit mesh positions in scenes to make game engine sort them correctly (to fix trasparency. This is kind-of hacky thing)
 - Random help tooltips in level selector.

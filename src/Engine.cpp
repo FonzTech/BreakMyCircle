@@ -235,7 +235,7 @@ void Engine::drawEvent()
 			std::sort(drawableTransformations.begin(), drawableTransformations.end(),
 				[](const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& a,
 					const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& b) {
-				return a.second.translation().z() < b.second.translation().z();
+				return a.second.translation().y() < b.second.translation().y();
 			});
 
 			// Draw scene
