@@ -51,7 +51,7 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 	{
 		const std::shared_ptr<ElectricBall> go = std::make_shared<ElectricBall>(mParentIndex);
 		mElectricBall = (std::shared_ptr<ElectricBall>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
-		mElectricBall->mPlayables[0]->source().play();
+		mElectricBall->playSfxAudio(0);
 	}
 	else
 	{
@@ -65,8 +65,7 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 		mPlayables[0]->source()
 			.setBuffer(buffer)
 			.setLooping(false);
-
-		playSfxAudio(0);
+		// playSfxAudio(0);
 	}
 }
 
@@ -126,8 +125,12 @@ void Projectile::update()
 		snapToGrid(nullptr);
 	}
 
-	// Advance animation
-	mAnimation -= mVelocity[0];
+	// Rotate animation
+	if (mAmbientColor == BUBBLE_BOMB)
+	{
+		// Advance animation
+		mAnimation -= mVelocity[0];
+	}
 
 	// Upgrade transformations
 	(*mManipulator)
@@ -178,8 +181,12 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 			{
 				if (item->getType() == GOT_BUBBLE)
 				{
-					mAmbientColor = ((Bubble*)item)->mAmbientColor;
-					assignRandomColor = false;
+					const auto& pb = (std::shared_ptr<Bubble>&)item;
+					if (pb->mAmbientColor != BUBBLE_COIN)
+					{
+						mAmbientColor = pb->mAmbientColor;
+						assignRandomColor = false;
+					}
 				}
 			}
 		}
@@ -197,7 +204,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 
 	// Check if projectile is a bomb
 	Int shootAmount = 0;
-	if (mAmbientColor == BUBBLE_BOMB)
+	if (preColor == BUBBLE_BOMB)
 	{
 		// Create explosion sprite
 		{
@@ -239,14 +246,17 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		}
 	}
 	// Check if projectile is an electric bubble
-	else if (mAmbientColor == BUBBLE_ELECTRIC)
+	else if (preColor == BUBBLE_ELECTRIC)
 	{
 		std::vector<std::shared_ptr<Bubble>> bubbles;
-		for (auto& item : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+		const auto& list = RoomManager::singleton->mGoLayers[mParentIndex].list;
+
+		for (Int i = 0, j = std::rand(); i != list->size(); ++i, j = std::rand())
 		{
+			const auto& item = list->at((i + j) % list->size());
 			if (item->getType() == GOT_BUBBLE)
 			{
-				const std::shared_ptr<Bubble> b = (std::shared_ptr<Bubble>&)item;
+				const auto& b = (std::shared_ptr<Bubble>&)item;
 				if (b->mAmbientColor == mAmbientColor)
 				{
 					bubbles.push_back(b);
