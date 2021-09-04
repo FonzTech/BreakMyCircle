@@ -1269,7 +1269,7 @@ void LevelSelector::manageLevelState()
 			{
 				if (mPickupHandler.timer > -900.0f)
 				{
-					if (false && mPickupHandler.pickups.size() >= 3 || false && std::rand() % 10 < 7)
+					if (mPickupHandler.pickups.size() >= 3 || std::rand() % 10 < 7)
 					{
 						if (mPickupHandler.pickups.size() > 0)
 						{
