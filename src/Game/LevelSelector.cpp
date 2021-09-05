@@ -5,6 +5,7 @@
 #include <Magnum/Math/Constants.h>
 #include <Magnum/Math/Bezier.h>
 #include <Magnum/GL/Renderer.h>
+#include <Magnum/Animation/Easing.h>
 
 #include "../RoomManager.h"
 #include "../InputManager.h"
@@ -54,7 +55,7 @@ std::unordered_map<Int, std::array<Vector3, 6>> LevelSelector::sLevelButtonPosit
 	})
 };
 
-LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut(Vector2(0.0f, 0.0f), Vector2(0.42f, 0.0f), Vector2(0.58f, 1.0f), Vector2(1.0f, 1.0f))
+LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut(Vector2(0.0f, 0.0f), Vector2(0.42f, 0.0f), Vector2(0.58f, 1.0f), Vector2(1.0f, 1.0f)), mHelpTipsTimer(-10.0f)
 {
 	// Assign parent index
 	mParentIndex = parentIndex;
@@ -225,6 +226,18 @@ void LevelSelector::update()
 		{
 			if (c[3] >= 100.0f)
 			{
+				// Scroll to last level position
+				const auto oldPosition = mPosition;
+				mPosition = Vector3(mLevelInfo.lastLevelPos.x(), 0.0f, mLevelInfo.lastLevelPos.z() - 8.0f);
+				handleScrollableCameraPosition(mPosition - oldPosition);
+				handleScrollableScenery();
+
+				// Clamp to 50
+				c[3] = 50.0f;
+			}
+			else if (c[3] >= 50.0f)
+			{
+				// Clamp to 1
 				c[3] = 1.0f;
 			}
 			else
@@ -1037,6 +1050,13 @@ void LevelSelector::windowForCommon()
 
 	// Scroll back
 	mScreenButtons[GO_LS_GUI_SCROLL_BACK].drawable->setPosition(Vector2(0.5f, -0.75f + 0.25f * (mLevelGuiAnim[4] - mSettingsAnim - mLevelAnim)));
+
+	// Help tips
+	{
+		const auto& yp = mLevelGuiAnim[5] <= 0.0f ? 0.0f : mLevelGuiAnim[5] < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::circularOut(mLevelGuiAnim[5])) * 0.5f : 0.5f;
+		mLevelGuis[GO_LS_GUI_HELP]->mPosition = Vector3(0.5f, 1.0f - yp, 0.0f);
+		mLevelTexts[GO_LS_TEXT_HELP]->mPosition = Vector3(0.49f, 0.99f - yp, 0.0f);
+	}
 }
 
 void LevelSelector::windowForSettings()
@@ -1238,7 +1258,7 @@ void LevelSelector::windowForCurrentLevelView()
 void LevelSelector::manageLevelState()
 {
 	// Variables for later
-	bool animate[3] = { false, false, false };
+	bool animate[4] = { false, false, false, false };
 
 	// Control level state
 	switch (mLevelInfo.state)
@@ -1268,6 +1288,26 @@ void LevelSelector::manageLevelState()
 		}
 
 		animate[2] = (mPosition - mLevelInfo.lastLevelPos).length() > 50.0f;
+
+		if (!mSettingsOpened && mLevelButtonScaleAnim >= 0.99f && mLevelInfo.currentViewingLevelId == 0U)
+		{
+			const auto ov = mHelpTipsTimer;
+			mHelpTipsTimer += mDeltaTime;
+			if (mHelpTipsTimer > 0.0f && ov <= 0.0f)
+			{
+				mLevelTexts[GO_LS_TEXT_HELP]->setText(getHelpTipText(std::rand() % 5));
+			}
+
+			if (mHelpTipsTimer >= 0.0f)
+			{
+				animate[3] = true;
+
+				if (mHelpTipsTimer >= 10.0f)
+				{
+					mHelpTipsTimer = -20.0f;
+				}
+			}
+		}
 
 		// Manage pickups on map screen
 		if (mLevelButtonScaleAnim >= 0.99f && !mSettingsOpened && mLevelInfo.currentViewingLevelId == 0U)
@@ -1514,6 +1554,7 @@ void LevelSelector::manageLevelState()
 	// Animate level GUIs
 	manageGuiLevelAnim(1, animate[0]);
 	manageGuiLevelAnim(4, animate[2]);
+	manageGuiLevelAnim(5, animate[3]);
 
 	// Animate camera, if requested
 	if (animate[1])
@@ -1967,111 +2008,6 @@ void LevelSelector::watchAdForPowerup(const UnsignedInt index)
 	Debug{} << "Trigger REWARDED AD for Powerup" << index;
 }
 
-void LevelSelector::createTexts()
-{
-
-	// Level number text
-	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopCenter, 40);
-		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
-		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setSize(Vector2(1.25f));
-		go->setText("Settings");
-
-		mLevelTexts[GO_LS_TEXT_LEVEL] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
-	}
-
-	// Time counter text
-	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineRight, 10);
-		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
-		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setAnchor(Vector2(-0.9f, 0.65f));
-		go->setSize(Vector2(1.125f));
-		go->setText("0s");
-
-		mLevelTexts[GO_LS_TEXT_TIME] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
-	}
-
-	// Coin counter text
-	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopLeft, 40);
-		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
-		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setAnchor(Vector2(3.5f, -1.0f));
-		go->setSize(Vector2(1.15f));
-		go->setText("0");
-
-		mLevelTexts[GO_LS_TEXT_COIN] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
-	}
-
-	// Powerup text
-	{
-		const std::string& text = "Your Powerups";
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
-		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
-		go->mColor = Color4(0.9f, 0.9f, 0.9f, 1.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setSize(Vector2(1.0f));
-		go->setText(text);
-
-		mLevelTexts[GO_LS_TEXT_POWERUP_TITLE] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
-	}
-
-	// Vote This App text
-	{
-		const std::string& text = "> Vote This App";
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
-		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
-		go->mColor = Color4(0.6f, 1.0f, 0.6f, 1.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setSize(Vector2(1.0f));
-		go->setText(text);
-
-		mScreenButtons[GO_LS_TEXT_VOTE_ME] = {
-			(std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true),
-			[this](UnsignedInt index) {
-			// Avoid inconsistencies
-			if (!mSettingsOpened)
-			{
-				return false;
-			}
-
-			Debug{} << "You have clicked VOTE ME";
-			return true;
-		}
-		};
-	}
-
-	// Other Apps text
-	{
-		const std::string& text = "> Other Apps";
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
-		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
-		go->mColor = Color4(1.0f, 0.6f, 0.6f, 1.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setSize(Vector2(1.0f));
-		go->setText(text);
-
-		mScreenButtons[GO_LS_TEXT_OTHER_APPS] = {
-			(std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true),
-			[this](UnsignedInt index) {
-			// Avoid inconsistencies
-			if (!mSettingsOpened)
-			{
-				return false;
-			}
-
-			Debug{} << "You have clicked OTHER APPS";
-			return true;
-		}
-		};
-	}
-}
-
 void LevelSelector::createGuis()
 {
 	// White glow quad
@@ -2433,11 +2369,6 @@ void LevelSelector::createGuis()
 
 			mLevelGuis[GO_LS_GUI_WHITEGLOW]->color()[3] = 100.0f;
 
-			const auto oldPosition = mPosition;
-			mPosition = Vector3(mLevelInfo.lastLevelPos.x(), 0.0f, mLevelInfo.lastLevelPos.z() - 8.0f);
-			handleScrollableCameraPosition(mPosition - oldPosition);
-			handleScrollableScenery();
-
 			return true;
 		}
 		};
@@ -2452,4 +2383,137 @@ void LevelSelector::createGuis()
 
 		mLevelGuis[GO_LS_GUI_SAD] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 	}
+
+	// Help box
+	{
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_HELP);
+		o->setPosition({ 2.0f, 2.0f });
+		o->setSize({ 0.35f, 0.15f });
+		o->setAnchor({ -1.0f, -1.0f });
+		o->setColor({ 1.0f, 1.0f, 1.0f, 0.875f });
+
+		mLevelGuis[GO_LS_GUI_HELP] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+	}
+}
+
+void LevelSelector::createTexts()
+{
+	// Level number text
+	{
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopCenter, 40);
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setSize(Vector2(1.25f));
+		go->setText("Settings");
+
+		mLevelTexts[GO_LS_TEXT_LEVEL] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+
+	// Time counter text
+	{
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineRight, 10);
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setAnchor(Vector2(-0.9f, 0.65f));
+		go->setSize(Vector2(1.125f));
+		go->setText("0s");
+
+		mLevelTexts[GO_LS_TEXT_TIME] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+
+	// Coin counter text
+	{
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopLeft, 40);
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setAnchor(Vector2(3.5f, -1.0f));
+		go->setSize(Vector2(1.15f));
+		go->setText("0");
+
+		mLevelTexts[GO_LS_TEXT_COIN] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+
+	// Powerup text
+	{
+		const std::string& text = "Your Powerups";
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(0.9f, 0.9f, 0.9f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setSize(Vector2(1.0f));
+		go->setText(text);
+
+		mLevelTexts[GO_LS_TEXT_POWERUP_TITLE] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+
+	// Vote This App text
+	{
+		const std::string& text = "> Vote This App";
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(0.6f, 1.0f, 0.6f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setSize(Vector2(1.0f));
+		go->setText(text);
+
+		mScreenButtons[GO_LS_TEXT_VOTE_ME] = {
+			(std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true),
+			[this](UnsignedInt index) {
+			// Avoid inconsistencies
+			if (!mSettingsOpened)
+			{
+				return false;
+			}
+
+			Debug{} << "You have clicked VOTE ME";
+			return true;
+		}
+		};
+	}
+
+	// Other Apps text
+	{
+		const std::string& text = "> Other Apps";
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(1.0f, 0.6f, 0.6f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setSize(Vector2(1.0f));
+		go->setText(text);
+
+		mScreenButtons[GO_LS_TEXT_OTHER_APPS] = {
+			(std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true),
+			[this](UnsignedInt index) {
+			// Avoid inconsistencies
+			if (!mSettingsOpened)
+			{
+				return false;
+			}
+
+			Debug{} << "You have clicked OTHER APPS";
+			return true;
+		}
+		};
+	}
+
+	// Help text
+	{
+		const std::string& text = "Test here.";
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopRight, 100U);
+		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		go->setSize(Vector2(0.6f));
+		go->setText(text);
+
+		mLevelTexts[GO_LS_TEXT_HELP] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+	}
+}
+
+const std::string LevelSelector::getHelpTipText(const Int index) const
+{
+	return "Ok";
 }

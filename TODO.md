@@ -34,5 +34,4 @@
 
 # On-going tasks
 
-- Edit mesh positions in scenes to make game engine sort them correctly (to fix trasparency. This is kind-of hacky thing)
 - Random help tooltips in level selector.

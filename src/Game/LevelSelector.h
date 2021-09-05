@@ -12,6 +12,7 @@
 #define GO_LS_TEXT_LEVEL 0U
 #define GO_LS_TEXT_TIME 1U
 #define GO_LS_TEXT_COIN 2U
+#define GO_LS_TEXT_HELP 10U
 #define GO_LS_TEXT_POWERUP_TITLE 3U
 #define GO_LS_TEXT_POWERUP_COUNT 1000U
 #define GO_LS_TEXT_VOTE_ME 200U
@@ -31,6 +32,7 @@
 #define GO_LS_GUI_WHITEGLOW 11U
 #define GO_LS_GUI_SCROLL_BACK 12U
 #define GO_LS_GUI_SAD 13U
+#define GO_LS_GUI_HELP 14U
 #define GO_LS_GUI_STAR 100U
 #define GO_LS_GUI_POWERUP 1000U
 
@@ -165,6 +167,7 @@ private:
 	void handleScrollableCameraPosition(const Vector3 & delta);
 	void handleScrollableScenery();
 	void clickLevelButton(const LS_ScenerySelector * sc, const LS_PickableObject * po);
+	const std::string getHelpTipText(const Int index) const;
 
 	void windowForCommon();
 	void windowForSettings();
@@ -208,6 +211,7 @@ private:
 
 	Float mLevelStartedAnim;
 	bool mLevelEndingAnim;
+	Float mHelpTipsTimer;
 
 	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
 
@@ -222,7 +226,7 @@ private:
 	std::unordered_map<UnsignedInt, LS_PickableObjectRef> mPickableObjectRefs;
 
 	LS_LevelInfo mLevelInfo;
-	Float mLevelGuiAnim[5];
+	Float mLevelGuiAnim[6];
 
 	LS_CachedVariable<Float, Int> mTimer;
 	LS_CachedVariable<Float, Int> mCoins;
