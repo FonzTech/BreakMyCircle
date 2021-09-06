@@ -95,9 +95,18 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mPuView.startX = GO_LS_RESET_MOUSE_VALUE;
 		mPuView.scrollX = 0.0f;
 
+		const std::unordered_map<UnsignedInt, Int> prices = {
+			{ GO_LS_GUI_POWERUP, 4 },
+			{ GO_LS_GUI_POWERUP + 1, 1 },
+			{ GO_LS_GUI_POWERUP + 2, 3 },
+			{ GO_LS_GUI_POWERUP + 3, 6 }
+		};
+
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
-			mPuView.counts[GO_LS_GUI_POWERUP + i] = { 0, -1 };
+			const UnsignedInt k = GO_LS_GUI_POWERUP + i;
+			mPuView.counts[k] = { 0, -1 };
+			mPuView.prices[k] = prices.at(k);
 		}
 	}
 
@@ -143,6 +152,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			{ GO_LS_AUDIO_PAUSE_OUT, RESOURCE_AUDIO_PAUSE_OUT },
 			{ GO_LS_AUDIO_EXPLOSION, RESOURCE_AUDIO_EXPLOSION },
 			{ GO_LS_AUDIO_COIN, RESOURCE_AUDIO_COIN },
+			{ GO_LS_AUDIO_WRONG, RESOURCE_AUDIO_WRONG },
 			{ GO_LS_AUDIO_STAR, RESOURCE_AUDIO_STAR_PREFIX + std::string("1") },
 			{ GO_LS_AUDIO_STAR + 1, RESOURCE_AUDIO_STAR_PREFIX + std::string("2") },
 			{ GO_LS_AUDIO_STAR + 2, RESOURCE_AUDIO_STAR_PREFIX + std::string("3") }
@@ -271,12 +281,6 @@ void LevelSelector::update()
 		}
 	}
 
-	// Check if any dialog is active
-	if (!mDialog.expired())
-	{
-		return;
-	}
-
 	// Set light position for all sceneries
 	for (auto& item : mSceneries)
 	{
@@ -288,6 +292,12 @@ void LevelSelector::update()
 
 	// Manage level state
 	manageLevelState();
+
+	// Check if any dialog is active
+	if (!mDialog.expired())
+	{
+		return;
+	}
 	
 #if NDEBUG or _DEBUG
 	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
@@ -1189,8 +1199,8 @@ void LevelSelector::windowForCurrentLevelView()
 			const Float xp = canShowPowerups ? Float(i) * xf + mPuView.scrollX : -1000.0f;
 
 			// Clickable icon
+			const Float alpha = Math::clamp(1.2f - Math::abs(xp) * 5.0f * ar, 0.0f, 1.0f);
 			{
-				const Float alpha = Math::clamp(1.2f - Math::abs(xp) * 5.0f * ar, 0.0f, 1.0f);
 				auto& item = (std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_POWERUP + i].drawable;
 				if (alpha > 0.0f)
 				{
@@ -1203,19 +1213,50 @@ void LevelSelector::windowForCurrentLevelView()
 				}
 			}
 
-			// Counter
+			// Count
+			auto& itemCount = mLevelTexts[GO_LS_TEXT_POWERUP_ICON + i];
 			{
-				const Float alpha = Math::clamp(1.0f - Math::abs(xp) * 10.0f * ar, 0.0f, 1.0f);
-				auto& item = mLevelTexts[GO_LS_TEXT_POWERUP_COUNT + i];
 				if (alpha > 0.0f)
 				{
-					item->setPosition({ xp + 0.115f / ar, yf - 0.06f });
-					item->mColor.data()[3] = alpha;
-					item->mOutlineColor.data()[3] = alpha;
+					itemCount->setPosition({ xp + 0.115f / ar, yf - 0.06f });
+					itemCount->mColor.data()[3] = alpha;
+					itemCount->mOutlineColor.data()[3] = alpha;
 				}
 				else
 				{
-					item->setPosition({ -2.0f, yf });
+					itemCount->setPosition({ -2.0f, yf });
+				}
+			}
+
+			// Price icon
+			const Float alphaPrice = alpha < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::exponentialIn(alpha)) : 1.0f;
+			const auto& yft = yf + 0.03f / ar;
+			{
+				auto& itemCoin = mLevelGuis[GO_LS_TEXT_POWERUP_ICON + i];
+				if (alphaPrice > 0.0f)
+				{
+					itemCoin->setPosition({ xp - 0.115f / ar, yft });
+					itemCoin->mColor.data()[3] = alphaPrice;
+				}
+				else
+				{
+					itemCoin->setPosition({ -2.0f, yf });
+				}
+			}
+
+			// Price text
+			{
+				auto& itemPrice = mLevelTexts[GO_LS_TEXT_POWERUP_PRICE + i];
+
+				if (alphaPrice > 0.0f)
+				{
+					itemPrice->setPosition({ xp - 0.115f / ar + 0.055f / ar, yft + 0.005f });
+					itemPrice->mColor.data()[3] = alphaPrice;
+					itemPrice->mOutlineColor.data()[3] = alphaPrice;
+				}
+				else
+				{
+					itemPrice->setPosition({ -2.0f, itemCount->mPosition.y() });
 				}
 			}
 		}
@@ -1901,17 +1942,20 @@ void LevelSelector::createPowerupView()
 						break;
 					}
 
-					message = title + "\n\n" + message + "\n\nYou can earn more\npowerups by watching\nrewarded video ads.";
+					message = title + "\n\n" + message;
 					const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST, message.length());
 					o->setTextPosition({ 0.0f, 0.4f, 0.0f });
 					o->setMessage(message);
 
+					Vector3 offsetButton;
 					if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
 					{
+						offsetButton = Vector3(0.0f, 0.1f, 0.0f);
+
 						const bool& isEnough = RoomManager::singleton->mSaveData.powerupAmounts[index] > 0;
-						const std::string& text = isEnough ? "Yes" : "Watch Ad";
-						o->addAction(text, [this,index]() {
-							Debug{} << "You have clicked YES to USE POWERUP";
+						const std::string& text = "Use";
+						o->addAction(text, [this, index](UnsignedInt buttonIndex) {
+							Debug{} << "You have clicked USE POWERUP";
 
 							// Check if there is one left to use, at least
 							auto& pm = RoomManager::singleton->mSaveData.powerupAmounts;
@@ -1933,18 +1977,80 @@ void LevelSelector::createPowerupView()
 							closeDialog();
 							mScreenButtons[GO_LS_GUI_SETTINGS].callback(GO_LS_GUI_SETTINGS);
 						},
-							Vector3(0.0f, -0.1f, 0.0f)
-						);
+							false,
+							offsetButton
+							);
+					}
+					else
+					{
+						offsetButton = Vector3(0.0f, 0.05f, 0.0f);
 					}
 
+					// Watch Ad
+					{
+						const bool& isEnough = RoomManager::singleton->mSaveData.powerupAmounts[index] > 0;
+						const std::string& text = "Watch Ad";
+						o->addAction(text, [this, index](UnsignedInt buttonIndex) {
+							Debug{} << "You have clicked WATCH AD POWERUP";
+
+							// Trigger rewarded ad
+							watchAdForPowerup(index);
+
+							// Close dialog and settings window
+							closeDialog();
+							mScreenButtons[GO_LS_GUI_SETTINGS].callback(GO_LS_GUI_SETTINGS);
+						},
+							true,
+							offsetButton
+							);
+					}
+
+					// Buy for coins
+					{
+						const bool& isEnough = RoomManager::singleton->mSaveData.powerupAmounts[index] > 0;
+						const std::string& text = "Buy for " + std::to_string(mPuView.prices[index]) + " coins";
+						o->addAction(text, [this, index](UnsignedInt buttonIndex) {
+							Debug{} << "You have clicked BUY POWERUP";
+
+							// Check for coins amount
+							if (RoomManager::singleton->mSaveData.coinTotal >= mPuView.prices[index])
+							{
+								// Play sound
+								playSfxAudio(GO_LS_AUDIO_COIN);
+
+								// Deduct cost
+								RoomManager::singleton->mSaveData.coinTotal -= mPuView.prices[index];
+
+								// Add one more powerup
+								++RoomManager::singleton->mSaveData.powerupAmounts[index];
+
+								/*
+								// Close dialog and settings window
+								closeDialog();
+								mScreenButtons[GO_LS_GUI_SETTINGS].callback(GO_LS_GUI_SETTINGS);
+								*/
+							}
+							else
+							{
+								mDialog.lock()->shakeButton(buttonIndex);
+								playSfxAudio(GO_LS_AUDIO_WRONG);
+							}
+						},
+							true,
+							offsetButton
+							);
+					}
+
+					// Back
 					{
 						const bool isNo = mLevelInfo.state == GO_LS_LEVEL_STARTED;
-						const std::string & text = isNo ? "No" : "OK";
-						o->addAction(text, [this]() {
-							Debug{} << "You have clicked NO to USE POWERUP";
+						const std::string & text = isNo ? "Back" : "OK";
+						o->addAction(text, [this](UnsignedInt buttonIndex) {
+							Debug{} << "You have clicked NO POWERUP";
 							closeDialog();
 						},
-							Vector3(0.0f, isNo ? -0.1f : -0.2f, 0.0f)
+							false,
+							offsetButton
 						);
 					}
 
@@ -1963,7 +2069,31 @@ void LevelSelector::createPowerupView()
 			go->setSize(Vector2(1.0f));
 			go->setText("-");
 
-			mLevelTexts[GO_LS_TEXT_POWERUP_COUNT + i] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+			mLevelTexts[GO_LS_TEXT_POWERUP_ICON + i] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+		}
+
+		// Price icon
+		{
+			const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_COIN);
+			o->setPosition({ 2.0f, 2.0f });
+			o->setSize({ 0.045f, 0.045f });
+			o->setAnchor(Vector2(1.0f));
+
+			mLevelGuis[GO_LS_TEXT_POWERUP_ICON + i] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+		}
+
+		// Price text
+		{
+			const auto& text = std::to_string(mPuView.prices[GO_LS_TEXT_POWERUP_ICON + i]);
+
+			const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineLeft, UnsignedInt(text.length()));
+			go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+			go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
+			go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+			go->setSize(Vector2(0.75f));
+			go->setText(text);
+
+			mLevelTexts[GO_LS_TEXT_POWERUP_PRICE + i] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 		}
 	}
 }
@@ -2113,7 +2243,7 @@ void LevelSelector::createGuis()
 
 				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
 				o->setMessage("Do you really\nwant to restart\nthis level?");
-				o->addAction("Yes", [this]() {
+				o->addAction("Yes", [this](UnsignedInt buttonIndex) {
 					Debug{} << "You have clicked YES to REPLAY";
 					if (mLevelInfo.state == GO_LS_LEVEL_STARTED || mLevelInfo.state == GO_LS_LEVEL_FINISHED)
 					{
@@ -2121,7 +2251,7 @@ void LevelSelector::createGuis()
 						replayCurrentLevel();
 					}
 				});
-				o->addAction("No", [this]() {
+				o->addAction("No", [this](UnsignedInt buttonIndex) {
 					Debug{} << "You have clicked NO to REPLAY";
 					closeDialog();
 				});
@@ -2255,7 +2385,7 @@ void LevelSelector::createGuis()
 
 				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST);
 				o->setMessage("Do you really\nwant to exit\nthis level?");
-				o->addAction("Yes", [this]() {
+				o->addAction("Yes", [this](UnsignedInt buttonIndex) {
 					Debug{} << "You have clicked YES to EXIT";
 
 					// Set variable flag for level ending
@@ -2265,7 +2395,7 @@ void LevelSelector::createGuis()
 						mLevelEndingAnim = true;
 					}
 				});
-				o->addAction("No", [this]() {
+				o->addAction("No", [this](UnsignedInt buttonIndex) {
 					Debug{} << "You have clicked NO to EXIT";
 					closeDialog();
 				});
@@ -2515,5 +2645,22 @@ void LevelSelector::createTexts()
 
 const std::string LevelSelector::getHelpTipText(const Int index) const
 {
-	return "Ok";
+	switch (index)
+	{
+	case 0:
+		return "Play levels to unlock more.\nThe more you advance,\nthe tough it is.";
+
+	case 1:
+		return "Look for coin pickups\naround the map. These are\nuseful to buy powerups.";
+
+	case 2:
+		return "You can use powerups in\nlevels by accessing the\nbottom-left menu.";
+
+	case 3:
+		return "Game progress is\nautomatically saved after\na level is successfully\npassed.";
+
+	case 4:
+		return "Consider downloading my\nother games and writing\na positive review.";
+	}
+	return nullptr;
 }

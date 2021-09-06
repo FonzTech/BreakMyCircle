@@ -31,7 +31,8 @@
 - ~~Improve level failure screen.~~
 - ~~Wall 3D model to avoid seam between different world scenes in level selector.~~
 - ~~Place random pickups around the map (to make use of coins).~~
+- ~~Random help tooltips in level selector.~~
+~~- Buy powerups in powerup scroller.~~
 
 # On-going tasks
-
-- Random help tooltips in level selector.
+- Implement other level game objects, such as rocks, holes, and others...

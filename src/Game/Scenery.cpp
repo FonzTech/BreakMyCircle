@@ -62,7 +62,6 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 				.rotateX(90.0_degf)
 				.translate(mPosition + Vector3(0.0f, 0.3f, 0.0f));
 
-			createWaterDrawable();
 			rk = RESOURCE_SCENE_WORLD_1;
 			break;
 
@@ -87,6 +86,12 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 			.translate(mPosition + Vector3(0.0f, 0.6f, -25.0f));
 
 		am.loadAssets(*this, *mManipulatorList[2], RESOURCE_SCENE_WORLD_WALL, this);
+	}
+
+	// Create water drawable AFTER
+	if (modelIndex == 0)
+	{
+		createWaterDrawable();
 	}
 
 	/*

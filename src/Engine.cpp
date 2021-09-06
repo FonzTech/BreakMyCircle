@@ -385,7 +385,8 @@ void Engine::upsertGameObjectLayers()
 				{
 					// Set renderer features
 					layer->depthTestEnabled = true;
-					layer->orderingByZ = true;
+					// layer->orderingByZ = true;
+					layer->orderingByZ = false;
 				}
 			}
 		}

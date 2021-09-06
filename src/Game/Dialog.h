@@ -29,16 +29,18 @@ public:
 
 	void setMessage(const std::string & text);
 	void setTextPosition(const Vector3 & position);
-	void addAction(const std::string & text, const std::function<void()> & callback, const Vector3 & offset = Vector3(0.0f));
+	void addAction(const std::string & text, const std::function<void(UnsignedInt)> & callback, const bool isLong = false, const Vector3 & offset = Vector3(0.0f));
 	void closeDialog();
+	void shakeButton(const UnsignedInt index);
 
 protected:
 
 	struct GD_Action
 	{
-		std::function<void()> callback;
+		std::function<void(UnsignedInt)> callback;
 		std::shared_ptr<OverlayGui> buttonGui;
 		std::shared_ptr<OverlayText> buttonText;
+		Float shake;
 	};
 
 	Float mOpened;

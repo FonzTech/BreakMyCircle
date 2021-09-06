@@ -14,7 +14,8 @@
 #define GO_LS_TEXT_COIN 2U
 #define GO_LS_TEXT_HELP 10U
 #define GO_LS_TEXT_POWERUP_TITLE 3U
-#define GO_LS_TEXT_POWERUP_COUNT 1000U
+#define GO_LS_TEXT_POWERUP_ICON 1000U
+#define GO_LS_TEXT_POWERUP_PRICE 1500U
 #define GO_LS_TEXT_VOTE_ME 200U
 #define GO_LS_TEXT_OTHER_APPS 201U
 
@@ -49,6 +50,7 @@
 #define GO_LS_AUDIO_PAUSE_OUT 5
 #define GO_LS_AUDIO_EXPLOSION 6
 #define GO_LS_AUDIO_COIN 7
+#define GO_LS_AUDIO_WRONG 8
 #define GO_LS_AUDIO_STAR 1000
 
 #define GO_LS_MAX_POWERUP_COUNT 4
@@ -160,6 +162,7 @@ private:
 		Int startX;
 		Float scrollX;
 		std::unordered_map<UnsignedInt, LS_CachedVariable<Int, Int>> counts;
+		std::unordered_map<UnsignedInt, Int> prices;
 	};
 
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);

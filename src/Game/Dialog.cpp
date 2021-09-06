@@ -2,6 +2,8 @@
 #include "../RoomManager.h"
 #include "../InputManager.h"
 
+#include <Magnum/Animation/Easing.h>
+
 std::shared_ptr<GameObject> Dialog::getInstance(const nlohmann::json & params)
 {
 	// Get parent index
@@ -89,19 +91,41 @@ void Dialog::update()
 	mText->mOutlineColor.data()[3] = mOpacity;
 
 	// Set parameters for all actions
-	for (Int i = 0; i < mActions.size(); ++i)
+	for (UnsignedInt i = 0; i < mActions.size(); ++i)
 	{
+		// Get references
+		auto& sf = mActions[i].shake;
+		auto& ct = mActions[i].buttonText;
+		auto& cg = mActions[i].buttonGui;
+
+		// Set shake animation
+		sf -= mDeltaTime;
+		if (sf <= 0.0f)
+		{
+			sf = 0.0f;
+		}
+
+		{
+			const Float sv = sf * 2.0f;
+			const Float dx = sv - Math::floor(sv);
+			const Float dy = dx > 0.5f ? (1.0f - dx) * 2.0f : (dx * 2.0f);
+			const Float mult = sf > 0.5f ? -1.0f : 1.0f;
+			const Vector2 sp = { Math::lerp(0.0f, 1.0f, Animation::Easing::quadraticOut(dy)) * mult, 0.0f };
+			ct->setAnchor(sp);
+			cg->setAnchor(sp);
+		}
+
 		// Set text opacity for
-		mActions[i].buttonText->mColor.data()[3] = mOpacity;
-		mActions[i].buttonText->mOutlineColor.data()[3] = mOpacity;
+		ct->mColor.data()[3] = mOpacity;
+		ct->mOutlineColor.data()[3] = mOpacity;
 
 		// Set GUI opacity color
-		mActions[i].buttonGui->setColor(mActions[i].buttonText->mColor);
+		cg->setColor(mActions[i].buttonText->mColor);
 
 		// Check for click
 		if (clickable)
 		{
-			const auto& b = mActions[i].buttonGui->getBoundingBox(w);
+			const auto& b = cg->getBoundingBox(w);
 			if (b.contains(p))
 			{
 				if (lbs == IM_STATE_PRESSED)
@@ -111,7 +135,7 @@ void Dialog::update()
 				}
 				else if (lbs == IM_STATE_RELEASED && mClickIndex == i)
 				{
-					mActions[i].callback();
+					mActions[i].callback(i);
 					break;
 				}
 			}
@@ -137,31 +161,37 @@ void Dialog::setTextPosition(const Vector3 & position)
 	mText->setPosition(position.xy());
 }
 
-void Dialog::addAction(const std::string & text, const std::function<void()> & callback, const Vector3 & offset)
+void Dialog::addAction(const std::string & text, const std::function<void(UnsignedInt)> & callback, const bool isLong, const Vector3 & offset)
 {
 	const Float index(Float(mActions.size()) + 1.0f);
-	const Float yp = -0.15f * index;
+	const Float yp = -0.125f * index;
 
-	const std::shared_ptr<OverlayGui> buttonGui = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_GUI_BUTTON_2X1);
+	const std::shared_ptr<OverlayGui> buttonGui = std::make_shared<OverlayGui>(mParentIndex, isLong ? RESOURCE_TEXTURE_GUI_BUTTON_4X1 : RESOURCE_TEXTURE_GUI_BUTTON_2X1);
 	buttonGui->setPosition(Vector2(0.0f, yp) + offset.xy());
-	buttonGui->setSize({ 0.2f, 0.1f });
+	buttonGui->setSize({ isLong ? 0.36f : 0.18f, 0.09f });
 	buttonGui->setAnchor({ 0.0f, 0.0f });
 
-	const std::shared_ptr<OverlayText> buttonText = std::make_shared<OverlayText>(mParentIndex, Text::Alignment::MiddleCenter, 10);
+	const std::shared_ptr<OverlayText> buttonText = std::make_shared<OverlayText>(mParentIndex, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
 	buttonText->mPosition = Vector3(0.0f, yp, 0.0f) + offset;
 	buttonText->mColor = Color4(1.0f, 1.0f, 1.0f, 0.0f);
 	buttonText->mOutlineColor = Color4(0.81f, 0.42f, 0.14f, 0.0f);
-	buttonText->setSize(Vector2(1.0f));
+	buttonText->setSize(Vector2(0.8f));
 	buttonText->setText(text);
 
 	mActions.push_back({
 		callback,
 		(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(buttonGui, true),
-		(std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(buttonText, true)
+		(std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(buttonText, true),
+		0.0f
 	});
 }
 
 void Dialog::closeDialog()
 {
 	mOpened = -1.0f;
+}
+
+void Dialog::shakeButton(const UnsignedInt index)
+{
+	mActions[index].shake = 1.0f;
 }
