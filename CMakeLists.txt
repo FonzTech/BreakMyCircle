@@ -20,7 +20,14 @@ if(CORRADE_TARGET_ANDROID)
 
     set(NDK_SYSROOT "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr")
     
+    if(NOT ${ANDROID_ABI} MATCHES "arm64-v8a")
+        set(NDK_API30LIBS "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/30")
+    else()
+        set(NDK_API30LIBS "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/x86_64-linux-android/30")
+    endif()
+    
     list(APPEND CMAKE_MODULE_PATH ${NDK_SYSROOT})
+    list(APPEND CMAKE_MODULE_PATH ${NDK_API30LIBS})
     
     include_directories(
         PUBLIC
@@ -28,6 +35,10 @@ if(CORRADE_TARGET_ANDROID)
         "D:/Development/C++/magnum-plugins/src/external/stb"
         "D:/Development/C++/nlohmann-json"
     )
+
+    link_directories(${API30_LIBS})
+
+    list(APPEND CMAKE_PREFIX_PATH ${API30_LIBS})
 
 else()
 
@@ -62,32 +73,32 @@ endif()
 
 find_package(Corrade REQUIRED Main)
 find_package(Magnum REQUIRED
+    Audio
     GL
     MeshTools
-	  Primitives
+    Primitives
     Shaders
     SceneGraph
+    Text
     Trade)
 
 set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
 if(CORRADE_TARGET_ANDROID)
-    
+
     add_library(
         native-lib
         SHARED
-        src/main.cpp
         src/AssetManager.cpp
-        src/CollisionManager.cpp
-        src/Engine.cpp
-        src/GameObject.cpp
-        src/InputManager.cpp
-        src/RoomManager.cpp
         src/Audio/StreamedAudioBuffer.cpp
         src/Audio/StreamedAudioPlayable.cpp
+        src/CollisionManager.cpp
         src/Common/AbstractCustomRenderer.cpp
         src/Common/CommonUtility.cpp
+        src/Common/CustomRenderers/LSNumberRenderer.cpp
+        src/Common/CustomRenderers/PlasmaSquareRenderer.cpp
         src/Common/LinePath.cpp
+        src/Engine.cpp
         src/Game/AbstractGuiElement.cpp
         src/Game/Bubble.cpp
         src/Game/Congrats.cpp
@@ -105,7 +116,11 @@ if(CORRADE_TARGET_ANDROID)
         src/Game/Projectile.cpp
         src/Game/Scenery.cpp
         src/Game/Skybox.cpp
+        src/GameObject.cpp
         src/Graphics/BaseDrawable.cpp
+        src/InputManager.cpp
+        src/main.cpp
+        src/RoomManager.cpp
         src/Shaders/CubeMapShader.cpp
         src/Shaders/PlasmaShader.cpp
         src/Shaders/ScreenQuadShader.cpp
@@ -118,18 +133,16 @@ else()
     add_executable(
         ${PROJECT_NAME}
         WIN32
-        src/main.cpp
         src/AssetManager.cpp
-        src/CollisionManager.cpp
-        src/Engine.cpp
-        src/GameObject.cpp
-        src/InputManager.cpp
-        src/RoomManager.cpp
         src/Audio/StreamedAudioBuffer.cpp
         src/Audio/StreamedAudioPlayable.cpp
+        src/CollisionManager.cpp
         src/Common/AbstractCustomRenderer.cpp
         src/Common/CommonUtility.cpp
+        src/Common/CustomRenderers/LSNumberRenderer.cpp
+        src/Common/CustomRenderers/PlasmaSquareRenderer.cpp
         src/Common/LinePath.cpp
+        src/Engine.cpp
         src/Game/AbstractGuiElement.cpp
         src/Game/Bubble.cpp
         src/Game/Congrats.cpp
@@ -139,6 +152,7 @@ else()
         src/Game/LevelSelector.cpp
         src/Game/LimitLine.cpp
         src/Game/Logo.cpp
+        src/Game/MapPickup.cpp
         src/Game/OverlayGui.cpp
         src/Game/OverlayGuiDetached.cpp
         src/Game/OverlayText.cpp
@@ -146,7 +160,11 @@ else()
         src/Game/Projectile.cpp
         src/Game/Scenery.cpp
         src/Game/Skybox.cpp
+        src/GameObject.cpp
         src/Graphics/BaseDrawable.cpp
+        src/InputManager.cpp
+        src/main.cpp
+        src/RoomManager.cpp
         src/Shaders/CubeMapShader.cpp
         src/Shaders/PlasmaShader.cpp
         src/Shaders/ScreenQuadShader.cpp
@@ -161,12 +179,14 @@ if(CORRADE_TARGET_ANDROID)
       native-lib
       Corrade::Main
       Magnum::Application
+      Magnum::Audio
       Magnum::GL
       Magnum::Magnum
       Magnum::MeshTools
       Magnum::Primitives
       Magnum::SceneGraph
       Magnum::Shaders
+      Magnum::Text
       Magnum::Trade
   )
 
@@ -175,12 +195,14 @@ else()
   target_link_libraries(${PROJECT_NAME} PRIVATE
       Corrade::Main
       Magnum::Application
+      Magnum::Audio
       Magnum::GL
       Magnum::Magnum
       Magnum::MeshTools
       Magnum::Primitives
       Magnum::SceneGraph
       Magnum::Shaders
+      Magnum::Text
       Magnum::Trade
   )
 

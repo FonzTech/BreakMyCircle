@@ -44,7 +44,7 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 		Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SPARKLES);
 
 		// Create plane
-		const std::shared_ptr<GameDrawable<SpriteShader>> td = std::dynamic_pointer_cast<GameDrawable<SpriteShader>>(CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this));
+		const std::shared_ptr<GameDrawable<SpriteShader>> td = std::static_pointer_cast<GameDrawable<SpriteShader>>(CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this));
 		mDrawables.emplace_back(td);
 
 		// Create shader data wrapper
@@ -76,7 +76,7 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 			Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_EXPLOSION);
 
 			// Create plane
-			const std::shared_ptr<GameDrawable<SpriteShader>> td = std::dynamic_pointer_cast<GameDrawable<SpriteShader>>(CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this));
+			const std::shared_ptr<GameDrawable<SpriteShader>> td = std::static_pointer_cast<GameDrawable<SpriteShader>>(CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this));
 			mDrawables.emplace_back(td);
 
 			// Create shader data wrapper

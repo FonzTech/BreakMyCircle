@@ -37,7 +37,7 @@ OverlayGui::OverlayGui(const Int parentIndex, const std::string & textureName) :
 	// Create drawable
 	auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;
 
-	const std::shared_ptr<GameDrawable<Shaders::Flat3D>> td = std::dynamic_pointer_cast<GameDrawable<Shaders::Flat3D>>(std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, texture));
+	const std::shared_ptr<GameDrawable<Shaders::Flat3D>> td = std::static_pointer_cast<GameDrawable<Shaders::Flat3D>>(std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, texture));
 	td->setParent(mManipulator.get());
 	td->setDrawCallback(this);
 	mDrawables.emplace_back(td);

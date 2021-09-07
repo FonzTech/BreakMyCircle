@@ -40,7 +40,7 @@ ElectricBall::ElectricBall(const Int parentIndex) : GameObject(parentIndex)
 			mPieces[i].angleCurrent = Deg(2.0f);
 			mPieces[i].angleLimit = Deg(1.0f);
 
-			std::shared_ptr<GameDrawable<SpriteShader>> td = std::dynamic_pointer_cast<GameDrawable<SpriteShader>>(CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mPieces[i].manipulator, resTexture, this));
+			std::shared_ptr<GameDrawable<SpriteShader>> td = std::static_pointer_cast<GameDrawable<SpriteShader>>(CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mPieces[i].manipulator, resTexture, this));
 			mDrawables.emplace_back(td);
 		}
 	}
