@@ -1,1 +1,2 @@
-/build
+build
+src/main/jniLibs/arm64-v8a/libopenal.so
