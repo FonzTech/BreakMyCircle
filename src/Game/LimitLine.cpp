@@ -19,7 +19,7 @@ LimitLine::LimitLine(const Int parentIndex, const Color4 & color, const Int cust
 	mCustomType = customType;
 
 	// Get assets
-	Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D>(RESOURCE_MESH_PLANE_FLAT);
+	Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D::Position, Shaders::Flat3D::TextureCoordinates>(RESOURCE_MESH_PLANE_FLAT);
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> shader = CommonUtility::singleton->getFlat3DShader();
 	Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WHITE);
 

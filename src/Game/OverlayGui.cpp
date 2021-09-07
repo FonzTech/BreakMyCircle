@@ -6,6 +6,7 @@
 #include <Magnum/Shaders/Flat.h>
 
 #include "../Common/CommonUtility.h"
+#include "../Graphics/GameDrawable.h"
 #include "../RoomManager.h"
 
 std::shared_ptr<GameObject> OverlayGui::getInstance(const nlohmann::json & params)
@@ -29,14 +30,14 @@ OverlayGui::OverlayGui(const Int parentIndex, const std::string & textureName) :
 	mParentIndex = parentIndex;
 
 	// Get assets
-	Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D>(RESOURCE_MESH_PLANE_FLAT);
+	Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D::Position, Shaders::Flat3D::TextureCoordinates>(RESOURCE_MESH_PLANE_FLAT);
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> shader = CommonUtility::singleton->getFlat3DShader();
 	Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(textureName);
 
 	// Create drawable
 	auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;
 
-	const std::shared_ptr<GameDrawable<Shaders::Flat3D>> td = std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, texture);
+	const std::shared_ptr<GameDrawable<Shaders::Flat3D>> td = std::dynamic_pointer_cast<GameDrawable<Shaders::Flat3D>>(std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, texture));
 	td->setParent(mManipulator.get());
 	td->setDrawCallback(this);
 	mDrawables.emplace_back(td);

@@ -25,13 +25,13 @@ OverlayGuiDetached::OverlayGuiDetached(const Int parentIndex, const std::string 
 	{
 	case GO_OGD_FLAT:
 		mShader = &*CommonUtility::singleton->getFlat3DShader();
-		mMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D>(RESOURCE_MESH_PLANE_FLAT);
+		mMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D::Position, Shaders::Flat3D::TextureCoordinates>(RESOURCE_MESH_PLANE_FLAT);
 		mTexture = CommonUtility::singleton->loadTexture(textureName);
 		break;
 
 	case GO_OGD_PLASMA:
 		mShader = &*CommonUtility::singleton->getPlasmaShader();
-		mMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<PlasmaShader>(RESOURCE_MESH_PLANE_PLASMA);
+		mMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<PlasmaShader::Position, PlasmaShader::TextureCoordinates>(RESOURCE_MESH_PLANE_PLASMA);
 		break;
 	}
 }

@@ -143,7 +143,7 @@ void Player::update()
 		const auto& w = RoomManager::singleton->getWindowSize();
 
 		Vector2 p1 = Vector2(InputManager::singleton->mMousePosition);
-		Vector2 p2 = Vector2({ w.x() * 0.5f, w.y() });
+		Vector2 p2 = Vector2( w.x() * 0.5f, w.y() );
 		Vector2 pdir = p2 - p1;
 
 		Float value = std::atan2(-pdir.y(), pdir.x());

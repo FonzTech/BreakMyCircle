@@ -17,7 +17,7 @@ android {
 
         externalNativeBuild {
             cmake {
-                cppFlags "-std=c++14"
+                cppFlags "-std=c++17"
                 arguments '-DANDROID_STL=c++_static', '-DCORRADE_TARGET_ANDROID=true', '-DMAGNUM_ANDROIDAPPLICATION_MAIN=true', '-DCORRADE_RC_EXECUTABLE=D:/Development/C++/corrade-bin/bin/corrade-rc.exe'
             }
         }

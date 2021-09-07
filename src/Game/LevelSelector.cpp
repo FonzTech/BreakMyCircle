@@ -277,7 +277,7 @@ void LevelSelector::update()
 		// Enable or disable player shooting
 		if (canShoot != 0)
 		{
-			((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = canShoot == 1;
+			((Player*)mLevelInfo.playerPointer.lock().get())->mCanShoot = canShoot == 1;
 		}
 	}
 
@@ -474,7 +474,7 @@ void LevelSelector::update()
 				mClickIndex = it->first;
 				break;
 			}
-			else if (lbs == IM_STATE_RELEASED && mClickIndex == it->first && it->second.callback(it->first))
+			else if (lbs == IM_STATE_RELEASED && mClickIndex == Int(it->first) && it->second.callback(it->first))
 			{
 				break;
 			}
@@ -540,7 +540,7 @@ void LevelSelector::update()
 			const Vector2i mouseDelta = InputManager::singleton->mMousePosition - mPrevMousePos;
 			if (mouseDelta.isZero())
 			{
-				mScrollVelocity = { 0.0f };
+				mScrollVelocity = Vector3(0.0f);
 			}
 			else
 			{
@@ -1420,7 +1420,7 @@ void LevelSelector::manageLevelState()
 		// Decrement timer
 		if (mTimer.value < 0.0f)
 		{
-			if (mLevelInfo.playerPointer.expired() || ((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot)
+			if (mLevelInfo.playerPointer.expired() || ((Player*)mLevelInfo.playerPointer.lock().get())->mCanShoot)
 			{
 				checkForLevelEnd();
 			}
@@ -1533,7 +1533,7 @@ void LevelSelector::manageLevelState()
 		if (!mLevelInfo.playerPointer.expired())
 		{
 			// Prevent player from shooting
-			((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = false;
+			((Player*)mLevelInfo.playerPointer.lock().get())->mCanShoot = false;
 		}
 
 		// Control animation
@@ -1703,7 +1703,7 @@ void LevelSelector::finishCurrentLevel(const bool success)
 	// Prevent player from shooting
 	if (!mLevelInfo.playerPointer.expired())
 	{
-		((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = false;
+		((Player*)mLevelInfo.playerPointer.lock().get())->mCanShoot = false;
 	}
 
 	// Set level state as "Finished"
@@ -2116,7 +2116,7 @@ void LevelSelector::usePowerup(const UnsignedInt index)
 		return;
 	}
 
-	const std::shared_ptr<Player> player = (std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock();
+	Player* player = (Player*)mLevelInfo.playerPointer.lock().get();
 
 	switch (index)
 	{
@@ -2187,16 +2187,16 @@ void LevelSelector::createGuis()
 			// If already closed, open/close the settings window
 			else if (mLevelInfo.state < GO_LS_LEVEL_FINISHED)
 			{
-				Int index;
+				Int audioIndex;
 
 				mSettingsOpened = !mSettingsOpened;
 				if (mSettingsOpened)
 				{
 					// Game logic
-					index = GO_LS_AUDIO_PAUSE_IN;
+					audioIndex = GO_LS_AUDIO_PAUSE_IN;
 					if (!mLevelInfo.playerPointer.expired())
 					{
-						((std::shared_ptr<Player>&)mLevelInfo.playerPointer.lock())->mCanShoot = false;
+						((Player*)mLevelInfo.playerPointer.lock().get())->mCanShoot = false;
 					}
 
 					// Set pause text
@@ -2207,11 +2207,11 @@ void LevelSelector::createGuis()
 				}
 				else
 				{
-					index = GO_LS_AUDIO_PAUSE_OUT;
+					audioIndex = GO_LS_AUDIO_PAUSE_OUT;
 				}
 
 				// Play sound
-				playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
+				playSfxAudio(audioIndex);
 
 				// Debug print
 				Debug{} << "You have" << (mSettingsOpened ? "opened" : "closed") << "SETTINGS";

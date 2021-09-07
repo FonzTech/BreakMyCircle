@@ -41,7 +41,7 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 	// Assign members
 	mParentIndex = parentIndex;
 	mAmbientColor = ambientColor;
-	mShakePos = { 0.0f };
+	mShakePos = Vector3(0.0f);
 	mShakeFact = 0.0f;
 
 	// Create game sphere for this game object

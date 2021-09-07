@@ -87,7 +87,7 @@ public:
 		Get plane mesh for specific shader. For instance, typename T
 		can be "Shaders::Flat3D" and first parameter can be RESOURCE_MESH_PLANE_FLAT.
 	*/
-	template <typename T>
+	template <typename S, typename T>
 	Resource<GL::Mesh> getPlaneMeshForSpecializedShader(const std::string & rk)
 	{
 		// Get required resource
@@ -104,7 +104,7 @@ public:
 			GL::Mesh mesh;
 			mesh.setPrimitive(plane.primitive())
 				.setCount(plane.vertexCount())
-				.addVertexBuffer(std::move(vertices), 0, T::Position(), T::TextureCoordinates());
+				.addVertexBuffer(std::move(vertices), 0, S{}, T{});
 
 			// Add to resources
 			CommonUtility::singleton->manager.set(resMesh.key(), std::move(mesh));

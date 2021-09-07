@@ -2,6 +2,7 @@
 
 #include "Bubble.h"
 #include "../Common/CommonUtility.h"
+#include "../Graphics/GameDrawable.h"
 #include "../RoomManager.h"
 
 using namespace Magnum;
@@ -39,7 +40,7 @@ ElectricBall::ElectricBall(const Int parentIndex) : GameObject(parentIndex)
 			mPieces[i].angleCurrent = Deg(2.0f);
 			mPieces[i].angleLimit = Deg(1.0f);
 
-			std::shared_ptr<GameDrawable<SpriteShader>> td = CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mPieces[i].manipulator, resTexture, this);
+			std::shared_ptr<GameDrawable<SpriteShader>> td = std::dynamic_pointer_cast<GameDrawable<SpriteShader>>(CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mPieces[i].manipulator, resTexture, this));
 			mDrawables.emplace_back(td);
 		}
 	}
@@ -47,7 +48,7 @@ ElectricBall::ElectricBall(const Int parentIndex) : GameObject(parentIndex)
 	// Create lightorb
 	{
 		// Load assets
-		Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D>(RESOURCE_MESH_PLANE_FLAT);
+		Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D::Position, Shaders::Flat3D::TextureCoordinates>(RESOURCE_MESH_PLANE_FLAT);
 		Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_LIGHTORB);
 		Resource<GL::AbstractShaderProgram, Shaders::Flat3D> resShader = CommonUtility::singleton->getFlat3DShader();
 

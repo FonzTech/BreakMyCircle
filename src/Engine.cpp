@@ -16,6 +16,8 @@
 #include "RoomManager.h"
 #include "GameObject.h"
 
+using namespace Magnum::Math::Literals;
+
 const Int Engine::GO_LAYERS[] = {
 	GOL_PERSP_FIRST,
 	GOL_PERSP_SECOND,

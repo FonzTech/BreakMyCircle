@@ -8,14 +8,11 @@
 
 #include "../AssetManager.h"
 #include "../RoomManager.h"
+#include "../InputManager.h"
 #include "../Common/CommonUtility.h"
 #include "../Graphics/BaseDrawable.h"
 #include "Bubble.h"
 #include "FallingBubble.h"
-
-#if NDEBUG or _DEBUG
-#include "../InputManager.h"
-#endif
 
 using namespace Corrade;
 using namespace Magnum;

@@ -32,7 +32,7 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 	if (mCustomType == GO_FB_TYPE_BUBBLE)
 	{
 		// Init members
-		mVelocity = { 0.0f };
+		mVelocity = Vector3(0.0f);
 		mDelay = Float(std::rand() % 250) * 0.001f;
 
 		// Create bubble
@@ -44,7 +44,7 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 		Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SPARKLES);
 
 		// Create plane
-		std::shared_ptr<GameDrawable<SpriteShader>> td = CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this);
+		const std::shared_ptr<GameDrawable<SpriteShader>> td = std::dynamic_pointer_cast<GameDrawable<SpriteShader>>(CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this));
 		mDrawables.emplace_back(td);
 
 		// Create shader data wrapper
@@ -58,7 +58,7 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 	else if (mCustomType == GO_FB_TYPE_COIN)
 	{
 		// Init members
-		mVelocity = { 0.0f };
+		mVelocity = Vector3(0.0f);
 		mDelay = 0.0f;
 
 		// Load assets
@@ -67,7 +67,7 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 	else if (mCustomType == GO_FB_TYPE_BOMB)
 	{
 		// Init members
-		mVelocity = { 0.0f };
+		mVelocity = Vector3(0.0f);
 		mDelay = 0.0f;
 
 		// Create assets
@@ -76,7 +76,7 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 			Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_EXPLOSION);
 
 			// Create plane
-			std::shared_ptr<GameDrawable<SpriteShader>> td = CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this);
+			const std::shared_ptr<GameDrawable<SpriteShader>> td = std::dynamic_pointer_cast<GameDrawable<SpriteShader>>(CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this));
 			mDrawables.emplace_back(td);
 
 			// Create shader data wrapper

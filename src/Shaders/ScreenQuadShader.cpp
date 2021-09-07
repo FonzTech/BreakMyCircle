@@ -20,12 +20,15 @@ ScreenQuadShader::ScreenQuadShader()
 
 void ScreenQuadShader::setupShader()
 {
-	MAGNUM_ASSERT_GL_VERSION_SUPPORTED(GL::Version::GL330);
-
+	// Setup shader from file
 #ifdef CORRADE_TARGET_ANDROID
+	MAGNUM_ASSERT_GL_VERSION_SUPPORTED(GL::Version::GLES300);
+
 	GL::Shader vert{ GL::Version::GLES300, GL::Shader::Type::Vertex };
 	GL::Shader frag{ GL::Version::GLES300, GL::Shader::Type::Fragment };
 #else
+	MAGNUM_ASSERT_GL_VERSION_SUPPORTED(GL::Version::GL300);
+
 	GL::Shader vert{ GL::Version::GL330, GL::Shader::Type::Vertex };
 	GL::Shader frag{ GL::Version::GL330, GL::Shader::Type::Fragment };
 #endif

@@ -225,7 +225,7 @@ void Scenery::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>
 void Scenery::createWaterDrawable()
 {
 	// Get mesh and shader
-	Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<WaterShader>(RESOURCE_MESH_PLANE_WATER);
+	Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<WaterShader::Position, WaterShader::TextureCoordinates>(RESOURCE_MESH_PLANE_WATER);
 	Resource<GL::AbstractShaderProgram, WaterShader> resShader = CommonUtility::singleton->getWaterShader();
 
 	// Create new water object

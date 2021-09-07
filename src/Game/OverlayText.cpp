@@ -8,6 +8,7 @@
 
 #include "../RoomManager.h"
 #include "../InputManager.h"
+#include "../Graphics/GameDrawable.h"
 
 std::shared_ptr<GameObject> OverlayText::getInstance(const nlohmann::json & params)
 {

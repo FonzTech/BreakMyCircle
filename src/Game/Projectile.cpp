@@ -34,7 +34,7 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 {
 	// Initialize members
 	mAmbientColor = ambientColor;
-	mVelocity = { 0.0f };
+	mVelocity = Vector3(0.0f);
 	mSpeed = 50.0f;
 
 	updateBBox();
