@@ -64,13 +64,24 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	// Build room
 	RoomManager::singleton->loadRoom("intro");
 	// RoomManager::singleton->createLevelRoom();
+
+#ifdef CORRADE_TARGET_ANDROID
+	while (true)
+    {
+	    tickEvent();
+    }
+#endif
 }
 
 void Engine::tickEvent()
 {
 	// Update input events
 	InputManager::singleton->updateMouseStates();
+
+#ifndef CORRADE_TARGET_ANDROID
 	InputManager::singleton->updateKeyStates();
+#endif
+
 	InputManager::singleton->mClickedObjectId = 0;
 
 	// Compute delta time
@@ -281,6 +292,15 @@ void Engine::mouseMoveEvent(MouseMoveEvent& event)
 	event.setAccepted();
 }
 
+void Engine::viewportEvent(ViewportEvent& event)
+{
+	// Update viewports
+	GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, event.framebufferSize()));
+	RoomManager::singleton->mCamera->setViewport(event.framebufferSize());
+	upsertGameObjectLayers();
+}
+
+#ifndef CORRADE_TARGET_ANDROID
 void Engine::keyPressEvent(KeyEvent& event)
 {
 	// Update state for pressed key button
@@ -297,14 +317,6 @@ void Engine::keyReleaseEvent(KeyEvent& event)
 
 	// Capture event
 	event.setAccepted();
-}
-
-void Engine::viewportEvent(ViewportEvent& event)
-{
-	// Update viewports
-	GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, event.framebufferSize()));
-	RoomManager::singleton->mCamera->setViewport(event.framebufferSize());
-	upsertGameObjectLayers();
 }
 
 void Engine::exitEvent(ExitEvent& event)
@@ -338,6 +350,7 @@ void Engine::exitEvent(ExitEvent& event)
 	// Pass default behaviour
 	event.setAccepted();
 }
+#endif
 
 void Engine::upsertGameObjectLayers()
 {
@@ -441,13 +454,13 @@ void Engine::upsertGameObjectLayers()
 	}
 }
 
-void Engine::updateMouseButtonState(const MouseEvent& event, const bool & pressed)
+void Engine::updateMouseButtonState(MouseEvent& event, const bool & pressed)
 {
 	// Update state for the button which triggered the event
 	InputManager::singleton->setMouseState(event.button(), pressed);
 }
 
-void Engine::updateMouseButtonStates(const MouseMoveEvent& event)
+void Engine::updateMouseButtonStates(MouseMoveEvent& event)
 {
 	// Get current mouse position
 	InputManager::singleton->mMousePosition = event.position();
@@ -460,8 +473,10 @@ void Engine::updateMouseButtonStates(const MouseMoveEvent& event)
 	InputManager::singleton->setMouseState(ImMouseButtons::Left, value ? true : false);
 }
 
+#ifndef CORRADE_TARGET_ANDROID
 void Engine::updateKeyButtonState(const KeyEvent& event, const bool & pressed)
 {
 	// Update state for the button which triggered the event
 	InputManager::singleton->setKeyState(event.key(), pressed);
 }
+#endif

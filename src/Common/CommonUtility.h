@@ -25,7 +25,6 @@
 #include <nlohmann/json.hpp>
 
 #include "CommonTypes.h"
-#include "../Graphics/GameDrawable.h"
 #include "../Shaders/SpriteShader.h"
 #include "../Shaders/PlasmaShader.h"
 #include "../Shaders/WaterShader.h"
@@ -67,7 +66,6 @@ public:
 		const auto& it = params.find("position");
 		if (it != params.end())
 		{
-			Float position[S];
 			for (UnsignedInt i = 0; i < S; ++i)
 			{
 				(*it).at(VECTOR_COMPONENTS[i]).get_to(vector[i]);
@@ -106,7 +104,7 @@ public:
 			GL::Mesh mesh;
 			mesh.setPrimitive(plane.primitive())
 				.setCount(plane.vertexCount())
-				.addVertexBuffer(std::move(vertices), 0, T::Position{}, T::TextureCoordinates{});
+				.addVertexBuffer(std::move(vertices), 0, T::Position(), T::TextureCoordinates());
 
 			// Add to resources
 			CommonUtility::singleton->manager.set(resMesh.key(), std::move(mesh));
@@ -145,7 +143,7 @@ public:
 	bool stringEndsWith(const std::string& data, const std::string& suffix);
 	bool isBubbleColorValid(const Color3 & color);
 	void createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color);
-	std::shared_ptr<GameDrawable<SpriteShader>> createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
+	std::shared_ptr<BaseDrawable> createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> getFlat3DShader();
 	Resource<GL::AbstractShaderProgram, PlasmaShader> getPlasmaShader();
 	Resource<GL::AbstractShaderProgram, WaterShader> getWaterShader();

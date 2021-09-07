@@ -4,6 +4,7 @@ plugins {
 
 android {
     compileSdkVersion 30
+    ndkPath "D:/AndroidSDK/ndk-bundle"
 
     defaultConfig {
         applicationId "it.fonztech.breakmycircle"
@@ -16,11 +17,12 @@ android {
 
         externalNativeBuild {
             cmake {
-                arguments '-DANDROID_STL=c++_static', '-DCORRADE_TARGET_ANDROID=true'
+                cppFlags "-std=c++14"
+                arguments '-DANDROID_STL=c++_static', '-DCORRADE_TARGET_ANDROID=true', '-DMAGNUM_ANDROIDAPPLICATION_MAIN=true', '-DCORRADE_RC_EXECUTABLE=D:/Development/C++/corrade-bin/bin/corrade-rc.exe'
             }
         }
         ndk {
-            abiFilters 'arm64-v8a', 'x86_64'
+            abiFilters 'arm64-v8a'
         }
     }
 

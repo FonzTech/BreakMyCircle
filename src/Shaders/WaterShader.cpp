@@ -12,8 +12,13 @@ WaterShader::WaterShader()
 	// Setup shader from file
 	MAGNUM_ASSERT_GL_VERSION_SUPPORTED(GL::Version::GL330);
 
+#ifdef CORRADE_TARGET_ANDROID
+	GL::Shader vert{ GL::Version::GLES300, GL::Shader::Type::Vertex };
+	GL::Shader frag{ GL::Version::GLES300, GL::Shader::Type::Fragment };
+#else
 	GL::Shader vert{ GL::Version::GL330, GL::Shader::Type::Vertex };
 	GL::Shader frag{ GL::Version::GL330, GL::Shader::Type::Fragment };
+#endif
 
 	vert.addFile("shaders/passthrough.vert");
 	frag.addFile("shaders/water.frag");

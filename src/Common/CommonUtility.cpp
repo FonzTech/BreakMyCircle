@@ -17,6 +17,7 @@
 
 #include "../RoomManager.h"
 #include "../AssetManager.h"
+#include "../Graphics/GameDrawable.h"
 
 using namespace Corrade;
 using namespace Magnum;
@@ -151,17 +152,20 @@ void CommonUtility::createGameSphere(GameObject* gameObject, Object3D & manipula
 	Debug{} << "Created bubble with color" << color.toSrgbInt();
 
 	const auto& it = RoomManager::singleton->mBubbleColors.find(color.toSrgbInt());
+
+#ifndef CORRADE_TARGET_ANDROID
 	if (it == RoomManager::singleton->mBubbleColors.end())
 	{
 		CORRADE_ASSERT(false, "Color " + std::to_string(color.toSrgbInt()) + " for bubble was invalid");
 	}
+#endif
 
 	// Load texture
 	Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(it->second.textureKey);
 	gameObject->mDrawables.back()->mTexture = resTexture;
 }
 
-std::shared_ptr<GameDrawable<SpriteShader>> CommonUtility::createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback)
+std::shared_ptr<BaseDrawable> CommonUtility::createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback)
 {
 	Resource<GL::Mesh> resMesh{ CommonUtility::singleton->manager.get<GL::Mesh>(RESOURCE_MESH_PLANE_SPRITE) };
 

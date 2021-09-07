@@ -6,12 +6,17 @@
 #include <unordered_set>
 #include <Magnum/Math/Color.h>
 #include <Magnum/Math/Matrix4.h>
-#include <Magnum/Platform/Sdl2Application.h>
 #include <Magnum/Timeline.h>
 
 #include "Common/CommonTypes.h"
 #include "RoomManager.h"
 #include "Shaders/ScreenQuadShader.h"
+
+#ifdef CORRADE_TARGET_ANDROID
+#include <Magnum/Platform/AndroidApplication.h>
+#else
+#include <Magnum/Platform/Sdl2Application.h>
+#endif
 
 using namespace Magnum;
 
@@ -21,7 +26,12 @@ public:
 	explicit Engine(const Arguments& arguments);
 
 protected:
-	void tickEvent() override;
+
+#ifdef CORRADE_TARGET_ANDROID
+    void tickEvent();
+#else
+    void tickEvent() override;
+#endif
 
 private:
 	// List of layers
@@ -37,17 +47,23 @@ private:
 	void mousePressEvent(MouseEvent& event) override;
 	void mouseReleaseEvent(MouseEvent& event) override;
 	void mouseMoveEvent(MouseMoveEvent& event) override;
+	void viewportEvent(ViewportEvent& event) override;
+
+#ifndef CORRADE_TARGET_ANDROID
 	void keyPressEvent(KeyEvent& event) override;
 	void keyReleaseEvent(KeyEvent& event) override;
-	void viewportEvent(ViewportEvent& event) override;
 	void exitEvent(ExitEvent& event) override;
+#endif
 
 	// Class methods
 	void upsertGameObjectLayers();
 
-	void updateMouseButtonState(const MouseEvent& event, const bool & pressed);
-	void updateMouseButtonStates(const MouseMoveEvent& event);
+	void updateMouseButtonState(MouseEvent& event, const bool & pressed);
+	void updateMouseButtonStates(MouseMoveEvent& event);
+
+#ifndef CORRADE_TARGET_ANDROID
 	void updateKeyButtonState(const KeyEvent& event, const bool & pressed);
+#endif
 
 	// Variables
 	Timeline mTimeline;

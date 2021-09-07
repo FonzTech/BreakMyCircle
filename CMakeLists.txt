@@ -13,34 +13,53 @@ if(NOT CORRADE_TARGET_ANDROID)
 endif()
 
 # Add module path in case this is project root
-set(CORRADE_SRC_PATH "D:/Development/C++/corrade/modules")
-set(CORRADE_BIN_PATH "D:/Development/C++/corrade-bin")
-set(SDL2_INCLUDE_DIR "D:/Development/C++/SDL2-2.0.14/include")
-
 set(MAGNUM_SRC_PATH "D:/Development/C++/magnum/modules")
-set(MAGNUM_BIN_PATH "D:/Development/C++/magnum-bin")
+list(APPEND CMAKE_MODULE_PATH ${MAGNUM_SRC_PATH})
+
+if(CORRADE_TARGET_ANDROID)
+
+    set(NDK_SYSROOT "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr")
+    
+    list(APPEND CMAKE_MODULE_PATH ${NDK_SYSROOT})
+    
+    include_directories(
+        PUBLIC
+        "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include/AL"
+        "D:/Development/C++/magnum-plugins/src/external/stb"
+        "D:/Development/C++/nlohmann-json"
+    )
+
+else()
+
+    set(CORRADE_BIN_PATH "D:/Development/C++/corrade-bin")
+    
+    set(SDL2_INCLUDE_DIR "D:/Development/C++/SDL2-2.0.14/include")
+    set(SDL2_LIBRARY "D:/Development/C++/SDL2-2.0.14/lib/x64")
+
+    set(MAGNUM_SRC_PATH "D:/Development/C++/magnum/modules")
+    set(MAGNUM_BIN_PATH "D:/Development/C++/magnum-bin")
+
+    set(OPENAL_BIN_PATH "D:/Development/C++/openal-bin")
+
+    list(APPEND CMAKE_PREFIX_PATH ${MAGNUM_BIN_PATH})
+
+    list(APPEND CMAKE_MODULE_PATH ${CORRADE_SRC_PATH})
+    list(APPEND CMAKE_PREFIX_PATH ${CORRADE_BIN_PATH})
+    
+    list(APPEND CMAKE_PREFIX_PATH ${SDL2_INCLUDE_DIR})
+    list(APPEND CMAKE_PREFIX_PATH ${SDL2_LIBRARY})
+    
+    list(APPEND CMAKE_PREFIX_PATH ${OPENAL_BIN_PATH})
+
+endif()
 
 if(CORRADE_TARGET_ANDROID)
     find_package(Magnum REQUIRED AndroidApplication)
 else()
     find_package(Magnum REQUIRED Sdl2Application)
-    set(SDL2_LIBRARY "D:/Development/C++/SDL2-2.0.14/lib/x64")
+    find_package(SDL2 REQUIRED)
 endif()
 
-set(NLOHMANN_JSON_INCLUDE_DIR "D:/Development/C++/nlohmann-json")
-
-set(OPENAL_BIN_PATH "D:/Development/C++/openal-bin")
-
-list(APPEND CMAKE_MODULE_PATH ${CORRADE_SRC_PATH})
-list(APPEND CMAKE_MODULE_PATH ${MAGNUM_SRC_PATH})
-
-list(APPEND CMAKE_PREFIX_PATH ${CORRADE_BIN_PATH})
-list(APPEND CMAKE_PREFIX_PATH ${MAGNUM_BIN_PATH})
-list(APPEND CMAKE_PREFIX_PATH ${SDL2_INCLUDE_DIR})
-list(APPEND CMAKE_PREFIX_PATH ${SDL2_LIBRARY})
-list(APPEND CMAKE_PREFIX_PATH ${OPENAL_BIN_PATH})
-
-find_package(SDL2 REQUIRED)
 find_package(Corrade REQUIRED Main)
 find_package(Magnum REQUIRED
     GL
@@ -53,6 +72,7 @@ find_package(Magnum REQUIRED
 set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
 if(CORRADE_TARGET_ANDROID)
+    
     add_library(
         native-lib
         SHARED
@@ -92,7 +112,9 @@ if(CORRADE_TARGET_ANDROID)
         src/Shaders/SpriteShader.cpp
         src/Shaders/WaterShader.cpp
     )
+    
 else()
+
     add_executable(
         ${PROJECT_NAME}
         WIN32
@@ -133,35 +155,58 @@ else()
     )
 endif()
 
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    Corrade::Main
-    Magnum::Application
-    Magnum::GL
-    Magnum::Magnum
-    Magnum::MeshTools
-    Magnum::Primitives
-    Magnum::SceneGraph
-    Magnum::Shaders
-    Magnum::Trade
-)
+if(CORRADE_TARGET_ANDROID)
 
-install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
+  target_link_libraries(
+      native-lib
+      Corrade::Main
+      Magnum::Application
+      Magnum::GL
+      Magnum::Magnum
+      Magnum::MeshTools
+      Magnum::Primitives
+      Magnum::SceneGraph
+      Magnum::Shaders
+      Magnum::Trade
+  )
 
-install(FILES scenes/cannon_1.glb DESTINATION ${CMAKE_INSTALL_PREFIX}/scenes)
+else()
 
-install(FILES shaders/screen_quad.vert DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
-install(FILES shaders/screen_quad.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
-install(FILES shaders/passthrough.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
-install(FILES shaders/sprite.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
-install(FILES shaders/water.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+  target_link_libraries(${PROJECT_NAME} PRIVATE
+      Corrade::Main
+      Magnum::Application
+      Magnum::GL
+      Magnum::Magnum
+      Magnum::MeshTools
+      Magnum::Primitives
+      Magnum::SceneGraph
+      Magnum::Shaders
+      Magnum::Trade
+  )
 
-install(FILES textures/sparkles.png DESTINATION ${CMAKE_INSTALL_PREFIX}/textures)
+endif()
 
-install(FILES paths/new_sphere.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/paths)
+if(NOT CORRADE_TARGET_ANDROID)
 
-install(FILES rooms/intro.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/rooms)
+  install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
 
-install(FILES audios/bgmusic.ogg DESTINATION ${CMAKE_INSTALL_PREFIX}/audios)
+  install(FILES scenes/cannon_1.glb DESTINATION ${CMAKE_INSTALL_PREFIX}/scenes)
+
+  install(FILES shaders/screen_quad.vert DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+  install(FILES shaders/screen_quad.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+  install(FILES shaders/passthrough.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+  install(FILES shaders/sprite.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+  install(FILES shaders/water.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+
+  install(FILES textures/sparkles.png DESTINATION ${CMAKE_INSTALL_PREFIX}/textures)
+
+  install(FILES paths/new_sphere.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/paths)
+
+  install(FILES rooms/intro.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/rooms)
+
+  install(FILES audios/bgmusic.ogg DESTINATION ${CMAKE_INSTALL_PREFIX}/audios)
+
+endif()
 
 # Make the executable a default target to build & run in Visual Studio
 # set_property(DIRECTORY ${PROJECT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ${PROJECT_NAME})

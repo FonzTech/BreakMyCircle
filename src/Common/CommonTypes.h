@@ -118,10 +118,15 @@
 #include <Magnum/SceneGraph/Drawable.h>
 #include <Magnum/SceneGraph/MatrixTransformation3D.h>
 #include <Magnum/SceneGraph/Scene.h>
-#include <Magnum/Platform/Sdl2Application.h>
 #include <Magnum/Trade/PhongMaterialData.h>
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/GL/Texture.h>
+
+#ifdef CORRADE_TARGET_ANDROID
+#include <Magnum/Platform/AndroidApplication.h>
+#else
+#include <Magnum/Platform/Sdl2Application.h>
+#endif
 
 using namespace Magnum;
 
@@ -129,7 +134,10 @@ typedef SceneGraph::Object<SceneGraph::MatrixTransformation3D> Object3D;
 typedef SceneGraph::Scene<SceneGraph::MatrixTransformation3D> Scene3D;
 
 typedef Platform::Application::MouseEvent::Button ImMouseButtons;
+
+#ifndef CORRADE_TARGET_ANDROID
 typedef Platform::Application::KeyEvent::Key ImKeyButtons;
+#endif
 
 typedef Containers::Array<Containers::Optional<GL::Mesh>> AssetMeshes;
 typedef Containers::Array<Containers::Optional<GL::Texture2D>> AssetTextures;

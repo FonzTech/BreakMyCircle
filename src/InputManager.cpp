@@ -5,6 +5,12 @@ std::unique_ptr<InputManager> InputManager::singleton = nullptr;
 InputManager::InputManager()
 {
 	mMousePosition = { 0, 0 };
+	mMouseStates = {};
+
+#ifndef CORRADE_TARGET_ANDROID
+	mKeyStates = {};
+#endif
+
 	mClickedObjectId = 0U;
 }
 
@@ -13,10 +19,12 @@ void InputManager::setMouseState(const ImMouseButtons & key, const bool & presse
 	mPreTickMouseStates[key] = pressed;
 }
 
+#ifndef CORRADE_TARGET_ANDROID
 void InputManager::setKeyState(const ImKeyButtons & key, const bool & pressed)
 {
 	mPreTickKeyStates[key] = pressed;
 }
+#endif
 
 void InputManager::updateMouseStates()
 {
@@ -37,6 +45,7 @@ void InputManager::updateMouseStates()
 	}
 }
 
+#ifndef CORRADE_TARGET_ANDROID
 void InputManager::updateKeyStates()
 {
 	for (std::unordered_map<ImKeyButtons, Int>::iterator it = mPreTickKeyStates.begin(); it != mPreTickKeyStates.end(); ++it)
@@ -55,3 +64,4 @@ void InputManager::updateKeyStates()
 		}
 	}
 }
+#endif
