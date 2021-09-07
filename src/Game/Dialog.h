@@ -19,7 +19,7 @@ class Dialog : public GameObject
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	Dialog(const Int parentIndex, const UnsignedInt textCapacity = 100);
+	Dialog(const Int parentIndex, const UnsignedInt messageCapacity = 100U, const UnsignedInt titleCapacity = 0U);
 	~Dialog();
 
 	const Int getType() const override;
@@ -27,11 +27,15 @@ public:
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
+	std::shared_ptr<OverlayText>& getTitleDrawable();
+	std::shared_ptr<OverlayText>& getMessageDrawable();
+	void setTitle(const std::string & text);
 	void setMessage(const std::string & text);
-	void setTextPosition(const Vector3 & position);
+	void setTitlePosition(const Vector3 & position);
+	void setMessagePosition(const Vector3 & position);
 	void addAction(const std::string & text, const std::function<void(UnsignedInt)> & callback, const bool isLong = false, const Vector3 & offset = Vector3(0.0f));
 	void closeDialog();
-	void shakeButton(const UnsignedInt index);
+	void shakeButton(const UnsignedInt index);;
 
 protected:
 
@@ -47,6 +51,7 @@ protected:
 	Float mOpacity;
 	Int mClickIndex;
 	std::shared_ptr<OverlayGui> mBackground;
-	std::shared_ptr<OverlayText> mText;
+	std::shared_ptr<OverlayText> mTitle;
+	std::shared_ptr<OverlayText> mMessage;
 	std::vector<GD_Action> mActions;
 };

@@ -40,3 +40,11 @@ const void GameObject::playSfxAudio(const Int index, const Float offset)
 			.setOffsetInSeconds(offset)
 			.play();
 }
+
+const void GameObject::pushToFront()
+{
+	for (auto i = 0; i < mDrawables.size(); ++i)
+	{
+		mDrawables[i]->pushToFront();
+	}
+}

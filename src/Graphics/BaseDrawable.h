@@ -32,6 +32,8 @@ public:
 	virtual GL::AbstractShaderProgram& getShader() = 0;
 	virtual void draw(const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) = 0;
 
+	const void pushToFront();
+
 protected:
 	IDrawCallback* mDrawCallback;
 	UnsignedInt mObjectId;

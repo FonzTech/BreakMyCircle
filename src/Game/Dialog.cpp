@@ -15,7 +15,7 @@ std::shared_ptr<GameObject> Dialog::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Dialog::Dialog(const Int parentIndex, const UnsignedInt textCapacity) : GameObject(parentIndex), mOpened(1.0f), mOpacity(0.0f), mClickIndex(-1)
+Dialog::Dialog(const Int parentIndex, const UnsignedInt messageCapacity, const UnsignedInt titleCapacity) : GameObject(parentIndex), mOpened(1.0f), mOpacity(0.0f), mClickIndex(-1)
 {
 	// Assign members
 	mParentIndex = parentIndex;
@@ -31,16 +31,29 @@ Dialog::Dialog(const Int parentIndex, const UnsignedInt textCapacity) : GameObje
 		mBackground = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
 	}
 
-	// Create text
+	// Create title
+	if (titleCapacity != 0U)
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::LineCenter, textCapacity);
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, titleCapacity);
+		go->mColor = Color4(1.0f, 1.0f, 1.0f, 0.0f);
+		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
+		go->mPosition = Vector3(0.0f, 0.4f, 0.0f);
+		go->setSize(Vector2(1.0f));
+		go->setText("---");
+
+		mTitle = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
+	}
+
+	// Create message
+	{
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, messageCapacity);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 0.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
 		go->mPosition = Vector3(0.0f, 0.3f, 0.0f);
 		go->setSize(Vector2(1.0f));
 		go->setText("---");
 
-		mText = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
+		mMessage = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
 	}
 }
 
@@ -48,7 +61,16 @@ Dialog::~Dialog()
 {
 	// Destroy all the mandatory GUI objects
 	mBackground->mDestroyMe = true;
-	mText->mDestroyMe = true;
+
+	if (mTitle != nullptr)
+	{
+		mTitle->mDestroyMe = true;
+	}
+
+	if (mMessage != nullptr)
+	{
+		mMessage->mDestroyMe = true;
+	}
 
 	// Destroy all of the added actions
 	for (auto& action : mActions)
@@ -86,9 +108,18 @@ void Dialog::update()
 	// Set background color
 	mBackground->color()[3] = mOpacity * 0.8f;
 
-	// Set message color
-	mText->mColor.data()[3] = mOpacity;
-	mText->mOutlineColor.data()[3] = mOpacity;
+	// Set title and message color
+	if (mTitle != nullptr)
+	{
+		mTitle->mColor.data()[3] = mOpacity;
+		mTitle->mOutlineColor.data()[3] = mOpacity;
+	}
+
+	if (mMessage != nullptr)
+	{
+		mMessage->mColor.data()[3] = mOpacity;
+		mMessage->mOutlineColor.data()[3] = mOpacity;
+	}
 
 	// Set parameters for all actions
 	for (UnsignedInt i = 0; i < mActions.size(); ++i)
@@ -151,14 +182,34 @@ void Dialog::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>>
 {
 }
 
-void Dialog::setMessage(const std::string & text)
+std::shared_ptr<OverlayText>& Dialog::getTitleDrawable()
 {
-	mText->setText(text);
+	return mTitle;
 }
 
-void Dialog::setTextPosition(const Vector3 & position)
+std::shared_ptr<OverlayText>& Dialog::getMessageDrawable()
 {
-	mText->setPosition(position.xy());
+	return mMessage;
+}
+
+void Dialog::setTitle(const std::string & text)
+{
+	mTitle->setText(text);
+}
+
+void Dialog::setMessage(const std::string & text)
+{
+	mMessage->setText(text);
+}
+
+void Dialog::setTitlePosition(const Vector3 & position)
+{
+	mTitle->setPosition(position.xy());
+}
+
+void Dialog::setMessagePosition(const Vector3 & position)
+{
+	mMessage->setPosition(position.xy());
 }
 
 void Dialog::addAction(const std::string & text, const std::function<void(UnsignedInt)> & callback, const bool isLong, const Vector3 & offset)

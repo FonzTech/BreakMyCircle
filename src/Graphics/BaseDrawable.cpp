@@ -22,3 +22,10 @@ const void BaseDrawable::setObjectId(const UnsignedInt objectId)
 {
 	mObjectId = objectId;
 }
+
+const void BaseDrawable::pushToFront()
+{
+	(*group())
+		.remove(*this)
+		.add(*this);
+}

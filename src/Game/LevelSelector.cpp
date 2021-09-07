@@ -1942,9 +1942,11 @@ void LevelSelector::createPowerupView()
 						break;
 					}
 
-					message = title + "\n\n" + message;
-					const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST, message.length());
-					o->setTextPosition({ 0.0f, 0.4f, 0.0f });
+					const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST, UnsignedInt(message.length()), UnsignedInt(title.length()));
+					o->getTitleDrawable()->mColor = { 1.0f, 0.8f, 0.25f, 1.0f };
+					o->setTitlePosition({ 0.0f, 0.36f, 0.0f });
+					o->setMessagePosition({ 0.0f, 0.175f, 0.0f });
+					o->setTitle(title);
 					o->setMessage(message);
 
 					Vector3 offsetButton;
@@ -2054,7 +2056,13 @@ void LevelSelector::createPowerupView()
 						);
 					}
 
+					// Push dialog
 					mDialog = (std::shared_ptr<Dialog>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+
+					// Move coins GUI on top
+					mLevelGuis[GO_LS_GUI_COIN]->pushToFront();
+					mLevelTexts[GO_LS_TEXT_COIN]->pushToFront();
+
 					return true;
 				}
 			};
