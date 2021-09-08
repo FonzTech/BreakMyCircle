@@ -75,7 +75,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
     env->ReleaseStringUTFChars(jsParam1, Param1);
 #endif
 
-    Debug{} << "okokokk" << CommonUtility::singleton->mAssetDir << "qqq";
+    Debug{} << "Asset base directory is" << CommonUtility::singleton->mAssetDir;
 
 	// Setup screen quad shader (after the CommonUtility has started)
 	mScreenQuadShader.setup();
