@@ -16,6 +16,10 @@
 #include "RoomManager.h"
 #include "GameObject.h"
 
+#ifdef CORRADE_TARGET_ANDROID
+#include <android/native_activity.h>
+#endif
+
 using namespace Magnum::Math::Literals;
 
 const Int Engine::GO_LAYERS[] = {
@@ -33,9 +37,9 @@ const std::unordered_set<Int> Engine::GO_DRAW_DETACHED = {
 Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
 {
 	// Setup window
-	#ifdef MAGNUM_SDL2APPLICATION_MAIN
+#ifdef MAGNUM_SDL2APPLICATION_MAIN
 	setWindowSize({ 432, 768 });
-	#endif
+#endif
 
 	// Start timeline
 	mTimeline.start();
@@ -51,6 +55,30 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 
 	// Init common utility
 	CommonUtility::singleton = std::make_unique<CommonUtility>();
+
+#ifdef CORRADE_TARGET_ANDROID
+    JNIEnv *env;
+    nativeActivity()->vm->AttachCurrentThread(&env, 0);
+
+    jobject me = nativeActivity()->clazz;
+
+    jclass acl = env->GetObjectClass(me); //class pointer of NativeActivity
+    jmethodID giid = env->GetMethodID(acl, "getIntent", "()Landroid/content/Intent;");
+    jobject intent = env->CallObjectMethod(me, giid); //Got our intent
+
+    jclass icl = env->GetObjectClass(intent); //class pointer of Intent
+    jmethodID gseid = env->GetMethodID(icl, "getStringExtra", "(Ljava/lang/String;)Ljava/lang/String;");
+
+    jstring jsParam1 = (jstring)env->CallObjectMethod(intent, gseid, env->NewStringUTF("asset_dir"));
+    const char *Param1 = env->GetStringUTFChars(jsParam1, 0);
+    CommonUtility::singleton->mAssetDir = std::string(Param1);
+    env->ReleaseStringUTFChars(jsParam1, Param1);
+#endif
+
+    Debug{} << "okokokk" << CommonUtility::singleton->mAssetDir << "qqq";
+
+	// Setup screen quad shader (after the CommonUtility has started)
+	mScreenQuadShader.setup();
 
 	// Init input manager
 	InputManager::singleton = std::make_unique<InputManager>();

@@ -7,6 +7,8 @@
 #include <Magnum/GL/Shader.h>
 #include <Magnum/GL/Version.h>
 
+#include "../Common/CommonUtility.h"
+
 SpriteShader::SpriteShader()
 {
 	// Setup shader from file
@@ -22,8 +24,8 @@ SpriteShader::SpriteShader()
 	GL::Shader frag{ GL::Version::GL330, GL::Shader::Type::Fragment };
 #endif
 
-	vert.addFile("shaders/passthrough.vert");
-	frag.addFile("shaders/sprite.frag");
+	vert.addFile(CommonUtility::singleton->mAssetDir + "shaders/passthrough.vert");
+	frag.addFile(CommonUtility::singleton->mAssetDir + "shaders/sprite.frag");
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(GL::Shader::compile({ vert, frag }));
 

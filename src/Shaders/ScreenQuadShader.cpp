@@ -9,13 +9,12 @@
 #include <Magnum/Trade/AbstractImporter.h>
 
 #include "../RoomManager.h"
+#include "../Common/CommonUtility.h"
 
 using namespace Corrade;
 
 ScreenQuadShader::ScreenQuadShader()
 {
-	setupShader();
-	setupMesh();
 }
 
 void ScreenQuadShader::setupShader()
@@ -33,8 +32,8 @@ void ScreenQuadShader::setupShader()
 	GL::Shader frag{ GL::Version::GL330, GL::Shader::Type::Fragment };
 #endif
 
-	vert.addFile("shaders/screen_quad.vert");
-	frag.addFile("shaders/screen_quad.frag");
+	vert.addFile(CommonUtility::singleton->mAssetDir + "shaders/screen_quad.vert");
+	frag.addFile(CommonUtility::singleton->mAssetDir + "shaders/screen_quad.frag");
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(GL::Shader::compile({ vert, frag }));
 
@@ -46,6 +45,12 @@ void ScreenQuadShader::setupShader()
 	setUniform(uniformLocation("depthStencilPerspFirst"), GOL_PERSP_FIRST + TEXTURE_UNIT_DEPTHSTENCIL_OFFSET);
 	setUniform(uniformLocation("colorPerspSecond"), GOL_PERSP_SECOND);
 	setUniform(uniformLocation("colorOrthoFirst"), GOL_ORTHO_FIRST);
+}
+
+void ScreenQuadShader::setup()
+{
+	setupShader();
+	setupMesh();
 }
 
 void ScreenQuadShader::setupMesh()

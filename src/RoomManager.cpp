@@ -183,7 +183,7 @@ void RoomManager::prepareRoom(const bool stopBgMusic)
 void RoomManager::loadRoom(const std::string & name)
 {
 	// Load room from file
-	const auto& content = Utility::Directory::readString("rooms/" + name + ".txt");
+	const auto& content = Utility::Directory::readString(CommonUtility::singleton->mAssetDir + "rooms/" + name + ".txt");
 	const auto& roomData = nlohmann::json::parse(content);
 
 	// Load audio

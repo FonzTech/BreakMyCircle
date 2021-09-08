@@ -94,7 +94,7 @@ void Skybox::createDrawable(const std::string & name)
 			std::exit(-4);
 		}
 
-		importer->openFile("textures/" + name + "_px.png");
+		importer->openFile(CommonUtility::singleton->mAssetDir + "textures/" + name + "_px.png");
 		Containers::Optional<Trade::ImageData2D> image = importer->image2D(0);
 		CORRADE_INTERNAL_ASSERT(image);
 		Vector2i size = image->size();
@@ -102,23 +102,23 @@ void Skybox::createDrawable(const std::string & name)
 			.setStorage(Math::log2(size.min()) + 1, GL::TextureFormat::RGB8, size)
 			.setSubImage(GL::CubeMapCoordinate::PositiveX, 0, {}, *image);
 
-		importer->openFile("textures/" + name + "_nx.png");
+		importer->openFile(CommonUtility::singleton->mAssetDir + "textures/" + name + "_nx.png");
 		CORRADE_INTERNAL_ASSERT_OUTPUT(image = importer->image2D(0));
 		cubeMap.setSubImage(GL::CubeMapCoordinate::NegativeX, 0, {}, *image);
 
-		importer->openFile("textures/" + name + "_ny.png");
+		importer->openFile(CommonUtility::singleton->mAssetDir + "textures/" + name + "_ny.png");
 		CORRADE_INTERNAL_ASSERT_OUTPUT(image = importer->image2D(0));
 		cubeMap.setSubImage(GL::CubeMapCoordinate::PositiveY, 0, {}, *image);
 
-		importer->openFile("textures/" + name + "_py.png");
+		importer->openFile(CommonUtility::singleton->mAssetDir + "textures/" + name + "_py.png");
 		CORRADE_INTERNAL_ASSERT_OUTPUT(image = importer->image2D(0));
 		cubeMap.setSubImage(GL::CubeMapCoordinate::NegativeY, 0, {}, *image);
 
-		importer->openFile("textures/" + name + "_pz.png");
+		importer->openFile(CommonUtility::singleton->mAssetDir + "textures/" + name + "_pz.png");
 		CORRADE_INTERNAL_ASSERT_OUTPUT(image = importer->image2D(0));
 		cubeMap.setSubImage(GL::CubeMapCoordinate::PositiveZ, 0, {}, *image);
 
-		importer->openFile("textures/" + name + "_nz.png");
+		importer->openFile(CommonUtility::singleton->mAssetDir + "textures/" + name + "_nz.png");
 		CORRADE_INTERNAL_ASSERT_OUTPUT(image = importer->image2D(0));
 		cubeMap.setSubImage(GL::CubeMapCoordinate::NegativeZ, 0, {}, *image);
 

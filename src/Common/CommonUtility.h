@@ -52,6 +52,9 @@ public:
 	// Resource manager holder
 	MyResourceManager manager;
 
+	// Base path for resources
+	std::string mAssetDir;
+
 	// Constructor
 	CommonUtility();
 

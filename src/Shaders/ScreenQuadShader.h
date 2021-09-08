@@ -21,6 +21,8 @@ public:
 	ScreenQuadShader& bindColorTexture(const Int layer, GL::Texture2D & texture);
 	ScreenQuadShader& bindDepthStencilTexture(const Int layer, GL::Texture2D & texture);
 
+	void setup();
+
 private:
 
 	void setupShader();
