@@ -24,6 +24,7 @@ class Engine : public Platform::Application
 {
 public:
 	explicit Engine(const Arguments& arguments);
+	~Engine();
 
 protected:
 
@@ -57,6 +58,8 @@ private:
 
 	// Class methods
 	void upsertGameObjectLayers();
+	void drawInternal();
+	void exitInternal(void* arg);
 
 	void updateMouseButtonState(MouseEvent& event, const bool & pressed);
 	void updateMouseButtonStates(MouseMoveEvent& event);

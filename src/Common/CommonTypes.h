@@ -135,6 +135,12 @@ typedef SceneGraph::Scene<SceneGraph::MatrixTransformation3D> Scene3D;
 
 typedef Platform::Application::MouseEvent::Button ImMouseButtons;
 
+#ifdef CORRADE_TARGET_ANDROID
+#define PRIMARY_BUTTON ImMouseButtons::None
+#else
+#define PRIMARY_BUTTON ImMouseButtons::Left
+#endif
+
 #ifndef CORRADE_TARGET_ANDROID
 typedef Platform::Application::KeyEvent::Key ImKeyButtons;
 #endif

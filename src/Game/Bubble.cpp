@@ -184,9 +184,7 @@ Int Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
 			std::unique_ptr<std::queue<GraphNode>> fps = std::make_unique<std::queue<GraphNode>>();
 
 			// Work on bubble collision group
-#if NDEBUG or _DEBUG
-			printf("Collided bubbles of color %d are %d\n", mAmbientColor.toSrgbInt(), bg.size());
-#endif
+			Debug{} << "Collided bubbles of color" << mAmbientColor.toSrgbInt() << "are" << bg.size();
 
 			if (bg.size() >= MINIMUM_BUBBLE_TRAIL_SIZE)
 			{
@@ -303,10 +301,7 @@ Int Bubble::destroyDisjointBubbles()
 			std::unique_ptr<Graph> graph = bubble->destroyDisjointBubblesImpl(group);
 			// graph->set.insert(bubble);
 
-			// Debug print
-			#if NDEBUG or _DEBUG
-			printf("Graph %s bubbles are %d\n", graph->attached ? "attached" : "not attached", graph->set.size());
-			#endif
+			Debug{} << "Graph" << (graph->attached ? "attached" : "not attached") << "bubbles are" << graph->set.size();
 
 			// Destroy all bubbles obtained from the previous function
 			if (!graph->attached)

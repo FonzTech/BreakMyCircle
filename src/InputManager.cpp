@@ -5,6 +5,7 @@ std::unique_ptr<InputManager> InputManager::singleton = nullptr;
 InputManager::InputManager()
 {
 	mMousePosition = { 0, 0 };
+	mPreTickMouseStates = {};
 	mMouseStates = {};
 
 #ifndef CORRADE_TARGET_ANDROID
@@ -30,17 +31,22 @@ void InputManager::updateMouseStates()
 {
 	for (std::unordered_map<ImMouseButtons, Int>::iterator it = mPreTickMouseStates.begin(); it != mPreTickMouseStates.end(); ++it)
 	{
-		auto* ms = &mMouseStates[it->first];
+		if (mMouseStates.find(it->first) == mMouseStates.end())
+		{
+			mMouseStates[it->first] = IM_STATE_NOT_PRESSED;
+		}
+
+		auto value = mMouseStates[it->first];
 		if (mPreTickMouseStates[it->first])
 		{
-			if (*ms != IM_STATE_PRESSING)
+			if (value != IM_STATE_PRESSING)
 			{
-				*ms = *ms == IM_STATE_PRESSED ? IM_STATE_PRESSING : IM_STATE_PRESSED;
+				mMouseStates[it->first] = value == IM_STATE_PRESSED ? IM_STATE_PRESSING : IM_STATE_PRESSED;
 			}
 		}
-		else if (*ms != IM_STATE_NOT_PRESSED)
+		else if (value != IM_STATE_NOT_PRESSED)
 		{
-			*ms = *ms == IM_STATE_RELEASED ? IM_STATE_NOT_PRESSED : IM_STATE_RELEASED;
+			mMouseStates[it->first] = value == IM_STATE_RELEASED ? IM_STATE_NOT_PRESSED : IM_STATE_RELEASED;
 		}
 	}
 }

@@ -230,6 +230,7 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 		}
 
 		// Sort by trasparency
+#if 1 == 2
 		std::sort(gameObject.mDrawables.begin(), gameObject.mDrawables.end(), [](const std::shared_ptr<BaseDrawable>& a, const std::shared_ptr<BaseDrawable>& b) -> bool {
 			if (a->mMesh.state() == ResourceState::Final && CommonUtility::singleton->stringEndsWith(a->mMesh->label(), "VT"))
 			{
@@ -238,6 +239,7 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 			}
 			return false;
 		});
+#endif
 	}
 	else if (!assets.meshes.empty() && assets.meshes[0])
 	{

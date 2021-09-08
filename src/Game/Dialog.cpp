@@ -1,6 +1,7 @@
 #include "Dialog.h"
 #include "../RoomManager.h"
 #include "../InputManager.h"
+#include "../Common/CommonTypes.h"
 
 #include <Magnum/Animation/Easing.h>
 
@@ -99,7 +100,7 @@ void Dialog::update()
 	}
 
 	// Prepare work variables
-	const auto& lbs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
+	const auto& lbs = InputManager::singleton->mMouseStates[PRIMARY_BUTTON];
 	const Vector3 p(Float(InputManager::singleton->mMousePosition.x()), Float(InputManager::singleton->mMousePosition.y()), 0.0f);
 	const auto& w = RoomManager::singleton->getWindowSize();
 

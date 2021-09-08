@@ -352,7 +352,7 @@ void LevelSelector::update()
 	if (isViewingLevel || isViewingSettings)
 	{
 		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
-		const auto& lbs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
+		const auto& lbs = InputManager::singleton->mMouseStates[PRIMARY_BUTTON];
 
 		if (lbs == IM_STATE_PRESSED)
 		{
@@ -459,7 +459,7 @@ void LevelSelector::update()
 	*/
 
 	// Handle button clicks
-	const auto& lbs = InputManager::singleton->mMouseStates[ImMouseButtons::Left];
+	const auto& lbs = InputManager::singleton->mMouseStates[PRIMARY_BUTTON];
 
 	const Vector3 p(Float(InputManager::singleton->mMousePosition.x()), Float(InputManager::singleton->mMousePosition.y()), 0.0f);
 	const auto& w = RoomManager::singleton->getWindowSize();

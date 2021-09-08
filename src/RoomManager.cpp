@@ -214,7 +214,7 @@ void RoomManager::loadRoom(const std::string & name)
 			const auto& it = gameObjectCreators.find(type);
 			if (it == gameObjectCreators.end())
 			{
-				printf("Could not find instantiator function for type %u. Skipping it.\n", type);
+				Error{} << "Could not find instantiator function for type" << type << ". Skipping it";
 				continue;
 			}
 
@@ -286,7 +286,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 			const auto &it = gameObjectCreators.find(pi->key);
 			if (it == gameObjectCreators.end())
 			{
-				printf("Could not find instantiator function for type %u. Skipping it.\n", pi->key);
+				Debug{} << "Could not find instantiator function for type " << pi->key << ". Skipping it";
 				continue;
 			}
 

@@ -20,6 +20,12 @@
 #include <android/native_activity.h>
 #endif
 
+#define DEBUG_OPENGL_CALLS
+
+#ifdef DEBUG_OPENGL_CALLS
+#include <Magnum/GL/DebugOutput.h>
+#endif
+
 using namespace Magnum::Math::Literals;
 
 const Int Engine::GO_LAYERS[] = {
@@ -41,8 +47,11 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	setWindowSize({ 432, 768 });
 #endif
 
-	// Start timeline
-	mTimeline.start();
+#ifdef DEBUG_OPENGL_CALLS
+        GL::Renderer::enable(GL::Renderer::Feature::DebugOutput);
+        GL::Renderer::enable(GL::Renderer::Feature::DebugOutputSynchronous);
+        GL::DebugOutput::setDefaultCallback();
+#endif
 
 	// Set renderer features
 	// GL::Renderer::enable(GL::Renderer::Feature::FaceCulling);
@@ -52,6 +61,9 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 
 	// Set clear color
 	GL::Renderer::setClearColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
+
+    // Start timeline
+    mTimeline.start();
 
 	// Init common utility
 	CommonUtility::singleton = std::make_unique<CommonUtility>();
@@ -94,12 +106,12 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	// Build room
 	RoomManager::singleton->loadRoom("intro");
 	// RoomManager::singleton->createLevelRoom();
+}
 
+Engine::~Engine()
+{
 #ifdef CORRADE_TARGET_ANDROID
-	while (true)
-    {
-	    tickEvent();
-    }
+	exitInternal(nullptr);
 #endif
 }
 
@@ -112,7 +124,7 @@ void Engine::tickEvent()
 	InputManager::singleton->updateKeyStates();
 #endif
 
-	InputManager::singleton->mClickedObjectId = 0;
+	InputManager::singleton->mClickedObjectId = 0U;
 
 	// Compute delta time
 	mDeltaTime = mTimeline.previousFrameDuration();
@@ -128,6 +140,7 @@ void Engine::tickEvent()
 		RoomManager::singleton->setCurrentBoundParentIndex(index);
 		currentGol = &RoomManager::singleton->mGoLayers[index];
 
+#ifdef ENABLE_MOUSE_PICKING
 		if (index == GOL_PERSP_FIRST)
 		{
 			// Get clicked Object ID
@@ -152,9 +165,15 @@ void Engine::tickEvent()
 			(*currentGol->frameBuffer)
 				.clearColor(GLF_OBJECTID_ATTACHMENT_INDEX, Vector4ui{});
 		}
+#endif
+
+        if (currentGol->depthTestEnabled)
+        {
+            (*currentGol->frameBuffer)
+                    .clear(GL::FramebufferClear::Depth | GL::FramebufferClear::Stencil);
+        }
 
 		(*currentGol->frameBuffer)
-			.clear(GL::FramebufferClear::Depth | GL::FramebufferClear::Stencil)
 			.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f))
 			.bind();
 
@@ -198,7 +217,7 @@ void Engine::tickEvent()
 #ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
 		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 #endif
-		drawEvent();
+		drawInternal();
 
 		// Check for special actions
 #ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
@@ -232,7 +251,7 @@ void Engine::tickEvent()
 	{
 		// Bind default window framebuffer
 		GL::defaultFramebuffer
-			.clear(GL::FramebufferClear::Color | GL::FramebufferClear::Depth)
+			.clear(GL::FramebufferClear::Color)
 			.bind();
 
 		// Set renderer features
@@ -244,7 +263,7 @@ void Engine::tickEvent()
 #ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
 		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 #endif
-		drawEvent();
+		drawInternal();
 	}
 
 	// Advance timeline
@@ -253,13 +272,21 @@ void Engine::tickEvent()
 
 void Engine::drawEvent()
 {
+#ifdef CORRADE_TARGET_ANDROID
+	tickEvent();
+	redraw();
+#endif
+}
+
+void Engine::drawInternal()
+{
 	// Process main frame buffer
 	if (currentGol == nullptr)
 	{
 		// Draw screen quad
 		mScreenQuadShader
 			.bindColorTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].colorTexture)
-			.bindDepthStencilTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].depthTexture)
+			// .bindDepthStencilTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].depthTexture)
 			.bindColorTexture(GOL_PERSP_SECOND, *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].colorTexture)
 			.bindColorTexture(GOL_ORTHO_FIRST, *RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture)
 			.draw(mScreenQuadShader.mMesh);
@@ -348,8 +375,16 @@ void Engine::keyReleaseEvent(KeyEvent& event)
 	// Capture event
 	event.setAccepted();
 }
+#endif
 
+#ifndef CORRADE_TARGET_ANDROID
 void Engine::exitEvent(ExitEvent& event)
+{
+	exitInternal(&event);
+}
+#endif
+
+void Engine::exitInternal(void* arg)
 {
 	/*
 		Clear the entire room. Must be done now, because this
@@ -377,10 +412,14 @@ void Engine::exitEvent(ExitEvent& event)
 	// Clear input manager
 	InputManager::singleton = nullptr;
 
+#ifndef CORRADE_TARGET_ANDROID
 	// Pass default behaviour
-	event.setAccepted();
-}
+	if (arg != nullptr)
+	{
+		((ExitEvent*)arg)->setAccepted();
+	}
 #endif
+}
 
 void Engine::upsertGameObjectLayers()
 {
@@ -467,6 +506,7 @@ void Engine::upsertGameObjectLayers()
 		}
 
 		// Attach Object ID buffer, but only for "Perspective First"
+#ifdef ENABLE_MOUSE_PICKING
 		if (index == GOL_PERSP_FIRST)
 		{
 			GL::Renderbuffer objectIdBuffer;
@@ -478,6 +518,7 @@ void Engine::upsertGameObjectLayers()
 				{ Shaders::Phong::ObjectIdOutput, GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX } }
 				});
 		}
+#endif
 
 		// Check for framebuffer status
 		CORRADE_INTERNAL_ASSERT(layer->frameBuffer->checkStatus(GL::FramebufferTarget::Draw) == GL::Framebuffer::Status::Complete);
@@ -495,12 +536,16 @@ void Engine::updateMouseButtonStates(MouseMoveEvent& event)
 	// Get current mouse position
 	InputManager::singleton->mMousePosition = event.position();
 
+#ifdef CORRADE_TARGET_ANDROID
+	InputManager::singleton->setMouseState(Platform::Application::MouseEvent::Button::None, true);
+#else
 	// Get pressed buttons for this mouse move event
 	const auto& mouseButtons = event.buttons();
 
 	// Check if left button is actually pressed
 	const auto& value = mouseButtons & MouseMoveEvent::Button::Left;
 	InputManager::singleton->setMouseState(ImMouseButtons::Left, value ? true : false);
+#endif
 }
 
 #ifndef CORRADE_TARGET_ANDROID

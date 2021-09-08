@@ -167,7 +167,7 @@ void Logo::update()
 	{
 		// Handle "tap here"
 		{
-			if (InputManager::singleton->mMouseStates[ImMouseButtons::Left] == IM_STATE_RELEASED)
+			if (InputManager::singleton->mMouseStates[PRIMARY_BUTTON] == IM_STATE_RELEASED)
 			{
 				mIntroBubbles = false;
 			}
@@ -222,11 +222,17 @@ void Logo::update()
 
 		if (mLightPosition.y() > 11.0f)
 		{
-			mLightDirection = true;
+			if (!mLightDirection)
+			{
+				mLightDirection = true;
+			}
 		}
 		else if (mLightPosition.y() < -1.0f)
 		{
-			mLightDirection = false;
+			if (mLightDirection)
+			{
+				mLightDirection = false;
+			}
 		}
 	}
 	else
