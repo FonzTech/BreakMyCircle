@@ -210,23 +210,23 @@ endif()
 
 if(NOT CORRADE_TARGET_ANDROID)
 
-  install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
+    install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_INSTALL_PREFIX})
 
-  install(FILES scenes/cannon_1.glb DESTINATION ${CMAKE_INSTALL_PREFIX}/scenes)
+    install(FILES scenes/cannon_1.glb DESTINATION ${CMAKE_INSTALL_PREFIX}/scenes)
 
-  install(FILES shaders/screen_quad.vert DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
-  install(FILES shaders/screen_quad.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
-  install(FILES shaders/passthrough.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
-  install(FILES shaders/sprite.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
-  install(FILES shaders/water.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+    install(FILES shaders/screen_quad.vert DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+    install(FILES shaders/screen_quad.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+    install(FILES shaders/passthrough.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+    install(FILES shaders/sprite.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
+    install(FILES shaders/water.frag DESTINATION ${CMAKE_INSTALL_PREFIX}/shaders)
 
-  install(FILES textures/sparkles.png DESTINATION ${CMAKE_INSTALL_PREFIX}/textures)
+    install(FILES textures/sparkles.png DESTINATION ${CMAKE_INSTALL_PREFIX}/textures)
 
-  install(FILES paths/new_sphere.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/paths)
+    install(FILES paths/new_sphere.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/paths)
 
-  install(FILES rooms/intro.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/rooms)
+    install(FILES rooms/intro.txt DESTINATION ${CMAKE_INSTALL_PREFIX}/rooms)
 
-  install(FILES audios/bgmusic.ogg DESTINATION ${CMAKE_INSTALL_PREFIX}/audios)
+    install(FILES audios/bgmusic.ogg DESTINATION ${CMAKE_INSTALL_PREFIX}/audios)
 
 endif()
 

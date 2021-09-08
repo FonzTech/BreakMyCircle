@@ -45,8 +45,57 @@ android {
 }
 
 dependencies {
-
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
+
+task copyAudios(type: Copy) {
+    from "../../audios"
+    into "src/main/assets/audios"
+    include './**'
+}
+
+task copyFonts(type: Copy) {
+    from "../../fonts"
+    into "src/main/assets/audios"
+    include './**'
+}
+
+task copyPaths(type: Copy) {
+    from "../../paths"
+    into "src/main/assets/audios"
+    include './**'
+}
+
+task copyRooms(type: Copy) {
+    from "../../rooms"
+    into "src/main/assets/audios"
+    include './**'
+}
+
+task copyScenes(type: Copy) {
+    from "../../scenes"
+    into "src/main/assets/audios"
+    include './**'
+}
+
+task copyShaders(type: Copy) {
+    from "../../shaders"
+    into "src/main/assets/audios"
+    include './**'
+}
+
+task copyTextures(type: Copy) {
+    from "../../textures"
+    into "src/main/assets/audios"
+    include './**'
+}
+
+assemble.dependsOn copyAudios
+assemble.dependsOn copyFonts
+assemble.dependsOn copyPaths
+assemble.dependsOn copyRooms
+assemble.dependsOn copyScenes
+assemble.dependsOn copyShaders
+assemble.dependsOn copyTextures
