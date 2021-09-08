@@ -2,6 +2,10 @@
 
 #include <string>
 #include <Corrade/Utility/DebugStl.h>
+
+// #ifdef CORRADE_TARGET_ANDROID
+// #define STB_VORBIS_HEADER_ONLY
+// #endif
 #include <stb_vorbis.c>
 
 std::unique_ptr<StreamedAudioBuffer> StreamedAudioBuffer::singleton = nullptr;
@@ -37,7 +41,7 @@ void StreamedAudioBuffer::feed()
 	// Check for stream validity
 	if (mStream == nullptr)
 	{
-		Error{} << "Feeding is not possible, because stream is NULL.";
+        Error{} << "Feeding is not possible, because stream is NULL.";
 	}
 
 	// Cast required pointers
@@ -57,7 +61,7 @@ void StreamedAudioBuffer::feed()
 		}
 		else if (i)
 		{
-			Error{} << "Could not read further for streamed audio buffer.";
+            Error{} << "Could not read further for streamed audio buffer.";
 		}
 		else
 		{
@@ -66,29 +70,29 @@ void StreamedAudioBuffer::feed()
 	}
 }
 
-void StreamedAudioBuffer::openAudio(const std::string & filename)
+void StreamedAudioBuffer::openAudio(const std::string & basePath, const std::string & filename)
 {
 	// Open stream
 	{
-		std::string s = "audios/" + filename + ".ogg";
+		std::string s = basePath + "audios/" + filename + ".ogg";
 		mStream = stb_vorbis_open_filename(s.c_str(), nullptr, nullptr);
 	}
 
 	if (mStream == nullptr)
 	{
-		Error{} << "Could not open file" << filename << "for streaming.";
+        Error{} << "Could not open file" << filename << "for streaming.";
 		return;
 	}
 
 	// Cast to specialized type
-	stb_vorbis* vs = (stb_vorbis*) mStream;
+	stb_vorbis* vs = (stb_vorbis*)mStream;
 
 	// Get info and copy it to heap
 	stb_vorbis_info vi = stb_vorbis_get_info(vs);
 	mInfo = std::malloc(sizeof(stb_vorbis_info));
 	if (mInfo == nullptr)
 	{
-		Error{} << "Could not malloc a struct of size stb_vorbis_info.";
+        Error{} << "Could not malloc a struct of size stb_vorbis_info.";
 		clear();
 		return;
 	}
@@ -96,12 +100,12 @@ void StreamedAudioBuffer::openAudio(const std::string & filename)
 	std::memcpy(mInfo, &vi, sizeof(stb_vorbis_info));
 
 	// Work on stream
-	uint32 samples = stb_vorbis_stream_length_in_samples(vs) * vi.channels;
+	auto samples = stb_vorbis_stream_length_in_samples(vs) * vi.channels;
 
-	Debug{} << "Channels:" << vi.channels;
-	Debug{} << "Sample rate:" << vi.sample_rate;
-	Debug{} << "Samples:" << samples;
-	Debug{} << "Duration:" << stb_vorbis_stream_length_in_seconds(vs) << "seconds.";
+    Debug{} << "Channels:" << vi.channels;
+    Debug{} << "Sample rate:" << vi.sample_rate;
+    Debug{} << "Samples:" << samples;
+    Debug{} << "Duration:" << stb_vorbis_stream_length_in_seconds(vs) << "seconds.";
 
 	mCachedNumberOfChannels = vi.channels;
 	mCachedBufferFormat = computeBufferFormat();
@@ -133,7 +137,7 @@ const UnsignedInt StreamedAudioBuffer::getSampleRate() const
 
 const Audio::BufferFormat StreamedAudioBuffer::computeBufferFormat() const
 {
-	stb_vorbis_info* vi = (stb_vorbis_info*) mInfo;
+	stb_vorbis_info* vi = (stb_vorbis_info*)mInfo;
 
 	if (vi->channels == 1)
 	{
@@ -160,6 +164,8 @@ const Audio::BufferFormat StreamedAudioBuffer::computeBufferFormat() const
 		return Audio::BufferFormat::Surround71Channel16;
 	}
 
-	Error() << "StreamedAudioBuffer: unsupported channel count" << vi->channels << "with" << 16 << "bits per sample";
+    Error() << "StreamedAudioBuffer: unsupported channel count" << vi->channels << "with" << 16 << "bits per sample";
 	return Audio::BufferFormat::Mono8;
 }
+
+// #undef STB_VORBIS_HEADER_ONLY

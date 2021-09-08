@@ -62,11 +62,11 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 
     jobject me = nativeActivity()->clazz;
 
-    jclass acl = env->GetObjectClass(me); //class pointer of NativeActivity
+    jclass acl = env->GetObjectClass(me); // Class pointer of NativeActivity
     jmethodID giid = env->GetMethodID(acl, "getIntent", "()Landroid/content/Intent;");
-    jobject intent = env->CallObjectMethod(me, giid); //Got our intent
+    jobject intent = env->CallObjectMethod(me, giid); // Got our intent
 
-    jclass icl = env->GetObjectClass(intent); //class pointer of Intent
+    jclass icl = env->GetObjectClass(intent); // Class pointer of Intent
     jmethodID gseid = env->GetMethodID(icl, "getStringExtra", "(Ljava/lang/String;)Ljava/lang/String;");
 
     jstring jsParam1 = (jstring)env->CallObjectMethod(intent, gseid, env->NewStringUTF("asset_dir"));

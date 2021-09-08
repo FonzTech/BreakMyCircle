@@ -23,7 +23,7 @@ public:
 	StreamedAudioBuffer();
 	~StreamedAudioBuffer();
 
-	void openAudio(const std::string & filename);
+	void openAudio(const std::string & basePath, const std::string & filename);
 	void feed();
 
 	Audio::Buffer& getFrontBuffer();

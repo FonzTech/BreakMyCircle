@@ -19,9 +19,10 @@ list(APPEND CMAKE_MODULE_PATH ${MAGNUM_SRC_PATH})
 if(CORRADE_TARGET_ANDROID)
 
     set(NDK_SYSROOT "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr")
+    
     set(NDK_API30LIBS_ARM64 "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/30")
     set(NDK_API30LIBS_X8664 "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/x86_64-linux-android/30")
-    
+
     list(APPEND CMAKE_MODULE_PATH ${NDK_SYSROOT})
 
     if(${ANDROID_ABI} MATCHES "arm64-v8a")
@@ -29,12 +30,12 @@ if(CORRADE_TARGET_ANDROID)
     else()
         list(APPEND CMAKE_MODULE_PATH ${NDK_API30LIBS_X8664})
     endif()
-    
+
     include_directories(
         PUBLIC
         "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/include/AL"
-        "D:/Development/C++/magnum-plugins/src/external/stb"
         "D:/Development/C++/nlohmann-json"
+        "D:/Development/C++/magnum-plugins/src/external/stb"
     )
 
     if(${ANDROID_ABI} MATCHES "arm64-v8a")
@@ -52,7 +53,7 @@ if(CORRADE_TARGET_ANDROID)
 else()
 
     set(CORRADE_BIN_PATH "D:/Development/C++/corrade-bin")
-    
+
     set(SDL2_INCLUDE_DIR "D:/Development/C++/SDL2-2.0.14/include")
     set(SDL2_LIBRARY "D:/Development/C++/SDL2-2.0.14/lib/x64")
 
@@ -65,10 +66,10 @@ else()
 
     list(APPEND CMAKE_MODULE_PATH ${CORRADE_SRC_PATH})
     list(APPEND CMAKE_PREFIX_PATH ${CORRADE_BIN_PATH})
-    
+
     list(APPEND CMAKE_PREFIX_PATH ${SDL2_INCLUDE_DIR})
     list(APPEND CMAKE_PREFIX_PATH ${SDL2_LIBRARY})
-    
+
     list(APPEND CMAKE_PREFIX_PATH ${OPENAL_BIN_PATH})
 
 endif()
@@ -81,6 +82,7 @@ else()
 endif()
 
 find_package(Corrade REQUIRED Main)
+
 find_package(Magnum REQUIRED
     Audio
     GL
@@ -89,7 +91,22 @@ find_package(Magnum REQUIRED
     Shaders
     SceneGraph
     Text
-    Trade)
+    Trade
+    AnySceneImporter
+)
+
+if (MAGNUM_BUILD_STATIC AND USE_MAGNUM_FONT)
+    find_package(Magnum REQUIRED
+        MagnumFont
+    )
+endif()
+
+find_package(MagnumPlugins REQUIRED
+    StbVorbisAudioImporter
+    StbTrueTypeFont
+    TinyGltfImporter
+    PngImporter
+)
 
 set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 
@@ -136,7 +153,7 @@ if(CORRADE_TARGET_ANDROID)
         src/Shaders/SpriteShader.cpp
         src/Shaders/WaterShader.cpp
     )
-    
+
 else()
 
     add_executable(
@@ -184,35 +201,61 @@ endif()
 
 if(CORRADE_TARGET_ANDROID)
 
-  target_link_libraries(
-      native-lib
-      Corrade::Main
-      Magnum::Application
-      Magnum::Audio
-      Magnum::GL
-      Magnum::Magnum
-      Magnum::MeshTools
-      Magnum::Primitives
-      Magnum::SceneGraph
-      Magnum::Shaders
-      Magnum::Text
-      Magnum::Trade
+  target_link_libraries(native-lib PRIVATE
+    Corrade::Main
+    Magnum::Application
+    Magnum::Audio
+    Magnum::GL
+    Magnum::Magnum
+    Magnum::MeshTools
+    Magnum::Primitives
+    Magnum::SceneGraph
+    Magnum::Shaders
+    Magnum::Text
+    Magnum::Trade
+    Magnum::AnySceneImporter
+  )
+
+  if (MAGNUM_BUILD_STATIC AND USE_MAGNUM_FONT)
+    target_link_libraries(native-lib PRIVATE
+        Magnum::MagnumFont
+    )
+  endif()
+
+  target_link_libraries(native-lib PRIVATE
+      MagnumPlugins::StbVorbisAudioImporter
+      MagnumPlugins::StbTrueTypeFont
+      MagnumPlugins::TinyGltfImporter
+      MagnumPlugins::PngImporter
   )
 
 else()
 
   target_link_libraries(${PROJECT_NAME} PRIVATE
-      Corrade::Main
-      Magnum::Application
-      Magnum::Audio
-      Magnum::GL
-      Magnum::Magnum
-      Magnum::MeshTools
-      Magnum::Primitives
-      Magnum::SceneGraph
-      Magnum::Shaders
-      Magnum::Text
-      Magnum::Trade
+    Corrade::Main
+    Magnum::Application
+    Magnum::Audio
+    Magnum::GL
+    Magnum::Magnum
+    Magnum::MeshTools
+    Magnum::Primitives
+    Magnum::SceneGraph
+    Magnum::Shaders
+    Magnum::Text
+    Magnum::Trade
+  )
+
+  if (MAGNUM_BUILD_STATIC AND USE_MAGNUM_FONT)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        Magnum::MagnumFont
+    )
+  endif()
+
+  target_link_libraries(${PROJECT_NAME} PRIVATE
+      MagnumPlugins::StbVorbisAudioImporter
+      MagnumPlugins::StbTrueTypeFont
+      MagnumPlugins::TinyGltfImporter
+      MagnumPlugins::PngImporter
   )
 
 endif()

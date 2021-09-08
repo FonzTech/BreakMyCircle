@@ -35,4 +35,5 @@
 ~~- Buy powerups in powerup scroller.~~
 
 # On-going tasks
+- Use `magnum-fontconverter` instead of loading `TTF` directly.
 - Implement other level game objects, such as rocks, holes, and others...
