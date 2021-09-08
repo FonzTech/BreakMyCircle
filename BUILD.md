@@ -4,6 +4,8 @@ Please, take note of this snippet below, and replace the `project` directive wit
 
 This is necessary, since Windows 10 SDK can change from time to time, so some bugs or peculiar behaviours can be introduced literally the day after.
 
+Also, be aware of cache when working with Android Studio. You may have to delete manually the entire `.cxx` directory, otherwise you end up with mixed files, inconsistent builds and strange (fake) errors.
+
 ```
 if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Android")
   set(CMAKE_GENERATOR_PLATFORM x64) # BEFORE PROJECT

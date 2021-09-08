@@ -19,15 +19,16 @@ list(APPEND CMAKE_MODULE_PATH ${MAGNUM_SRC_PATH})
 if(CORRADE_TARGET_ANDROID)
 
     set(NDK_SYSROOT "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr")
-    
-    if(NOT ${ANDROID_ABI} MATCHES "arm64-v8a")
-        set(NDK_API30LIBS "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/30")
-    else()
-        set(NDK_API30LIBS "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/x86_64-linux-android/30")
-    endif()
+    set(NDK_API30LIBS_ARM64 "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/aarch64-linux-android/30")
+    set(NDK_API30LIBS_X8664 "D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr/lib/x86_64-linux-android/30")
     
     list(APPEND CMAKE_MODULE_PATH ${NDK_SYSROOT})
-    list(APPEND CMAKE_MODULE_PATH ${NDK_API30LIBS})
+
+    if(${ANDROID_ABI} MATCHES "arm64-v8a")
+        list(APPEND CMAKE_MODULE_PATH ${NDK_API30LIBS_ARM64})
+    else()
+        list(APPEND CMAKE_MODULE_PATH ${NDK_API30LIBS_X8664})
+    endif()
     
     include_directories(
         PUBLIC
@@ -36,9 +37,17 @@ if(CORRADE_TARGET_ANDROID)
         "D:/Development/C++/nlohmann-json"
     )
 
-    link_directories(${API30_LIBS})
+    if(${ANDROID_ABI} MATCHES "arm64-v8a")
+        link_directories(${NDK_API30LIBS_ARM64})
+    else()
+        link_directories(${NDK_API30LIBS_X8664})
+    endif()
 
-    list(APPEND CMAKE_PREFIX_PATH ${API30_LIBS})
+    if(${ANDROID_ABI} MATCHES "arm64-v8a")
+        list(APPEND CMAKE_PREFIX_PATH ${NDK_API30LIBS_ARM64})
+    else()
+        list(APPEND CMAKE_PREFIX_PATH ${NDK_API30LIBS_X8664})
+    endif()
 
 else()
 

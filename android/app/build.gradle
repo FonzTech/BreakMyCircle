@@ -22,7 +22,7 @@ android {
             }
         }
         ndk {
-            abiFilters 'arm64-v8a'
+            abiFilters 'arm64-v8a', 'x86_64'
         }
     }
 
@@ -53,49 +53,50 @@ dependencies {
 task copyAudios(type: Copy) {
     from "../../audios"
     into "src/main/assets/audios"
-    include './**'
+    include '**/*.ogg'
 }
 
 task copyFonts(type: Copy) {
     from "../../fonts"
-    into "src/main/assets/audios"
-    include './**'
+    into "src/main/assets/fonts"
+    include '**/*.ttf'
 }
 
 task copyPaths(type: Copy) {
     from "../../paths"
-    into "src/main/assets/audios"
-    include './**'
+    into "src/main/assets/paths"
+    include '**/*.txt'
 }
 
 task copyRooms(type: Copy) {
     from "../../rooms"
-    into "src/main/assets/audios"
-    include './**'
+    into "src/main/assets/rooms"
+    include '**/*.txt'
 }
 
 task copyScenes(type: Copy) {
     from "../../scenes"
-    into "src/main/assets/audios"
-    include './**'
+    into "src/main/assets/scenes"
+    include '**/*.glb'
 }
 
 task copyShaders(type: Copy) {
     from "../../shaders"
-    into "src/main/assets/audios"
-    include './**'
+    into "src/main/assets/shaders"
+    include '**/*.frag'
+    include '**/*.vert'
 }
 
 task copyTextures(type: Copy) {
     from "../../textures"
-    into "src/main/assets/audios"
-    include './**'
+    into "src/main/assets/textures"
+    include '**/*.png'
 }
 
-assemble.dependsOn copyAudios
-assemble.dependsOn copyFonts
-assemble.dependsOn copyPaths
-assemble.dependsOn copyRooms
-assemble.dependsOn copyScenes
-assemble.dependsOn copyShaders
-assemble.dependsOn copyTextures
+preBuild.dependsOn copyAudios
+preBuild.dependsOn copyFonts
+preBuild.dependsOn copyPaths
+preBuild.dependsOn copyRooms
+preBuild.dependsOn copyScenes
+preBuild.dependsOn copyShaders
+preBuild.dependsOn copyTextures
