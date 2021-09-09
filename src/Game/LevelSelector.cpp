@@ -528,8 +528,9 @@ void LevelSelector::update()
 	{
 		if (!isViewingLevel && !mSettingsOpened && mLevelInfo.state == GO_LS_LEVEL_INIT && !mLevelEndingAnim)
 		{
-			mPrevMousePos = InputManager::singleton->mMousePosition;
+            mPrevMousePos = InputManager::singleton->mMousePosition;
 			mClickStartTime = std::chrono::system_clock::now();
+            Debug{} << "qqq" << mPrevMousePos.x() << " " << mPrevMousePos.y();
 		}
 	}
 	else if (lbs >= IM_STATE_PRESSED)
@@ -1955,7 +1956,7 @@ void LevelSelector::createPowerupView()
 						offsetButton = Vector3(0.0f, 0.1f, 0.0f);
 
 						const bool& isEnough = RoomManager::singleton->mSaveData.powerupAmounts[index] > 0;
-						const std::string& text = "Use";
+						const std::string& text = isEnough ? "Use" : "Not Enough";
 						o->addAction(text, [this, index](UnsignedInt buttonIndex) {
 							Debug{} << "You have clicked USE POWERUP";
 
@@ -1964,7 +1965,6 @@ void LevelSelector::createPowerupView()
 							const auto& it = pm.find(index);
 							if (it->second <= 0)
 							{
-								watchAdForPowerup(index);
 								return;
 							}
 
@@ -1979,7 +1979,7 @@ void LevelSelector::createPowerupView()
 							closeDialog();
 							mScreenButtons[GO_LS_GUI_SETTINGS].callback(GO_LS_GUI_SETTINGS);
 						},
-							false,
+							!isEnough,
 							offsetButton
 							);
 					}

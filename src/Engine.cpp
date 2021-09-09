@@ -1,13 +1,3 @@
-#include <memory>
-#include <Magnum/Image.h>
-#include <Magnum/PixelFormat.h>
-#include <Magnum/GL/Renderer.h>
-#include <Magnum/GL/Renderbuffer.h>
-#include <Magnum/GL/RenderbufferFormat.h>
-#include <Magnum/GL/Framebuffer.h>
-#include <Magnum/GL/DefaultFramebuffer.h>
-#include <Magnum/GL/TextureFormat.h>
-
 #include "Engine.h"
 #include "Common/CommonUtility.h"
 #include "Audio/StreamedAudioBuffer.h"
@@ -101,7 +91,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 
 	// Setup room manager
 	RoomManager::singleton->setWindowSize(Vector2(windowSize()));
-	upsertGameObjectLayers();
+    upsertGameObjectLayers();
 
 	// Build room
 	RoomManager::singleton->loadRoom("intro");
@@ -140,7 +130,6 @@ void Engine::tickEvent()
 		RoomManager::singleton->setCurrentBoundParentIndex(index);
 		currentGol = &RoomManager::singleton->mGoLayers[index];
 
-#ifdef ENABLE_MOUSE_PICKING
 		if (index == GOL_PERSP_FIRST)
 		{
 			// Get clicked Object ID
@@ -165,7 +154,6 @@ void Engine::tickEvent()
 			(*currentGol->frameBuffer)
 				.clearColor(GLF_OBJECTID_ATTACHMENT_INDEX, Vector4ui{});
 		}
-#endif
 
         if (currentGol->depthTestEnabled)
         {
@@ -506,19 +494,23 @@ void Engine::upsertGameObjectLayers()
 		}
 
 		// Attach Object ID buffer, but only for "Perspective First"
-#ifdef ENABLE_MOUSE_PICKING
 		if (index == GOL_PERSP_FIRST)
 		{
-			GL::Renderbuffer objectIdBuffer;
-			objectIdBuffer.setStorage(GL::RenderbufferFormat::R32UI, size);
+            layer->objectIdBuffer = std::make_unique<GL::Renderbuffer>();
+            layer->objectIdBuffer->setStorage(GL::RenderbufferFormat::R32UI, size);
 
-			layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX }, objectIdBuffer);
+			layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX }, *layer->objectIdBuffer);
 			layer->frameBuffer->mapForDraw({
 				{ Shaders::Phong::ColorOutput, GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX } },
 				{ Shaders::Phong::ObjectIdOutput, GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX } }
-				});
+			});
 		}
-#endif
+		else
+		{
+            layer->frameBuffer->mapForDraw({
+               { Shaders::Phong::ColorOutput, GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX } }
+           });
+		}
 
 		// Check for framebuffer status
 		CORRADE_INTERNAL_ASSERT(layer->frameBuffer->checkStatus(GL::FramebufferTarget::Draw) == GL::Framebuffer::Status::Complete);
@@ -528,6 +520,7 @@ void Engine::upsertGameObjectLayers()
 void Engine::updateMouseButtonState(MouseEvent& event, const bool & pressed)
 {
 	// Update state for the button which triggered the event
+	InputManager::singleton->mMousePosition = event.position();
 	InputManager::singleton->setMouseState(event.button(), pressed);
 }
 

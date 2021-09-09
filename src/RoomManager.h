@@ -9,6 +9,8 @@
 #include <nlohmann/json.hpp>
 
 #include <Magnum/Magnum.h>
+#include <Magnum/Image.h>
+#include <Magnum/PixelFormat.h>
 #include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/Audio/Buffer.h>
 #include <Magnum/Audio/Context.h>
@@ -18,6 +20,12 @@
 #include <Magnum/Audio/Source.h>
 #include <Magnum/GL/Framebuffer.h>
 #include <Magnum/GL/Texture.h>
+#include <Magnum/GL/Renderer.h>
+#include <Magnum/GL/Renderbuffer.h>
+#include <Magnum/GL/RenderbufferFormat.h>
+#include <Magnum/GL/Framebuffer.h>
+#include <Magnum/GL/DefaultFramebuffer.h>
+#include <Magnum/GL/TextureFormat.h>
 
 #include "GameObject.h"
 #include "CollisionManager.h"
@@ -42,6 +50,7 @@ public:
 		std::unique_ptr<GL::Framebuffer> frameBuffer;
 		std::unique_ptr<GL::Texture2D> colorTexture;
 		std::unique_ptr<GL::Texture2D> depthTexture;
+		std::unique_ptr<GL::Renderbuffer> objectIdBuffer;
 		std::unique_ptr<GameObjectList> list;
 		std::unique_ptr<SceneGraph::DrawableGroup3D> drawables;
 
