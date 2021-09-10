@@ -1,3 +1,5 @@
+precision mediump float;
+
 uniform samplerCube textureData;
 
 in vec3 textureCoords;

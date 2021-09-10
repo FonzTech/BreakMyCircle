@@ -1,3 +1,5 @@
+precision mediump float;
+
 uniform sampler2D colorPerspFirst;
 uniform sampler2D depthStencilPerspFirst;
 uniform sampler2D colorPerspSecond;

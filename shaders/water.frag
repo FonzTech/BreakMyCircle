@@ -1,5 +1,7 @@
 #define PI 3.1415926538
 
+precision mediump float;
+
 uniform sampler2D displacementData;
 uniform sampler2D textureData;
 uniform sampler2D effectsData;
@@ -24,7 +26,7 @@ void main()
 
 	// Apply distortion
 	vec4 wm = texture(displacementData, tc);
-	float angle = fract(wm.r + frame * 0.5) * PI * 2.0;
+	float angle = fract(wm.r + frame) * PI * 2.0;
 	
 	vec2 dc;
 	{

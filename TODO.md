@@ -36,6 +36,7 @@
 
 # On-going tasks
 - Avoid rendering for `OverlayGui` and `OverlayText` when off-screen.
+- Implement different switches for `update` and `draw` phases, to avoid re-rendering of static scenes.
 - Implement other level game objects, such as rocks, holes, and others...
 - Assets update on Android based on versioning.
 

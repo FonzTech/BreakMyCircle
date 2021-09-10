@@ -116,7 +116,11 @@ const Int Scenery::getType() const
 void Scenery::update()
 {
 	// Update frame
-	mFrame += mDeltaTime;
+	mFrame += mDeltaTime * 0.5f;
+	while (mFrame > 1.0f)
+	{
+		mFrame -= 1.0f;
+	}
 
 	for (auto& wh : mWaterHolders)
 	{

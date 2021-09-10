@@ -1,3 +1,5 @@
+precision mediump float;
+
 uniform sampler2D textureData;
 uniform vec4 color;
 uniform float texWidth;

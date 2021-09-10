@@ -26,4 +26,8 @@ void PlasmaSquareRenderer::renderInternal()
 void PlasmaSquareRenderer::update(const Float deltaTime)
 {
 	mTime += deltaTime;
+	while (mTime > 1.0f)
+	{
+		mTime -= 1.0f;
+	}
 }
