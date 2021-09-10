@@ -46,3 +46,4 @@ The `OverlayText` is *NOT ALWAYS* detached anymore. A dummy drawable is added to
 - ~~Blending between `OverlayText` and `OverlayGui` is incorrect due to the blending function used. This can be fixed, but it's a time consuming task. Please, avoid this.~~
 - Transformations for `OverlayText` is only computed automatically on the first update. Later times, the method `setPosition` must be called to trigger transformations update. Otherwise the object will be rendered with out-of-date transformations.
 - The `screen_quad.frag` shader program has an hard-coded effect to resemble a fog, which is very tighted to this specific game appearance.
+- [This](https://github.com/mosra/magnum/blob/3d136503d8a959b4c260b9b60ca925566cc9d095/src/Magnum/GL/Shader.cpp#L722) makes shader compilation fail on some drivers, expecially on Samsung phones. A manually-compiled release of Magnum, without that `#line 1`, is required.

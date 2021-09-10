@@ -294,7 +294,7 @@ void Engine::drawInternal()
 		// Draw screen quad
 		mScreenQuadShader
 			.bindColorTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].colorTexture)
-			// .bindDepthStencilTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].depthTexture)
+			.bindDepthStencilTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].depthTexture)
 			.bindColorTexture(GOL_PERSP_SECOND, *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].colorTexture)
 			.bindColorTexture(GOL_ORTHO_FIRST, *RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture)
 			.draw(mScreenQuadShader.mMesh);

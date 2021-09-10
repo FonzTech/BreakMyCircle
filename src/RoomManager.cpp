@@ -191,7 +191,7 @@ void RoomManager::loadRoom(const std::string & name)
 		const auto& it = roomData.find("bgmusic");
 		if (it != roomData.end())
 		{
-			std::string bgmusic = it->get<std::string>();
+			const auto& bgmusic = it->get<std::string>();
 
 			mBgMusic = std::make_unique<StreamedAudioPlayable>(&mCameraObject);
 			mBgMusic->loadAudio(bgmusic);

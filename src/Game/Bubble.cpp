@@ -44,9 +44,6 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 	mShakePos = Vector3(0.0f);
 	mShakeFact = 0.0f;
 
-	// Create game sphere for this game object
-	CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
-
 	// Load asset for "Coin" game object, if required
 	if (mAmbientColor == BUBBLE_COIN)
 	{
@@ -59,6 +56,9 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 	{
 		mRotation = 0.0f;
 	}
+
+	// Create game sphere for this game object
+	CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
 }
 
 const Int Bubble::getType() const

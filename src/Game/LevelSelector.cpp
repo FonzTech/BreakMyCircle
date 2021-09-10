@@ -81,7 +81,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mLevelInfo.state = GO_LS_LEVEL_INIT;
 		mLevelInfo.nextLevelAnim = 0.0f;
 		mLevelInfo.numberOfRetries = 0;
-		mLevelInfo.score = 0;
+		mLevelInfo.score = -1;
 		mLevelInfo.lastLevelPos = Vector3(0.0f);
 	}
 
@@ -1698,12 +1698,13 @@ void LevelSelector::finishCurrentLevel(const bool success)
 
 		// Compute correct score
 		mLevelInfo.score = computeScore();
+		mLevelInfo.playedScore = 0;
 	}
 	else
 	{
-		mLevelInfo.score = 0;
+        mLevelInfo.score = 0;
+		mLevelInfo.playedScore = -1;
 	}
-	mLevelInfo.playedScore = 0;
 
 	// Reset temporary stats
 	RoomManager::singleton->mSaveData.coinCurrent = 0;

@@ -37,6 +37,7 @@
 # On-going tasks
 - Avoid rendering for `OverlayGui` and `OverlayText` when off-screen.
 - Implement other level game objects, such as rocks, holes, and others...
+- Assets update on Android based on versioning.
 
 # Optional tasks
 - Use `magnum-fontconverter` instead of loading `TTF` directly.

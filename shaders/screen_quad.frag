@@ -19,13 +19,12 @@ void main()
   fragmentColor.a = 1.0;
 	
 	// P First - Depth Stencil
-  if (false)
 	{
 		float c = texture(depthStencilPerspFirst, interpolatedTextureCoordinates).r;
     c = linearize_Z(c, 0.01, 25.0);
     c = clamp(pow(c, 8.0), 0.0, 1.0);
     c = clamp(c * 4.0, 0.0, 1.0);
-		fragmentColor.rgb = mix(fragmentColor.rgb, vec3(1.0), c * 0.001);
+		fragmentColor.rgb = mix(fragmentColor.rgb, vec3(1.0), c);
 	}
 	
 	// P Second - Color
