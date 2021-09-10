@@ -60,7 +60,7 @@ void LinePath::load(const std::string & name)
 		std::unique_ptr<LinePathAsset> lpa = std::make_unique<LinePathAsset>();
 
 		// Load raw file
-		auto content = Utility::Directory::readString(CommonUtility::singleton->mAssetDir + "paths/" + name + ".txt");
+		auto content = Utility::Directory::readString(CommonUtility::singleton->mConfig.assetDir + "paths/" + name + ".txt");
 
 		// Read line by line
 		std::istringstream sin(content);

@@ -60,6 +60,7 @@ private:
 	void upsertGameObjectLayers();
 	void drawInternal();
 	void exitInternal(void* arg);
+	void viewportInternal(ViewportEvent* event);
 
 	void updateMouseButtonState(MouseEvent& event, const bool & pressed);
 	void updateMouseButtonStates(MouseMoveEvent& event);
@@ -69,6 +70,7 @@ private:
 #endif
 
 	// Variables
+	Vector2i mScaledFramebufferSize;
 	Timeline mTimeline;
 	Float mDeltaTime;
 	ScreenQuadShader mScreenQuadShader;

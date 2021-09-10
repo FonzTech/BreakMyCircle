@@ -42,7 +42,7 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 {
 	// Create and load stream
 	mStream = std::make_unique<StreamedAudioBuffer>();
-	mStream->openAudio(CommonUtility::singleton->mAssetDir, filename);
+	mStream->openAudio(CommonUtility::singleton->mConfig.assetDir, filename);
 
 	// Create and detach thread
 	mThread = std::make_unique<std::thread>([&]()

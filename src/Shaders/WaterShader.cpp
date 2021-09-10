@@ -24,8 +24,8 @@ WaterShader::WaterShader()
 	GL::Shader frag{ GL::Version::GL330, GL::Shader::Type::Fragment };
 #endif
 
-	vert.addFile(CommonUtility::singleton->mAssetDir + "shaders/passthrough.vert");
-	frag.addFile(CommonUtility::singleton->mAssetDir + "shaders/water.frag");
+	vert.addFile(CommonUtility::singleton->mConfig.assetDir + "shaders/passthrough.vert");
+	frag.addFile(CommonUtility::singleton->mConfig.assetDir + "shaders/water.frag");
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(GL::Shader::compile({ vert, frag }));
 

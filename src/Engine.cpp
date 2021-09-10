@@ -7,10 +7,10 @@
 #include "GameObject.h"
 
 #ifdef CORRADE_TARGET_ANDROID
-#include <android/native_activity.h>
-#endif
-
 #define DEBUG_OPENGL_CALLS
+#include <android/native_activity.h>
+using namespace std::chrono_literals;
+#endif
 
 #ifdef DEBUG_OPENGL_CALLS
 #include <Magnum/GL/DebugOutput.h>
@@ -71,13 +71,30 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
     jclass icl = env->GetObjectClass(intent); // Class pointer of Intent
     jmethodID gseid = env->GetMethodID(icl, "getStringExtra", "(Ljava/lang/String;)Ljava/lang/String;");
 
-    jstring jsParam1 = (jstring)env->CallObjectMethod(intent, gseid, env->NewStringUTF("asset_dir"));
-    const char *Param1 = env->GetStringUTFChars(jsParam1, 0);
-    CommonUtility::singleton->mAssetDir = std::string(Param1);
-    env->ReleaseStringUTFChars(jsParam1, Param1);
+    const std::array<std::string, 2> params = { "asset_dir", "density" };
+    for (UnsignedInt i = 0; i != params.size(); ++i)
+    {
+        const auto jsParam1 = (jstring) env->CallObjectMethod(intent, gseid, env->NewStringUTF(params.at(i).c_str()));
+        const char *Param1 = env->GetStringUTFChars(jsParam1, nullptr);
+
+        const auto& value = std::string(Param1);
+
+        switch (i)
+        {
+        case 0U:
+            CommonUtility::singleton->mConfig.assetDir = value;
+            break;
+
+        case 1U:
+            CommonUtility::singleton->mConfig.displayDensity = std::stof(value);
+            break;
+        }
+
+        env->ReleaseStringUTFChars(jsParam1, Param1);
+    }
 #endif
 
-    Debug{} << "Asset base directory is" << CommonUtility::singleton->mAssetDir;
+    Debug{} << "Asset base directory is" << CommonUtility::singleton->mConfig.assetDir;
 
 	// Setup screen quad shader (after the CommonUtility has started)
 	mScreenQuadShader.setup();
@@ -91,7 +108,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 
 	// Setup room manager
 	RoomManager::singleton->setWindowSize(Vector2(windowSize()));
-    upsertGameObjectLayers();
+	viewportInternal(nullptr);
 
 	// Build room
 	RoomManager::singleton->loadRoom("intro");
@@ -119,9 +136,10 @@ void Engine::tickEvent()
 	// Compute delta time
 	mDeltaTime = mTimeline.previousFrameDuration();
 
-	auto ws = windowSize();
-	RoomManager::singleton->setWindowSize(Vector2(ws));
-	RoomManager::singleton->mCamera->setViewport(ws);
+	RoomManager::singleton->setWindowSize(Vector2(windowSize()));
+
+	// Set correct viewport
+	RoomManager::singleton->mCamera->setViewport(mScaledFramebufferSize);
 
 	// Iterate through all layers
 	for (const auto& index : GO_LAYERS)
@@ -136,8 +154,8 @@ void Engine::tickEvent()
 			currentGol->frameBuffer->mapForRead(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX });
 
 			{
-				const Vector2i position(Vector2(InputManager::singleton->mMousePosition) * Vector2 { framebufferSize() } / Vector2{ windowSize() });
-				const Vector2i fbPosition{ position.x(), GL::defaultFramebuffer.viewport().sizeY() - position.y() - 1 };
+				const Vector2i position(Vector2(InputManager::singleton->mMousePosition) * Vector2 { mScaledFramebufferSize } / Vector2{ windowSize() });
+				const Vector2i fbPosition{ position.x(), mScaledFramebufferSize.y() - position.y() - 1 };
 
 				const Image2D data = currentGol->frameBuffer->read(
 					Range2Di::fromSize(fbPosition, { 1, 1 }),
@@ -235,7 +253,9 @@ void Engine::tickEvent()
 	}
 
 	// Redraw main frame buffer
+	RoomManager::singleton->mCamera->setViewport(framebufferSize());
 	RoomManager::singleton->setCurrentBoundParentIndex(-1);
+
 	{
 		// Bind default window framebuffer
 		GL::defaultFramebuffer
@@ -339,9 +359,14 @@ void Engine::mouseMoveEvent(MouseMoveEvent& event)
 
 void Engine::viewportEvent(ViewportEvent& event)
 {
+	viewportInternal(&event);
+}
+
+void Engine::viewportInternal(ViewportEvent* event)
+{
 	// Update viewports
-	GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, event.framebufferSize()));
-	RoomManager::singleton->mCamera->setViewport(event.framebufferSize());
+	GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, framebufferSize()));
+	mScaledFramebufferSize = Vector2i(Vector2d(framebufferSize()) / CommonUtility::singleton->mConfig.displayDensity);
 	upsertGameObjectLayers();
 }
 
@@ -470,16 +495,13 @@ void Engine::upsertGameObjectLayers()
 			layer->projectionMatrix = pm;
 		}
 
-		// Get size for window framebuffer
-		const auto& size = GL::defaultFramebuffer.viewport().size();
-
 		// Create framebuffer and attach color buffers
-		layer->frameBuffer = std::make_unique<GL::Framebuffer>(Range2Di({}, size));
+		layer->frameBuffer = std::make_unique<GL::Framebuffer>(Range2Di({}, mScaledFramebufferSize));
 
 		{
 			// Create main texture to attach layer
 			layer->colorTexture = std::make_unique<GL::Texture2D>();
-			layer->colorTexture->setStorage(1, GL::TextureFormat::RGBA8, size);
+			layer->colorTexture->setStorage(1, GL::TextureFormat::RGBA8, mScaledFramebufferSize);
 			layer->frameBuffer->attachTexture(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, *layer->colorTexture, 0);
 			// layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, colorBuffer);
 		}
@@ -488,7 +510,7 @@ void Engine::upsertGameObjectLayers()
 		if (layer->depthTestEnabled)
 		{
 			layer->depthTexture = std::make_unique<GL::Texture2D>();
-			layer->depthTexture->setStorage(1, GL::TextureFormat::Depth24Stencil8, size);
+			layer->depthTexture->setStorage(1, GL::TextureFormat::Depth24Stencil8, mScaledFramebufferSize);
 			layer->depthTexture->setCompareMode(GL::SamplerCompareMode::None);
 			layer->frameBuffer->attachTexture(GL::Framebuffer::BufferAttachment::DepthStencil, *layer->depthTexture, 0);
 		}
@@ -497,7 +519,7 @@ void Engine::upsertGameObjectLayers()
 		if (index == GOL_PERSP_FIRST)
 		{
             layer->objectIdBuffer = std::make_unique<GL::Renderbuffer>();
-            layer->objectIdBuffer->setStorage(GL::RenderbufferFormat::R32UI, size);
+            layer->objectIdBuffer->setStorage(GL::RenderbufferFormat::R32UI, mScaledFramebufferSize);
 
 			layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX }, *layer->objectIdBuffer);
 			layer->frameBuffer->mapForDraw({

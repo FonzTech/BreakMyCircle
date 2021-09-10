@@ -27,7 +27,7 @@ std::unique_ptr<CommonUtility> CommonUtility::singleton = nullptr;
 
 const std::string CommonUtility::VECTOR_COMPONENTS[] = { "x", "y", "z", "w" };
 
-CommonUtility::CommonUtility() : mAssetDir("")
+CommonUtility::CommonUtility() : mConfig{ "", 1.0f }
 {
 }
 
@@ -51,7 +51,7 @@ Resource<Audio::Buffer> CommonUtility::loadAudioData(const std::string & filenam
 			std::exit(1);
 		}
 
-		if (!importer->openFile(mAssetDir + "audios/" + filename + ".ogg"))
+		if (!importer->openFile(mConfig.assetDir + "audios/" + filename + ".ogg"))
 		{
 			std::exit(2);
 		}
@@ -81,7 +81,7 @@ Resource<GL::Texture2D> CommonUtility::loadTexture(const std::string & filename)
 		PluginManager::Manager<Trade::AbstractImporter> manager;
 		Containers::Pointer<Trade::AbstractImporter> importer = manager.loadAndInstantiate("PngImporter");
 
-		if (!importer || !importer->openFile(CommonUtility::singleton->mAssetDir + "textures/" + filename.substr(4) + ".png"))
+		if (!importer || !importer->openFile(CommonUtility::singleton->mConfig.assetDir + "textures/" + filename.substr(4) + ".png"))
 		{
 			std::exit(-4);
 		}
@@ -115,7 +115,7 @@ Resource<FontHolder> CommonUtility::loadFont(const std::string & filename)
 	{
 		std::unique_ptr<FontHolder> fh = std::make_unique<FontHolder>();
 		fh->font = fh->manager.loadAndInstantiate("TrueTypeFont");
-		if (!fh->font || !fh->font->openFile(mAssetDir + "fonts/" + filename + ".ttf", 100.0f))
+		if (!fh->font || !fh->font->openFile(mConfig.assetDir + "fonts/" + filename + ".ttf", 100.0f))
 		{
 			Fatal{} << "Cannot open font file";
 			std::exit(1);

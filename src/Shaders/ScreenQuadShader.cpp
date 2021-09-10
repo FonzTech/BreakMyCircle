@@ -32,8 +32,8 @@ void ScreenQuadShader::setupShader()
 	GL::Shader frag{ GL::Version::GL330, GL::Shader::Type::Fragment };
 #endif
 
-	vert.addFile(CommonUtility::singleton->mAssetDir + "shaders/screen_quad.vert");
-	frag.addFile(CommonUtility::singleton->mAssetDir + "shaders/screen_quad.frag");
+	vert.addFile(CommonUtility::singleton->mConfig.assetDir + "shaders/screen_quad.vert");
+	frag.addFile(CommonUtility::singleton->mConfig.assetDir + "shaders/screen_quad.frag");
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(GL::Shader::compile({ vert, frag }));
 

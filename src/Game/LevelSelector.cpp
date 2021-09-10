@@ -66,6 +66,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mPrevMousePos = Vector2i(GO_LS_RESET_MOUSE_VALUE, -1);
 	mScrollVelocity = Vector3(0.0f);
 	mClickIndex = -1;
+	mClickTimer = 0.0f;
 	mLevelButtonScaleAnim = 0.0f;
 
 	mSettingsOpened = false;
@@ -371,7 +372,7 @@ void LevelSelector::update()
 		{
 			if (mPuView.startX != GO_LS_RESET_MOUSE_VALUE)
 			{
-				mPuView.scrollX += Float(InputManager::singleton->mMousePosition.x() - mPuView.startX) * 0.005f;
+				mPuView.scrollX += Float(InputManager::singleton->mMousePosition.x() - mPuView.startX) * (0.005f / CommonUtility::singleton->mConfig.displayDensity);
 				mPuView.startX = InputManager::singleton->mMousePosition.x();
 			}
 		}
@@ -381,10 +382,8 @@ void LevelSelector::update()
 		}
 		else
 		{
-			const Float xf = 0.5f - 0.25f * ar;
-			const Float xi = Math::floor((mPuView.scrollX + xf * 0.5f) / xf);
-
-			const Float xt = Math::clamp(xi * xf, Float(-GO_LS_MAX_POWERUP_COUNT + 1) * xf, 0.0f);
+			const Float xi = Math::round(mPuView.scrollX);
+			const Float xt = Math::clamp(xi, Float(-GO_LS_MAX_POWERUP_COUNT + 1), 0.0f);
 			const Float d = xt - mPuView.scrollX;
 			mPuView.scrollX += d * 0.25f;
 		}
@@ -460,23 +459,30 @@ void LevelSelector::update()
 
 	// Handle button clicks
 	const auto& lbs = InputManager::singleton->mMouseStates[PRIMARY_BUTTON];
-
-	const Vector3 p(Float(InputManager::singleton->mMousePosition.x()), Float(InputManager::singleton->mMousePosition.y()), 0.0f);
-	const auto& w = RoomManager::singleton->getWindowSize();
-
-	for (auto it = mScreenButtons.begin(); it != mScreenButtons.end(); ++it)
 	{
-		const auto& b = it->second.drawable->getBoundingBox(w);
-		if (b.contains(p))
+		if (mClickTimer >= 0.0f)
 		{
-			if (lbs == IM_STATE_PRESSED)
+			mClickTimer -= mDeltaTime;
+		}
+
+		const Vector3 p(Float(InputManager::singleton->mMousePosition.x()), Float(InputManager::singleton->mMousePosition.y()), 0.0f);
+		const auto& w = RoomManager::singleton->getWindowSize();
+
+		for (auto it = mScreenButtons.begin(); it != mScreenButtons.end(); ++it)
+		{
+			const auto& b = it->second.drawable->getBoundingBox(w);
+			if (b.contains(p))
 			{
-				mClickIndex = it->first;
-				break;
-			}
-			else if (lbs == IM_STATE_RELEASED && mClickIndex == Int(it->first) && it->second.callback(it->first))
-			{
-				break;
+				if (lbs == IM_STATE_PRESSED)
+				{
+					mClickIndex = it->first;
+					mClickTimer = 0.5f;
+					break;
+				}
+				else if (lbs == IM_STATE_RELEASED && mClickIndex == Int(it->first) && mClickTimer > 0.0f && it->second.callback(it->first))
+				{
+					break;
+				}
 			}
 		}
 	}
@@ -530,7 +536,6 @@ void LevelSelector::update()
 		{
             mPrevMousePos = InputManager::singleton->mMousePosition;
 			mClickStartTime = std::chrono::system_clock::now();
-            Debug{} << "qqq" << mPrevMousePos.x() << " " << mPrevMousePos.y();
 		}
 	}
 	else if (lbs >= IM_STATE_PRESSED)
@@ -1193,14 +1198,15 @@ void LevelSelector::windowForCurrentLevelView()
 	// Powerup buttons
 	if (canShowPowerups)
 	{
-		const Float xf = 0.5f - 0.25f * ar;
+		const Float xm = 0.075f * CommonUtility::singleton->mConfig.displayDensity;
+		const Float xf = (0.5f + xm) - (0.25f + xm) * ar;
 		const Float yf = 0.91f - powerupY;
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
-			const Float xp = canShowPowerups ? Float(i) * xf + mPuView.scrollX : -1000.0f;
+			const Float xp = canShowPowerups ? (Float(i) * xf + mPuView.scrollX * xf) : -1000.0f;
 
 			// Clickable icon
-			const Float alpha = Math::clamp(1.2f - Math::abs(xp) * 5.0f * ar, 0.0f, 1.0f);
+			const Float alpha = Math::clamp(1.2f - Math::abs(xp) * 5.0f / CommonUtility::singleton->mConfig.displayDensity * ar, 0.0f, 1.0f);
 			{
 				auto& item = (std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_POWERUP + i].drawable;
 				if (alpha > 0.0f)
@@ -1692,8 +1698,12 @@ void LevelSelector::finishCurrentLevel(const bool success)
 
 		// Compute correct score
 		mLevelInfo.score = computeScore();
-		mLevelInfo.playedScore = 0;
 	}
+	else
+	{
+		mLevelInfo.score = 0;
+	}
+	mLevelInfo.playedScore = 0;
 
 	// Reset temporary stats
 	RoomManager::singleton->mSaveData.coinCurrent = 0;

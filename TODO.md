@@ -35,5 +35,8 @@
 ~~- Buy powerups in powerup scroller.~~
 
 # On-going tasks
-- Use `magnum-fontconverter` instead of loading `TTF` directly.
+- Avoid rendering for `OverlayGui` and `OverlayText` when off-screen.
 - Implement other level game objects, such as rocks, holes, and others...
+
+# Optional tasks
+- Use `magnum-fontconverter` instead of loading `TTF` directly.

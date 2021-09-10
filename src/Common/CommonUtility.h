@@ -53,7 +53,11 @@ public:
 	MyResourceManager manager;
 
 	// Base path for resources
-	std::string mAssetDir;
+	struct EngineConfiguration
+	{
+		std::string assetDir;
+		Float displayDensity;
+	} mConfig;
 
 	// Constructor
 	CommonUtility();

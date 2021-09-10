@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="it.fonztech.breakmycircle">
 
+    <uses-feature
+        android:glEsVersion="0x00030000"
+        android:required="true" />
+
     <application
         android:allowBackup="false"
         android:fullBackupContent="false"
@@ -12,6 +16,7 @@
         android:theme="@style/BreakMyCircle">
         <activity
             android:name=".MainActivity"
+            android:hardwareAccelerated="true"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.app.lib_name"

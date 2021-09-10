@@ -17,6 +17,11 @@ public class MainActivity extends NativeActivity {
 
         // Set base directory for assets
         {
+            final float density = Math.max(1.0f, getResources().getDisplayMetrics().density);
+            getIntent().putExtra("density", Float.toString(density));
+        }
+
+        {
             String assetDir = getFilesDir().getAbsolutePath();
             if (!assetDir.endsWith(File.separator))
             {

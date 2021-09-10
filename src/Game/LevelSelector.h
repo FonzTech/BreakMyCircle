@@ -219,6 +219,7 @@ private:
 	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
 
 	Int mClickIndex;
+	Float mClickTimer; // Timer for touch screens, because often fingers make small mouse moves when tapping
 	std::unordered_map<UnsignedInt, LS_ScreenButton> mScreenButtons;
 
 	std::unordered_map<UnsignedInt, std::shared_ptr<OverlayGui>> mLevelGuis;

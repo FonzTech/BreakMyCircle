@@ -82,7 +82,7 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 	Containers::Pointer<Trade::AbstractImporter> importer = manager.loadAndInstantiate("AnySceneImporter");
 
 	{
-		const std::string fname = CommonUtility::singleton->mAssetDir + filename;
+		const std::string fname = CommonUtility::singleton->mConfig.assetDir + filename;
 		Debug{} << "Loading asset" << fname;
 		if (!importer || !importer->openFile(fname))
 		{
