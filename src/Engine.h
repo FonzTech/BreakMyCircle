@@ -27,6 +27,7 @@ public:
 	~Engine();
 
 protected:
+	static const Float mDrawFrameTime;
 
 #ifdef CORRADE_TARGET_ANDROID
     void tickEvent();
@@ -70,6 +71,7 @@ private:
 #endif
 
 	// Variables
+	Float mFrameTime;
 	Vector2i mScaledFramebufferSize;
 	Timeline mTimeline;
 	Float mDeltaTime;

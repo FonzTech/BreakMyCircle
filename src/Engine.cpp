@@ -18,6 +18,8 @@ using namespace std::chrono_literals;
 
 using namespace Magnum::Math::Literals;
 
+const Float Engine::mDrawFrameTime = 0.016f;
+
 const Int Engine::GO_LAYERS[] = {
 	GOL_PERSP_FIRST,
 	GOL_PERSP_SECOND,
@@ -30,7 +32,7 @@ const std::unordered_set<Int> Engine::GO_DRAW_DETACHED = {
 };
 #endif
 
-Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }
+Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }, mFrameTime(0.0f)
 {
 	// Setup window
 #ifdef MAGNUM_SDL2APPLICATION_MAIN
@@ -136,17 +138,22 @@ void Engine::tickEvent()
 	// Compute delta time
 	mDeltaTime = mTimeline.previousFrameDuration();
 
-	RoomManager::singleton->setWindowSize(Vector2(windowSize()));
+	// Advance frame time
+	mFrameTime += mDeltaTime;
+	const bool canDraw = mFrameTime >= mDrawFrameTime;
 
 	// Set correct viewport
+	RoomManager::singleton->setWindowSize(Vector2(windowSize()));
 	RoomManager::singleton->mCamera->setViewport(mScaledFramebufferSize);
 
 	// Iterate through all layers
 	for (const auto& index : GO_LAYERS)
 	{
-		// Get layer's framebuffer
+		// Get framebufferf for this buffer
 		RoomManager::singleton->setCurrentBoundParentIndex(index);
 		currentGol = &RoomManager::singleton->mGoLayers[index];
+
+		const bool canDrawLayer = canDraw && currentGol->drawEnabled;
 
 		if (index == GOL_PERSP_FIRST)
 		{
@@ -174,7 +181,7 @@ void Engine::tickEvent()
 		}
 
 		// Do operations on framebuffer only if drawing for it is enabled
-		if (currentGol->drawEnabled)
+		if (canDrawLayer)
         {
 			if (currentGol->depthTestEnabled)
 			{
@@ -231,7 +238,7 @@ void Engine::tickEvent()
 		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 #endif
 
-		if (currentGol->drawEnabled)
+		if (canDrawLayer)
 		{
 			drawInternal();
 		}
@@ -283,6 +290,12 @@ void Engine::tickEvent()
 		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 #endif
 		drawInternal();
+	}
+
+	// Reset frame time, if required
+	if (canDraw)
+	{
+		mFrameTime = 0.0f;
 	}
 
 	// Advance timeline
