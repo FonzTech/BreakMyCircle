@@ -1,0 +1,266 @@
+{
+  "audios/bgmusic.ogg": {
+    "version": 1
+  },
+  "audios/bubble_fall.ogg": {
+    "version": 1
+  },
+  "audios/bubble_pop.ogg": {
+    "version": 1
+  },
+  "audios/bubble_stomp.ogg": {
+    "version": 1
+  },
+  "audios/coin.ogg": {
+    "version": 1
+  },
+  "audios/congrats_1.ogg": {
+    "version": 1
+  },
+  "audios/congrats_2.ogg": {
+    "version": 1
+  },
+  "audios/congrats_3.ogg": {
+    "version": 1
+  },
+  "audios/congrats_4.ogg": {
+    "version": 1
+  },
+  "audios/congrats_5.ogg": {
+    "version": 1
+  },
+  "audios/electric.ogg": {
+    "version": 1
+  },
+  "audios/end_lose.ogg": {
+    "version": 1
+  },
+  "audios/end_win.ogg": {
+    "version": 1
+  },
+  "audios/explosion.ogg": {
+    "version": 1
+  },
+  "audios/pause_in.ogg": {
+    "version": 1
+  },
+  "audios/pause_out.ogg": {
+    "version": 1
+  },
+  "audios/powerup.ogg": {
+    "version": 1
+  },
+  "audios/shot_1.ogg": {
+    "version": 1
+  },
+  "audios/shot_2.ogg": {
+    "version": 1
+  },
+  "audios/shot_3.ogg": {
+    "version": 1
+  },
+  "audios/star_1.ogg": {
+    "version": 1
+  },
+  "audios/star_2.ogg": {
+    "version": 1
+  },
+  "audios/star_3.ogg": {
+    "version": 1
+  },
+  "audios/wrong.ogg": {
+    "version": 1
+  },
+  "fonts/ubuntu-title.ttf": {
+    "version": 1
+  },
+  "paths/new_sphere.txt": {
+    "version": 1
+  },
+  "rooms/intro.txt": {
+    "version": 1
+  },
+  "scenes/bomb.glb": {
+    "version": 1
+  },
+  "scenes/bubble.glb": {
+    "version": 1
+  },
+  "scenes/cannon_1.glb": {
+    "version": 1
+  },
+  "scenes/coin.glb": {
+    "version": 1
+  },
+  "scenes/level_button.glb": {
+    "version": 1
+  },
+  "scenes/logo.glb": {
+    "version": 1
+  },
+  "scenes/scenery_pipe.glb": {
+    "version": 1
+  },
+  "scenes/world_1.glb": {
+    "version": 1
+  },
+  "scenes/world_2.glb": {
+    "version": 1
+  },
+  "scenes/world_3.glb": {
+    "version": 1
+  },
+  "scenes/world_wall.glb": {
+    "version": 1
+  },
+  "shaders/cubemap.frag": {
+    "version": 1
+  },
+  "shaders/cubemap.vert": {
+    "version": 1
+  },
+  "shaders/passthrough.vert": {
+    "version": 1
+  },
+  "shaders/plasma.frag": {
+    "version": 1
+  },
+  "shaders/screen_quad.frag": {
+    "version": 1
+  },
+  "shaders/screen_quad.vert": {
+    "version": 1
+  },
+  "shaders/sprite.frag": {
+    "version": 1
+  },
+  "shaders/water.frag": {
+    "version": 1
+  },
+  "textures/bubble_blue.png": {
+    "version": 1
+  },
+  "textures/bubble_cyan.png": {
+    "version": 1
+  },
+  "textures/bubble_green.png": {
+    "version": 1
+  },
+  "textures/bubble_orange.png": {
+    "version": 1
+  },
+  "textures/bubble_purple.png": {
+    "version": 1
+  },
+  "textures/bubble_red.png": {
+    "version": 1
+  },
+  "textures/bubble_translucent.png": {
+    "version": 1
+  },
+  "textures/bubble_yellow.png": {
+    "version": 1
+  },
+  "textures/explosion.png": {
+    "version": 1
+  },
+  "textures/gui_back_arrow.png": {
+    "version": 1
+  },
+  "textures/gui_bgmusic_off.png": {
+    "version": 1
+  },
+  "textures/gui_bgmusic_on.png": {
+    "version": 1
+  },
+  "textures/gui_button_2x1.png": {
+    "version": 1
+  },
+  "textures/gui_button_4x1.png": {
+    "version": 1
+  },
+  "textures/gui_coin.png": {
+    "version": 1
+  },
+  "textures/gui_congrats.png": {
+    "version": 1
+  },
+  "textures/gui_exit.png": {
+    "version": 1
+  },
+  "textures/gui_help.png": {
+    "version": 1
+  },
+  "textures/gui_level_panel.png": {
+    "version": 1
+  },
+  "textures/gui_next.png": {
+    "version": 1
+  },
+  "textures/gui_play.png": {
+    "version": 1
+  },
+  "textures/gui_pu_bomb.png": {
+    "version": 1
+  },
+  "textures/gui_pu_electric.png": {
+    "version": 1
+  },
+  "textures/gui_pu_plasma.png": {
+    "version": 1
+  },
+  "textures/gui_pu_time.png": {
+    "version": 1
+  },
+  "textures/gui_replay.png": {
+    "version": 1
+  },
+  "textures/gui_sad.png": {
+    "version": 1
+  },
+  "textures/gui_scroll_back.png": {
+    "version": 1
+  },
+  "textures/gui_settings.png": {
+    "version": 1
+  },
+  "textures/gui_sfx_off.png": {
+    "version": 1
+  },
+  "textures/gui_sfx_on.png": {
+    "version": 1
+  },
+  "textures/gui_share.png": {
+    "version": 1
+  },
+  "textures/gui_star.png": {
+    "version": 1
+  },
+  "textures/gui_time.png": {
+    "version": 1
+  },
+  "textures/lightning.png": {
+    "version": 1
+  },
+  "textures/lightorb.png": {
+    "version": 1
+  },
+  "textures/skybox_1_px.png": {
+    "version": 1
+  },
+  "textures/sparkles.png": {
+    "version": 1
+  },
+  "textures/water_dm.png": {
+    "version": 1
+  },
+  "textures/water_tm.png": {
+    "version": 1
+  },
+  "textures/white.png": {
+    "version": 1
+  },
+  "textures/world_1_wem.png": {
+    "version": 1
+  }
+}

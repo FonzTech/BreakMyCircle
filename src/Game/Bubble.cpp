@@ -233,7 +233,7 @@ Int Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
 			}
 
 			// Increment work variable
-			posZ += 0.05f;
+			posZ += 0.075f;
 
 			// Remove from graph
 			fps->pop();
