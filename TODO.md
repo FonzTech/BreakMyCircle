@@ -33,10 +33,10 @@
 - ~~Place random pickups around the map (to make use of coins).~~
 - ~~Random help tooltips in level selector.~~
 ~~- Buy powerups in powerup scroller.~~
+~~- Implement different switches for `update` and `draw` phases, to avoid re-rendering of static scenes.~~
+~~- Avoid rendering for `OverlayGui` and `OverlayText` when off-screen.~~
 
 # On-going tasks
-- Avoid rendering for `OverlayGui` and `OverlayText` when off-screen.
-- Implement different switches for `update` and `draw` phases, to avoid re-rendering of static scenes.
 - Implement other level game objects, such as rocks, holes, and others...
 - Assets update on Android based on versioning.
 

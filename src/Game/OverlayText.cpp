@@ -56,14 +56,17 @@ void OverlayText::draw(BaseDrawable* baseDrawable, const Matrix4& transformation
 {
 	if (mColor.a() > 0.0f || mOutlineColor.a() > 0.0f || mSize.length() != 0.0f)
 	{
-		((Shaders::DistanceFieldVector2D&)baseDrawable->getShader())
-			.bindVectorTexture(mFontHolder->cache->texture())
-			.setTransformationProjectionMatrix(mProjectionMatrix * mTransformationMatrix)
-			.setColor(mColor)
-			.setOutlineColor(mOutlineColor)
-			.setOutlineRange(mOutlineRange.x(), mOutlineRange.y())
-			.setSmoothness(0.025f / mTransformationMatrix.uniformScaling())
-			.draw(mText->mesh());
+		if (Math::intersects(mBbox, outerFrame))
+		{
+			((Shaders::DistanceFieldVector2D&)baseDrawable->getShader())
+				.bindVectorTexture(mFontHolder->cache->texture())
+				.setTransformationProjectionMatrix(mProjectionMatrix * mTransformationMatrix)
+				.setColor(mColor)
+				.setOutlineColor(mOutlineColor)
+				.setOutlineRange(mOutlineRange.x(), mOutlineRange.y())
+				.setSmoothness(0.025f / mTransformationMatrix.uniformScaling())
+				.draw(mText->mesh());
+		}
 	}
 }
 
@@ -108,7 +111,7 @@ void OverlayText::setText(const std::string & text)
 
 Range3D OverlayText::getBoundingBox(const Vector2 & windowSize)
 {
-	const auto& s = Vector3(windowSize, 1.0f);
+	const auto& s = Vector3(windowSize, 0.25f);
 	const auto& o = s * 0.5f;
 	return Range3D{
 		{ mBbox.min().x() * s.x() + o.x(), s.y() - (mBbox.max().y() * s.y() + o.y()), mBbox.min().z() * s.z() + o.z() },

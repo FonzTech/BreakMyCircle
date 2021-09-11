@@ -1,6 +1,8 @@
 #include "AbstractGuiElement.h"
 #include "../RoomManager.h"
 
+Range3D AbstractGuiElement::outerFrame = Range3D(Vector3(-0.5f), Vector3(0.5f));
+
 std::shared_ptr<GameObject> AbstractGuiElement::getInstance(const nlohmann::json & params)
 {
 	// No default constructor exists for this class!!

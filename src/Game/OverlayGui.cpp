@@ -56,12 +56,15 @@ void OverlayGui::update()
 
 void OverlayGui::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	((Shaders::Flat3D&) baseDrawable->getShader())
-		.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
-		.bindTexture(*baseDrawable->mTexture)
-		.setColor(mColor)
-		.setAlphaMask(0.001f)
-		.draw(*baseDrawable->mMesh);
+	if (Math::intersects(mBbox, outerFrame))
+	{
+		((Shaders::Flat3D&) baseDrawable->getShader())
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+			.bindTexture(*baseDrawable->mTexture)
+			.setColor(mColor)
+			.setAlphaMask(0.001f)
+			.draw(*baseDrawable->mMesh);
+	}
 }
 
 void OverlayGui::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
@@ -80,7 +83,7 @@ void OverlayGui::setColor(const Color4 & color)
 
 Range3D OverlayGui::getBoundingBox(const Vector2 & windowSize)
 {
-	const auto& s = Vector3(windowSize, 1.0f);
+	const auto& s = Vector3(windowSize, 0.25f);
 	const auto& o = s * 0.5f;
 	return Range3D{
 		{ mBbox.min().x() * s.x() + o.x(), s.y() - (mBbox.max().y() * s.y() + o.y()), mBbox.min().z() * s.z() + o.z() },

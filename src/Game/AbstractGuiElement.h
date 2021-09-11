@@ -10,6 +10,8 @@ using namespace Magnum;
 class AbstractGuiElement : public GameObject
 {
 public:
+	static Range3D outerFrame;
+
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	// Class members
