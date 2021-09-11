@@ -168,6 +168,7 @@
     <ClCompile Include="src\Game\Dialog.cpp" />
     <ClCompile Include="src\Game\ElectricBall.cpp" />
     <ClCompile Include="src\Game\LevelSelector.cpp" />
+    <ClCompile Include="src\Game\LevelSelectorSidecar.cpp" />
     <ClCompile Include="src\Game\LimitLine.cpp" />
     <ClCompile Include="src\Game\MapPickup.cpp" />
     <ClCompile Include="src\Game\OverlayGui.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="src\Game\Dialog.h" />
     <ClInclude Include="src\Game\ElectricBall.h" />
     <ClInclude Include="src\Game\LevelSelector.h" />
+    <ClInclude Include="src\Game\LevelSelectorSidecar.h" />
     <ClInclude Include="src\Game\LimitLine.h" />
     <ClInclude Include="src\Game\MapPickup.h" />
     <ClInclude Include="src\Game\OverlayGui.h" />

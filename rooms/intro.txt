@@ -11,7 +11,7 @@
       }
     },
     {
-      "parent": 0,
+      "parent": 2,
       "type": 9,
       "position": {
         "x": 0.0,

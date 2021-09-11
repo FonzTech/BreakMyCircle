@@ -7,8 +7,6 @@
 #define GO_LS_RESET_MOUSE_VALUE -10000
 #define GO_LS_CLICK_TAP_MAX_DELAY 0.3
 
-#define GO_LS_MESH_PLATFORM "PlatformV"
-
 #define GO_LS_TEXT_LEVEL 0U
 #define GO_LS_TEXT_TIME 1U
 #define GO_LS_TEXT_COIN 2U
@@ -65,9 +63,10 @@
 #include <Magnum/Math/Bezier.h>
 
 #include "../GameObject.h"
-#include "../Game/Dialog.h"
-#include "../Game/MapPickup.h"
-#include "../Game/Callbacks/IShootCallback.h"
+#include "Dialog.h"
+#include "MapPickup.h"
+#include "LevelSelectorSidecar.h"
+#include "Callbacks/IShootCallback.h"
 #include "../Graphics/BaseDrawable.h"
 #include "OverlayGui.h"
 #include "OverlayText.h"
@@ -93,33 +92,43 @@ public:
 private:
 	static std::unordered_map<Int, std::array<Vector3, 6>> sLevelButtonPositions;
 
-	struct LS_PickableObject
+	class LS_PickableObject
 	{
-		std::vector<std::weak_ptr<BaseDrawable>> drawables;
+	public:
+		explicit LS_PickableObject();
+		~LS_PickableObject();
+		
+		std::weak_ptr<LevelSelectorSidecar> sidecar;
 		Vector3 position;
 		Float scale;
 		UnsignedInt levelIndex;
 		UnsignedInt objectId;
 		Resource<GL::Texture2D> texture;
 	};
+	
+	class LS_ScenerySelector
+	{
+	public:
+		~LS_ScenerySelector();
+
+		std::weak_ptr<Scenery> scenery;
+		std::vector<std::shared_ptr<LS_PickableObject>> buttons;
+	};
+
+	class LS_ScreenButton
+	{
+	public:
+		explicit LS_ScreenButton();
+		~LS_ScreenButton();
+
+		std::shared_ptr<AbstractGuiElement> drawable;
+		std::function<bool(UnsignedInt)> callback;
+	};
 
 	struct LS_PickableObjectRef
 	{
 		Int sceneryIndex;
 		Int objectIndex;
-	};
-
-	struct LS_ScenerySelector
-	{
-		std::weak_ptr<Scenery> scenery;
-		std::vector<LS_PickableObject> buttons;
-		Object3D* manipulator;
-	};
-
-	struct LS_ScreenButton
-	{
-		std::shared_ptr<AbstractGuiElement> drawable;
-		std::function<bool(UnsignedInt)> callback;
 	};
 
 	struct LS_LevelInfo
@@ -220,7 +229,7 @@ private:
 
 	Int mClickIndex;
 	Float mClickTimer; // Timer for touch screens, because often fingers make small mouse moves when tapping
-	std::unordered_map<UnsignedInt, LS_ScreenButton> mScreenButtons;
+	std::unordered_map<UnsignedInt, std::unique_ptr<LS_ScreenButton>> mScreenButtons;
 
 	std::unordered_map<UnsignedInt, std::shared_ptr<OverlayGui>> mLevelGuis;
 	std::unordered_map<UnsignedInt, std::shared_ptr<OverlayText>> mLevelTexts;

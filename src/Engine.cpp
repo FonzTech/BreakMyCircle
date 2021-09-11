@@ -173,15 +173,19 @@ void Engine::tickEvent()
 				.clearColor(GLF_OBJECTID_ATTACHMENT_INDEX, Vector4ui{});
 		}
 
-        if (currentGol->depthTestEnabled)
+		// Do operations on framebuffer only if drawing for it is enabled
+		if (currentGol->drawEnabled)
         {
-            (*currentGol->frameBuffer)
-                    .clear(GL::FramebufferClear::Depth | GL::FramebufferClear::Stencil);
-        }
+			if (currentGol->depthTestEnabled)
+			{
+				(*currentGol->frameBuffer)
+					.clear(GL::FramebufferClear::Depth | GL::FramebufferClear::Stencil);
+			}
 
-		(*currentGol->frameBuffer)
-			.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f))
-			.bind();
+			(*currentGol->frameBuffer)
+				.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f))
+				.bind();
+        }
 
 		// Set renderer features
 		GL::Renderer::enable(GL::Renderer::Feature::Blending);
@@ -198,24 +202,27 @@ void Engine::tickEvent()
 		const auto& gos = currentGol->list;
 
 		// Update all game objects on this layer
-		for (UnsignedInt i = 0; i < gos->size(); ++i)
+		if (currentGol->updateEnabled)
 		{
-			std::shared_ptr<GameObject> & go = gos->at(i);
-			go->mDeltaTime = mDeltaTime;
-			go->update();
-		}
-
-		// Destroy all marked objects as such on this layer
-		for (UnsignedInt i = 0; i < gos->size();)
-		{
-			std::shared_ptr<GameObject> & go = gos->at(i);
-			if (go->mDestroyMe)
+			for (UnsignedInt i = 0; i < gos->size(); ++i)
 			{
-				gos->erase(gos->begin() + i);
+				std::shared_ptr<GameObject> & go = gos->at(i);
+				go->mDeltaTime = mDeltaTime;
+				go->update();
 			}
-			else
+
+			// Destroy all marked objects as such on this layer
+			for (UnsignedInt i = 0; i < gos->size();)
 			{
-				++i;
+				std::shared_ptr<GameObject> & go = gos->at(i);
+				if (go->mDestroyMe)
+				{
+					gos->erase(gos->begin() + i);
+				}
+				else
+				{
+					++i;
+				}
 			}
 		}
 
@@ -223,7 +230,11 @@ void Engine::tickEvent()
 #ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
 		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 #endif
-		drawInternal();
+
+		if (currentGol->drawEnabled)
+		{
+			drawInternal();
+		}
 
 		// Check for special actions
 #ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
@@ -466,6 +477,9 @@ void Engine::upsertGameObjectLayers()
 				layer->drawables = std::make_unique<SceneGraph::DrawableGroup3D>();
 
 				// Special setup
+				layer->updateEnabled = true;
+				layer->drawEnabled = true;
+
 				if (index == GOL_ORTHO_FIRST)
 				{
 					// Set renderer features

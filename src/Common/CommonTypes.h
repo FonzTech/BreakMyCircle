@@ -110,6 +110,7 @@
 #define GOT_ELECTRIC_BALL 13
 #define GOT_CONGRATS 14
 #define GOT_MAPPICKUP 15
+#define GOT_LEVEL_SELECTOR_SIDECAR 16
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>

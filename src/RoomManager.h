@@ -45,6 +45,8 @@ public:
 		Int index;
 		bool depthTestEnabled;
 		bool orderingByZ;
+		bool updateEnabled;
+		bool drawEnabled; // If draw is disabled, framebuffer is NOT cleared
 		Matrix4 projectionMatrix;
 		Vector3 cameraEye, cameraTarget;
 		std::unique_ptr<GL::Framebuffer> frameBuffer;
