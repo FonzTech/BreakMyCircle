@@ -48,9 +48,9 @@ void ScreenQuadShader::setupShader()
 	CORRADE_INTERNAL_ASSERT_OUTPUT(link());
 
 	setUniform(uniformLocation("colorPerspFirst"), GOL_PERSP_FIRST);
-	setUniform(uniformLocation("depthStencilPerspFirst"), GOL_PERSP_FIRST + TEXTURE_UNIT_DEPTHSTENCIL_OFFSET);
 	setUniform(uniformLocation("colorPerspSecond"), GOL_PERSP_SECOND);
 	setUniform(uniformLocation("colorOrthoFirst"), GOL_ORTHO_FIRST);
+	setUniform(uniformLocation("depthStencilPerspFirst"), GOL_PERSP_FIRST + TEXTURE_UNIT_DEPTHSTENCIL_OFFSET);
 }
 
 void ScreenQuadShader::setupMesh()

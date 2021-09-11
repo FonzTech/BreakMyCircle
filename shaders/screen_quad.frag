@@ -1,9 +1,9 @@
 precision mediump float;
 
 uniform sampler2D colorPerspFirst;
-uniform sampler2D depthStencilPerspFirst;
 uniform sampler2D colorPerspSecond;
 uniform sampler2D colorOrthoFirst;
+uniform sampler2D depthStencilPerspFirst;
 
 in vec2 interpolatedTextureCoordinates;
 

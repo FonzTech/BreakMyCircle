@@ -35,6 +35,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mParentIndex = parentIndex;
 	
 	// Init members
+	mCanvasPadding = CommonUtility::singleton->mConfig.canvasVerticalPadding / RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture->imageSize(0).y();
 	mLightPosition = Vector3(0.0f, -0.5f, 0.0f);
 	mLightDirection = false;
 	mIntroBubbles = true;
@@ -90,7 +91,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	{
 		const std::string& text = "Created by\nFonzTech";
 		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
-		go->mPosition = Vector3(0.0f, -0.4f, 0.0f);
+		go->mPosition = Vector3(0.0f, -0.4f + mCanvasPadding, 0.0f);
 		go->mColor = Color4(1.0f, 0.5f, 0.5f, 0.0f);
 		go->mOutlineColor.data()[3] = 0.0f;
 		go->setText(text);
@@ -292,7 +293,7 @@ void Logo::buildAnimations()
 		case 3:
 			mKeyframes[i][0] = { 0.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
 			mKeyframes[i][1] = { 6.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
-			mKeyframes[i][2] = { 7.0f, Vector3(0.0f, -2.0f, 0.0f), 0.0_degf };
+			mKeyframes[i][2] = { 7.0f, Vector3(0.0f, -2.0f + mCanvasPadding * 8.0f, 0.0f), 0.0_degf };
 			break;
 		}
 

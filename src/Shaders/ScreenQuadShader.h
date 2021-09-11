@@ -1,6 +1,6 @@
 #pragma once
 
-#define TEXTURE_UNIT_DEPTHSTENCIL_OFFSET 55
+#define TEXTURE_UNIT_DEPTHSTENCIL_OFFSET 3
 
 #include <Magnum/GL/Mesh.h>
 #include <Magnum/GL/Texture.h>

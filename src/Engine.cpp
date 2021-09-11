@@ -328,9 +328,9 @@ void Engine::drawInternal()
 		// Draw screen quad
 		mScreenQuadShader
 				.bindColorTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].colorTexture)
-				.bindDepthStencilTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].depthTexture)
 				.bindColorTexture(GOL_PERSP_SECOND, *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].colorTexture)
 				.bindColorTexture(GOL_ORTHO_FIRST, *RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture)
+				.bindDepthStencilTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].depthTexture)
 				.draw(mScreenQuadShader.mMesh);
 
 		// Swap buffers
@@ -549,6 +549,8 @@ void Engine::upsertGameObjectLayers()
 			layer->depthTexture = std::make_unique<GL::Texture2D>();
 			layer->depthTexture->setStorage(1, GL::TextureFormat::Depth24Stencil8, mScaledFramebufferSize);
 			layer->depthTexture->setCompareMode(GL::SamplerCompareMode::None);
+			layer->depthTexture->setMagnificationFilter(Magnum::SamplerFilter::Nearest);
+			layer->depthTexture->setMagnificationFilter(Magnum::SamplerFilter::Nearest);
 			layer->frameBuffer->attachTexture(GL::Framebuffer::BufferAttachment::DepthStencil, *layer->depthTexture, 0);
 		}
 

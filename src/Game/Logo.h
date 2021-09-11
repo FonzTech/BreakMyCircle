@@ -45,8 +45,9 @@ private:
 	void setCameraParameters();
 
 	// Common members
-	bool mLightDirection;
+	Float mCanvasPadding;
 	Vector3 mLightPosition;
+	bool mLightDirection;
 
 	// Logo manipulator
 	Object3D* mLogoManipulator;

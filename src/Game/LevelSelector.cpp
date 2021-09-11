@@ -298,7 +298,7 @@ void LevelSelector::update()
 	if (!mLevelInfo.playerPointer.expired())
 	{
 		Int canShoot = 0;
-		if (!mDialog.expired())
+		if (!mDialog.expired() || mClickIndex != -1)
 		{
 			canShoot = 2;
 		}
@@ -499,7 +499,7 @@ void LevelSelector::update()
 					mClickTimer = 0.5f;
 					break;
 				}
-				else if (lbs == IM_STATE_RELEASED && mClickIndex == Int(it->first) && mClickTimer > 0.0f && it->second->callback(it->first))
+				else if (lbs == IM_STATE_RELEASED && mClickIndex == Int(it->first) && it->second->callback(it->first))
 				{
 					break;
 				}
@@ -1899,7 +1899,7 @@ void LevelSelector::createPowerupView()
 			mScreenButtons[GO_LS_GUI_POWERUP + i] = std::make_unique<LS_ScreenButton>();
 			mScreenButtons[GO_LS_GUI_POWERUP + i]->drawable = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 			mScreenButtons[GO_LS_GUI_POWERUP + i]->callback = [&](UnsignedInt index) {
-				if ((mLevelAnim < 0.95f && mSettingsAnim < 0.95f) || ((std::shared_ptr<OverlayGui>&)mScreenButtons[index]->drawable)->color()[3] < 0.95f || !mDialog.expired())
+				if ((mLevelAnim < 0.95f && mSettingsAnim < 0.95f) || ((std::shared_ptr<OverlayGui>&)mScreenButtons[index]->drawable)->color()[3] < 0.95f || !mDialog.expired() || mClickTimer <= 0.0f)
 				{
 					return false;
 				}
@@ -2216,8 +2216,8 @@ void LevelSelector::createGuis()
 	{
 		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_LEVEL_PANEL);
 		o->setPosition({ 2.0f, 2.0f });
-		o->setSize({ 0.45f, 0.45f });
-		o->setAnchor({ 0.0f, 0.0f });
+		o->setSize(Vector2(0.45f * getWidthReferenceFactor()));
+		o->setAnchor(Vector2(0.0f));
 
 		mLevelGuis[GO_LS_GUI_LEVEL_PANEL] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 	}
@@ -2226,8 +2226,8 @@ void LevelSelector::createGuis()
 	{
 		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_REPLAY);
 		o->setPosition({ -2.0f, 0.5f });
-		o->setSize({ 0.1f, 0.1f });
-		o->setAnchor({ 0.0f, 0.0f });
+		o->setSize(Vector2(0.1f));
+		o->setAnchor(Vector2(0.0f));
 
 		mScreenButtons[GO_LS_GUI_REPLAY] = std::make_unique<LS_ScreenButton>();
 		mScreenButtons[GO_LS_GUI_REPLAY]->drawable = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
