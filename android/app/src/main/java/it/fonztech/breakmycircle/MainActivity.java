@@ -31,6 +31,11 @@ public class MainActivity extends NativeActivity {
         }
 
         {
+            final int height = statusBarHeight();
+            getIntent().putExtra("canvas_vertical_height", Integer.toString(height));
+        }
+
+        {
             String assetDir = getFilesDir().getAbsolutePath();
             if (!assetDir.endsWith(File.separator))
             {
@@ -101,5 +106,9 @@ public class MainActivity extends NativeActivity {
         is.close();
 
         return new String(baos.toByteArray());
+    }
+
+    protected final int statusBarHeight() {
+        return (int) (24.0f * getResources().getDisplayMetrics().density);
     }
 }

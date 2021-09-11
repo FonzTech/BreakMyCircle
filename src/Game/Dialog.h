@@ -35,7 +35,7 @@ public:
 	void setMessagePosition(const Vector3 & position);
 	void addAction(const std::string & text, const std::function<void(UnsignedInt)> & callback, const bool isLong = false, const Vector3 & offset = Vector3(0.0f));
 	void closeDialog();
-	void shakeButton(const UnsignedInt index);;
+	void shakeButton(const UnsignedInt index);
 
 protected:
 

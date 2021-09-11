@@ -206,6 +206,9 @@ private:
 	void createGuis();
 	void createTexts();
 
+	Float getScaledVerticalPadding();
+	Float getWidthReferenceFactor();
+
 	std::weak_ptr<Dialog> mDialog;
 
 #ifdef GO_LS_SKY_PLANE_ENABLED
@@ -246,4 +249,6 @@ private:
 
 	LS_PowerupView mPuView;
 	LS_PickupHandler mPickupHandler;
+
+	Float mCachedFramebufferHeight;
 };

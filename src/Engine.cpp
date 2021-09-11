@@ -18,7 +18,13 @@ using namespace std::chrono_literals;
 
 using namespace Magnum::Math::Literals;
 
-const Float Engine::mDrawFrameTime = 0.016f;
+const Float Engine::mDrawFrameTime =
+#ifdef CORRADE_TARGET_ANDROID
+0.016f
+#else
+0.009f
+#endif
+;
 
 const Int Engine::GO_LAYERS[] = {
 	GOL_PERSP_FIRST,
@@ -73,7 +79,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
     jclass icl = env->GetObjectClass(intent); // Class pointer of Intent
     jmethodID gseid = env->GetMethodID(icl, "getStringExtra", "(Ljava/lang/String;)Ljava/lang/String;");
 
-    const std::array<std::string, 2> params = { "asset_dir", "density" };
+    const std::array<std::string, 3> params = { "asset_dir", "canvas_vertical_height", "density" };
     for (UnsignedInt i = 0; i != params.size(); ++i)
     {
         const auto jsParam1 = (jstring) env->CallObjectMethod(intent, gseid, env->NewStringUTF(params.at(i).c_str()));
@@ -88,6 +94,10 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
             break;
 
         case 1U:
+            CommonUtility::singleton->mConfig.canvasVerticalPadding = std::stof(value);
+            break;
+
+        case 2U:
             CommonUtility::singleton->mConfig.displayDensity = std::stof(value);
             break;
         }
@@ -317,11 +327,11 @@ void Engine::drawInternal()
 	{
 		// Draw screen quad
 		mScreenQuadShader
-			.bindColorTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].colorTexture)
-			.bindDepthStencilTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].depthTexture)
-			.bindColorTexture(GOL_PERSP_SECOND, *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].colorTexture)
-			.bindColorTexture(GOL_ORTHO_FIRST, *RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture)
-			.draw(mScreenQuadShader.mMesh);
+				.bindColorTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].colorTexture)
+				.bindDepthStencilTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].depthTexture)
+				.bindColorTexture(GOL_PERSP_SECOND, *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].colorTexture)
+				.bindColorTexture(GOL_ORTHO_FIRST, *RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture)
+				.draw(mScreenQuadShader.mMesh);
 
 		// Swap buffers
 		swapBuffers();

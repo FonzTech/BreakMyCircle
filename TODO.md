@@ -35,10 +35,11 @@
 ~~- Buy powerups in powerup scroller.~~
 ~~- Implement different switches for `update` and `draw` phases, to avoid re-rendering of static scenes.~~
 ~~- Avoid rendering for `OverlayGui` and `OverlayText` when off-screen.~~
+~~- Assets update on Android based on versioning.~~
 
 # On-going tasks
+- Improve collision detection during gameplay when FPS is low.
 - Implement other level game objects, such as rocks, holes, and others...
-- Assets update on Android based on versioning.
 
 # Optional tasks
 - Use `magnum-fontconverter` instead of loading `TTF` directly.

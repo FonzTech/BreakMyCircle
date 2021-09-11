@@ -56,6 +56,7 @@ public:
 	struct EngineConfiguration
 	{
 		std::string assetDir;
+		Float canvasVerticalPadding;
 		Float displayDensity;
 	} mConfig;
 

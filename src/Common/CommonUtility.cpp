@@ -27,7 +27,7 @@ std::unique_ptr<CommonUtility> CommonUtility::singleton = nullptr;
 
 const std::string CommonUtility::VECTOR_COMPONENTS[] = { "x", "y", "z", "w" };
 
-CommonUtility::CommonUtility() : mConfig{ "", 1.0f }
+CommonUtility::CommonUtility() : mConfig{ "", 0.0f, 1.0f }
 {
 }
 

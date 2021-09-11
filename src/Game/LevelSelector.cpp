@@ -200,6 +200,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Trigger scenery creation
 	handleScrollableScenery();
+
+	// Get framebuffer height
+	mCachedFramebufferHeight = RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture->imageSize(0).y();
 }
 
 LevelSelector::~LevelSelector()
@@ -991,8 +994,9 @@ void LevelSelector::clickLevelButton(const LS_ScenerySelector * sc, const LS_Pic
 void LevelSelector::windowForCommon()
 {
 	const auto& dsl = mCbEaseInOut.value(mSettingsAnim + mLevelAnim)[1];
+	const auto& p0 = Vector2(0.0f, getScaledVerticalPadding());
 	const auto& d0 = mCbEaseInOut.value(mLevelGuiAnim[0])[1];
-	const auto& d1 = mCbEaseInOut.value(mLevelGuiAnim[1])[1];
+	// const auto& d1 = mCbEaseInOut.value(mLevelGuiAnim[1])[1];
 	const auto& ds = mCbEaseInOut.value(mLevelStartedAnim)[1];
 
 	// Main panel
@@ -1000,15 +1004,15 @@ void LevelSelector::windowForCommon()
 
 	// Coin icon and text
 	{
-		const auto& dx = 0.2f * d0;
+		const auto& dx = (0.2f + p0.y()) * d0;
 		mLevelGuis[GO_LS_GUI_COIN]->setPosition({ -0.49f, 0.69f - dx });
 		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.5f, 0.7f - dx });
 	}
 
 	// Time icon and text
 	{
-		const auto& p1 = Vector2(0.49f, -0.74f + ds * 0.25f);
-		const auto& p2 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector3(0.0f, -0.2f, 0.0f) * d1 : Vector3(0.0f);
+		const auto& p1 = Vector2(0.49f, -0.74f + ds * (0.25f + p0.y()));
+		// const auto& p2 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector3(0.0f, -0.2f, 0.0f) * d1 : Vector3(0.0f);
 
 		mLevelGuis[GO_LS_GUI_TIME]->setPosition(p1);
 		mLevelTexts[GO_LS_TEXT_TIME]->setPosition(p1);
@@ -1018,10 +1022,18 @@ void LevelSelector::windowForCommon()
 	mScreenButtons[GO_LS_GUI_SCROLL_BACK]->drawable->setPosition(Vector2(0.5f, -0.75f + 0.25f * (mLevelGuiAnim[4] - mSettingsAnim - mLevelAnim)));
 
 	// Help tips
+	const auto& wrf = getWidthReferenceFactor();
 	{
 		const auto& yp = mLevelGuiAnim[5] <= 0.0f ? 0.0f : mLevelGuiAnim[5] < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::circularOut(mLevelGuiAnim[5])) * 0.5f : 0.5f;
 		mLevelGuis[GO_LS_GUI_HELP]->mPosition = Vector3(0.5f, 1.0f - yp, 0.0f);
+		mLevelGuis[GO_LS_GUI_HELP]->setSize({ 0.35f * wrf, 0.15f + getScaledVerticalPadding() * 0.5f });
+	}
+
+	{
+		const auto& h = 0.5f + getScaledVerticalPadding();
+		const auto& yp = mLevelGuiAnim[5] <= 0.0f ? 0.0f : mLevelGuiAnim[5] < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::circularOut(mLevelGuiAnim[5])) * h : h;
 		mLevelTexts[GO_LS_TEXT_HELP]->mPosition = Vector3(0.49f, 0.99f - yp, 0.0f);
+		mLevelTexts[GO_LS_TEXT_HELP]->setSize(Vector2(0.6f * wrf));
 	}
 }
 
@@ -1040,8 +1052,9 @@ void LevelSelector::windowForSettings()
 
 		// Position and Anchor
 		{
-			const auto& p1 = Vector2(-0.75f, -0.5f) + Vector2(0.25f, 0.0f) * d2;
-			const auto& p2 = Vector2(0.5f, 0.85f) * dsl;
+			const auto& p0 = Vector2(0.0f, getScaledVerticalPadding());
+			const auto& p1 = Vector2(-0.75f, -0.5f) + Vector2(0.25f, p0.y()) * d2;
+			const auto& p2 = Vector2(0.5f, 0.85f - p0.y()) * dsl;
 			const auto& p3 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector2(-0.5f, -1.0f) * dl : Vector2(0.0f);
 			drawable->setPosition(p1 + p2 + p3);
 
@@ -1105,7 +1118,7 @@ void LevelSelector::windowForCurrentLevelView()
 	{
 		const auto& drawable = mLevelGuis[GO_LS_GUI_STAR + i];
 
-		const Float xp = 0.2f / (ar / 0.5625f);
+		const Float xp = 0.2f / getWidthReferenceFactor();
 		const Float yp = mLevelInfo.score - 1 >= i ? 1.25f - d : 2.0f;
 		drawable->setPosition({ -xp + xp * Float(i), yp });
 
@@ -1920,7 +1933,8 @@ void LevelSelector::createPowerupView()
 
 				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST, UnsignedInt(message.length()), UnsignedInt(title.length()));
 				o->getTitleDrawable()->mColor = { 1.0f, 0.8f, 0.25f, 1.0f };
-				o->setTitlePosition({ 0.0f, 0.36f, 0.0f });
+				o->getMessageDrawable()->mSize = Vector2(getWidthReferenceFactor());
+				o->setTitlePosition({ 0.0f, 0.36f - getScaledVerticalPadding(), 0.0f });
 				o->setMessagePosition({ 0.0f, 0.175f, 0.0f });
 				o->setTitle(title);
 				o->setMessage(message);
@@ -2637,4 +2651,14 @@ const std::string LevelSelector::getHelpTipText(const Int index) const
 		return "Consider downloading my\nother games and writing\na positive review.";
 	}
 	return nullptr;
+}
+
+Float LevelSelector::getScaledVerticalPadding()
+{
+	return CommonUtility::singleton->mConfig.canvasVerticalPadding / mCachedFramebufferHeight;
+}
+
+Float LevelSelector::getWidthReferenceFactor()
+{
+	return RoomManager::singleton->getWindowAspectRatio() / 0.5625f;
 }

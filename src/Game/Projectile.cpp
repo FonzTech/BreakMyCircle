@@ -115,7 +115,7 @@ void Projectile::update()
 
 	// Check for collision against other bubbles
 	const std::unique_ptr<std::unordered_set<GameObject*>> bubbles = RoomManager::singleton->mCollisionManager->checkCollision(mBbox, this, { GOT_BUBBLE });
-	if (bubbles->size() > 0)
+	if (!bubbles->empty())
 	{
 		collidedWith(bubbles);
 	}
@@ -175,7 +175,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 	if (mAmbientColor == BUBBLE_PLASMA || mAmbientColor == BUBBLE_ELECTRIC)
 	{
 		bool assignRandomColor = true;
-		if (gameObjects != nullptr && gameObjects->size() > 0)
+		if (gameObjects != nullptr && !gameObjects->empty())
 		{
 			for (const auto& item : *gameObjects)
 			{
@@ -337,10 +337,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 void Projectile::updateBBox()
 {
 	// Update bounding box
-	mBbox = Range3D{
-		Vector3(mPosition.x() - 0.9f, mPosition.y() - 1.0f - mDeltaTime, mPosition.z() - 0.25f),
-		Vector3(mPosition.x() + 0.9f, mPosition.y() + 1.0f + mDeltaTime, mPosition.z() + 0.25f)
-	};
+	mBbox = Range3D{ mPosition - Vector3(0.9f), mPosition + Vector3(0.9f) };
 }
 
 void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
