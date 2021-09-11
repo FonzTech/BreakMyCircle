@@ -271,7 +271,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		// Destroy nearby bubbles and disjoint bubble groups
 		for (auto& b : bubbles)
 		{
-			if (shootAmount = b->destroyNearbyBubbles(false, 0.3f))
+			if (shootAmount = b->destroyNearbyBubbles(false, 0.6f))
 			{
 				shootAmount += b->destroyDisjointBubbles();
 			}
@@ -298,7 +298,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		}
 
 		// Destroy nearby bubbles and disjoint bubble groups
-		if (shootAmount = b->destroyNearbyBubbles(false, 0.3f))
+		if (shootAmount = b->destroyNearbyBubbles(false, 0.6f))
 		{
 			shootAmount += b->destroyDisjointBubbles();
 		}
@@ -324,7 +324,10 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 void Projectile::updateBBox()
 {
 	// Update bounding box
-	mBbox = Range3D{ mPosition - Vector3(0.8f), mPosition + Vector3(0.8f) };
+	mBbox = Range3D{
+		Vector3(mPosition.x() - 0.9f, mPosition.y() - 1.0f - mDeltaTime, mPosition.z() - 0.25f),
+		Vector3(mPosition.x() + 0.9f, mPosition.y() + 1.0f + mDeltaTime, mPosition.z() + 0.25f)
+	};
 }
 
 void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
