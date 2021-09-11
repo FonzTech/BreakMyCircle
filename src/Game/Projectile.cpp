@@ -337,7 +337,8 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 void Projectile::updateBBox()
 {
 	// Update bounding box
-	mBbox = Range3D{ mPosition - Vector3(0.9f), mPosition + Vector3(0.9f) };
+	const auto& b = Vector3(1.25f + mDeltaTime);
+	mBbox = Range3D{ mPosition - b, mPosition + b };
 }
 
 void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)

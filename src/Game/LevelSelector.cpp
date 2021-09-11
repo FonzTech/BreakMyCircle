@@ -507,7 +507,7 @@ void LevelSelector::update()
 		}
 	}
 
-	// Handle button scale animation 
+	// Handle button scale animation
 	{
 		// Handle scale value
 		{

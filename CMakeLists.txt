@@ -12,6 +12,8 @@ if(NOT CORRADE_TARGET_ANDROID)
     set(CMAKE_VS_PLATFORM_TOOLSET "v141") # AFTER ON cmake install
 endif()
 
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
+
 # Add module path in case this is project root
 set(MAGNUM_SRC_PATH "D:/Development/C++/magnum/modules")
 list(APPEND CMAKE_MODULE_PATH ${MAGNUM_SRC_PATH})
