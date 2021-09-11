@@ -665,6 +665,9 @@ void LevelSelector::update()
 								{
 									if (spo->levelIndex < RoomManager::singleton->mSaveData.maxLevelId)
 									{
+										// Stop scrolling
+										mScrollVelocity = Vector3(0.0f);
+
 										// Open level window
 										clickLevelButton(&it2->second, spo);
 
@@ -2163,6 +2166,9 @@ void LevelSelector::createGuis()
 				mSettingsOpened = !mSettingsOpened;
 				if (mSettingsOpened)
 				{
+					// Stop scrolling
+					mScrollVelocity = Vector3(0.0f);
+
 					// Game logic
 					audioIndex = GO_LS_AUDIO_PAUSE_IN;
 					if (!mLevelInfo.playerPointer.expired())
