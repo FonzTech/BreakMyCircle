@@ -317,6 +317,19 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_FINISHED, preColor, mAmbientColor, shootAmount);
 	}
 
+	// Move sparkles on top
+	for (auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+	{
+		if (go->getType() == GOT_FALLING_BUBBLE)
+		{
+			const auto& sp = (std::shared_ptr<FallingBubble>&)go;
+			if (sp->mCustomType == GO_FB_TYPE_SPARK)
+			{
+				sp->pushToFront();
+			}
+		}
+	}
+
 	// Destroy me
 	mDestroyMe = true;
 }
