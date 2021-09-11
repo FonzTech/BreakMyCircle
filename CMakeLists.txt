@@ -132,6 +132,7 @@ if(CORRADE_TARGET_ANDROID)
         src/Game/ElectricBall.cpp
         src/Game/FallingBubble.cpp
         src/Game/LevelSelector.cpp
+        src/Game/LevelSelectorSidecar.cpp
         src/Game/LimitLine.cpp
         src/Game/Logo.cpp
         src/Game/MapPickup.cpp
@@ -176,6 +177,7 @@ else()
         src/Game/ElectricBall.cpp
         src/Game/FallingBubble.cpp
         src/Game/LevelSelector.cpp
+        src/Game/LevelSelectorSidecar.cpp
         src/Game/LimitLine.cpp
         src/Game/Logo.cpp
         src/Game/MapPickup.cpp
