@@ -35,7 +35,11 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mParentIndex = parentIndex;
 	
 	// Init members
-	mCanvasPadding = CommonUtility::singleton->mConfig.canvasVerticalPadding / RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture->imageSize(0).y();
+	{
+		mCanvasPadding = CommonUtility::singleton->mConfig.canvasVerticalPadding;
+		mCanvasPadding /= RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture->imageSize(0).y();
+		mCanvasPadding /= CommonUtility::singleton->mConfig.displayDensity;
+	}
 	mLightPosition = Vector3(0.0f, -0.5f, 0.0f);
 	mLightDirection = false;
 	mIntroBubbles = true;

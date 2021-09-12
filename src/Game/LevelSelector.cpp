@@ -2655,7 +2655,7 @@ const std::string LevelSelector::getHelpTipText(const Int index) const
 
 Float LevelSelector::getScaledVerticalPadding()
 {
-	return CommonUtility::singleton->mConfig.canvasVerticalPadding / mCachedFramebufferHeight;
+	return CommonUtility::singleton->mConfig.canvasVerticalPadding / mCachedFramebufferHeight / CommonUtility::singleton->mConfig.displayDensity;
 }
 
 Float LevelSelector::getWidthReferenceFactor()
