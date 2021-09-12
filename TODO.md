@@ -38,7 +38,7 @@
 ~~- Assets update on Android based on versioning.~~
 
 # On-going tasks
-- Improve collision detection during gameplay when FPS is low.
+- Improve collision detection and animations due to "async" between `update` and draw`.
 - Implement other level game objects, such as rocks, holes, and others...
 
 # Optional tasks

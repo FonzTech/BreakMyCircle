@@ -143,8 +143,6 @@ void Engine::tickEvent()
 	InputManager::singleton->updateKeyStates();
 #endif
 
-	InputManager::singleton->mClickedObjectId = 0U;
-
 	// Compute delta time
 	mDeltaTime = mTimeline.previousFrameDuration();
 
@@ -165,31 +163,6 @@ void Engine::tickEvent()
 
 		const bool canDrawLayer = canDraw && currentGol->drawEnabled;
 
-		if (index == GOL_PERSP_FIRST)
-		{
-			// Get clicked Object ID
-			currentGol->frameBuffer->mapForRead(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX });
-
-			{
-				const Vector2i position(Vector2(InputManager::singleton->mMousePosition) * Vector2 { mScaledFramebufferSize } / Vector2{ windowSize() });
-				const Vector2i fbPosition{ position.x(), mScaledFramebufferSize.y() - position.y() - 1 };
-
-				const Image2D data = currentGol->frameBuffer->read(
-					Range2Di::fromSize(fbPosition, { 1, 1 }),
-					{ PixelFormat::R32UI }
-				);
-
-				InputManager::singleton->mClickedObjectId = data.pixels<UnsignedInt>()[0][0];
-			}
-
-			// Restore old color attachment
-			currentGol->frameBuffer->mapForRead(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX });
-
-			// Clear object ID buffer
-			(*currentGol->frameBuffer)
-				.clearColor(GLF_OBJECTID_ATTACHMENT_INDEX, Vector4ui{});
-		}
-
 		// Do operations on framebuffer only if drawing for it is enabled
 		if (canDrawLayer)
         {
@@ -202,6 +175,42 @@ void Engine::tickEvent()
 			(*currentGol->frameBuffer)
 				.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f))
 				.bind();
+
+			/*
+			 * Read after binding, since OpenGL buffer *may* be
+			 * flushed, and `glReadPixels` causes another flush.
+			 */
+			if (index == GOL_PERSP_FIRST)
+			{
+#ifdef CORRADE_TARGET_ANDROID
+				const auto& lbs = InputManager::singleton->mMouseStates[PRIMARY_BUTTON];
+				if (lbs >= IM_STATE_PRESSED)
+#endif
+				{
+					// Get clicked Object ID
+					currentGol->frameBuffer->mapForRead(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX });
+
+					const Vector2i position(Vector2(InputManager::singleton->mMousePosition) * Vector2 { mScaledFramebufferSize } / Vector2{ windowSize() });
+					const Vector2i fbPosition{ position.x(), mScaledFramebufferSize.y() - position.y() - 1 };
+
+					const Image2D data = currentGol->frameBuffer->read(
+							Range2Di::fromSize(fbPosition, { 1, 1 }),
+							{ PixelFormat::R32UI }
+					);
+
+					InputManager::singleton->mClickedObjectId = data.pixels<UnsignedInt>()[0][0];
+
+					// Clear object ID buffer
+					(*currentGol->frameBuffer)
+							.clearColor(GLF_OBJECTID_ATTACHMENT_INDEX, Vector4ui{});
+				}
+#ifdef CORRADE_TARGET_ANDROID
+				else if (lbs == IM_STATE_NOT_PRESSED)
+				{
+					InputManager::singleton->mClickedObjectId = 0U;
+				}
+#endif
+			}
         }
 
 		// Set renderer features
@@ -221,9 +230,9 @@ void Engine::tickEvent()
 		// Update all game objects on this layer
 		if (currentGol->updateEnabled)
 		{
-			for (UnsignedInt i = 0; i < gos->size(); ++i)
-			{
-				std::shared_ptr<GameObject> & go = gos->at(i);
+            for (UnsignedInt i = 0; i != gos->size(); ++i)
+            {
+                std::shared_ptr<GameObject> & go = gos->at(i);
 				go->mDeltaTime = mDeltaTime;
 				go->update();
 			}
@@ -286,20 +295,21 @@ void Engine::tickEvent()
 
 	{
 		// Bind default window framebuffer
-		GL::defaultFramebuffer
-			.clear(GL::FramebufferClear::Color)
-			.bind();
+		GL::defaultFramebuffer.bind();
 
 		// Set renderer features
-		GL::Renderer::enable(GL::Renderer::Feature::Blending);
-		GL::Renderer::setFeature(GL::Renderer::Feature::DepthTest, false);
+		GL::Renderer::disable(GL::Renderer::Feature::Blending);
+		GL::Renderer::disable(GL::Renderer::Feature::DepthTest);
 		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::One);
 
 		// Redraw
 #ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
 		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
 #endif
-		drawInternal();
+		if (canDraw)
+		{
+			drawInternal();
+		}
 	}
 
 	// Reset frame time, if required
@@ -315,8 +325,8 @@ void Engine::tickEvent()
 void Engine::drawEvent()
 {
 #ifdef CORRADE_TARGET_ANDROID
-	tickEvent();
-	redraw();
+    tickEvent();
+    redraw();
 #endif
 }
 

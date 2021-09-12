@@ -1602,7 +1602,7 @@ void LevelSelector::createLevelRoom()
 	{
 		auto& gol = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
 		gol.updateEnabled = false;
-		gol.updateEnabled = false;
+		gol.drawEnabled = false;
 	}
 
 	// Reset level state
@@ -1692,7 +1692,7 @@ void LevelSelector::finishCurrentLevel(const bool success)
 	{
 		auto& gol = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
 		gol.updateEnabled = true;
-		gol.updateEnabled = true;
+		gol.drawEnabled = true;
 	}
 
 	// Set level state as "Finished"
