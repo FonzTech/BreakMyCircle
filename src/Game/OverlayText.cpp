@@ -152,7 +152,7 @@ void OverlayText::updateTransformations()
 		}
 
 
-		const auto& tp = mPosition.xy() * ws;
+		const auto& tp = mPosition.xy() * ws + mAnchor * ws * ar * 0.5f;
 		mTransformationMatrix = Matrix3::translation(tp) * Matrix3::scaling(mSize * scaleFactor);
 	}
 
