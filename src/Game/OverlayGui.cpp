@@ -114,7 +114,7 @@ const Vector2 OverlayGui::getSize() const
 void OverlayGui::updateTransformations()
 {
 	const Vector2 ar = mAspectRatio > 1.0f ? Vector2(mAspectRatio, 1.0f) : Vector2(1.0f, 1.0f / mAspectRatio);
-	const Float scale = mAspectRatio > 1.0f ? 512.0f / CommonUtility::singleton->mScaledFramebufferSize.y() : (432.0f / CommonUtility::singleton->mScaledFramebufferSize.x());
+	const Float scale = 432.0f / (mAspectRatio > 1.0f ? CommonUtility::singleton->mScaledFramebufferSize.y() : CommonUtility::singleton->mScaledFramebufferSize.x());
 	const Vector2 size = mSize / ar * scale;
 
 	Vector2 tp(mPosition.xy());

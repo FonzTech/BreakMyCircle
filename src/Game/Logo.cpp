@@ -196,9 +196,10 @@ void Logo::update()
 						{
 							mLogoZoom += mDeltaTime;
 
+							const auto& z = Math::lerp(0.0f, 1.0f, Animation::Easing::quadraticIn(mLogoZoom)) * -1.0f * RoomManager::singleton->getWindowAspectRatio();
 							for (UnsignedInt k = 0; k < 3; ++k)
 							{
-								mLogoObjects[k]->translate(Vector3(0.0f, 0.0f, Math::sin(Rad(mLogoZoom)) * -0.12f));
+								mLogoObjects[k]->translate(Vector3(0.0f, 0.0f, z));
 							}
 						}
 					}
@@ -289,9 +290,12 @@ void Logo::buildAnimations()
 			break;
 
 		case 2:
-			mKeyframes[i][0] = { 0.0f, Vector3(0.0f, 0.0f, -10.0f), 360.0_degf * 2 };
-			mKeyframes[i][1] = { 3.0f, Vector3(0.0f, 0.0f, -10.0f), 360.0_degf * 2 };
+		{
+			const auto& xp = RoomManager::singleton->getWindowAspectRatio() * -20.0f;
+			mKeyframes[i][0] = { 0.0f, Vector3(0.0f, 0.0f, xp), 360.0_degf * 2 };
+			mKeyframes[i][1] = { 3.0f, Vector3(0.0f, 0.0f, xp), 360.0_degf * 2 };
 			mKeyframes[i][2] = { 5.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
+		}
 			break;
 
 		case 3:

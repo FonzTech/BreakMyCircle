@@ -595,7 +595,7 @@ void LevelSelector::update()
 				}
 			}
 
-			Vector3 scrollDelta = mScrollVelocity;
+			Vector3 scrollDelta = mScrollVelocity * mDeltaTime;
 			for (UnsignedInt i = 0; i < 3; ++i)
 			{
 				if (scrollDelta[i] < -GO_LS_MAX_SCROLL_VELOCITY)
@@ -1008,14 +1008,14 @@ void LevelSelector::windowForCommon()
 	{
 		const auto& dy = (0.3f + p0.y()) * d0;
 		mLevelGuis[GO_LS_GUI_COIN]->setPosition({ -0.49f, 0.79f - dy });
-		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.5f + getSquareOffset().x(), 0.78f - dy });
+		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.5f + getSquareOffset(0.0825f).x(), 0.78f - dy });
 	}
 
 	// Time icon and text
 	{
 		const auto& p1 = Vector2(0.49f, -0.74f + ds * (0.25f + p0.y()));
 		mLevelGuis[GO_LS_GUI_TIME]->setPosition(p1);
-		mLevelTexts[GO_LS_TEXT_TIME]->setPosition(p1 - getSquareOffset() + Vector2(0.0f, 0.015f));
+		mLevelTexts[GO_LS_TEXT_TIME]->setPosition(p1 - getSquareOffset(0.08f) + Vector2(0.0f, 0.015f));
 	}
 
 	// Scroll back
@@ -1161,15 +1161,15 @@ void LevelSelector::windowForCurrentLevelView()
 	// Powerup buttons
 	if (canShowPowerups)
 	{
-		const Float xm = 0.075f * CommonUtility::singleton->mConfig.displayDensity;
-		const Float xf = (0.5f + xm) - (0.25f + xm) * ar;
+		const Float xm = 0.06f * CommonUtility::singleton->mConfig.displayDensity;
+		const Float xf = (0.5f + xm * Math::pow(Math::max(1.0f, ar), 2.0f)) - (0.25f + xm) * ar;
 		const Float yf = 0.91f - powerupY;
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
 			const Float xp = canShowPowerups ? (Float(i) * xf + mPuView.scrollX * xf) : -1000.0f;
 
 			// Clickable icon
-			const Float alpha = Math::clamp(1.2f - Math::abs(xp) * 5.0f / CommonUtility::singleton->mConfig.displayDensity * ar, 0.0f, 1.0f);
+			const Float alpha = Math::clamp(1.2f - Math::abs(xp) * 4.0f / CommonUtility::singleton->mConfig.displayDensity * ar, 0.0f, 1.0f);
 			{
 				auto& item = (std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_POWERUP + i]->drawable;
 				if (alpha > 0.0f)
@@ -1298,7 +1298,10 @@ void LevelSelector::manageLevelState()
 			mLevelInfo.lastLevelPos = Vector3(0.0f, 0.0f, zp) + sLevelButtonPositions[getModelIndex(Int(zp))][zf];
 		}
 
-		animate[2] = (mPosition - mLevelInfo.lastLevelPos).length() > 50.0f;
+		if (RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->empty())
+		{
+			animate[2] = (mPosition - mLevelInfo.lastLevelPos).length() > 50.0f;
+		}
 
 		if (!mSettingsOpened && mLevelButtonScaleAnim >= 0.99f && mLevelInfo.currentViewingLevelId == 0U)
 		{
@@ -2666,8 +2669,8 @@ Float LevelSelector::getWidthReferenceFactor()
 	return RoomManager::singleton->getWindowAspectRatio() / 0.5625f;
 }
 
-Vector2 LevelSelector::getSquareOffset()
+Vector2 LevelSelector::getSquareOffset(const Float size)
 {
-	const auto& ar = CommonUtility::singleton->mScaledFramebufferSize.aspectRatio();
-	return Vector2((ar > 1.0f ? 0.115f : 0.15f) / Math::max(1.0f, ar), 0.0f);
+	const auto& ar = RoomManager::singleton->getWindowAspectRatio();
+	return Vector2(size / ar, 0.0f);
 }

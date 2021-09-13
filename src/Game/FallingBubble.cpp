@@ -115,7 +115,7 @@ void FallingBubble::update()
 			// Raise velocity
 			if (mVelocity.y() > mMaxVerticalSpeed)
 			{
-				mVelocity += { 0.0f, -2.0f, 0.0f };
+				mVelocity += { 0.0f, -100.0f * mDeltaTime, 0.0f };
 			}
 			mPosition += mVelocity * mDeltaTime;
 		}

@@ -1,8 +1,8 @@
 #pragma once
 
 #define GO_LS_SCENERY_LENGTH 50.0f
-#define GO_LS_MAX_SCROLL_THRESHOLD 0.01f
-#define GO_LS_MAX_SCROLL_VELOCITY 0.025f
+#define GO_LS_MAX_SCROLL_THRESHOLD 0.0001f
+#define GO_LS_MAX_SCROLL_VELOCITY 0.005f
 #define GO_LS_MAX_SCROLL_VELOCITY_MAX (GO_LS_MAX_SCROLL_VELOCITY * GO_LS_SCENERY_LENGTH)
 #define GO_LS_RESET_MOUSE_VALUE -10000
 #define GO_LS_CLICK_TAP_MAX_DELAY 0.3
@@ -206,7 +206,7 @@ private:
 	void createGuis();
 	void createTexts();
 
-	Vector2 getSquareOffset();
+	Vector2 getSquareOffset(const Float size);
 
 	Float getScaledVerticalPadding();
 	Float getWidthReferenceFactor();
