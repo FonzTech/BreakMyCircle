@@ -35,7 +35,7 @@ protected:
 
 	void updateAspectRatioFactors();
 
+	Float mAspectRatio;
 	Vector2 mAnchor;
-	Vector2 mAspectRatio;
 	Vector2 mCustomCanvasSize;
 };

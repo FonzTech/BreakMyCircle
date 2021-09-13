@@ -49,7 +49,7 @@ void OverlayGuiDetached::update()
 	// Update projection
 	if (mCustomCanvasSize.x() >= 0.0f)
 	{
-		const auto& w = mCustomCanvasSize.x() >= 1.0f ? mCustomCanvasSize : RoomManager::singleton->getWindowSize();
+		const auto& w = mCustomCanvasSize.x() >= 1.0f ? mCustomCanvasSize : CommonUtility::singleton->mScaledFramebufferSize;
 		mProjectionMatrix = Matrix4::orthographicProjection(w, 0.01f, 1.1f);
 	}
 	else

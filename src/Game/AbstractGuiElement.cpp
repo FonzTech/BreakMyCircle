@@ -32,19 +32,12 @@ void AbstractGuiElement::updateAspectRatioFactors()
 {
 	if (mCustomCanvasSize.x() <= -1.0f)
 	{
-		mAspectRatio = mCustomCanvasSize.normalized();
+		mAspectRatio = mCustomCanvasSize.normalized().aspectRatio();
 	}
 	else
 	{
 		const auto& w = RoomManager::singleton->getWindowSize();
-		if (w.x() < w.y())
-		{
-			mAspectRatio = Vector2(1.0f, Float(w.x()) / Float(w.y()));
-		}
-		else
-		{
-			mAspectRatio = Vector2(Float(w.x()) / Float(w.y()), 1.0f);
-		}
+		mAspectRatio = w.aspectRatio();
 	}
 }
 

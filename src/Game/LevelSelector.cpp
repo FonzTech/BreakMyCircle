@@ -166,9 +166,14 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Set camera parameters
 	{
-		const auto& ar = QuadraticBezier2D(Vector2(0.0f), Vector2(-0.5f, 1.0f), Vector2(1.0f)).value(RoomManager::singleton->getWindowAspectRatio())[1];
+		// const auto& ar = QuadraticBezier2D(Vector2(0.0f), Vector2(-0.5f, 1.0f), Vector2(1.0f)).value(RoomManager::singleton->getWindowAspectRatio())[1];
+		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
+		auto ratio = (0.5625f / ar);
+		ratio = ratio < 1.0f ? 1.0f / ratio : ratio;
+		const auto& rt = 15.0f * ratio;
+
 		auto& layer = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
-		layer.cameraEye = mPosition + Vector3(0.0f, 16.0f * ar, 20.0f * ar);
+		layer.cameraEye = mPosition + Vector3(0.0f, rt, rt);
 		layer.cameraTarget = mPosition;
 	}
 
@@ -200,9 +205,6 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Trigger scenery creation
 	handleScrollableScenery();
-
-	// Get framebuffer height
-	mCachedFramebufferHeight = RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture->imageSize(0).y();
 }
 
 LevelSelector::~LevelSelector()
@@ -1004,18 +1006,16 @@ void LevelSelector::windowForCommon()
 
 	// Coin icon and text
 	{
-		const auto& dx = (0.2f + p0.y()) * d0;
-		mLevelGuis[GO_LS_GUI_COIN]->setPosition({ -0.49f, 0.69f - dx });
-		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.5f, 0.7f - dx });
+		const auto& dy = (0.3f + p0.y()) * d0;
+		mLevelGuis[GO_LS_GUI_COIN]->setPosition({ -0.49f, 0.79f - dy });
+		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.5f + getSquareOffset().x(), 0.78f - dy });
 	}
 
 	// Time icon and text
 	{
 		const auto& p1 = Vector2(0.49f, -0.74f + ds * (0.25f + p0.y()));
-		// const auto& p2 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector3(0.0f, -0.2f, 0.0f) * d1 : Vector3(0.0f);
-
 		mLevelGuis[GO_LS_GUI_TIME]->setPosition(p1);
-		mLevelTexts[GO_LS_TEXT_TIME]->setPosition(p1);
+		mLevelTexts[GO_LS_TEXT_TIME]->setPosition(p1 - getSquareOffset() + Vector2(0.0f, 0.015f));
 	}
 
 	// Scroll back
@@ -1027,7 +1027,7 @@ void LevelSelector::windowForCommon()
 		const auto& yp = mLevelGuiAnim[5] <= 0.0f ? 0.0f : mLevelGuiAnim[5] < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::circularOut(mLevelGuiAnim[5])) * 0.5f : 0.5f;
 		mLevelGuis[GO_LS_GUI_HELP]->mPosition = Vector3(0.5f, 1.0f - yp, 0.0f);
 		mLevelGuis[GO_LS_GUI_HELP]->setSize({ 0.35f * wrf, 0.15f + getScaledVerticalPadding() * 0.5f });
-	}
+	} 
 
 	{
 		const auto& h = 0.5f + getScaledVerticalPadding();
@@ -2216,8 +2216,12 @@ void LevelSelector::createGuis()
 	{
 		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_LEVEL_PANEL);
 		o->setPosition({ 2.0f, 2.0f });
-		o->setSize(Vector2(0.45f * getWidthReferenceFactor()));
-		o->setAnchor(Vector2(0.0f));
+
+		{
+			const auto& ar = CommonUtility::singleton->mScaledFramebufferSize.aspectRatio();
+			Float size = 0.45f * (ar < 1.0f ? ar / 0.5625f : 1.0f);
+			o->setSize(Vector2(size));
+		}
 
 		mLevelGuis[GO_LS_GUI_LEVEL_PANEL] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 	}
@@ -2536,7 +2540,7 @@ void LevelSelector::createTexts()
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setAnchor(Vector2(-0.9f, 0.65f));
+		go->setAnchor(Vector2(-0.9f, 0.0f));
 		go->setSize(Vector2(1.125f));
 		go->setText("0s");
 
@@ -2545,11 +2549,10 @@ void LevelSelector::createTexts()
 
 	// Coin counter text
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopLeft, 40);
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::TopLeft, 10);
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setAnchor(Vector2(3.5f, -1.0f));
 		go->setSize(Vector2(1.15f));
 		go->setText("0");
 
@@ -2655,10 +2658,16 @@ const std::string LevelSelector::getHelpTipText(const Int index) const
 
 Float LevelSelector::getScaledVerticalPadding()
 {
-	return CommonUtility::singleton->mConfig.canvasVerticalPadding / mCachedFramebufferHeight / CommonUtility::singleton->mConfig.displayDensity;
+	return CommonUtility::singleton->mConfig.canvasVerticalPadding / CommonUtility::singleton->mScaledFramebufferSize.y() / CommonUtility::singleton->mConfig.displayDensity;
 }
 
 Float LevelSelector::getWidthReferenceFactor()
 {
 	return RoomManager::singleton->getWindowAspectRatio() / 0.5625f;
+}
+
+Vector2 LevelSelector::getSquareOffset()
+{
+	const auto& ar = CommonUtility::singleton->mScaledFramebufferSize.aspectRatio();
+	return Vector2((ar > 1.0f ? 0.115f : 0.15f) / Math::max(1.0f, ar), 0.0f);
 }

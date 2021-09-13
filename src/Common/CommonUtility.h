@@ -49,8 +49,9 @@ protected:
 public:
 	static std::unique_ptr<CommonUtility> singleton;
 
-	// Resource manager holder
+	// Members
 	MyResourceManager manager;
+	Vector2 mScaledFramebufferSize;
 
 	// Base path for resources
 	struct EngineConfiguration

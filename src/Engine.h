@@ -71,8 +71,8 @@ private:
 #endif
 
 	// Variables
+	Vector2i mCachedFramebufferSize;
 	Float mFrameTime;
-	Vector2i mScaledFramebufferSize;
 	Timeline mTimeline;
 	Float mDeltaTime;
 	ScreenQuadShader mScreenQuadShader;

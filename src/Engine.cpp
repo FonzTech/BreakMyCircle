@@ -152,7 +152,7 @@ void Engine::tickEvent()
 
 	// Set correct viewport
 	RoomManager::singleton->setWindowSize(Vector2(windowSize()));
-	RoomManager::singleton->mCamera->setViewport(mScaledFramebufferSize);
+	RoomManager::singleton->mCamera->setViewport(mCachedFramebufferSize);
 
 	// Iterate through all layers
 	for (const auto& index : GO_LAYERS)
@@ -190,8 +190,8 @@ void Engine::tickEvent()
 					// Get clicked Object ID
 					currentGol->frameBuffer->mapForRead(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX });
 
-					const Vector2i position(Vector2(InputManager::singleton->mMousePosition) * Vector2 { mScaledFramebufferSize } / Vector2{ windowSize() });
-					const Vector2i fbPosition{ position.x(), mScaledFramebufferSize.y() - position.y() - 1 };
+					const Vector2i position(Vector2(InputManager::singleton->mMousePosition) * CommonUtility::singleton->mScaledFramebufferSize / Vector2{ windowSize() });
+					const Vector2i fbPosition{ position.x(), mCachedFramebufferSize.y() - position.y() - 1 };
 
 					const Image2D data = currentGol->frameBuffer->read(
 							Range2Di::fromSize(fbPosition, { 1, 1 }),
@@ -340,7 +340,7 @@ void Engine::drawInternal()
 				.bindColorTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].colorTexture)
 				.bindColorTexture(GOL_PERSP_SECOND, *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].colorTexture)
 				.bindColorTexture(GOL_ORTHO_FIRST, *RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture)
-				.bindDepthStencilTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].depthTexture)
+				// .bindDepthStencilTexture(GOL_PERSP_FIRST, *RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].depthTexture)
 				.draw(mScreenQuadShader.mMesh);
 
 		// Swap buffers
@@ -410,7 +410,8 @@ void Engine::viewportInternal(ViewportEvent* event)
 {
 	// Update viewports
 	GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, framebufferSize()));
-	mScaledFramebufferSize = Vector2i(Vector2d(framebufferSize()) / CommonUtility::singleton->mConfig.displayDensity);
+	CommonUtility::singleton->mScaledFramebufferSize = Vector2(framebufferSize()) / CommonUtility::singleton->mConfig.displayDensity;
+	mCachedFramebufferSize = Vector2i(CommonUtility::singleton->mScaledFramebufferSize);
 	upsertGameObjectLayers();
 }
 
@@ -543,12 +544,12 @@ void Engine::upsertGameObjectLayers()
 		}
 
 		// Create framebuffer and attach color buffers
-		layer->frameBuffer = std::make_unique<GL::Framebuffer>(Range2Di({}, mScaledFramebufferSize));
+		layer->frameBuffer = std::make_unique<GL::Framebuffer>(Range2Di({}, mCachedFramebufferSize));
 
 		{
 			// Create main texture to attach layer
 			layer->colorTexture = std::make_unique<GL::Texture2D>();
-			layer->colorTexture->setStorage(1, GL::TextureFormat::RGBA8, mScaledFramebufferSize);
+			layer->colorTexture->setStorage(1, GL::TextureFormat::RGBA8, mCachedFramebufferSize);
 			layer->frameBuffer->attachTexture(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, *layer->colorTexture, 0);
 			// layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::ColorAttachment{ GLF_COLOR_ATTACHMENT_INDEX }, colorBuffer);
 		}
@@ -557,7 +558,7 @@ void Engine::upsertGameObjectLayers()
 		if (layer->depthTestEnabled)
 		{
 			layer->depthTexture = std::make_unique<GL::Texture2D>();
-			layer->depthTexture->setStorage(1, GL::TextureFormat::Depth24Stencil8, mScaledFramebufferSize);
+			layer->depthTexture->setStorage(1, GL::TextureFormat::Depth24Stencil8, mCachedFramebufferSize);
 			layer->depthTexture->setCompareMode(GL::SamplerCompareMode::None);
 			layer->depthTexture->setMagnificationFilter(Magnum::SamplerFilter::Nearest);
 			layer->depthTexture->setMagnificationFilter(Magnum::SamplerFilter::Nearest);
@@ -568,7 +569,7 @@ void Engine::upsertGameObjectLayers()
 		if (index == GOL_PERSP_FIRST)
 		{
             layer->objectIdBuffer = std::make_unique<GL::Renderbuffer>();
-            layer->objectIdBuffer->setStorage(GL::RenderbufferFormat::R32UI, mScaledFramebufferSize);
+            layer->objectIdBuffer->setStorage(GL::RenderbufferFormat::R32UI, mCachedFramebufferSize);
 
 			layer->frameBuffer->attachRenderbuffer(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX }, *layer->objectIdBuffer);
 			layer->frameBuffer->mapForDraw({

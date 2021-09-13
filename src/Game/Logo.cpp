@@ -37,7 +37,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	// Init members
 	{
 		mCanvasPadding = CommonUtility::singleton->mConfig.canvasVerticalPadding;
-		mCanvasPadding /= RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].colorTexture->imageSize(0).y();
+		mCanvasPadding /= CommonUtility::singleton->mScaledFramebufferSize.y();
 		mCanvasPadding /= CommonUtility::singleton->mConfig.displayDensity;
 	}
 	mLightPosition = Vector3(0.0f, -0.5f, 0.0f);

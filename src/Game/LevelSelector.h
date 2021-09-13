@@ -206,6 +206,8 @@ private:
 	void createGuis();
 	void createTexts();
 
+	Vector2 getSquareOffset();
+
 	Float getScaledVerticalPadding();
 	Float getWidthReferenceFactor();
 
@@ -249,6 +251,4 @@ private:
 
 	LS_PowerupView mPuView;
 	LS_PickupHandler mPickupHandler;
-
-	Float mCachedFramebufferHeight;
 };

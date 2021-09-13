@@ -113,23 +113,22 @@ const Vector2 OverlayGui::getSize() const
 
 void OverlayGui::updateTransformations()
 {
-	const Float ar = mAspectRatio.aspectRatio();
-	const Vector2 size = mSize / 1.77f * ar;
+	const Vector2 ar = mAspectRatio > 1.0f ? Vector2(mAspectRatio, 1.0f) : Vector2(1.0f, 1.0f / mAspectRatio);
+	const Float scale = mAspectRatio > 1.0f ? 512.0f / CommonUtility::singleton->mScaledFramebufferSize.y() : (432.0f / CommonUtility::singleton->mScaledFramebufferSize.x());
+	const Vector2 size = mSize / ar * scale;
 
 	Vector2 tp(mPosition.xy());
-	tp += mAnchor * size / Vector2(1.0f, ar);
-
-	Vector2 ts = mAspectRatio * size;
+	tp += mAnchor * size;
 
 	(*mManipulator)
 		.resetTransformation()
 		.rotate(mRotation, Vector3::zAxis())
-		.scale(Vector3(ts.x(), ts.y(), 1.0f))
+		.scale(Vector3(size.x(), size.y(), 1.0f))
 		.translate(Vector3(tp.x(), tp.y(), 0.0f));
 
 	const Range2D r = {
-		tp - ts,
-		tp + ts
+		tp - size,
+		tp + size
 	};
 	mBbox = Range3D{
 		{ r.min().x(), r.min().y(), -1.0f },

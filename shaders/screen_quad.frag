@@ -3,7 +3,7 @@ precision mediump float;
 uniform sampler2D colorPerspFirst;
 uniform sampler2D colorPerspSecond;
 uniform sampler2D colorOrthoFirst;
-uniform sampler2D depthStencilPerspFirst;
+// uniform sampler2D depthStencilPerspFirst;
 
 in vec2 interpolatedTextureCoordinates;
 
@@ -21,6 +21,7 @@ void main()
   fragmentColor.a = 1.0;
 	
 	// P First - Depth Stencil
+  /*
 	{
 		float c = texture(depthStencilPerspFirst, interpolatedTextureCoordinates).r;
     c = linearize_Z(c, 0.01, 25.0);
@@ -28,6 +29,7 @@ void main()
     c = clamp(c * 4.0, 0.0, 1.0);
 		fragmentColor.rgb = mix(fragmentColor.rgb, vec3(1.0), c);
 	}
+  */
 	
 	// P Second - Color
 	{
