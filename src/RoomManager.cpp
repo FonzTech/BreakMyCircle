@@ -65,6 +65,7 @@ RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
 	mBubbleColors[BUBBLE_BOMB.toSrgbInt()] = { BUBBLE_BOMB, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
 	mBubbleColors[BUBBLE_PLASMA.toSrgbInt()] = { BUBBLE_PLASMA, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
 	mBubbleColors[BUBBLE_ELECTRIC.toSrgbInt()] = { BUBBLE_ELECTRIC, RESOURCE_TEXTURE_WHITE };
+	mBubbleColors[BUBBLE_STONE.toSrgbInt()] = { BUBBLE_STONE, RESOURCE_TEXTURE_WHITE };
 
 	// Initialize game save data
 #if NDEBUG or _DEBUG
@@ -373,7 +374,7 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		const Int index = Int(Math::round(value * mBubbleColors.size()));
 		const auto& it = std::next(std::begin(mBubbleColors), index % mBubbleColors.size());
 
-		if (it->second.color != BUBBLE_COIN && !CommonUtility::singleton->isBubbleColorValid(it->second.color))
+		if (it->second.color != BUBBLE_COIN && it->second.color != BUBBLE_STONE && !CommonUtility::singleton->isBubbleColorValid(it->second.color))
 		{
 			return d;
 		}
@@ -383,9 +384,13 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		params["parent"] = GOL_PERSP_SECOND;
 		params["color"] = {};
 
-		if (value >= 0.95)
+		const bool isCoin = isInRange(value, 0.95);
+		const bool isStone = isInRange(value, 0.05) || isInRange(value, 0.37) || isInRange(value, 0.86);
+
+		if (isCoin || isStone)
 		{
-			const auto k = BUBBLE_COIN.toSrgbInt();
+			// const auto k = isCoin ? BUBBLE_COIN.toSrgbInt() : BUBBLE_STONE.toSrgbInt();
+			const auto k = BUBBLE_STONE.toSrgbInt();
 			params["color"]["int"] = k;
 			params["color"]["r"] = mBubbleColors[k].color.r();
 			params["color"]["g"] = mBubbleColors[k].color.g();
@@ -403,4 +408,9 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		d->params = std::make_unique<nlohmann::json>(params);
 	}
 	return d;
+}
+
+Float RoomManager::isInRange(const double source, const double dest)
+{
+	return Math::abs(source - dest) < 0.01;
 }

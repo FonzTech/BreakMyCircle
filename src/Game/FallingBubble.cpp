@@ -88,6 +88,15 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 			mWrapper.speed = 16.0f;
 		}
 	}
+	else if (mCustomType == GO_FB_TYPE_STONE)
+	{
+		// Init members
+		mVelocity = Vector3(0.0f);
+		mDelay = 0.0f;
+
+		// Load assets
+		AssetManager().loadAssets(*this, *mManipulator, RESOURCE_SCENE_STONE, this);
+	}
 }
 
 const Int FallingBubble::getType() const
@@ -190,6 +199,12 @@ void FallingBubble::update()
 			.scale(Vector3(8.0f, 8.0f, 1.0f))
 			.translate(mPosition);
 
+	case GO_FB_TYPE_STONE:
+
+		(*mManipulator)
+			.resetTransformation()
+			.translate(mPosition);
+
 		break;
 	}
 }
@@ -247,6 +262,10 @@ std::shared_ptr<Audio::Playable3D>& FallingBubble::buildSound()
 
 	case GO_FB_TYPE_BOMB:
 		filename = RESOURCE_AUDIO_EXPLOSION;
+		break;
+
+	case GO_FB_TYPE_STONE:
+		filename = RESOURCE_AUDIO_STONE;
 		break;
 	}
 

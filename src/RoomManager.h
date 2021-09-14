@@ -160,4 +160,7 @@ protected:
 
 	// Audio parameters
 	Float mSfxLevel;
+
+	// Methods
+	Float isInRange(const double source, const double dest);
 };

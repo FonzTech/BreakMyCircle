@@ -4,6 +4,7 @@
 #define GO_FB_TYPE_SPARK 2
 #define GO_FB_TYPE_COIN 3
 #define GO_FB_TYPE_BOMB 4
+#define GO_FB_TYPE_STONE 5
 
 #include <unordered_set>
 #include <nlohmann/json.hpp>

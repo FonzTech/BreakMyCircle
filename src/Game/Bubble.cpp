@@ -51,14 +51,19 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 
 		AssetManager().loadAssets(*this, *mItemManipulator, RESOURCE_SCENE_COIN, this);
 		mRotation = Float(Rad(Deg(std::rand() % 360)));
+
+		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
+	}
+	else if (mAmbientColor == BUBBLE_STONE)
+	{
+		AssetManager().loadAssets(*this, *mManipulator, RESOURCE_SCENE_STONE, this);
+		mRotation = 0.0f;
 	}
 	else
 	{
 		mRotation = 0.0f;
+		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
 	}
-
-	// Create game sphere for this game object
-	CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
 }
 
 const Int Bubble::getType() const
@@ -448,6 +453,10 @@ Int Bubble::getCustomTypeForFallingBubble(const Color3 & color)
 	if (color == BUBBLE_COIN)
 	{
 		return GO_FB_TYPE_COIN;
+	}
+	else if (color == BUBBLE_STONE)
+	{
+		return GO_FB_TYPE_STONE;
 	}
 	else
 	{
