@@ -12,10 +12,11 @@
 #include "../AssetManager.h"
 #include "../Common/CommonUtility.h"
 #include "../Common/CustomRenderers/LSNumberRenderer.h"
-#include "../Game/Player.h"
-#include "../Game/LimitLine.h"
-#include "../Game/Bubble.h"
-#include "../Game/Congrats.h"
+#include "Player.h"
+#include "LimitLine.h"
+#include "Bubble.h"
+#include "Congrats.h"
+#include "FallingBubble.h"
 
 std::shared_ptr<GameObject> LevelSelector::getInstance(const nlohmann::json & params)
 {
@@ -755,6 +756,17 @@ void LevelSelector::shootCallback(const Int state, const Color3 & preColor, cons
 	switch (state)
 	{
 	case ISC_STATE_SHOOT_STARTED:
+		for (auto& item : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
+		{
+			if (item->getType() == GOT_FALLING_BUBBLE)
+			{
+				const auto& fb = (std::shared_ptr<FallingBubble>&)item;
+				if (fb->mCustomType == GO_FB_TYPE_SPARK)
+				{
+					fb->pushToFront();
+				}
+			}
+		}
 		break;
 
 	case ISC_STATE_SHOOT_FINISHED:
@@ -1437,7 +1449,7 @@ void LevelSelector::manageLevelState()
 		if (mLevelInfo.delayedChecks)
 		{
 			mLevelInfo.delayedChecks = false;
-			checkForLevelEnd();	
+			checkForLevelEnd();
 		}
 
 		// Manage GUI level animation for timer
@@ -1759,12 +1771,16 @@ void LevelSelector::checkForLevelEnd()
 	}
 	else if (!lose)
 	{
-		for (auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
+		for (const auto& go : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
 		{
 			if (go->getType() == GOT_BUBBLE)
 			{
 				// Level is not won if there is one bubble at least
-				win = false;
+				const std::shared_ptr<Bubble>& bubble = (std::shared_ptr<Bubble>&)go;
+				if (CommonUtility::singleton->isBubbleColorValid(bubble->mAmbientColor))
+				{
+					win = false;
+				}
 
 				// Check if there is any bubble below the red line
 				if (go->mPosition.y() < mLevelInfo.limitLinePointer.lock()->mPosition.y())

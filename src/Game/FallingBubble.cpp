@@ -199,6 +199,8 @@ void FallingBubble::update()
 			.scale(Vector3(8.0f, 8.0f, 1.0f))
 			.translate(mPosition);
 
+		break;
+
 	case GO_FB_TYPE_STONE:
 
 		(*mManipulator)

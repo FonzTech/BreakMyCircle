@@ -337,12 +337,14 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 void Projectile::updateBBox()
 {
 	// Update bounding box
-	const auto& b = Vector3(1.25f + mDeltaTime);
+	const auto& b = Vector3(0.9f);
 	mBbox = Range3D{ mPosition - b, mPosition + b };
 }
 
 void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
+	Debug{} << "Okokok";
+
 	// Bubble* bubble = (Bubble*) *gameObjects->begin();
 	snapToGrid(gameObjects);
 }

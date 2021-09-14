@@ -281,6 +281,11 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 				}
 			}
 
+			if (pi->key == -1)
+			{
+				continue;
+			}
+
 			const auto &it = gameObjectCreators.find(pi->key);
 			if (it == gameObjectCreators.end())
 			{
@@ -382,29 +387,39 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		 
 		nlohmann::json params;
 		params["parent"] = GOL_PERSP_SECOND;
-		params["color"] = {};
 
 		const bool isCoin = isInRange(value, 0.95);
 		const bool isStone = isInRange(value, 0.05) || isInRange(value, 0.37) || isInRange(value, 0.86);
+		const bool isHole = isInRange(value, 0.09) || isInRange(value, 0.54) || isInRange(value, 0.96);
 
-		if (isCoin || isStone)
+		if (isHole)
 		{
-			// const auto k = isCoin ? BUBBLE_COIN.toSrgbInt() : BUBBLE_STONE.toSrgbInt();
-			const auto k = BUBBLE_STONE.toSrgbInt();
-			params["color"]["int"] = k;
-			params["color"]["r"] = mBubbleColors[k].color.r();
-			params["color"]["g"] = mBubbleColors[k].color.g();
-			params["color"]["b"] = mBubbleColors[k].color.b();
+			d->key = -1;
+		}
+		else if (isCoin || isStone)
+		{
+			const auto k = isCoin ? BUBBLE_COIN.toSrgbInt() : BUBBLE_STONE.toSrgbInt();
+			params["color"] = {
+				{ "int", k },
+				{ "r", mBubbleColors[k].color.r() },
+				{ "g", mBubbleColors[k].color.g() },
+				{ "b", mBubbleColors[k].color.b() }
+			};
+
+			d->key = GOT_BUBBLE;
 		}
 		else
 		{
-			params["color"]["int"] = it->second.color.toSrgbInt();
-			params["color"]["r"] = it->second.color.r();
-			params["color"]["g"] = it->second.color.g();
-			params["color"]["b"] = it->second.color.b();
+			params["color"] = {
+				{ "int", it->second.color.toSrgbInt() },
+				{ "r", it->second.color.r() },
+				{ "g", it->second.color.g() },
+				{ "b", it->second.color.b() }
+			};
+
+			d->key = GOT_BUBBLE;
 		}
 		
-		d->key = GOT_BUBBLE;
 		d->params = std::make_unique<nlohmann::json>(params);
 	}
 	return d;
