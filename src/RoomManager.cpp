@@ -235,8 +235,12 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	// Create bubbles
 	const siv::PerlinNoise perlin(seed);
 
+	const double fSeed(seed);
 	const Float fSquare(xlen);
 	const Int iSeed(seed);
+
+	const double xf = xlen / frequency;
+	const double yf = ylen / frequency;
 
 	for (Int i = 0; i < ylen; ++i)
 	{
@@ -249,17 +253,11 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 			// Work with noise value to get the actual in-game object
 			std::unique_ptr<Instantiator> pi = nullptr;
 			{
-				// Get noise value at this position
-				double dx = x / xlen / frequency;
-				double dy = y / ylen / frequency;
-
-				const double ox = double(std::rand() % (8 + iSeed) * ((iSeed % 48) + 1)) * 0.1;
-				const double oy = double(std::rand() % (8 + iSeed) * ((iSeed % 64) + 1)) * 0.15;
-
 				// Get valid instantiator
+				double ox = fSeed * x * 0.01;
 				while (true)
 				{
-					const double value = perlin.accumulatedOctaveNoise2D_0_1(dx + ox, dy + oy, octaves);
+					const double value = perlin.accumulatedOctaveNoise2D_0_1((x + ox) / xf, y + y / yf, octaves);
 					pi = getGameObjectFromNoiseValue(value);
 					if (pi != nullptr)
 					{
@@ -278,8 +276,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 						}
 					}
 
-					dx += 0.01;
-					dy += 0.01;
+					ox += 0.1;
 				}
 			}
 

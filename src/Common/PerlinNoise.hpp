@@ -39,9 +39,7 @@
 # include <random>
 
 #include <Magnum/Magnum.h>
-#include <Magnum/Math/Math.h>
-
-using namespace Magnum;
+#include <Magnum/Math/Functions.h>
 
 namespace siv
 {
@@ -345,7 +343,7 @@ namespace siv
 # endif
 		value_type accumulatedOctaveNoise1D_0_1(value_type x, std::int32_t octaves) const noexcept
 		{
-			return Math::clamp<value_type>(accumulatedOctaveNoise1D(x, octaves)
+			return Magnum::Math::clamp(accumulatedOctaveNoise1D(x, octaves)
 				* value_type(0.5) + value_type(0.5), 0.0, 1.0);
 		}
 
@@ -354,7 +352,7 @@ namespace siv
 # endif
 		value_type accumulatedOctaveNoise2D_0_1(value_type x, value_type y, std::int32_t octaves) const noexcept
 		{
-			return Math::clamp(accumulatedOctaveNoise2D(x, y, octaves)
+			return Magnum::Math::clamp(accumulatedOctaveNoise2D(x, y, octaves)
 				* value_type(0.5) + value_type(0.5), 0.0, 1.0);
 		}
 
@@ -363,7 +361,7 @@ namespace siv
 # endif
 		value_type accumulatedOctaveNoise3D_0_1(value_type x, value_type y, value_type z, std::int32_t octaves) const noexcept
 		{
-			return Math::clamp<value_type>(accumulatedOctaveNoise3D(x, y, z, octaves)
+			return Magnum::Math::clamp(accumulatedOctaveNoise3D(x, y, z, octaves)
 				* value_type(0.5) + value_type(0.5), 0.0, 1.0);
 		}
 

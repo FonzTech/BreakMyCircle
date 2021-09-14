@@ -123,7 +123,7 @@ void OverlayText::updateTransformations()
 {
 	const Vector2 ar = mAspectRatio > 1.0f ? Vector2(mAspectRatio, 1.0f) : Vector2(1.0f, 1.0f / mAspectRatio);
 	const Vector2 s1 = mSize * mTextSize * ar;
-	const Vector2 s2 = s1 * (0.02f / ar) * 1.5f;
+	const Vector2 s2 = s1 * (0.02f / ar) * Vector2(1.25f, 2.25f);
 
 	{
 		Vector2 ws;

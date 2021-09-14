@@ -595,7 +595,7 @@ void LevelSelector::update()
 				}
 			}
 
-			Vector3 scrollDelta = mScrollVelocity * mDeltaTime;
+			Vector3 scrollDelta = mScrollVelocity;
 			for (UnsignedInt i = 0; i < 3; ++i)
 			{
 				if (scrollDelta[i] < -GO_LS_MAX_SCROLL_VELOCITY)
@@ -1000,6 +1000,7 @@ void LevelSelector::windowForCommon()
 	const auto& d0 = mCbEaseInOut.value(mLevelGuiAnim[0])[1];
 	// const auto& d1 = mCbEaseInOut.value(mLevelGuiAnim[1])[1];
 	const auto& ds = mCbEaseInOut.value(mLevelStartedAnim)[1];
+	const auto& dp = mLevelInfo.state == GO_LS_LEVEL_STARTED ? dsl * 0.2f : 0.0f;
 
 	// Main panel
 	mLevelGuis[GO_LS_GUI_LEVEL_PANEL]->setPosition({ 0.0f, 1.0f - dsl });
@@ -1007,15 +1008,16 @@ void LevelSelector::windowForCommon()
 	// Coin icon and text
 	{
 		const auto& dy = (0.3f + p0.y()) * d0;
-		mLevelGuis[GO_LS_GUI_COIN]->setPosition({ -0.49f, 0.79f - dy });
-		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.5f + getSquareOffset(0.0825f).x(), 0.78f - dy });
+		mLevelGuis[GO_LS_GUI_COIN]->setPosition({ -0.49f, 0.79f - dy + dp });
+		mLevelTexts[GO_LS_TEXT_COIN]->setPosition({ -0.5f + getSquareOffset(0.0825f).x(), 0.78f - dy + dp });
 	}
 
 	// Time icon and text
 	{
 		const auto& p1 = Vector2(0.49f, -0.74f + ds * (0.25f + p0.y()));
-		mLevelGuis[GO_LS_GUI_TIME]->setPosition(p1);
-		mLevelTexts[GO_LS_TEXT_TIME]->setPosition(p1 - getSquareOffset(0.08f) + Vector2(0.0f, 0.015f));
+		const auto& dpv = Vector2(0.0f, -dp);
+		mLevelGuis[GO_LS_GUI_TIME]->setPosition(p1 + dpv);
+		mLevelTexts[GO_LS_TEXT_TIME]->setPosition(p1 - getSquareOffset(0.08f) + Vector2(0.0f, 0.015f) + dpv);
 	}
 
 	// Scroll back
@@ -1595,7 +1597,10 @@ void LevelSelector::createLevelRoom()
 
 	// Level is started
 	{
-		RoomManager::singleton->createLevelRoom(shared_from_this(), 8, 7, mLevelInfo.selectedLevelId, 8.0, 32.0);
+		const auto flid = Float(mLevelInfo.selectedLevelId);
+		const std::int32_t octaves = 4 + std::int32_t(std::fmodf(flid, 12.0f));
+		const double frequency = 8 + double(std::fmodf(flid, 56.0f));
+		RoomManager::singleton->createLevelRoom(shared_from_this(), 8, 7, mLevelInfo.selectedLevelId, octaves, frequency);
 
 		// Set difficulty and starting time
 		mLevelInfo.difficulty = 8.0f + Float(mLevelInfo.selectedLevelId % 56U);
@@ -2543,7 +2548,7 @@ void LevelSelector::createTexts()
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setAnchor(Vector2(-0.9f, 0.0f));
+		go->setAnchor(Vector2(0.0f));
 		go->setSize(Vector2(1.125f));
 		go->setText("0s");
 
