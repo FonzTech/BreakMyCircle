@@ -45,6 +45,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mIntroBubbles = true;
 	mLogoZoom = 0.0f;
 	mAnimElapsed = -3.001f; // Cycle waste
+	mPlaneAlpha = 2.0f;
 
 	// Load assets
 	mPosition = Vector3(0.0f, 10.0f, 0.0f);
@@ -52,6 +53,28 @@ Logo::Logo(const Int parentIndex) : GameObject()
 
 	mLogoManipulator = new Object3D(mManipulator.get());
 	AssetManager().loadAssets(*this, *mLogoManipulator, RESOURCE_SCENE_LOGO, this);
+
+	// Create black plane
+	{
+		Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D::Position, Shaders::Flat3D::TextureCoordinates>(RESOURCE_MESH_PLANE_FLAT);
+		Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WHITE);
+		Resource<GL::AbstractShaderProgram, Shaders::Flat3D> resShader = CommonUtility::singleton->getFlat3DShader();
+
+		// Create child manipulator
+		mPlaneManipulator = new Object3D{ mManipulator.get() };
+
+		(*mPlaneManipulator)
+			.resetTransformation()
+			.scale(Vector3(100.0f))
+			.translate(Vector3(0.0f, 0.0f, -10.0f));
+
+		// Create drawable
+		auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
+		std::shared_ptr<GameDrawable<Shaders::Flat3D>> d = std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, resShader, resMesh, resTexture);
+		d->setParent(mPlaneManipulator);
+		d->setDrawCallback(this);
+		mDrawables.emplace_back(d);
+	}
 
 	// Filter required meshes
 	const std::unordered_map<std::string, UnsignedInt> indexes{
@@ -130,6 +153,7 @@ void Logo::update()
 	}
 	else
 	{
+		mPlaneAlpha -= mDeltaTime;
 		mAnimElapsed += mDeltaTime;
 		mAnimPlayer->advance(mAnimElapsed);
 	}
@@ -249,17 +273,29 @@ void Logo::update()
 
 void Logo::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPosition(mLightPosition)
-		.setLightColor(0xffffff60_rgbaf)
-		.setSpecularColor(0xffffff00_rgbaf)
-		.setAmbientColor(0x505050ff_rgbaf)
-		.setDiffuseColor(0xffffffff_rgbaf)
-		.setTransformationMatrix(transformationMatrix)
-		.setNormalMatrix(transformationMatrix.normalMatrix())
-		.setProjectionMatrix(camera.projectionMatrix())
-		.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
-		.draw(*baseDrawable->mMesh);
+	if (baseDrawable->mTexture.key() == ResourceKey(RESOURCE_TEXTURE_WHITE))
+	{
+		((Shaders::Flat3D&) baseDrawable->getShader())
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+			.bindTexture(*baseDrawable->mTexture)
+			.setColor(Color4(0.05f, 0.05f, 0.05f, Math::min(1.0f, mPlaneAlpha)))
+			.setAlphaMask(0.001f)
+			.draw(*baseDrawable->mMesh);
+	}
+	else
+	{
+		((Shaders::Phong&) baseDrawable->getShader())
+			.setLightPosition(mLightPosition)
+			.setLightColor(0xffffff60_rgbaf)
+			.setSpecularColor(0xffffff00_rgbaf)
+			.setAmbientColor(0x505050ff_rgbaf)
+			.setDiffuseColor(0xffffffff_rgbaf)
+			.setTransformationMatrix(transformationMatrix)
+			.setNormalMatrix(transformationMatrix.normalMatrix())
+			.setProjectionMatrix(camera.projectionMatrix())
+			.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
+			.draw(*baseDrawable->mMesh);
+	}
 }
 
 void Logo::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)

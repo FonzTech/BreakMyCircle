@@ -50,11 +50,13 @@ private:
 	bool mLightDirection;
 
 	// Logo manipulator
+	Object3D* mPlaneManipulator;
 	Object3D* mLogoManipulator;
 	Object3D* mLogoObjects[3];
 
 	// Animation data structures
 	Float mAnimElapsed;
+	Float mPlaneAlpha;
 
 	Keyframe mKeyframes[4][3];
 	std::unique_ptr<AnimPosition> mTrackViewPositions[4];

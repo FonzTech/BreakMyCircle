@@ -67,8 +67,10 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 	CommonUtility::singleton = std::make_unique<CommonUtility>();
 
 #ifdef CORRADE_TARGET_ANDROID
+	CommonUtility::singleton->mConfig.nativeActivity = nativeActivity();
+
     JNIEnv *env;
-    nativeActivity()->vm->AttachCurrentThread(&env, 0);
+	nativeActivity()->vm->AttachCurrentThread(&env, nullptr);
 
     jobject me = nativeActivity()->clazz;
 
@@ -410,7 +412,8 @@ void Engine::viewportInternal(ViewportEvent* event)
 {
 	// Update viewports
 	GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, framebufferSize()));
-	CommonUtility::singleton->mScaledFramebufferSize = Vector2(framebufferSize()) / CommonUtility::singleton->mConfig.displayDensity;
+    // CommonUtility::singleton->mScaledFramebufferSize = Vector2(framebufferSize()) / CommonUtility::singleton->mConfig.displayDensity;
+    CommonUtility::singleton->mScaledFramebufferSize = Vector2(framebufferSize());
 	mCachedFramebufferSize = Vector2i(CommonUtility::singleton->mScaledFramebufferSize);
 	upsertGameObjectLayers();
 }

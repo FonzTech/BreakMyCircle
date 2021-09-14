@@ -140,6 +140,7 @@ void OverlayText::updateTransformations()
 			{
 				ws = CommonUtility::singleton->mScaledFramebufferSize;
 				scaleFactor = Math::min(1.0f, CommonUtility::singleton->mScaledFramebufferSize.x() / 432.0f);
+				scaleFactor *= CommonUtility::singleton->mConfig.displayDensity;
 			}
 
 			mProjectionMatrix = Matrix3::projection(ws);

@@ -1,6 +1,5 @@
 package it.fonztech.breakmycircle;
 
-import android.app.NativeActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-public class MainActivity extends NativeActivity {
+public class MainActivity extends GameActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String ASSET_PREFERENCES = "ASSET_PREFERENCES";
 
@@ -25,8 +24,7 @@ public class MainActivity extends NativeActivity {
 
         // Set base directory for assets
         {
-            // final float density = Math.max(1.0f, getResources().getDisplayMetrics().density);
-            final float density = 1.0f;
+            final float density = Math.max(1.0f, getResources().getDisplayMetrics().density);
             getIntent().putExtra("density", Float.toString(density));
         }
 

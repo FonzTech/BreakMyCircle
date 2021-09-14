@@ -18,6 +18,10 @@
 #include "Congrats.h"
 #include "FallingBubble.h"
 
+#ifdef CORRADE_TARGET_ANDROID
+#include <android/native_activity.h>
+#endif
+
 std::shared_ptr<GameObject> LevelSelector::getInstance(const nlohmann::json & params)
 {
 	// Get parent index
@@ -171,7 +175,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 		auto ratio = (0.5625f / ar);
 		ratio = ratio < 1.0f ? 1.0f / ratio : ratio;
-		const auto& rt = 15.0f * ratio;
+		const auto& rt = 14.5f * ratio;
 
 		auto& layer = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
 		layer.cameraEye = mPosition + Vector3(0.0f, rt, rt);
@@ -564,7 +568,7 @@ void LevelSelector::update()
 			}
 			else
 			{
-				const Vector3 scrollDelta = Vector3(Float(mouseDelta.x()), 0.0f, Float(mouseDelta.y())) * -0.03f;
+				const Vector3 scrollDelta = Vector3(Float(mouseDelta.x()), 0.0f, Float(mouseDelta.y())) * -0.05f;
 				mScrollVelocity = scrollDelta;
 			}
 
@@ -1040,14 +1044,14 @@ void LevelSelector::windowForCommon()
 	{
 		const auto& yp = mLevelGuiAnim[5] <= 0.0f ? 0.0f : mLevelGuiAnim[5] < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::circularOut(mLevelGuiAnim[5])) * 0.5f : 0.5f;
 		mLevelGuis[GO_LS_GUI_HELP]->mPosition = Vector3(0.5f, 1.0f - yp, 0.0f);
-		mLevelGuis[GO_LS_GUI_HELP]->setSize({ 0.35f * wrf, 0.15f + getScaledVerticalPadding() * 0.5f });
+		mLevelGuis[GO_LS_GUI_HELP]->setSize({ 0.35f * Math::min(1.0f, wrf * CommonUtility::singleton->mConfig.displayDensity), 0.15f + getScaledVerticalPadding() * 0.5f });
 	} 
 
 	{
 		const auto& h = 0.5f + getScaledVerticalPadding();
 		const auto& yp = mLevelGuiAnim[5] <= 0.0f ? 0.0f : mLevelGuiAnim[5] < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::circularOut(mLevelGuiAnim[5])) * h : h;
 		mLevelTexts[GO_LS_TEXT_HELP]->mPosition = Vector3(0.49f, 0.99f - yp, 0.0f);
-		mLevelTexts[GO_LS_TEXT_HELP]->setSize(Vector2(0.6f * wrf));
+		mLevelTexts[GO_LS_TEXT_HELP]->setSize(Vector2(0.6f));
 	}
 }
 
@@ -1183,7 +1187,7 @@ void LevelSelector::windowForCurrentLevelView()
 			const Float xp = canShowPowerups ? (Float(i) * xf + mPuView.scrollX * xf) : -1000.0f;
 
 			// Clickable icon
-			const Float alpha = Math::clamp(1.2f - Math::abs(xp) * 4.0f / CommonUtility::singleton->mConfig.displayDensity * ar, 0.0f, 1.0f);
+			const Float alpha = Math::clamp(1.2f - Math::abs(xp) * 4.0f * ar, 0.0f, 1.0f);
 			{
 				auto& item = (std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_POWERUP + i]->drawable;
 				if (alpha > 0.0f)
@@ -1213,14 +1217,13 @@ void LevelSelector::windowForCurrentLevelView()
 			}
 
 			// Price icon
-			const Float alphaPrice = alpha < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::exponentialIn(alpha)) : 1.0f;
 			const auto& yft = yf + 0.03f / ar;
 			{
 				auto& itemCoin = mLevelGuis[GO_LS_TEXT_POWERUP_ICON + i];
-				if (alphaPrice > 0.0f)
+				if (alpha > 0.0f)
 				{
 					itemCoin->setPosition({ xp - 0.115f / ar, yft });
-					itemCoin->mColor.data()[3] = alphaPrice;
+					itemCoin->mColor.data()[3] = alpha;
 				}
 				else
 				{
@@ -1232,11 +1235,11 @@ void LevelSelector::windowForCurrentLevelView()
 			{
 				auto& itemPrice = mLevelTexts[GO_LS_TEXT_POWERUP_PRICE + i];
 
-				if (alphaPrice > 0.0f)
+				if (alpha > 0.0f)
 				{
 					itemPrice->setPosition({ xp - 0.115f / ar + 0.055f / ar, yft + 0.005f });
-					itemPrice->mColor.data()[3] = alphaPrice;
-					itemPrice->mOutlineColor.data()[3] = alphaPrice;
+					itemPrice->mColor.data()[3] = alpha;
+					itemPrice->mOutlineColor.data()[3] = alpha;
 				}
 				else
 				{
@@ -1378,7 +1381,7 @@ void LevelSelector::manageLevelState()
 					}
 				}
 
-				mPickupHandler.timer = 10.0f + Float(std::rand() % 10);
+				mPickupHandler.timer = 5.0f + Float(std::rand() % 5);
 				Debug{} << "Map pickup timer has expired. Reset to" << mPickupHandler.timer;
 			}
 			else
@@ -2616,6 +2619,7 @@ void LevelSelector::createTexts()
 			}
 
 			Debug{} << "You have clicked VOTE ME";
+			callAndroidMethod("gameVoteMe");
 			return true;
 		};
 	}
@@ -2640,6 +2644,7 @@ void LevelSelector::createTexts()
 			}
 
 			Debug{} << "You have clicked OTHER APPS";
+			callAndroidMethod("gameOtherApps");
 			return true;
 		};
 	}
@@ -2682,7 +2687,7 @@ const std::string LevelSelector::getHelpTipText(const Int index) const
 
 Float LevelSelector::getScaledVerticalPadding()
 {
-	return CommonUtility::singleton->mConfig.canvasVerticalPadding / CommonUtility::singleton->mScaledFramebufferSize.y() / CommonUtility::singleton->mConfig.displayDensity;
+	return CommonUtility::singleton->mConfig.canvasVerticalPadding / CommonUtility::singleton->mScaledFramebufferSize.y();
 }
 
 Float LevelSelector::getWidthReferenceFactor()
@@ -2694,4 +2699,19 @@ Vector2 LevelSelector::getSquareOffset(const Float size)
 {
 	const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 	return Vector2(size / ar, 0.0f);
+}
+
+void LevelSelector::callAndroidMethod(const std::string & methodName)
+{
+#ifdef CORRADE_TARGET_ANDROID
+	JNIEnv *env;
+	auto na = static_cast<ANativeActivity*>(CommonUtility::singleton->mConfig.nativeActivity);
+    na->vm->AttachCurrentThread(&env, nullptr);
+    jclass clazz = env->GetObjectClass(na->clazz);
+    jmethodID methodID = env->GetMethodID(clazz, methodName.c_str(), "()V");
+    env->CallVoidMethod(na->clazz, methodID);
+    na->vm->DetachCurrentThread();
+#else
+    Debug{} << "Not running on Android platform";
+#endif
 }

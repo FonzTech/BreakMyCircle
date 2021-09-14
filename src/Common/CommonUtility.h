@@ -56,6 +56,7 @@ public:
 	// Base path for resources
 	struct EngineConfiguration
 	{
+		void* nativeActivity;
 		std::string assetDir;
 		Float canvasVerticalPadding;
 		Float displayDensity;
