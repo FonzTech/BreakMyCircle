@@ -41,6 +41,7 @@
 - Fix level end check.
 - Keep state on Android while app is in background (keep OpenGL ES context, work on Magnum's source).
 - Implement ads with back-end management to avoid Google's shit.
+- Implement push notifications to increase powerups count.
 
 # To be verified
 - Implement other level game objects, such as rocks, holes, and others...

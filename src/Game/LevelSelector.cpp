@@ -624,6 +624,7 @@ void LevelSelector::update()
 		// Check for click release
 		if (lbs == IM_STATE_RELEASED)
 		{
+			// Check for clicked object
 			const UnsignedInt oid = InputManager::singleton->mClickedObjectId;
 			if (oid != 0U)
 			{

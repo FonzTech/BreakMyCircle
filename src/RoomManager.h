@@ -163,5 +163,5 @@ protected:
 	Float mSfxLevel;
 
 	// Methods
-	Float isInRange(const double source, const double dest);
+	Float isInRange(const double source, const double dest, const double range = 0.01);
 };

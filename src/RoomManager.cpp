@@ -400,8 +400,8 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		nlohmann::json params;
 		params["parent"] = GOL_PERSP_SECOND;
 
-		const bool isHole = isInRange(value, 0.09) || isInRange(value, 0.54) || isInRange(value, 0.96);
-		const bool isCoin = isInRange(value, 0.15) || isInRange(value, 0.65) || isInRange(value, 0.95);
+		const bool isHole = isInRange(value, 0.09) || isInRange(value, 0.54) || isInRange(value, 0.98);
+		const bool isCoin = isInRange(value, 0.15, 0.03) || isInRange(value, 0.65, 0.03) || isInRange(value, 0.90, 0.03);
 		const bool isStone = isInRange(value, 0.05) || isInRange(value, 0.37) || isInRange(value, 0.86);
 
 		if (isHole)
@@ -437,7 +437,7 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 	return d;
 }
 
-Float RoomManager::isInRange(const double source, const double dest)
+Float RoomManager::isInRange(const double source, const double dest, const double range)
 {
-	return Math::abs(source - dest) < 0.01;
+	return Math::abs(source - dest) < range;
 }
