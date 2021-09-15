@@ -1347,7 +1347,7 @@ void LevelSelector::manageLevelState()
 			{
 				if (mPickupHandler.timer > -900.0f)
 				{
-					if (mPickupHandler.pickups.size() >= 3 || std::rand() % 10 < 7)
+					if (mPickupHandler.pickups.size() >= 10 || std::rand() % 10 < 7)
 					{
 						if (mPickupHandler.pickups.size() > 0)
 						{
@@ -1381,7 +1381,7 @@ void LevelSelector::manageLevelState()
 					}
 				}
 
-				mPickupHandler.timer = 5.0f + Float(std::rand() % 5);
+				mPickupHandler.timer = 3.0f + Float(std::rand() % 3);
 				Debug{} << "Map pickup timer has expired. Reset to" << mPickupHandler.timer;
 			}
 			else

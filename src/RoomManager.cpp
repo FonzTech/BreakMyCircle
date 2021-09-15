@@ -23,6 +23,31 @@
 
 using namespace Magnum::Math::Literals;
 
+std::unordered_map<UnsignedInt, RoomManager::BubbleData> RoomManager::sBubbleColors = {
+	{ BUBBLE_COLOR_RED.toSrgbInt(), { BUBBLE_COLOR_RED, RESOURCE_TEXTURE_BUBBLE_RED } },
+	{ BUBBLE_COLOR_GREEN.toSrgbInt(), { BUBBLE_COLOR_GREEN, RESOURCE_TEXTURE_BUBBLE_GREEN } },
+	{ BUBBLE_COLOR_BLUE.toSrgbInt(), { BUBBLE_COLOR_BLUE, RESOURCE_TEXTURE_BUBBLE_BLUE } },
+	{ BUBBLE_COLOR_YELLOW.toSrgbInt(), { BUBBLE_COLOR_YELLOW, RESOURCE_TEXTURE_BUBBLE_YELLOW } },
+	{ BUBBLE_COLOR_PURPLE.toSrgbInt(), { BUBBLE_COLOR_PURPLE, RESOURCE_TEXTURE_BUBBLE_PURPLE } },
+	{ BUBBLE_COLOR_ORANGE.toSrgbInt(), { BUBBLE_COLOR_ORANGE, RESOURCE_TEXTURE_BUBBLE_ORANGE } },
+	{ BUBBLE_COLOR_CYAN.toSrgbInt(), { BUBBLE_COLOR_CYAN, RESOURCE_TEXTURE_BUBBLE_CYAN } },
+	{ BUBBLE_COIN.toSrgbInt(), { BUBBLE_COIN, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT } },
+	{ BUBBLE_BOMB.toSrgbInt(), { BUBBLE_BOMB, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT } },
+	{ BUBBLE_PLASMA.toSrgbInt(), { BUBBLE_PLASMA, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT } },
+	{ BUBBLE_ELECTRIC.toSrgbInt(), { BUBBLE_ELECTRIC, RESOURCE_TEXTURE_WHITE } },
+	{ BUBBLE_STONE.toSrgbInt(), { BUBBLE_STONE, RESOURCE_TEXTURE_WHITE } }
+};
+
+std::array<UnsignedInt, 9U> RoomManager::sBubbleKeys = {
+	BUBBLE_COLOR_RED.toSrgbInt(),
+	BUBBLE_COLOR_GREEN.toSrgbInt(),
+	BUBBLE_COLOR_BLUE.toSrgbInt(),
+	BUBBLE_COLOR_YELLOW.toSrgbInt(),
+	BUBBLE_COLOR_PURPLE.toSrgbInt(),
+	BUBBLE_COLOR_ORANGE.toSrgbInt(),
+	BUBBLE_COLOR_CYAN.toSrgbInt()
+};
+
 std::unique_ptr<RoomManager> RoomManager::singleton = nullptr;
 
 RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
@@ -52,20 +77,6 @@ RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
 
 	// Create collision manager
 	mCollisionManager = std::make_unique<CollisionManager>();
-
-	// Setup randomizer
-	mBubbleColors[BUBBLE_COLOR_RED.toSrgbInt()] = { BUBBLE_COLOR_RED, RESOURCE_TEXTURE_BUBBLE_RED };
-	mBubbleColors[BUBBLE_COLOR_GREEN.toSrgbInt()] = { BUBBLE_COLOR_GREEN, RESOURCE_TEXTURE_BUBBLE_GREEN };
-	mBubbleColors[BUBBLE_COLOR_BLUE.toSrgbInt()] = { BUBBLE_COLOR_BLUE, RESOURCE_TEXTURE_BUBBLE_BLUE };
-	mBubbleColors[BUBBLE_COLOR_YELLOW.toSrgbInt()] = { BUBBLE_COLOR_YELLOW, RESOURCE_TEXTURE_BUBBLE_YELLOW };
-	mBubbleColors[BUBBLE_COLOR_PURPLE.toSrgbInt()] = { BUBBLE_COLOR_PURPLE, RESOURCE_TEXTURE_BUBBLE_PURPLE };
-	mBubbleColors[BUBBLE_COLOR_ORANGE.toSrgbInt()] = { BUBBLE_COLOR_ORANGE, RESOURCE_TEXTURE_BUBBLE_ORANGE };
-	mBubbleColors[BUBBLE_COLOR_CYAN.toSrgbInt()] = { BUBBLE_COLOR_CYAN, RESOURCE_TEXTURE_BUBBLE_CYAN };
-	mBubbleColors[BUBBLE_COIN.toSrgbInt()] = { BUBBLE_COIN, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
-	mBubbleColors[BUBBLE_BOMB.toSrgbInt()] = { BUBBLE_BOMB, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
-	mBubbleColors[BUBBLE_PLASMA.toSrgbInt()] = { BUBBLE_PLASMA, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT };
-	mBubbleColors[BUBBLE_ELECTRIC.toSrgbInt()] = { BUBBLE_ELECTRIC, RESOURCE_TEXTURE_WHITE };
-	mBubbleColors[BUBBLE_STONE.toSrgbInt()] = { BUBBLE_STONE, RESOURCE_TEXTURE_WHITE };
 
 	// Initialize game save data
 #if NDEBUG or _DEBUG
@@ -259,7 +270,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 				while (true)
 				{
 					const double value = perlin.accumulatedOctaveNoise2D_0_1((x + ox) / xf, y + y / yf, octaves);
-					pi = getGameObjectFromNoiseValue(value);
+					pi = getGameObjectFromNoiseValue(seed, value);
 					if (pi != nullptr)
 					{
 						// Check if object is a bubble
@@ -370,16 +381,17 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	*/
 }
 
-std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseValue(const double value)
+std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseValue(const std::uint32_t seed, const double value)
 {
 	std::unique_ptr<Instantiator> d = nullptr;
 
 	if (value >= 0.0)
 	{
-		const Int index = Int(Math::round(value * mBubbleColors.size()));
-		const auto& it = std::next(std::begin(mBubbleColors), index % mBubbleColors.size());
+		const Int maxIndex = 4 + Int(std::fmodf(Float(seed - 1), sBubbleKeys.size() - 4));
+		const Int index = Int(Math::round(value * maxIndex));
+		const auto& bd = sBubbleColors.at(sBubbleKeys[index]);
 
-		if (it->second.color != BUBBLE_COIN && it->second.color != BUBBLE_STONE && !CommonUtility::singleton->isBubbleColorValid(it->second.color))
+		if (!CommonUtility::singleton->isBubbleColorValid(bd.color))
 		{
 			return d;
 		}
@@ -388,9 +400,9 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		nlohmann::json params;
 		params["parent"] = GOL_PERSP_SECOND;
 
-		const bool isCoin = isInRange(value, 0.95);
-		const bool isStone = isInRange(value, 0.05) || isInRange(value, 0.37) || isInRange(value, 0.86);
 		const bool isHole = isInRange(value, 0.09) || isInRange(value, 0.54) || isInRange(value, 0.96);
+		const bool isCoin = isInRange(value, 0.15) || isInRange(value, 0.65) || isInRange(value, 0.95);
+		const bool isStone = isInRange(value, 0.05) || isInRange(value, 0.37) || isInRange(value, 0.86);
 
 		if (isHole)
 		{
@@ -401,9 +413,9 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 			const auto k = isCoin ? BUBBLE_COIN.toSrgbInt() : BUBBLE_STONE.toSrgbInt();
 			params["color"] = {
 				{ "int", k },
-				{ "r", mBubbleColors[k].color.r() },
-				{ "g", mBubbleColors[k].color.g() },
-				{ "b", mBubbleColors[k].color.b() }
+				{ "r", sBubbleColors[k].color.r() },
+				{ "g", sBubbleColors[k].color.g() },
+				{ "b", sBubbleColors[k].color.b() }
 			};
 
 			d->key = GOT_BUBBLE;
@@ -411,10 +423,10 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		else
 		{
 			params["color"] = {
-				{ "int", it->second.color.toSrgbInt() },
-				{ "r", it->second.color.r() },
-				{ "g", it->second.color.g() },
-				{ "b", it->second.color.b() }
+				{ "int", bd.color.toSrgbInt() },
+				{ "r", bd.color.r() },
+				{ "g", bd.color.g() },
+				{ "b", bd.color.b() }
 			};
 
 			d->key = GOT_BUBBLE;

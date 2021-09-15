@@ -441,7 +441,7 @@ std::unique_ptr<std::vector<Color3>> Player::getRandomEligibleColor(const Unsign
 Resource<GL::Texture2D> Player::getTextureResourceForIndex(const UnsignedInt index)
 {
 	// ALERT: No validity checks are performed!!
-	const auto& color = RoomManager::singleton->mBubbleColors[mProjColors[index].toSrgbInt()];
+	const auto& color = RoomManager::singleton->sBubbleColors[mProjColors[index].toSrgbInt()];
 	const auto& rk = color.textureKey;
 
 	Debug{} << "Loading texture" << rk << "for player projectile with index" << index;

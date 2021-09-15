@@ -45,7 +45,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mIntroBubbles = true;
 	mLogoZoom = 0.0f;
 	mAnimElapsed = -3.001f; // Cycle waste
-	mPlaneAlpha = 2.0f;
+	mPlaneAlpha = 1.5f;
 
 	// Load assets
 	mPosition = Vector3(0.0f, 10.0f, 0.0f);
@@ -166,7 +166,7 @@ void Logo::update()
 	else if (mIntroBubbles)
 	{
 		// Create bubble of random color
-		const auto& bc = RoomManager::singleton->mBubbleColors;
+		const auto& bc = RoomManager::singleton->sBubbleColors;
 		while (true)
 		{
 			// Get random color (no special objects, like coins)
@@ -316,28 +316,28 @@ void Logo::buildAnimations()
 		case 0:
 			mKeyframes[i][0] = { 0.0f, Vector3(10.0f, 10.0f, 0.0f), 360.0_degf * 4 };
 			mKeyframes[i][1] = { 0.01f, Vector3(10.0f, 10.0f, 0.0f), 360.0_degf * 4 };
-			mKeyframes[i][2] = { 2.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
+			mKeyframes[i][2] = { 3.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
 			break;
 
 		case 1:
 			mKeyframes[i][0] = { 0.0f, Vector3(0.0f, 10.0f, 0.0f), 360.0_degf * 4 };
-			mKeyframes[i][1] = { 1.5f, Vector3(0.0f, 10.0f, 0.0f), 360.0_degf * 4 };
-			mKeyframes[i][2] = { 3.5f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
+			mKeyframes[i][1] = { 2.5f, Vector3(0.0f, 10.0f, 0.0f), 360.0_degf * 4 };
+			mKeyframes[i][2] = { 4.5f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
 			break;
 
 		case 2:
 		{
 			const auto& xp = RoomManager::singleton->getWindowAspectRatio() * -20.0f;
 			mKeyframes[i][0] = { 0.0f, Vector3(0.0f, 0.0f, xp), 360.0_degf * 2 };
-			mKeyframes[i][1] = { 3.0f, Vector3(0.0f, 0.0f, xp), 360.0_degf * 2 };
-			mKeyframes[i][2] = { 5.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
+			mKeyframes[i][1] = { 4.0f, Vector3(0.0f, 0.0f, xp), 360.0_degf * 2 };
+			mKeyframes[i][2] = { 6.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
 		}
 			break;
 
 		case 3:
 			mKeyframes[i][0] = { 0.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
-			mKeyframes[i][1] = { 6.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
-			mKeyframes[i][2] = { 7.0f, Vector3(0.0f, -2.0f + mCanvasPadding * 8.0f, 0.0f), 0.0_degf };
+			mKeyframes[i][1] = { 7.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
+			mKeyframes[i][2] = { 8.0f, Vector3(0.0f, -2.0f + mCanvasPadding * 8.0f, 0.0f), 0.0_degf };
 			break;
 		}
 

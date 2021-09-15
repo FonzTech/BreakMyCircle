@@ -193,7 +193,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 
 		while (assignRandomColor)
 		{
-			const auto& it = std::next(std::begin(RoomManager::singleton->mBubbleColors), std::rand() % RoomManager::singleton->mBubbleColors.size());
+			const auto& it = std::next(std::begin(RoomManager::singleton->sBubbleColors), std::rand() % RoomManager::singleton->sBubbleColors.size());
 			if (CommonUtility::singleton->isBubbleColorValid(it->second.color))
 			{
 				mAmbientColor = it->second.color;

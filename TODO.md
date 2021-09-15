@@ -38,6 +38,11 @@
 ~~- Assets update on Android based on versioning.~~
 
 # On-going tasks
+- Fix level end check.
+- Keep state on Android while app is in background (keep OpenGL ES context, work on Magnum's source).
+- Implement ads with back-end management to avoid Google's shit.
+
+# To be verified
 - Implement other level game objects, such as rocks, holes, and others...
 - Improve collision detection and animations due to "async" between `update` and draw`.
 

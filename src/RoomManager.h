@@ -88,6 +88,10 @@ public:
 	// Singleton
 	static std::unique_ptr<RoomManager> singleton;
 
+	// Static members
+	static std::unordered_map<UnsignedInt, BubbleData> sBubbleColors;
+	static std::array<UnsignedInt, 9U> sBubbleKeys;
+
 	// Function creator mapper for room loader
 	std::unordered_map<Int, std::function<std::shared_ptr<GameObject>(const nlohmann::json & params)>> gameObjectCreators;
 
@@ -111,9 +115,6 @@ public:
 
 	// Collision Manager
 	std::unique_ptr<CollisionManager> mCollisionManager;
-
-	// Members for randomizer
-	std::unordered_map<UnsignedInt, BubbleData> mBubbleColors;
 
 	// Game save data
 	SaveData mSaveData;
@@ -151,7 +152,7 @@ protected:
 	};
 
 	// Methods
-	std::unique_ptr<RoomManager::Instantiator> getGameObjectFromNoiseValue(const double value);
+	std::unique_ptr<RoomManager::Instantiator> getGameObjectFromNoiseValue(const std::uint32_t seed, const double value);
 
 	// Window parameters
 	Int mCurrentBoundParentIndex;
