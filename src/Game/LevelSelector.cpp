@@ -424,7 +424,7 @@ void LevelSelector::update()
 			const Float xi = Math::round(mPuView.scrollX);
 			const Float xt = Math::clamp(xi, Float(-GO_LS_MAX_POWERUP_COUNT + 1), 0.0f);
 			const Float d = xt - mPuView.scrollX;
-			mPuView.scrollX += d * 0.25f;
+            mPuView.scrollX += d * mDeltaTime * 5.0f;
 		}
 	}
 	else
@@ -495,18 +495,18 @@ void LevelSelector::update()
 		const Vector3 p(Float(InputManager::singleton->mMousePosition.x()), Float(InputManager::singleton->mMousePosition.y()), 0.0f);
 		const auto& w = RoomManager::singleton->getWindowSize();
 
-		for (auto it = mScreenButtons.begin(); it != mScreenButtons.end(); ++it)
+		for (auto& scenery : mScreenButtons)
 		{
-			const auto& b = it->second->drawable->getBoundingBox(w);
+			const auto& b = scenery.second->drawable->getBoundingBox(w);
 			if (b.contains(p))
 			{
 				if (lbs == IM_STATE_PRESSED)
 				{
-					mClickIndex = it->first;
-					mClickTimer = 0.5f;
+					mClickIndex = scenery.first;
+					mClickTimer = 0.25f;
 					break;
 				}
-				else if (lbs == IM_STATE_RELEASED && mClickIndex == Int(it->first) && it->second->callback(it->first))
+				else if (lbs == IM_STATE_RELEASED && mClickIndex == Int(scenery.first) && scenery.second->callback(scenery.first))
 				{
 					break;
 				}
@@ -523,25 +523,25 @@ void LevelSelector::update()
 		}
 
 		// Apply transformations to all button drawables
-		for (auto it = mSceneries.begin(); it != mSceneries.end(); ++it)
+		for (auto& scenery : mSceneries)
 		{
-			for (auto it2 = it->second.buttons.begin(); it2 != it->second.buttons.end(); ++it2)
+			for (auto& button : scenery.second.buttons)
 			{
 				// Control animation
-				if (!it->second.scenery.expired())
+				if (!scenery.second.scenery.expired())
 				{
-					const auto& pz = (*it2)->position.z() + it->second.scenery.lock()->mPosition.z();
+					const auto& pz = button->position.z() + scenery.second.scenery.lock()->mPosition.z();
 					const auto& c = mPosition.z() > pz - 25.0f && mPosition.z() < pz + 25.0f;
-					manageBackendAnimationVariable((*it2)->scale, 1.0f, c);
+					manageBackendAnimationVariable(button->scale, 1.0f, c);
 				}
 
 				// Create common scaling vector
-				const Vector3 sv((*it2)->scale * mLevelButtonScaleAnim);
+				const Vector3 sv(button->scale * mLevelButtonScaleAnim);
 
 				// Apply transformations to all drawables for this pickable object
-				if (!(*it2)->sidecar.expired())
+				if (!button->sidecar.expired())
 				{
-					(*it2)->sidecar.lock()->setScale(sv);
+					button->sidecar.lock()->setScale(sv);
 				}
 			}
 		}
@@ -590,13 +590,13 @@ void LevelSelector::update()
 		{
 			for (UnsignedInt i = 0; i < 3; ++i)
 			{
-				if (mScrollVelocity[i] < -GO_LS_MAX_SCROLL_VELOCITY_MAX)
+				if (mScrollVelocity[i] < -1.0f)
 				{
-					mScrollVelocity[i] = -GO_LS_MAX_SCROLL_VELOCITY_MAX;
+					mScrollVelocity[i] = -1.0f;
 				}
-				else if (mScrollVelocity[i] > GO_LS_MAX_SCROLL_VELOCITY_MAX)
+				else if (mScrollVelocity[i] > 1.0f)
 				{
-					mScrollVelocity[i] = GO_LS_MAX_SCROLL_VELOCITY_MAX;
+					mScrollVelocity[i] = 1.0f;
 				}
 			}
 
@@ -618,7 +618,7 @@ void LevelSelector::update()
 				}
 			}
 
-			mScrollVelocity -= scrollDelta;
+			mScrollVelocity -= scrollDelta * mDeltaTime;
 		}
 
 		// Check for click release
@@ -1038,7 +1038,7 @@ void LevelSelector::windowForCommon()
 	}
 
 	// Scroll back
-	mScreenButtons[GO_LS_GUI_SCROLL_BACK]->drawable->setPosition(Vector2(0.5f, -0.75f + 0.25f * (mLevelGuiAnim[4] - mSettingsAnim - mLevelAnim)));
+	mScreenButtons[GO_LS_GUI_SCROLL_BACK]->drawable->setPosition(Vector2(0.5f, -0.75f + (0.25f + p0.y()) * (mLevelGuiAnim[4] - mSettingsAnim - mLevelAnim)));
 
 	// Help tips
 	const auto& wrf = getWidthReferenceFactor();
@@ -1049,7 +1049,7 @@ void LevelSelector::windowForCommon()
 	} 
 
 	{
-		const auto& h = 0.5f + getScaledVerticalPadding();
+		const auto& h = 0.5f + getScaledVerticalPadding() * 0.9f;
 		const auto& yp = mLevelGuiAnim[5] <= 0.0f ? 0.0f : mLevelGuiAnim[5] < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::circularOut(mLevelGuiAnim[5])) * h : h;
 		mLevelTexts[GO_LS_TEXT_HELP]->mPosition = Vector3(0.49f, 0.99f - yp, 0.0f);
 		mLevelTexts[GO_LS_TEXT_HELP]->setSize(Vector2(0.6f));
@@ -1350,7 +1350,7 @@ void LevelSelector::manageLevelState()
 				{
 					if (mPickupHandler.pickups.size() >= 10 || std::rand() % 10 < 7)
 					{
-						if (mPickupHandler.pickups.size() > 0)
+						if (!mPickupHandler.pickups.empty())
 						{
 							const auto& it = std::next(std::begin(mPickupHandler.pickups), std::rand() % mPickupHandler.pickups.size());
 							if (!it->second.expired())
