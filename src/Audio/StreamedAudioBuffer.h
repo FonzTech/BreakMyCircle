@@ -18,8 +18,6 @@ class StreamedAudioBuffer
 {
 public:
 
-	static std::unique_ptr<StreamedAudioBuffer> singleton;
-
 	StreamedAudioBuffer();
 	~StreamedAudioBuffer();
 

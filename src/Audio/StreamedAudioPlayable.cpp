@@ -58,7 +58,7 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 			auto& source = mPlayable->source();
 			const bool b1 = source.state() == Audio::Source::State::Stopped;
 			const bool b2 = source.state() == Audio::Source::State::Playing && source.offsetInSamples() >= limit;
-			if (b1 || b2) 
+			if (b1 || b2)
 			{
 				if (b2)
 				{
@@ -67,7 +67,7 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 
 				source.setBuffer(nullptr);
 
-				if (mPlayable != nullptr)
+				if (mPlayable != nullptr || b2)
 				{
 					mStream->feed();
 					source.setBuffer(&mStream->getFrontBuffer());

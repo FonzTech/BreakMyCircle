@@ -5,8 +5,6 @@
 
 #include <stb_vorbis_prefix.c>
 
-std::unique_ptr<StreamedAudioBuffer> StreamedAudioBuffer::singleton = nullptr;
-
 StreamedAudioBuffer::StreamedAudioBuffer()
 {
 }
