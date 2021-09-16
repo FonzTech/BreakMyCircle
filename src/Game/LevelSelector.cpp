@@ -590,28 +590,25 @@ void LevelSelector::update()
 		{
 			for (UnsignedInt i = 0; i < 3; ++i)
 			{
-				if (mScrollVelocity[i] < -1.0f)
+#ifdef CORRADE_TARGET_ANDROID
+                const Float maxVelocity = GO_LS_MAX_SCROLL_VELOCITY / (CommonUtility::singleton->mConfig.displayDensity * (i == 0 ? 4.0f : 1.0f)) * 0.25f;
+#else
+                const Float maxVelocity = GO_LS_MAX_SCROLL_VELOCITY / (CommonUtility::singleton->mConfig.displayDensity);
+#endif
+				if (mScrollVelocity.data()[i] < -maxVelocity)
 				{
-					mScrollVelocity[i] = -1.0f;
+					mScrollVelocity.data()[i] = -maxVelocity;
 				}
-				else if (mScrollVelocity[i] > 1.0f)
+				else if (mScrollVelocity.data()[i] > maxVelocity)
 				{
-					mScrollVelocity[i] = 1.0f;
+					mScrollVelocity.data()[i] = maxVelocity;
 				}
 			}
 
 			Vector3 scrollDelta = mScrollVelocity;
 			for (UnsignedInt i = 0; i < 3; ++i)
 			{
-				if (scrollDelta[i] < -GO_LS_MAX_SCROLL_VELOCITY)
-				{
-					scrollDelta[i] = -GO_LS_MAX_SCROLL_VELOCITY;
-				}
-				else if (scrollDelta[i] > GO_LS_MAX_SCROLL_VELOCITY)
-				{
-					scrollDelta[i] = GO_LS_MAX_SCROLL_VELOCITY;
-				}
-				else if (std::abs(scrollDelta[i]) < GO_LS_MAX_SCROLL_THRESHOLD)
+				if (std::abs(scrollDelta[i]) < GO_LS_MAX_SCROLL_THRESHOLD)
 				{
 					mScrollVelocity[i] = 0.0f;
 					scrollDelta[i] = 0.0f;

@@ -341,6 +341,7 @@ void Engine::resumeApp()
 	resumeContext(ENGINE_CONFIGURATION.setSize({ 0, 0 }));
     isInForeground = true;
 	RoomManager::singleton->mBgMusic->playable()->source().play();
+    mTimeline.nextFrame(); // Fix delta time
 }
 #endif
 
