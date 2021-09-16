@@ -122,7 +122,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	// Cached variables for GUI
 	{
 		mTimer = { 0.0f, 0 };
-		mCoins = { 0.0f, 0 };
+		mCoins = { Float(RoomManager::singleton->mSaveData.coinTotal), RoomManager::singleton->mSaveData.coinTotal };
 	}
 
 	// Powerup view
@@ -1555,7 +1555,7 @@ void LevelSelector::manageLevelState()
 		const auto& value = RoomManager::singleton->mSaveData.coinTotal + RoomManager::singleton->mSaveData.coinCurrent;
 		if (mCoins.cached != value)
 		{
-			mCoins.value += (Float(value) - mCoins.value) * 0.25f;
+			mCoins.value += (Float(value) - mCoins.value) * mDeltaTime * 3.0f;
 			mCoins.cached = Int(mCoins.value + 0.01f); // Add a small factor to avoid floating-point precision errors
 
 			const auto& str = std::to_string(mCoins.cached);
@@ -1969,8 +1969,7 @@ void LevelSelector::createPowerupView()
 				{
 					offsetButton = Vector3(0.0f, 0.1f, 0.0f);
 
-					const bool& isEnough = RoomManager::singleton->mSaveData.powerupAmounts[index] > 0;
-					const std::string& text = isEnough ? "Use" : "Not Enough";
+					const std::string& text = "Use";
 					o->addAction(text, [this, index](UnsignedInt buttonIndex) {
 						Debug{} << "You have clicked USE POWERUP";
 
@@ -1979,6 +1978,8 @@ void LevelSelector::createPowerupView()
 						const auto& it = pm.find(index);
 						if (it->second <= 0)
 						{
+							mDialog.lock()->shakeButton(buttonIndex);
+							playSfxAudio(GO_LS_AUDIO_WRONG);
 							return;
 						}
 
@@ -1993,7 +1994,7 @@ void LevelSelector::createPowerupView()
 						closeDialog();
 						mScreenButtons[GO_LS_GUI_SETTINGS]->callback(GO_LS_GUI_SETTINGS);
 					},
-						!isEnough,
+						false,
 						offsetButton
 						);
 				}
@@ -2579,7 +2580,7 @@ void LevelSelector::createTexts()
 		go->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
 		go->setSize(Vector2(1.15f));
-		go->setText("0");
+		go->setText(std::to_string(RoomManager::singleton->mSaveData.coinTotal));
 
 		mLevelTexts[GO_LS_TEXT_COIN] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
 	}

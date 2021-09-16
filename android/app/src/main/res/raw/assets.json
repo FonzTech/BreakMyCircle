@@ -92,6 +92,9 @@
   "scenes/coin.glb": {
     "version": 1
   },
+  "scenes/stone.glb": {
+    "version": 1
+  },
   "scenes/level_button.glb": {
     "version": 1
   },

@@ -37,9 +37,10 @@
 ~~- Avoid rendering for `OverlayGui` and `OverlayText` when off-screen.~~
 ~~- Assets update on Android based on versioning.~~
 ~~- Keep state on Android while app is in background (keep OpenGL ES context, work on Magnum's source).~~
+~~- Fix level end check.~~
 
 # On-going tasks
-- Fix level end check.
+- Implement save/load game.
 - Implement ads with back-end management to avoid Google's shit.
 - Implement push notifications to increase powerups count.
 
