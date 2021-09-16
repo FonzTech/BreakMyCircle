@@ -32,13 +32,13 @@ std::unordered_map<UnsignedInt, RoomManager::BubbleData> RoomManager::sBubbleCol
 	{ BUBBLE_COLOR_ORANGE.toSrgbInt(), { BUBBLE_COLOR_ORANGE, RESOURCE_TEXTURE_BUBBLE_ORANGE } },
 	{ BUBBLE_COLOR_CYAN.toSrgbInt(), { BUBBLE_COLOR_CYAN, RESOURCE_TEXTURE_BUBBLE_CYAN } },
 	{ BUBBLE_COIN.toSrgbInt(), { BUBBLE_COIN, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT } },
-	{ BUBBLE_BOMB.toSrgbInt(), { BUBBLE_BOMB, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT } },
-	{ BUBBLE_PLASMA.toSrgbInt(), { BUBBLE_PLASMA, RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT } },
+	{ BUBBLE_BOMB.toSrgbInt(), { BUBBLE_BOMB, RESOURCE_TEXTURE_WHITE } },
+	{ BUBBLE_PLASMA.toSrgbInt(), { BUBBLE_PLASMA, RESOURCE_TEXTURE_WHITE } },
 	{ BUBBLE_ELECTRIC.toSrgbInt(), { BUBBLE_ELECTRIC, RESOURCE_TEXTURE_WHITE } },
 	{ BUBBLE_STONE.toSrgbInt(), { BUBBLE_STONE, RESOURCE_TEXTURE_WHITE } }
 };
 
-std::array<UnsignedInt, 9U> RoomManager::sBubbleKeys = {
+std::array<UnsignedInt, 7U> RoomManager::sBubbleKeys = {
 	BUBBLE_COLOR_RED.toSrgbInt(),
 	BUBBLE_COLOR_GREEN.toSrgbInt(),
 	BUBBLE_COLOR_BLUE.toSrgbInt(),
@@ -387,14 +387,10 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 
 	if (value >= 0.0)
 	{
-		const Int maxIndex = 4 + Int(std::fmodf(Float(seed - 1), sBubbleKeys.size() - 4));
-		const Int index = Int(Math::round(value * maxIndex));
-		const auto& bd = sBubbleColors.at(sBubbleKeys[index]);
+		const double maxIndex = 4 + (Int(seed - 1) % 60);
+		const Int index = UnsignedInt(Int(seed) + Int(Math::round(value * maxIndex))) % UnsignedInt(sBubbleKeys.size());
+		const auto& bd = sBubbleKeys[index];
 
-		if (!CommonUtility::singleton->isBubbleColorValid(bd.color))
-		{
-			return d;
-		}
 		d = std::make_unique<Instantiator>();
 		 
 		nlohmann::json params;
@@ -411,22 +407,24 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		else if (isCoin || isStone)
 		{
 			const auto k = isCoin ? BUBBLE_COIN.toSrgbInt() : BUBBLE_STONE.toSrgbInt();
+			const auto& vd = sBubbleColors[k];
 			params["color"] = {
 				{ "int", k },
-				{ "r", sBubbleColors[k].color.r() },
-				{ "g", sBubbleColors[k].color.g() },
-				{ "b", sBubbleColors[k].color.b() }
+				{ "r", vd.color.r() },
+				{ "g", vd.color.g() },
+				{ "b", vd.color.b() }
 			};
 
 			d->key = GOT_BUBBLE;
 		}
 		else
 		{
+			const auto& vd = sBubbleColors[bd];
 			params["color"] = {
-				{ "int", bd.color.toSrgbInt() },
-				{ "r", bd.color.r() },
-				{ "g", bd.color.g() },
-				{ "b", bd.color.b() }
+				{ "int", vd.color.toSrgbInt() },
+				{ "r", vd.color.r() },
+				{ "g", vd.color.g() },
+				{ "b", vd.color.b() }
 			};
 
 			d->key = GOT_BUBBLE;

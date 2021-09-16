@@ -110,6 +110,7 @@ void FallingBubble::update()
 	switch (mCustomType)
 	{
 	case GO_FB_TYPE_BUBBLE:
+	case GO_FB_TYPE_STONE:
 
 		// Advance falling animation
 		if (mDelay > 0.0f)
@@ -197,14 +198,6 @@ void FallingBubble::update()
 		(*mManipulator)
 			.resetTransformation()
 			.scale(Vector3(8.0f, 8.0f, 1.0f))
-			.translate(mPosition);
-
-		break;
-
-	case GO_FB_TYPE_STONE:
-
-		(*mManipulator)
-			.resetTransformation()
 			.translate(mPosition);
 
 		break;
