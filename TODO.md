@@ -36,10 +36,10 @@
 ~~- Implement different switches for `update` and `draw` phases, to avoid re-rendering of static scenes.~~
 ~~- Avoid rendering for `OverlayGui` and `OverlayText` when off-screen.~~
 ~~- Assets update on Android based on versioning.~~
+~~- Keep state on Android while app is in background (keep OpenGL ES context, work on Magnum's source).~~
 
 # On-going tasks
 - Fix level end check.
-- Keep state on Android while app is in background (keep OpenGL ES context, work on Magnum's source).
 - Implement ads with back-end management to avoid Google's shit.
 - Implement push notifications to increase powerups count.
 
