@@ -6,6 +6,10 @@ This is necessary, since Windows 10 SDK can change from time to time, so some bu
 
 Also, be aware of cache when working with Android Studio. You may have to delete manually the entire `.cxx` directory, otherwise you end up with mixed files, inconsistent builds and strange (fake) errors.
 
+[Here](https://gitlab.com/fonztech-personal/magnum-edited-sources) can be found the Magnum's Edited Sources, along with other dependencies, which add required capatibilies and fixes, such as:
+- fixes on `CMakeLists.txt` for Windows 10 SDK
+- pause/resume capability on AndroidApplication with correct GLES Window/Surface/Context handling.
+
 ```
 if(NOT ${CMAKE_SYSTEM_NAME} MATCHES "Android")
   set(CMAKE_GENERATOR_PLATFORM x64) # BEFORE PROJECT

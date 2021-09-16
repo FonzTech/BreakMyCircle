@@ -38,11 +38,15 @@ const std::unordered_set<Int> Engine::GO_DRAW_DETACHED = {
 };
 #endif
 
-Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle") }, mFrameTime(0.0f)
+#ifdef CORRADE_TARGET_ANDROID
+Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, ENGINE_CONFIGURATION }, mFrameTime(0.0f)
+#else
+Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setSize({ 432, 768 }) }, mFrameTime(0.0f)
+#endif
 {
 	// Setup window
-#ifdef MAGNUM_SDL2APPLICATION_MAIN
-	setWindowSize({ 432, 768 });
+#ifdef CORRADE_TARGET_ANDROID
+    isInForeground = true;
 #endif
 
 #ifdef DEBUG_OPENGL_CALLS
@@ -324,11 +328,30 @@ void Engine::tickEvent()
 	mTimeline.nextFrame();
 }
 
+#ifdef CORRADE_TARGET_ANDROID
+void Engine::pauseApp()
+{
+	pauseContext();
+    isInForeground = false;
+	RoomManager::singleton->mBgMusic->playable()->source().pause();
+}
+
+void Engine::resumeApp()
+{
+	resumeContext(ENGINE_CONFIGURATION.setSize({ 0, 0 }));
+    isInForeground = true;
+	RoomManager::singleton->mBgMusic->playable()->source().play();
+}
+#endif
+
 void Engine::drawEvent()
 {
 #ifdef CORRADE_TARGET_ANDROID
-    tickEvent();
-    redraw();
+    if (isInForeground)
+    {
+        tickEvent();
+        redraw();
+    }
 #endif
 }
 
@@ -596,7 +619,8 @@ void Engine::updateMouseButtonState(MouseEvent& event, const bool & pressed)
 {
 	// Update state for the button which triggered the event
 	InputManager::singleton->mMousePosition = event.position();
-	InputManager::singleton->setMouseState(event.button(), pressed);
+
+    InputManager::singleton->setMouseState(event.button(), pressed);
 }
 
 void Engine::updateMouseButtonStates(MouseMoveEvent& event)

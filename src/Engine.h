@@ -18,11 +18,14 @@
 #include <Magnum/Platform/Sdl2Application.h>
 #endif
 
+#define ENGINE_CONFIGURATION Configuration{}.setTitle("BreakMyCircle")
+
 using namespace Magnum;
 
 class Engine : public Platform::Application
 {
 public:
+
 	explicit Engine(const Arguments& arguments);
 	~Engine();
 
@@ -33,6 +36,15 @@ protected:
     void tickEvent();
 #else
     void tickEvent() override;
+#endif
+
+protected:
+
+#ifdef CORRADE_TARGET_ANDROID
+	void pauseApp() override;
+	void resumeApp() override;
+
+	bool isInForeground;
 #endif
 
 private:
