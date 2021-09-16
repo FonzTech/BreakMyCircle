@@ -29,7 +29,7 @@
 #define GO_LS_GUI_SFX 10U
 #define GO_LS_GUI_WHITEGLOW 11U
 #define GO_LS_GUI_SCROLL_BACK 12U
-#define GO_LS_GUI_SAD 13U
+#define GO_LS_GUI_EMOJI 13U
 #define GO_LS_GUI_HELP 14U
 #define GO_LS_GUI_STAR 100U
 #define GO_LS_GUI_POWERUP 1000U
@@ -137,6 +137,7 @@ private:
 		UnsignedInt selectedLevelId;
 		Int state;
 		Int numberOfRetries;
+		Int numberOfPlays;
 		Int score;
 		Int playedScore;
 		Float difficulty;

@@ -85,7 +85,7 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
     jclass icl = env->GetObjectClass(intent); // Class pointer of Intent
     jmethodID gseid = env->GetMethodID(icl, "getStringExtra", "(Ljava/lang/String;)Ljava/lang/String;");
 
-    const std::array<std::string, 3> params = { "asset_dir", "canvas_vertical_height", "density" };
+    const std::array<std::string, 3> params = { "asset_dir", "canvas_vertical_height", "density", "play_ad_threshold" };
     for (UnsignedInt i = 0; i != params.size(); ++i)
     {
         const auto jsParam1 = (jstring) env->CallObjectMethod(intent, gseid, env->NewStringUTF(params.at(i).c_str()));
@@ -103,9 +103,13 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
             CommonUtility::singleton->mConfig.canvasVerticalPadding = std::stof(value);
             break;
 
-        case 2U:
-            CommonUtility::singleton->mConfig.displayDensity = std::stof(value);
-            break;
+		case 2U:
+			CommonUtility::singleton->mConfig.displayDensity = std::stof(value);
+			break;
+
+		case 2U:
+			CommonUtility::singleton->mConfig.playAdThreshold = std::stoi(value);
+			break;
         }
 
         env->ReleaseStringUTFChars(jsParam1, Param1);

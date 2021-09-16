@@ -115,6 +115,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mLevelInfo.state = GO_LS_LEVEL_INIT;
 		mLevelInfo.nextLevelAnim = 0.0f;
 		mLevelInfo.numberOfRetries = 0;
+		mLevelInfo.numberOfPlays = 0;
 		mLevelInfo.score = -1;
 		mLevelInfo.lastLevelPos = Vector3(0.0f);
 	}
@@ -1165,8 +1166,8 @@ void LevelSelector::windowForCurrentLevelView()
 
 	// Sad emoji
 	{
-		const auto& dx = mLevelInfo.state >= GO_LS_LEVEL_FINISHED && !mLevelInfo.success ? d * 1.25f : 0.0f;
-		mLevelGuis[GO_LS_GUI_SAD]->setPosition({ 0.0f, 1.175f - dx });
+		const auto& dx = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? d * 1.25f : 0.0f;
+		mLevelGuis[GO_LS_GUI_EMOJI]->setPosition({ 0.0f, 1.175f - dx });
 	}
 
 	// Powerup title text
@@ -1536,6 +1537,9 @@ void LevelSelector::manageLevelState()
 		{
 			// Reset level state
 			mLevelInfo.state = GO_LS_LEVEL_INIT;
+
+			// Reset level stats
+			mLevelInfo.score = -1;
 		}
 
 		// Animate jump to new level
@@ -1675,6 +1679,9 @@ void LevelSelector::finishCurrentLevel(const bool success)
 	// Add coins
 	if (mLevelInfo.success)
 	{
+		// Set correct texture for Emoji GUI
+		mLevelGuis[GO_LS_GUI_EMOJI]->setTexture(RESOURCE_TEXTURE_GUI_HAPPY);
+
 		// Reset number of retries
 		mLevelInfo.numberOfRetries = 0;
 
@@ -1693,6 +1700,10 @@ void LevelSelector::finishCurrentLevel(const bool success)
 	}
 	else
 	{
+		// Set correct texture for Emoji GUI
+		mLevelGuis[GO_LS_GUI_EMOJI]->setTexture(RESOURCE_TEXTURE_GUI_SAD);
+
+		// Set level stats
         mLevelInfo.score = 0;
 		mLevelInfo.playedScore = -1;
 	}
@@ -1721,6 +1732,17 @@ void LevelSelector::finishCurrentLevel(const bool success)
 
 	// Update text
 	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(mLevelInfo.selectedLevelId) + "\n" + (mLevelInfo.success ? "Completed" : "Failed"));
+
+	// Check how many times a level has been played
+	if (mLevelInfo.numberOfPlays >= CommonUtility::singleton->mConfig.playAdThreshold)
+	{
+		mLevelInfo.numberOfPlays = 0;
+		callAndroidMethod("showInterstitial");
+	}
+	else
+	{
+		++mLevelInfo.numberOfPlays;
+	}
 }
 
 void LevelSelector::prepareForReplay()
@@ -2531,7 +2553,7 @@ void LevelSelector::createGuis()
 		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 0.0f, 0.0f });
 
-		mLevelGuis[GO_LS_GUI_SAD] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
+		mLevelGuis[GO_LS_GUI_EMOJI] = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o, true);
 	}
 
 	// Help box

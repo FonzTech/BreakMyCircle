@@ -196,7 +196,7 @@ void Logo::update()
 	{
 		// Handle "tap here"
 		{
-			if (InputManager::singleton->mMouseStates[PRIMARY_BUTTON] == IM_STATE_RELEASED)
+			if (InputManager::singleton->mMouseStates[PRIMARY_BUTTON] == IM_STATE_RELEASED && mTexts[0]->mColor.a() >= 0.99f)
 			{
 				mIntroBubbles = false;
 			}

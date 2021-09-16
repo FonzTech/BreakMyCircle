@@ -34,6 +34,10 @@ public class MainActivity extends GameActivity {
         }
 
         {
+            getIntent().putExtra("play_ad_threshold", "3");
+        }
+
+        {
             String assetDir = getFilesDir().getAbsolutePath();
             if (!assetDir.endsWith(File.separator))
             {

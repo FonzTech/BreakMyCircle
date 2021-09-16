@@ -60,6 +60,7 @@
 #define RESOURCE_TEXTURE_GUI_PU_ELECTRIC "tex_gui_pu_electric"
 #define RESOURCE_TEXTURE_GUI_CONGRATS "tex_gui_congrats"
 #define RESOURCE_TEXTURE_GUI_SAD "tex_gui_sad"
+#define RESOURCE_TEXTURE_GUI_HAPPY "tex_gui_happy"
 #define RESOURCE_TEXTURE_GUI_HELP "tex_gui_help"
 #define RESOURCE_TEXTURE_WHITE "tex_white"
 

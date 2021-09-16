@@ -60,6 +60,7 @@ public:
 		std::string assetDir;
 		Float canvasVerticalPadding;
 		Float displayDensity;
+		Int playAdThreshold;
 	} mConfig;
 
 	// Constructor
