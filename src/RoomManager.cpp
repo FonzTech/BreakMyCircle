@@ -387,7 +387,7 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 
 	if (value >= 0.0)
 	{
-		const double maxIndex = 4 + (Int(seed - 1) % 60);
+		const double maxIndex = 4 + Int(Float(Int(seed - 1) % 100) * 0.1f);
 		const Int index = UnsignedInt(Int(seed) + Int(Math::round(value * maxIndex))) % UnsignedInt(sBubbleKeys.size());
 		const auto& bd = sBubbleKeys[index];
 
