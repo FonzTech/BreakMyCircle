@@ -95,7 +95,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mParentIndex = parentIndex;
 
 	// Init members
-	mPosition = Vector3(0.0f);
+	mPosition = getLastLevelPos();
 
 	mPrevMousePos = Vector2i(GO_LS_RESET_MOUSE_VALUE, -1);
 	mScrollVelocity = Vector3(0.0f);
@@ -1366,11 +1366,7 @@ void LevelSelector::manageLevelState()
 		}
 
 		// Check for distance between last level and current scroll position
-		{
-			const auto& zp = Math::floor(Float(RoomManager::singleton->mSaveData.maxLevelId - 2) / 6.0f) * -GO_LS_SCENERY_LENGTH;
-			const auto& zf = (RoomManager::singleton->mSaveData.maxLevelId - 2) % 6U;
-			mLevelInfo.lastLevelPos = Vector3(0.0f, 0.0f, zp) + sLevelButtonPositions[getModelIndex(Int(zp))][zf];
-		}
+		mLevelInfo.lastLevelPos = getLastLevelPos();
 
 		if (RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->empty())
 		{
@@ -1908,7 +1904,7 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 	mLevelInfo.repeatLevelId = 0U;
 	mLevelInfo.delayedChecks = false;
 	mLevelInfo.state = GO_LS_LEVEL_STARTING;
-	mLevelInfo.startingTime = 120.0f + Math::floor(Float(mLevelInfo.selectedLevelId % 100U) / 5.0f) * 10.0f;
+    mLevelInfo.startingTime = 120.0f + Math::floor(Float(mLevelInfo.selectedLevelId % 100U) / 5.0f) * 10.0f;
 
 	mTimer = { mLevelInfo.startingTime, Int(mLevelInfo.startingTime) };
 
@@ -1938,6 +1934,13 @@ Int LevelSelector::computeScore()
 Int LevelSelector::getModelIndex(const Int yp)
 {
 	return Int(Math::floor(Float(Math::abs(yp)) / 2.0f)) % 3;
+}
+
+Vector3 LevelSelector::getLastLevelPos()
+{
+	const auto& zp = Math::floor(Float(RoomManager::singleton->mSaveData.maxLevelId - 2) / 6.0f) * -GO_LS_SCENERY_LENGTH;
+	const auto& zf = (RoomManager::singleton->mSaveData.maxLevelId - 2) % 6U;
+	return Vector3(0.0f, 0.0f, zp) + sLevelButtonPositions[getModelIndex(Int(zp))][zf];
 }
 
 void LevelSelector::manageGuiLevelAnim(const UnsignedInt index, const bool increment, const Float factor)

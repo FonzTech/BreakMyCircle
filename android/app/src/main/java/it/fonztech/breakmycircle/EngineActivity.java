@@ -76,6 +76,7 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
     };
 
     protected boolean canShowAds;
+    protected int playAdThreshold;
 
     protected final FullScreenContentCallback fullScreenContentCallback = new FullScreenContentCallback() {
         @Override

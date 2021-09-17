@@ -88,7 +88,6 @@ bool RoomManager::SaveData::load()
 	nlohmann::json jsonData;
 	{
 		const auto rawJson = Utility::Directory::readString(CommonUtility::singleton->mConfig.saveFile);
-		Debug{} << "raw json is" << rawJson;
 		try
 		{
 			jsonData = nlohmann::json::parse(rawJson);
@@ -109,13 +108,13 @@ bool RoomManager::SaveData::load()
 	// Coin total
 	{
 		const auto value = jsonData.find("coinTotal");
-		coinTotal = value != jsonData.end() ? (*value).at("coinTotal").get<Int>() : 0;
+		coinTotal = value != jsonData.end() ? (*value).get<Int>() : 0;
 	}
 
 	// Coin current
 	{
 		const auto value = jsonData.find("coinCurrent");
-		coinCurrent = value != jsonData.end() ? (*value).at("coinCurrent").get<Int>() : 0;
+		coinCurrent = value != jsonData.end() ? (*value).get<Int>() : 0;
 	}
 
 	// Load powerup amounts
@@ -142,12 +141,19 @@ bool RoomManager::SaveData::save()
 	}
 
 	// Dump JSON data to file
-	const nlohmann::json jsonData = {
+	nlohmann::json jsonData = {
 		{ "maxLevelId", maxLevelId },
 		{ "coinTotal", coinTotal },
 		{ "coinCurrent", coinCurrent },
-		{ "powerupAmounts", nlohmann::json(powerupAmounts) }
+		{ "powerupAmounts", std::unordered_map<std::string, Int>() }
 	};
+
+	for (auto& item : powerupAmounts)
+	{
+		const auto& key = std::to_string(item.first);
+		jsonData["powerupAmounts"][key] = item.second;
+	}
+
 	Utility::Directory::writeString(CommonUtility::singleton->mConfig.saveFile, jsonData.dump());
 	return true;
 }

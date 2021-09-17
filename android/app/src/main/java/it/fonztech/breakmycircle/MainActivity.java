@@ -74,6 +74,9 @@ public class MainActivity extends EngineActivity implements Runnable {
 
             final JSONObject json = new JSONObject(new String(baos.toByteArray()));
             canShowAds = json.getBoolean("canShowAds");
+            playAdThreshold = json.getInt("playAdThreshold");
+
+            getIntent().putExtra("play_ad_threshold", Integer.toString(playAdThreshold));
         }
         catch (final Exception e) {
             e.printStackTrace();

@@ -194,6 +194,7 @@ private:
 	void startLevel(const UnsignedInt levelId);
 	Int computeScore();
 	Int getModelIndex(const Int yp);
+	Vector3 getLastLevelPos();
 
 	void manageGuiLevelAnim(const UnsignedInt index, const bool increment, const Float factor = 1.0f);
 	void updateTimeCounter(const Int value);
