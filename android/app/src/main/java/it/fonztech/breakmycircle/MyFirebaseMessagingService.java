@@ -8,8 +8,6 @@ import com.google.firebase.messaging.RemoteMessage;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     protected static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
 
-    protected String mToken;
-
     @Override
     public final void onNewToken(@SuppressWarnings("NullableProblems") final String token) {
         Log.d(TAG, "Refreshed token: " + token);
