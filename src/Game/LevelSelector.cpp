@@ -95,7 +95,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mParentIndex = parentIndex;
 
 	// Init members
-	mPosition = getLastLevelPos();
+	mPosition = getLastLevelPos() - Vector3(0.0f, 0.0f, 5.0f);
 
 	mPrevMousePos = Vector2i(GO_LS_RESET_MOUSE_VALUE, -1);
 	mScrollVelocity = Vector3(0.0f);

@@ -437,7 +437,6 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 		const auto& p = std::make_shared<Player>(GOL_PERSP_SECOND, shootCallback);
 		p->mPosition = { fSquare, -13.0f - len, 0.0f };
 		p->mCameraDist = (50.0f / (1.0f / ar) * 0.95f) + fSquare;
-		p->postConstruct();
 		player = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p, true);
 	}
 
@@ -461,6 +460,9 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 		p->setScale(Vector3(50.0f, 50.0f, 1.0f));
 		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
 	}
+
+	// Call post-construct for player
+	((std::shared_ptr<Player>&)player)->postConstruct();
 
 	// Setup camera for game layers
 	{

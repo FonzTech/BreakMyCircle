@@ -201,6 +201,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 			}
 		}
 	}
+	Debug{} << "mAmbientColormAmbientColor" << mAmbientColor;
 
 	// Check if projectile is a bomb
 	Int shootAmount = 0;
