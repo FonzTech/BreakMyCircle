@@ -43,6 +43,7 @@ private:
 	// Method
 	void buildAnimations();
 	void setCameraParameters();
+	void continueLogic();
 
 	// Common members
 	Float mCanvasPadding;

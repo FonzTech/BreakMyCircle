@@ -13,6 +13,7 @@
 #include "../Graphics/BaseDrawable.h"
 #include "Bubble.h"
 #include "FallingBubble.h"
+#include "SafeMinigame.h"
 
 using namespace Corrade;
 using namespace Magnum;
@@ -236,10 +237,7 @@ void Logo::update()
 					{
 						if (i == 0 && j == 0)
 						{
-							for (auto& item : *RoomManager::singleton->mGoLayers[mParentIndex].list)
-							{
-								item->mDestroyMe = true;
-							}
+							continueLogic();
 							return;
 						}
 					}
@@ -408,4 +406,22 @@ void Logo::setCameraParameters()
 	auto& layer = RoomManager::singleton->mGoLayers[mParentIndex];
 	layer.cameraEye = mPosition + Vector3(0.0f, 0.0f, 10.5f * ar);
 	layer.cameraTarget = mPosition;
+}
+
+void Logo::continueLogic()
+{
+	// Clear current layer
+	for (auto& item : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+	{
+		item->mDestroyMe = true;
+	}
+
+	// Set camera parameters
+	auto& layer = RoomManager::singleton->mGoLayers[mParentIndex];
+	layer.cameraEye = Vector3(0.0f, 0.0f, 8.0f);
+	layer.cameraTarget = Vector3(0.0f);
+
+	// Create safe minigame, if required
+	const std::shared_ptr<SafeMinigame> sm = std::make_shared<SafeMinigame>(mParentIndex);
+	RoomManager::singleton->mGoLayers[mParentIndex].push_back(sm);
 }

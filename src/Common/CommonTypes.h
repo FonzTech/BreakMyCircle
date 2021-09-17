@@ -11,6 +11,7 @@
 #define RESOURCE_SCENE_WORLD_2 "scenes/world_2.glb"
 #define RESOURCE_SCENE_WORLD_3 "scenes/world_3.glb"
 #define RESOURCE_SCENE_WORLD_WALL "scenes/world_wall.glb"
+#define RESOURCE_SCENE_SAFE "scenes/safe.glb"
 
 #define RESOURCE_MESH_PLANE_SPRITE "mesh_plane_sprite"
 #define RESOURCE_MESH_PLANE_WATER "mesh_plane_water"
@@ -115,6 +116,7 @@
 #define GOT_CONGRATS 14
 #define GOT_MAPPICKUP 15
 #define GOT_LEVEL_SELECTOR_SIDECAR 16
+#define GOT_SAFE_MINIGAME 17
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>

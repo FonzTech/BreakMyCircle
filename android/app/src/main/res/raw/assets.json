@@ -113,6 +113,9 @@
   "scenes/world_3.glb": {
     "version": 1
   },
+  "scenes/safe.glb": {
+    "version": 1
+  },
   "scenes/world_wall.glb": {
     "version": 1
   },
