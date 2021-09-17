@@ -62,6 +62,7 @@
 #define RESOURCE_TEXTURE_GUI_SAD "tex_gui_sad"
 #define RESOURCE_TEXTURE_GUI_HAPPY "tex_gui_happy"
 #define RESOURCE_TEXTURE_GUI_HELP "tex_gui_help"
+#define RESOURCE_TEXTURE_GUI_LOADING "tex_gui_loading"
 #define RESOURCE_TEXTURE_WHITE "tex_white"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"

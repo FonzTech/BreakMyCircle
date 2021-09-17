@@ -19,6 +19,11 @@
 #include "../AssetManager.h"
 #include "../Graphics/GameDrawable.h"
 
+#ifdef CORRADE_TARGET_ANDROID
+#define DEBUG_OPENGL_CALLS
+#include <android/native_activity.h>
+#endif
+
 using namespace Corrade;
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
@@ -27,7 +32,7 @@ std::unique_ptr<CommonUtility> CommonUtility::singleton = nullptr;
 
 const std::string CommonUtility::VECTOR_COMPONENTS[] = { "x", "y", "z", "w" };
 
-CommonUtility::CommonUtility() : mConfig{ nullptr, "", 0.0f, 1.0f, 3 }
+CommonUtility::CommonUtility() : mConfig{ nullptr, "", 0.0f, 1.0f, "" }
 {
 }
 
@@ -228,4 +233,38 @@ Resource<GL::AbstractShaderProgram, WaterShader> CommonUtility::getWaterShader()
 	return getSpecializedShader<WaterShader>(RESOURCE_SHADER_WATER, [] {
 		return (std::unique_ptr<GL::AbstractShaderProgram>) std::make_unique<WaterShader>();
 	});
+}
+
+std::unique_ptr<std::string> CommonUtility::getValueFromIntent(const std::string & key)
+{
+#ifdef CORRADE_TARGET_ANDROID
+	auto* na = (ANativeActivity*)mConfig.nativeActivity;
+
+	JNIEnv *env;
+	na->vm->AttachCurrentThread(&env, nullptr);
+
+	jobject me = na->clazz;
+
+	jclass acl = env->GetObjectClass(me); // Class pointer of NativeActivity
+	jmethodID giid = env->GetMethodID(acl, "getIntent", "()Landroid/content/Intent;");
+	jobject intent = env->CallObjectMethod(me, giid); // Got our intent
+
+	jclass icl = env->GetObjectClass(intent); // Class pointer of Intent
+	jmethodID gseid = env->GetMethodID(icl, "getStringExtra", "(Ljava/lang/String;)Ljava/lang/String;");
+
+	std::unique_ptr<std::string> valueToReturn = nullptr;
+	{
+		const auto jsParam = (jstring) env->CallObjectMethod(intent, gseid, env->NewStringUTF(key.c_str()));
+		if (jsParam != nullptr)
+		{
+			const char *Param = env->GetStringUTFChars(jsParam, nullptr);
+			valueToReturn = std::make_unique<std::string>(std::string(Param));
+			env->ReleaseStringUTFChars(jsParam, Param);
+		}
+	}
+
+	return valueToReturn;
+#else
+	return nullptr;
+#endif
 }

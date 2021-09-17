@@ -38,10 +38,11 @@
 ~~- Assets update on Android based on versioning.~~
 ~~- Keep state on Android while app is in background (keep OpenGL ES context, work on Magnum's source).~~
 ~~- Fix level end check.~~
+~~- Pause background music when showing ads.~~
+~~- Implement save/load game.~~
+~~- Implement ads with back-end management to avoid Google's shit.~~
 
 # On-going tasks
-- Implement save/load game.
-- Implement ads with back-end management to avoid Google's shit.
 - Implement push notifications to increase powerups count.
 
 # To be verified

@@ -109,6 +109,8 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mLevelStartedAnim = 0.0f;
 	mLevelEndingAnim = false;
 
+    mWatchForPowerup = 0U;
+
 	// Level info
 	{
 		mLevelInfo.currentViewingLevelId = 0U;
@@ -270,6 +272,62 @@ const Int LevelSelector::getType() const
 
 void LevelSelector::update()
 {
+    // Check for powerup rewarded ad
+    if (mWatchForPowerup != 0U)
+    {
+		const auto& expire = CommonUtility::singleton->getValueFromIntent("game_powerup_expire");
+		const auto& amount = CommonUtility::singleton->getValueFromIntent("game_powerup_amount");
+		if (expire != nullptr)
+		{
+		    // Resume background music
+            RoomManager::singleton->mBgMusic->playable()->source().play();
+
+#ifdef CORRADE_TARGET_ANDROID
+			// Clear powerup data
+			callAndroidMethod("clearPowerupData");
+#endif
+
+			// Reset watch powerup state
+			const auto powerupIndex = mWatchForPowerup;
+			mWatchForPowerup = 0U;
+
+			// Switch to "Buttons" mode
+			if (!mDialog.expired())
+            {
+                mDialog.lock()->setMode(GO_DG_MODE_ACTIONS);
+			}
+
+			// Check for amount
+			if (amount != nullptr)
+			{
+				const Int intAmount = std::stoi(*amount);
+				if (intAmount > 0)
+				{
+					// Check for expiration
+					const Long longExpire = std::stol(*expire);
+					const auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+					if (millis < longExpire)
+					{
+						// Check for powerup index validity
+						const auto& it = RoomManager::singleton->mSaveData.powerupAmounts.find(powerupIndex);
+						if (it != RoomManager::singleton->mSaveData.powerupAmounts.end())
+						{
+							// Add to powerup amount
+							RoomManager::singleton->mSaveData.powerupAmounts[powerupIndex] += intAmount;
+
+							// Update "Use" button text
+							if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
+							{
+								const std::string& text = "Use (" + std::to_string(RoomManager::singleton->mSaveData.powerupAmounts[powerupIndex]) + ")";
+								mDialog.lock()->setActionText(0U, text);
+							}
+						}
+					}
+				}
+			}
+		}
+    }
+
 	// Handle white glow
 	{
 		Float* c = mLevelGuis[GO_LS_GUI_WHITEGLOW]->color();
@@ -1380,7 +1438,7 @@ void LevelSelector::manageLevelState()
 					}
 				}
 
-				mPickupHandler.timer = 3.0f + Float(std::rand() % 3);
+				mPickupHandler.timer = 2.5f + Float(std::rand() % 25) * 0.1f;
 				Debug{} << "Map pickup timer has expired. Reset to" << mPickupHandler.timer;
 			}
 			else
@@ -1570,7 +1628,6 @@ void LevelSelector::manageLevelState()
 	// Update powerup view counters
 	if (mSettingsAnim > 0.01f || mLevelAnim > 0.01f)
 	{
-		const auto& pm = RoomManager::singleton->mSaveData.powerupAmounts;
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
 			const auto& key = GO_LS_GUI_POWERUP + i;
@@ -1734,15 +1791,18 @@ void LevelSelector::finishCurrentLevel(const bool success)
 	mLevelTexts[GO_LS_TEXT_LEVEL]->setText("Level " + std::to_string(mLevelInfo.selectedLevelId) + "\n" + (mLevelInfo.success ? "Completed" : "Failed"));
 
 	// Check how many times a level has been played
-	if (mLevelInfo.numberOfPlays >= CommonUtility::singleton->mConfig.playAdThreshold)
 	{
-		mLevelInfo.numberOfPlays = 0;
-		callAndroidMethod("showInterstitial");
+		const auto& value = CommonUtility::singleton->getValueFromIntent("play_ad_threshold");
+		const Int playAdThreshold = value != nullptr ? std::stoi(*value) : 3;
+		if (++mLevelInfo.numberOfPlays >= playAdThreshold)
+		{
+			mLevelInfo.numberOfPlays = 0;
+			showInterstitial();
+		}
 	}
-	else
-	{
-		++mLevelInfo.numberOfPlays;
-	}
+
+	// Save current gameplay
+	RoomManager::singleton->mSaveData.save();
 }
 
 void LevelSelector::prepareForReplay()
@@ -1848,7 +1908,7 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 	mLevelInfo.repeatLevelId = 0U;
 	mLevelInfo.delayedChecks = false;
 	mLevelInfo.state = GO_LS_LEVEL_STARTING;
-	mLevelInfo.startingTime = 120.0f + Math::floor(Float(mLevelInfo.selectedLevelId % 56U) / 5.0f) * 10.0f;
+	mLevelInfo.startingTime = 120.0f + Math::floor(Float(mLevelInfo.selectedLevelId % 100U) / 5.0f) * 10.0f;
 
 	mTimer = { mLevelInfo.startingTime, Int(mLevelInfo.startingTime) };
 
@@ -1991,7 +2051,7 @@ void LevelSelector::createPowerupView()
 				{
 					offsetButton = Vector3(0.0f, 0.1f, 0.0f);
 
-					const std::string& text = "Use";
+                    const std::string& text = "Use (" + std::to_string(RoomManager::singleton->mSaveData.powerupAmounts[index]) + ")";
 					o->addAction(text, [this, index](UnsignedInt buttonIndex) {
 						Debug{} << "You have clicked USE POWERUP";
 
@@ -2012,12 +2072,17 @@ void LevelSelector::createPowerupView()
 						// Play sound
 						playSfxAudio(GO_LS_AUDIO_POWERUP);
 
+                         // Edit first button text
+                         const std::string& text = "Use (" + std::to_string(RoomManager::singleton->mSaveData.powerupAmounts[index]) + ")";
+                         mDialog.lock()->setActionText(0U, text);
+
 						// Close dialog and settings window
 						closeDialog();
 						mScreenButtons[GO_LS_GUI_SETTINGS]->callback(GO_LS_GUI_SETTINGS);
 					},
 						false,
-						offsetButton
+						offsetButton,
+						10
 						);
 				}
 				else
@@ -2027,17 +2092,15 @@ void LevelSelector::createPowerupView()
 
 				// Watch Ad
 				{
-					const bool& isEnough = RoomManager::singleton->mSaveData.powerupAmounts[index] > 0;
-					const std::string& text = "Watch Ad";
+					const std::string& text = "Watch Rewarded Ad";
 					o->addAction(text, [this, index](UnsignedInt buttonIndex) {
 						Debug{} << "You have clicked WATCH AD POWERUP";
 
+						 // Switch to "Loading" mode
+						 mDialog.lock()->setMode(GO_DG_MODE_LOADING);
+
 						// Trigger rewarded ad
 						watchAdForPowerup(index);
-
-						// Close dialog and settings window
-						closeDialog();
-						mScreenButtons[GO_LS_GUI_SETTINGS]->callback(GO_LS_GUI_SETTINGS);
 					},
 						true,
 						offsetButton
@@ -2046,7 +2109,6 @@ void LevelSelector::createPowerupView()
 
 				// Buy for coins
 				{
-					const bool& isEnough = RoomManager::singleton->mSaveData.powerupAmounts[index] > 0;
 					const std::string& text = "Buy for " + std::to_string(mPuView.prices[index]) + " coins";
 					o->addAction(text, [this, index](UnsignedInt buttonIndex) {
 						Debug{} << "You have clicked BUY POWERUP";
@@ -2063,11 +2125,9 @@ void LevelSelector::createPowerupView()
 							// Add one more powerup
 							++RoomManager::singleton->mSaveData.powerupAmounts[index];
 
-							/*
-							// Close dialog and settings window
-							closeDialog();
-							mScreenButtons[GO_LS_GUI_SETTINGS].callback(GO_LS_GUI_SETTINGS);
-							*/
+                            // Edit first button text
+                            const std::string& text = "Use (" + std::to_string(RoomManager::singleton->mSaveData.powerupAmounts[index]) + ")";
+                            mDialog.lock()->setActionText(0U, text);
 						}
 						else
 						{
@@ -2179,7 +2239,16 @@ void LevelSelector::usePowerup(const UnsignedInt index)
 
 void LevelSelector::watchAdForPowerup(const UnsignedInt index)
 {
-	Debug{} << "Trigger REWARDED AD for Powerup" << index;
+    RoomManager::singleton->mBgMusic->playable()->source().pause();
+    mWatchForPowerup = index;
+	callAndroidMethod("watchAdForPowerup");
+}
+
+void LevelSelector::showInterstitial()
+{
+    RoomManager::singleton->mBgMusic->playable()->source().pause();
+    mWatchForPowerup = 1000U;
+    callAndroidMethod("showInterstitial");
 }
 
 void LevelSelector::createGuis()
@@ -2733,6 +2802,6 @@ void LevelSelector::callAndroidMethod(const std::string & methodName)
     env->CallVoidMethod(na->clazz, methodID);
     na->vm->DetachCurrentThread();
 #else
-    Debug{} << "Not running on Android platform";
+    Debug{} << "Cannot call" << methodName << " because not running on Android";
 #endif
 }

@@ -60,7 +60,7 @@ public:
 		std::string assetDir;
 		Float canvasVerticalPadding;
 		Float displayDensity;
-		Int playAdThreshold;
+		std::string saveFile;
 	} mConfig;
 
 	// Constructor
@@ -151,6 +151,7 @@ public:
 	};
 
 	// Utilities
+	std::unique_ptr<std::string> getValueFromIntent(const std::string & key);
 	bool stringEndsWith(const std::string& data, const std::string& suffix);
 	bool isBubbleColorValid(const Color3 & color);
 	void createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color);

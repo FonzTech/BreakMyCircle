@@ -39,6 +39,22 @@ typedef std::vector<std::shared_ptr<GameObject>> GameObjectList;
 class RoomManager
 {
 public:
+	// Save data structure
+	class SaveData
+	{
+	public:
+		SaveData();
+		~SaveData();
+
+		bool load();
+		bool save();
+
+		UnsignedInt maxLevelId;
+		Int coinTotal;
+		Int coinCurrent;
+		std::unordered_map<UnsignedInt, Int> powerupAmounts;
+	};
+
 	// Game Object layer data holder
 	struct GameObjectsLayer
 	{
@@ -74,15 +90,6 @@ public:
 	{
 		Color3 color;
 		std::string textureKey;
-	};
-
-	// Global game save data
-	struct SaveData
-	{
-		UnsignedInt maxLevelId;
-		Int coinTotal;
-		Int coinCurrent;
-		std::unordered_map<UnsignedInt, Int> powerupAmounts;
 	};
 
 	// Singleton

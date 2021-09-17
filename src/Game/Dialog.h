@@ -1,5 +1,8 @@
 #pragma once
 
+#define GO_DG_MODE_ACTIONS 1
+#define GO_DG_MODE_LOADING 2
+
 #include <vector>
 #include <memory>
 
@@ -33,9 +36,11 @@ public:
 	void setMessage(const std::string & text);
 	void setTitlePosition(const Vector3 & position);
 	void setMessagePosition(const Vector3 & position);
-	void addAction(const std::string & text, const std::function<void(UnsignedInt)> & callback, const bool isLong = false, const Vector3 & offset = Vector3(0.0f));
+	void addAction(const std::string & text, const std::function<void(UnsignedInt)> & callback, const bool isLong = false, const Vector3 & offset = Vector3(0.0f), const UnsignedInt capacity = 0U);
+	void setActionText(const UnsignedInt index, const std::string & text);
 	void closeDialog();
 	void shakeButton(const UnsignedInt index);
+	void setMode(const Int mode);
 
 protected:
 
@@ -47,11 +52,14 @@ protected:
 		Float shake;
 	};
 
+	Int mMode;
 	Float mOpened;
 	Float mOpacity;
+	Float mRotation;
 	Int mClickIndex;
 	std::shared_ptr<OverlayGui> mBackground;
 	std::shared_ptr<OverlayText> mTitle;
 	std::shared_ptr<OverlayText> mMessage;
+	std::shared_ptr<OverlayGui> mLoading;
 	std::vector<GD_Action> mActions;
 };

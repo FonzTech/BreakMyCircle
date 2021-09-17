@@ -202,6 +202,7 @@ private:
 	void createPowerupView();
 	void usePowerup(const UnsignedInt index);
 	void watchAdForPowerup(const UnsignedInt index);
+	void showInterstitial();
 
 	void createGuis();
 	void createTexts();
@@ -253,4 +254,6 @@ private:
 
 	LS_PowerupView mPuView;
 	LS_PickupHandler mPickupHandler;
+
+	UnsignedInt mWatchForPowerup;
 };

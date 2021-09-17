@@ -1,116 +1,98 @@
 package it.fonztech.breakmycircle;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
+import java.io.OutputStream;
+import java.net.URL;
 
-public class MainActivity extends GameActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String ASSET_PREFERENCES = "ASSET_PREFERENCES";
+import javax.net.ssl.HttpsURLConnection;
+
+public class MainActivity extends EngineActivity implements Runnable {
+    private static final String BACKEND_URL = "https://breakmycircle.alfonsopauciello.com/";
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set base directory for assets
-        {
-            final float density = Math.max(1.0f, getResources().getDisplayMetrics().density);
-            getIntent().putExtra("density", Float.toString(density));
-        }
+        new Thread(this).start();
+    }
 
+    @Override
+    protected final void setRewardedInfo(final String type, final int amount) {
+        if ("powerup".equalsIgnoreCase(type))
         {
-            final int height = statusBarHeight();
-            getIntent().putExtra("canvas_vertical_height", Integer.toString(height));
+            setPowerupInfo(amount);
         }
-
+        else if (ADS_NOT_AVAILABLE_TYPE.equalsIgnoreCase(type))
         {
-            getIntent().putExtra("play_ad_threshold", "3");
+            setPowerupInfo(0);
         }
-
+        else
         {
-            String assetDir = getFilesDir().getAbsolutePath();
-            if (!assetDir.endsWith(File.separator))
-            {
-                assetDir += File.separator;
-            }
-            getIntent().putExtra("asset_dir", assetDir);
+            setPowerupInfo(BuildConfig.DEBUG ? 1 : amount);
         }
+    }
 
-        // Copy all packed assets into internal app storage
+    @Override
+    protected final String getBackendUrl() {
+        return BACKEND_URL + "api.php";
+    }
+
+    @Override
+    public void run() {
+        HttpsURLConnection c = null;
         try {
-            final SharedPreferences prefs = getSharedPreferences(ASSET_PREFERENCES, Context.MODE_PRIVATE);
-            final SharedPreferences.Editor editor = prefs.edit();
+            final URL url = new URL(getBackendUrl());
+            c = (HttpsURLConnection) url.openConnection();
+            c.setReadTimeout(15000);
+            c.setConnectTimeout(30000);
+            c.setDoInput(true);
+            c.setDoOutput(true);
 
-            final JSONObject json = new JSONObject(getAssetsJson());
+            {
+                final JSONObject json = new JSONObject();
+                json.put("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
 
-            final Iterator<String> iterator = json.keys();
-            while (iterator.hasNext()) {
-                final String fname = iterator.next();
-                final JSONObject assetJson = json.getJSONObject(fname);
-                final File dest = new File(getFilesDir(), fname);
-                final long assetVersion = assetJson.getLong("version");
-
-                if (prefs.getLong(fname, 0L) >= assetVersion) {
-                    Log.d(TAG, "Asset " + fname + " (" + assetVersion + ") already exists in " + dest.getAbsolutePath());
-                }
-                else {
-                    Log.d(TAG, "Copying asset " + fname + " (" + assetVersion + ") into " + dest.getAbsolutePath());
-
-                    {
-                        final File parentDir = dest.getParentFile();
-                        if (!parentDir.exists() && !parentDir.mkdirs()){
-                            throw new RuntimeException("Could not make parent directories for " + dest.getAbsolutePath());
-                        }
-                    }
-
-                    final InputStream is = getAssets().open(fname);
-                    final FileOutputStream fos = new FileOutputStream(dest);
-
-                    final byte[] buffer = new byte[1024 * 10];
-                    for (int length; (length = is.read(buffer)) != -1; ) {
-                        fos.write(buffer, 0, length);
-                    }
-
-                    fos.close();
-                    is.close();
-
-                    editor.putLong(fname, assetVersion);
-                }
+                final OutputStream os = c.getOutputStream();
+                os.write(json.toString().getBytes());
+                os.close();
             }
 
-            editor.apply();
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final InputStream is = c.getInputStream();
+            final byte[] buf = new byte[1024];
+            int len;
+            while ((len = is.read(buf)) > 0) {
+                baos.write(buf, 0, len);
+            }
+            is.close();
+            baos.close();
+
+            final JSONObject json = new JSONObject(new String(baos.toByteArray()));
+            canShowAds = json.getBoolean("canShowAds");
         }
-        catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : "Unknown exception error");
+        catch (final Exception e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (c != null) {
+                c.disconnect();
+            }
         }
     }
 
-    protected final String getAssetsJson() throws IOException {
-        final InputStream is = getResources().openRawResource(R.raw.assets);
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        final byte[] buffer = new byte[1024 * 10];
-        for (int length; (length = is.read(buffer)) != -1; ) {
-            baos.write(buffer, 0, length);
-        }
-
-        baos.close();
-        is.close();
-
-        return new String(baos.toByteArray());
+    protected final void setPowerupInfo(final int rewardAmount) {
+        getIntent().putExtra("game_powerup_amount", Integer.toString(rewardAmount));
+        getIntent().putExtra("game_powerup_expire", Long.toString(System.currentTimeMillis() + 1000L));
     }
 
-    protected final int statusBarHeight() {
-        return (int) (24.0f * getResources().getDisplayMetrics().density);
+    @SuppressWarnings("unused")
+    protected final void clearPowerupData() {
+        getIntent().removeExtra("game_powerup_amount");
+        getIntent().removeExtra("game_powerup_expire");
     }
 }

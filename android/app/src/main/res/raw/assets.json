@@ -221,6 +221,9 @@
   "textures/gui_sad.png": {
     "version": 1
   },
+  "textures/gui_happy.png": {
+    "version": 1
+  },
   "textures/gui_scroll_back.png": {
     "version": 1
   },
@@ -240,6 +243,9 @@
     "version": 1
   },
   "textures/gui_time.png": {
+    "version": 1
+  },
+  "textures/gui_loading.png": {
     "version": 1
   },
   "textures/lightning.png": {

@@ -220,7 +220,7 @@ void Logo::update()
 						{
 							mLogoZoom += mDeltaTime;
 
-							const auto& z = Math::lerp(0.0f, 1.0f, Animation::Easing::quadraticIn(mLogoZoom)) * -1.0f * RoomManager::singleton->getWindowAspectRatio();
+							const auto& z = Math::lerp(0.0f, 1.0f, Animation::Easing::quadraticIn(mLogoZoom)) * -0.2f * RoomManager::singleton->getWindowAspectRatio();
 							for (UnsignedInt k = 0; k < 3; ++k)
 							{
 								mLogoObjects[k]->translate(Vector3(0.0f, 0.0f, z));

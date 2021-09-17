@@ -50,6 +50,108 @@ std::array<UnsignedInt, 7U> RoomManager::sBubbleKeys = {
 
 std::unique_ptr<RoomManager> RoomManager::singleton = nullptr;
 
+RoomManager::SaveData::SaveData()
+{
+}
+
+RoomManager::SaveData::~SaveData()
+{
+	Debug{} << "Save data was destroyed";
+}
+
+bool RoomManager::SaveData::load()
+{
+	// Set default value
+	{
+		maxLevelId = 2U;
+		coinTotal = 0;
+		coinCurrent = 0;
+
+		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
+		{
+#if NDEBUG or _DEBUG
+			powerupAmounts[GO_LS_GUI_POWERUP + i] = 2;
+#else
+			powerupAmounts[GO_LS_GUI_POWERUP + i] = 0;
+#endif
+		}
+	}
+
+	// Check if file path is valid
+	if (CommonUtility::singleton->mConfig.saveFile.empty())
+	{
+		Error{} << "Save file to read from was NULL";
+		return false;
+	}
+
+	// Load JSON data
+	nlohmann::json jsonData;
+	{
+		const auto rawJson = Utility::Directory::readString(CommonUtility::singleton->mConfig.saveFile);
+		Debug{} << "raw json is" << rawJson;
+		try
+		{
+			jsonData = nlohmann::json::parse(rawJson);
+		}
+		catch (const nlohmann::json::parse_error& ex)
+		{
+			Error{} << "Parse error at byte " << ex.byte;
+			return false;
+		}
+	}
+
+	// Max level ID
+	{
+		const auto value = jsonData.find("maxLevelId");
+		 maxLevelId = value != jsonData.end() ? (*value).get<UnsignedInt>() : 2U;
+	}
+
+	// Coin total
+	{
+		const auto value = jsonData.find("coinTotal");
+		coinTotal = value != jsonData.end() ? (*value).at("coinTotal").get<Int>() : 0;
+	}
+
+	// Coin current
+	{
+		const auto value = jsonData.find("coinCurrent");
+		coinCurrent = value != jsonData.end() ? (*value).at("coinCurrent").get<Int>() : 0;
+	}
+
+	// Load powerup amounts
+	const auto jsonPowerups = jsonData.find("powerupAmounts");
+	if (jsonPowerups != jsonData.end())
+	{
+		for (auto& item : (*jsonPowerups).items())
+		{
+			const auto key = UnsignedInt(std::stoi(item.key()));
+			powerupAmounts[key] = item.value().get<Int>();
+		}
+	}
+
+	return true;
+}
+
+bool RoomManager::SaveData::save()
+{
+	// Check if file path is valid
+	if (CommonUtility::singleton->mConfig.saveFile.empty())
+	{
+		Error{} << "Save file to save to was NULL";
+		return false;
+	}
+
+	// Dump JSON data to file
+	const nlohmann::json jsonData = {
+		{ "maxLevelId", maxLevelId },
+		{ "coinTotal", coinTotal },
+		{ "coinCurrent", coinCurrent },
+		{ "powerupAmounts", nlohmann::json(powerupAmounts) }
+	};
+	Utility::Directory::writeString(CommonUtility::singleton->mConfig.saveFile, jsonData.dump());
+	return true;
+}
+
 RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
 {
 	// Create audio manager
@@ -78,23 +180,9 @@ RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
 	// Create collision manager
 	mCollisionManager = std::make_unique<CollisionManager>();
 
-	// Initialize game save data
-#if NDEBUG or _DEBUG
-	mSaveData.maxLevelId = 100U;
-#else
-	mSaveData.maxLevelId = 2U;
-#endif
-	mSaveData.coinTotal = 0;
-	mSaveData.coinCurrent = 0;
-	
-	for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
-	{
-#if NDEBUG or _DEBUG
-		mSaveData.powerupAmounts[GO_LS_GUI_POWERUP + i] = 2;
-#else
-		mSaveData.powerupAmounts[GO_LS_GUI_POWERUP + i] = 0;
-#endif
-	}
+	// Load saved gameplay
+	mSaveData = SaveData();
+    mSaveData.load();
 }
 
 RoomManager::~RoomManager()

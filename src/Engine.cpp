@@ -6,12 +6,6 @@
 #include "RoomManager.h"
 #include "GameObject.h"
 
-#ifdef CORRADE_TARGET_ANDROID
-#define DEBUG_OPENGL_CALLS
-#include <android/native_activity.h>
-using namespace std::chrono_literals;
-#endif
-
 #ifdef DEBUG_OPENGL_CALLS
 #include <Magnum/GL/DebugOutput.h>
 #endif
@@ -73,46 +67,36 @@ Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, C
 #ifdef CORRADE_TARGET_ANDROID
 	CommonUtility::singleton->mConfig.nativeActivity = nativeActivity();
 
-    JNIEnv *env;
-	nativeActivity()->vm->AttachCurrentThread(&env, nullptr);
-
-    jobject me = nativeActivity()->clazz;
-
-    jclass acl = env->GetObjectClass(me); // Class pointer of NativeActivity
-    jmethodID giid = env->GetMethodID(acl, "getIntent", "()Landroid/content/Intent;");
-    jobject intent = env->CallObjectMethod(me, giid); // Got our intent
-
-    jclass icl = env->GetObjectClass(intent); // Class pointer of Intent
-    jmethodID gseid = env->GetMethodID(icl, "getStringExtra", "(Ljava/lang/String;)Ljava/lang/String;");
-
-    const std::array<std::string, 3> params = { "asset_dir", "canvas_vertical_height", "density", "play_ad_threshold" };
+    const std::array<std::string, 4> params = { "asset_dir", "canvas_vertical_height", "density", "save_file" };
     for (UnsignedInt i = 0; i != params.size(); ++i)
     {
-        const auto jsParam1 = (jstring) env->CallObjectMethod(intent, gseid, env->NewStringUTF(params.at(i).c_str()));
-        const char *Param1 = env->GetStringUTFChars(jsParam1, nullptr);
+    	const auto& key = params.at(i);
+        const std::unique_ptr<std::string> value = CommonUtility::singleton->getValueFromIntent(key);
+        if (value == nullptr)
+		{
+        	Error{} << "Value for key" << key << "was NULL";
+		}
+        else
+		{
+			switch (i)
+			{
+			case 0U:
+				CommonUtility::singleton->mConfig.assetDir = *value;
+				break;
 
-        const auto& value = std::string(Param1);
+			case 1U:
+				CommonUtility::singleton->mConfig.canvasVerticalPadding = std::stof(*value);
+				break;
 
-        switch (i)
-        {
-        case 0U:
-            CommonUtility::singleton->mConfig.assetDir = value;
-            break;
+			case 2U:
+				CommonUtility::singleton->mConfig.displayDensity = std::stof(*value);
+				break;
 
-        case 1U:
-            CommonUtility::singleton->mConfig.canvasVerticalPadding = std::stof(value);
-            break;
-
-		case 2U:
-			CommonUtility::singleton->mConfig.displayDensity = std::stof(value);
-			break;
-
-		case 2U:
-			CommonUtility::singleton->mConfig.playAdThreshold = std::stoi(value);
-			break;
+			case 3U:
+				CommonUtility::singleton->mConfig.saveFile = *value;
+				break;
+			}
         }
-
-        env->ReleaseStringUTFChars(jsParam1, Param1);
     }
 #endif
 
@@ -182,9 +166,13 @@ void Engine::tickEvent()
 					.clear(GL::FramebufferClear::Depth | GL::FramebufferClear::Stencil);
 			}
 
-			(*currentGol->frameBuffer)
-				.clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f))
-				.bind();
+			// Multi-layer color attachment clearing
+			{
+				currentGol->frameBuffer->bind();
+				GL::Renderer::setColorMask(false, false, false, true);
+				currentGol->frameBuffer->clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f));
+				GL::Renderer::setColorMask(true, true, true, true);
+			}
 
 			/*
 			 * Read after binding, since OpenGL buffer *may* be
