@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "919661591848",
+    "project_id": "break-my-circle",
+    "storage_bucket": "break-my-circle.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:919661591848:android:8abbb76279aacc57ace41d",
+        "android_client_info": {
+          "package_name": "it.fonztech.breakmycircle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "919661591848-p8o6i60uqqsbuaif94g1rvdh1gl4ajjk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmzgENylvm84r9vegLowMh8S-Oi_qskz0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "919661591848-p8o6i60uqqsbuaif94g1rvdh1gl4ajjk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

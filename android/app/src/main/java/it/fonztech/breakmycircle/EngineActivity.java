@@ -24,6 +24,9 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.rewarded.RewardItem;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONObject;
 
@@ -34,7 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-public abstract class EngineActivity extends NativeActivity implements OnInitializationCompleteListener, OnUserEarnedRewardListener {
+public abstract class EngineActivity extends NativeActivity implements OnInitializationCompleteListener, OnUserEarnedRewardListener, OnCompleteListener<String> {
     protected static final String TAG = EngineActivity.class.getSimpleName();
     protected static final String ASSET_PREFERENCES = "ASSET_PREFERENCES";
     protected static final String SAVE_FILE = "SAVE_FILE.json";
@@ -75,8 +78,8 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         }
     };
 
-    protected boolean canShowAds;
-    protected int playAdThreshold;
+    protected boolean mCanShowAds;
+    protected int mPlayAdThreshold;
 
     protected final FullScreenContentCallback fullScreenContentCallback = new FullScreenContentCallback() {
         @Override
@@ -99,7 +102,12 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        canShowAds = true;
+        mCanShowAds = true;
+
+        // Initialize Firebase Messaging
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(this);
+
+        // Initialize AdMob
         MobileAds.initialize(this, this);
 
         // Display density
@@ -208,6 +216,18 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         setRewardedInfo(rewardType, rewardAmount);
     }
 
+    @Override
+    public final void onComplete(@NonNull Task<String> task) {
+        if (!task.isSuccessful()) {
+            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+            return;
+        }
+
+        // Get new FCM registration token
+        final String token = task.getResult();
+        new TokenSender(token).start();
+    }
+
     protected abstract void setRewardedInfo(final String type, final int amount);
 
     protected abstract String getBackendUrl();
@@ -246,7 +266,7 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
     @SuppressWarnings("unused")
     protected final void showInterstitial() {
         runOnUiThread(() -> {
-            if (canShowAds) {
+            if (mCanShowAds) {
                 final AdRequest adRequest = new AdRequest.Builder().build();
                 InterstitialAd.load(EngineActivity.this, BuildConfig.DEBUG ? INTERSTITIAL_AD_DEV : INTERSTITIAL_AD_PROD, adRequest, interstitialAdLoadCallback);
             }
@@ -259,7 +279,7 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
     @SuppressWarnings("unused")
     protected final void watchAdForPowerup() {
         runOnUiThread(() -> {
-            if (canShowAds) {
+            if (mCanShowAds) {
                 final AdRequest adRequest = new AdRequest.Builder().build();
                 RewardedAd.load(EngineActivity.this, BuildConfig.DEBUG ? REWARDED_AD_DEV : REWARDED_AD_PROD, adRequest, rewardedAdLoadCallback);
             }

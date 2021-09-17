@@ -12,8 +12,6 @@ import java.net.URL;
 import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends EngineActivity implements Runnable {
-    private static final String BACKEND_URL = "https://breakmycircle.alfonsopauciello.com/";
-
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +37,7 @@ public class MainActivity extends EngineActivity implements Runnable {
 
     @Override
     protected final String getBackendUrl() {
-        return BACKEND_URL + "api.php";
+        return Utility.BACKEND_URL + "api.php";
     }
 
     @Override
@@ -73,10 +71,10 @@ public class MainActivity extends EngineActivity implements Runnable {
             baos.close();
 
             final JSONObject json = new JSONObject(new String(baos.toByteArray()));
-            canShowAds = json.getBoolean("canShowAds");
-            playAdThreshold = json.getInt("playAdThreshold");
+            mCanShowAds = json.getBoolean("canShowAds");
+            mPlayAdThreshold = json.getInt("playAdThreshold");
 
-            getIntent().putExtra("play_ad_threshold", Integer.toString(playAdThreshold));
+            getIntent().putExtra("play_ad_threshold", Integer.toString(mPlayAdThreshold));
         }
         catch (final Exception e) {
             e.printStackTrace();
