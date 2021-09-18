@@ -75,11 +75,11 @@ SafeMinigame::SafeMinigame(const Int parentIndex) : GameObject(parentIndex)
 		{
 			mDrawableKnob = item;
 		}
-		else if (item->mMesh->label() == "FaceV")
-		{
-			const std::string tn = CommonUtility::singleton->getTextureNameForPowerup(mPowerupIndex);
-			item->mTexture = CommonUtility::singleton->loadTexture(tn);
-		}
+        else if (item->mMesh->label() == "FaceV")
+        {
+            const std::string tn = CommonUtility::singleton->getTextureNameForPowerup(mPowerupIndex);
+            item->mTexture = CommonUtility::singleton->loadTexture(tn);
+        }
 	}
 
 	// Create overlay texts
@@ -294,11 +294,18 @@ void SafeMinigame::draw(BaseDrawable* baseDrawable, const Matrix4& transformatio
 	}
 	else
 	{
+		const bool b2 = baseDrawable->mMesh->label() == "FaceV" || baseDrawable->mMesh->label() == "PowerupV";
+#ifdef CORRADE_TARGET_ANDROID
+        const auto ambientColor = b2 ? 0x303030_rgbf : 0x909090_rgbf;
+#else
+        const auto ambientColor = 0x909090_rgbf;
+#endif
+
 		((Shaders::Phong&)baseDrawable->getShader())
 			.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(3.0f)))
-			.setLightColor(0xc0c0c0_rgbf)
+			.setLightColor(b2 ? 0x202020_rgbf : 0xc0c0c0_rgbf)
 			.setSpecularColor(0x00000000_rgbaf)
-			.setDiffuseColor(0x909090_rgbf)
+			.setDiffuseColor(ambientColor)
 			.setAmbientColor(0x909090_rgbf)
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
