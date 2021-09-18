@@ -409,19 +409,21 @@ void LevelSelector::update()
 #if NDEBUG or _DEBUG
 	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
 	{
-		if (!RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->empty())
+		if (mLevelInfo.state == GO_LS_LEVEL_INIT && !RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->empty())
 		{
 			for (auto& item : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
 			{
 				item->mDestroyMe = true;
 			}
 		}
+		/*
 		else if (mLevelInfo.playerPointer.expired())
 		{
 			Debug{} << "Level room created";
 			mLevelInfo.currentViewingLevelId = 1U;
 			mScreenButtons[GO_LS_GUI_PLAY]->callback(GO_LS_GUI_PLAY);
 		}
+		*/
 		else if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
 		{
 			Debug{} << "Level state to Finished SUCCESS";
@@ -600,7 +602,9 @@ void LevelSelector::update()
 				// Apply transformations to all drawables for this pickable object
 				if (!button->sidecar.expired())
 				{
-					button->sidecar.lock()->setScale(sv);
+					const auto& p = button->sidecar.lock();
+					p->setGlow(button->levelIndex == RoomManager::singleton->mSaveData.maxLevelId - 1);
+					p->setScale(sv);
 				}
 			}
 		}

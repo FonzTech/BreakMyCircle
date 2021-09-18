@@ -3,6 +3,7 @@
 #define RESOURCE_SCENE_BUBBLE "scenes/bubble.glb"
 #define RESOURCE_SCENE_LOGO "scenes/logo.glb"
 #define RESOURCE_SCENE_LEVEL_BUTTON "scenes/level_button.glb"
+#define RESOURCE_SCENE_LEVEL_GLOW "scenes/level_glow.glb"
 #define RESOURCE_SCENE_COIN "scenes/coin.glb"
 #define RESOURCE_SCENE_BOMB "scenes/bomb.glb"
 #define RESOURCE_SCENE_STONE "scenes/stone.glb"

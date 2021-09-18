@@ -3,6 +3,7 @@
 #define GO_LS_MESH_PLATFORM "PlatformV"
 
 #include <nlohmann/json.hpp>
+#include <Magnum/Shaders/Flat.h>
 
 #include "../GameObject.h"
 
@@ -21,8 +22,13 @@ public:
 
 	void setScale(const Vector3 & scale);
 	void setParameters(Resource<GL::Texture2D> & texture, UnsignedInt objectId);
+	void setGlow(const bool enabled);
 
 protected:
 	UnsignedInt mLevelIndex;
 	Vector3 mScale;
+	
+	Object3D* mGlowManipulator;
+	std::weak_ptr<BaseDrawable> mGlowDrawable;
+	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> mFlat3DShader;
 };

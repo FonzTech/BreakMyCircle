@@ -2,6 +2,7 @@
 
 #include "../AssetManager.h"
 #include "../RoomManager.h"
+#include "../Common/CommonUtility.h"
 
 using namespace Magnum::Math::Literals;
 
@@ -20,6 +21,7 @@ LevelSelectorSidecar::LevelSelectorSidecar(const Int parentIndex, const Unsigned
 {
 	// Assign members
 	mParentIndex = parentIndex;
+	mGlowManipulator = nullptr;
 
 	// Load drawables
 	AssetManager am(RESOURCE_SHADER_COLORED_PHONG, RESOURCE_SHADER_TEXTURED_PHONG_DIFFUSE, 1);
@@ -45,19 +47,31 @@ void LevelSelectorSidecar::update()
 
 void LevelSelectorSidecar::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	const auto& color = mLevelIndex < RoomManager::singleton->mSaveData.maxLevelId ? 0xc0c0c0_rgbf : 0x404040_rgbf;
-	((Shaders::Phong&)baseDrawable->getShader())
-		.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(0.0f, 6.0f, 0.0f)))
-		.setLightColor(0xc0c0c0_rgbf)
-		.setSpecularColor(0x000000_rgbf)
-		.setDiffuseColor(color)
-		.setAmbientColor(color)
-		.setTransformationMatrix(transformationMatrix)
-		.setNormalMatrix(transformationMatrix.normalMatrix())
-		.setProjectionMatrix(camera.projectionMatrix())
-		.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
-		.setObjectId(baseDrawable->getObjectId())
-		.draw(*baseDrawable->mMesh);
+	if (mGlowManipulator != nullptr && baseDrawable->mMesh->label() == "GlowV")
+	{
+		(*mFlat3DShader)
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+			.bindTexture(*baseDrawable->mTexture)
+			.setColor(Color4{ 1.0f })
+			.setAlphaMask(0.001f)
+			.draw(*baseDrawable->mMesh);
+	}
+	else
+	{
+		const auto& color = mLevelIndex < RoomManager::singleton->mSaveData.maxLevelId ? 0xc0c0c0_rgbf : 0x404040_rgbf;
+		((Shaders::Phong&)baseDrawable->getShader())
+			.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(0.0f, 6.0f, 0.0f)))
+			.setLightColor(0xc0c0c0_rgbf)
+			.setSpecularColor(0x000000_rgbf)
+			.setDiffuseColor(color)
+			.setAmbientColor(color)
+			.setTransformationMatrix(transformationMatrix)
+			.setNormalMatrix(transformationMatrix.normalMatrix())
+			.setProjectionMatrix(camera.projectionMatrix())
+			.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
+			.setObjectId(baseDrawable->getObjectId())
+			.draw(*baseDrawable->mMesh);
+	}
 }
 
 void LevelSelectorSidecar::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
@@ -82,5 +96,29 @@ void LevelSelectorSidecar::setParameters(Resource<GL::Texture2D> & texture, Unsi
 
 		// Set various properties
 		drawable->setObjectId(objectId);
+	}
+}
+
+void LevelSelectorSidecar::setGlow(const bool enabled)
+{
+	if (enabled)
+	{
+		if (mGlowManipulator != nullptr)
+		{
+			mGlowManipulator->scale(Vector3(1.0f));
+			mGlowDrawable.lock()->pushToFront();
+		}
+		else
+		{
+			mFlat3DShader = CommonUtility::singleton->getFlat3DShader();
+			mGlowManipulator = new Object3D{ mManipulator.get() };
+
+			AssetManager().loadAssets(*this, *mGlowManipulator, RESOURCE_SCENE_LEVEL_GLOW, this);
+			mGlowDrawable = *(mDrawables.end() - 1);
+		}
+	}
+	else if (mGlowManipulator != nullptr)
+	{
+		mGlowManipulator->scale(Vector3(0.0f));
 	}
 }

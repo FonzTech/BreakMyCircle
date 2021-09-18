@@ -101,6 +101,9 @@
   "scenes/level_button.glb": {
     "version": 1
   },
+  "scenes/level_glow.glb": {
+    "version": 1
+  },
   "scenes/logo.glb": {
     "version": 1
   },
