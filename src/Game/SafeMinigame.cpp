@@ -58,7 +58,7 @@ SafeMinigame::SafeMinigame(const Int parentIndex) : GameObject(parentIndex)
 		d->setDrawCallback(this);
 		mDrawables.emplace_back(d);
 
-		mGlowDrawable = d.get();
+        mDrawableGlow = d;
 	}
 
 	for (const auto& item : mDrawables)
@@ -283,7 +283,7 @@ void SafeMinigame::update()
 
 void SafeMinigame::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (baseDrawable == mGlowDrawable)
+	if (!mDrawableGlow.expired() && mDrawableGlow.lock().get() == baseDrawable)
 	{
 		((Shaders::Flat3D&)baseDrawable->getShader())
 			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
@@ -295,9 +295,9 @@ void SafeMinigame::draw(BaseDrawable* baseDrawable, const Matrix4& transformatio
 	else
 	{
 		((Shaders::Phong&)baseDrawable->getShader())
-			.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(1.5f, 2.5f, 1.5f)))
+			.setLightPosition(camera.cameraMatrix().transformPoint(mPosition + Vector3(3.0f)))
 			.setLightColor(0xc0c0c0_rgbf)
-			.setSpecularColor(0x000000_rgbf)
+			.setSpecularColor(0x00000000_rgbaf)
 			.setDiffuseColor(0x909090_rgbf)
 			.setAmbientColor(0x909090_rgbf)
 			.setTransformationMatrix(transformationMatrix)

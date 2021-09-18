@@ -36,7 +36,7 @@ protected:
 	Float mPuAnimation;
 
 	// Drawables
-	BaseDrawable* mGlowDrawable;
+	std::weak_ptr<BaseDrawable> mDrawableGlow;
 	std::weak_ptr<BaseDrawable> mDrawableKnob;
 	std::weak_ptr<BaseDrawable> mDrawableHandle;
 	std::weak_ptr<BaseDrawable> mDrawableDoor;

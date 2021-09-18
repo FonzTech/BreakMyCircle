@@ -143,6 +143,7 @@ if(CORRADE_TARGET_ANDROID)
         src/Game/OverlayText.cpp
         src/Game/Player.cpp
         src/Game/Projectile.cpp
+        src/Game/SafeMinigame.cpp
         src/Game/Scenery.cpp
         src/Game/Skybox.cpp
         src/GameObject.cpp

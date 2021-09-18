@@ -16,6 +16,7 @@ public class MainActivity extends EngineActivity implements Runnable {
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        getIntent().putExtra("game_safeminigame", "1");
         new Thread(this).start();
     }
 
