@@ -34,6 +34,12 @@ Logo::Logo(const Int parentIndex) : GameObject()
 {
 	// Assign parent index
 	mParentIndex = parentIndex;
+
+	// Check if safe minigame shall be created
+	{
+		const auto& value = CommonUtility::singleton->getValueFromIntent("game_safeminigame");
+		mSafeMinigame = value != nullptr;
+	}
 	
 	// Init members
 	{
@@ -416,12 +422,16 @@ void Logo::continueLogic()
 		item->mDestroyMe = true;
 	}
 
-	// Set camera parameters
-	auto& layer = RoomManager::singleton->mGoLayers[mParentIndex];
-	layer.cameraEye = Vector3(0.0f, 0.0f, 8.0f);
-	layer.cameraTarget = Vector3(0.0f);
+	// Check if safe minigame is required
+	if (mSafeMinigame)
+	{
+		// Set camera parameters
+		auto& layer = RoomManager::singleton->mGoLayers[mParentIndex];
+		layer.cameraEye = Vector3(0.0f, 0.0f, 0.4f);
+		layer.cameraTarget = Vector3(0.0f);
 
-	// Create safe minigame, if required
-	const std::shared_ptr<SafeMinigame> sm = std::make_shared<SafeMinigame>(mParentIndex);
-	RoomManager::singleton->mGoLayers[mParentIndex].push_back(sm);
+		// Create game object
+		const std::shared_ptr<SafeMinigame> sm = std::make_shared<SafeMinigame>(mParentIndex);
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(sm);
+	}
 }

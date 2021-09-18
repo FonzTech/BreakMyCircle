@@ -159,4 +159,5 @@ public:
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> getFlat3DShader();
 	Resource<GL::AbstractShaderProgram, PlasmaShader> getPlasmaShader();
 	Resource<GL::AbstractShaderProgram, WaterShader> getWaterShader();
+	std::string getTextureNameForPowerup(const UnsignedInt index);
 };

@@ -71,6 +71,9 @@
   "audios/wrong.ogg": {
     "version": 1
   },
+  "audios/safe_open.ogg": {
+    "version": 1
+  },
   "fonts/ubuntu-title.ttf": {
     "version": 1
   },
@@ -117,6 +120,9 @@
     "version": 1
   },
   "scenes/world_wall.glb": {
+    "version": 1
+  },
+  "scenes/powerup.glb": {
     "version": 1
   },
   "shaders/cubemap.frag": {
@@ -273,6 +279,9 @@
     "version": 1
   },
   "textures/world_1_wem.png": {
+    "version": 1
+  }
+  "textures/glow.png": {
     "version": 1
   }
 }

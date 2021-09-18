@@ -268,3 +268,22 @@ std::unique_ptr<std::string> CommonUtility::getValueFromIntent(const std::string
 	return nullptr;
 #endif
 }
+
+std::string CommonUtility::getTextureNameForPowerup(const UnsignedInt index)
+{
+	switch (index)
+	{
+	case 0:
+		return RESOURCE_TEXTURE_GUI_PU_BOMB;
+
+	case 1:
+		return RESOURCE_TEXTURE_GUI_PU_PLASMA;
+
+	case 2:
+		return RESOURCE_TEXTURE_GUI_PU_TIME;
+
+	case 3:
+		return RESOURCE_TEXTURE_GUI_PU_ELECTRIC;
+	}
+	return "";
+}

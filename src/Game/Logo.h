@@ -46,6 +46,7 @@ private:
 	void continueLogic();
 
 	// Common members
+	bool mSafeMinigame;
 	Float mCanvasPadding;
 	Vector3 mLightPosition;
 	bool mLightDirection;

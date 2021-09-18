@@ -2,7 +2,7 @@
 
 #include <nlohmann/json.hpp>
 
-#include "../GameObject.h"
+#include "OverlayText.h"
 
 class SafeMinigame : public GameObject
 {
@@ -10,6 +10,7 @@ public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	SafeMinigame(const Int parentIndex);
+	~SafeMinigame();
 
 	const Int getType() const override;
 	void update() override;
@@ -17,9 +18,29 @@ public:
 	void collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects) override;
 
 protected:
+	void animateTextAlpha(const UnsignedInt index, const bool increment);
+	void obtainPowerup();
+
+	Object3D* mGlowManipulator;
+	Object3D* mSafeManipulator;
+	Object3D* mPowerupManipulator;
+
+	Int mPowerupIndex;
 	Int mMode;
+	Float mGlowAnim;
 	Float mScale;
 	Float mAnimY;
 	Float mAngleHandle;
+	Float mAngleDoor;
+	Float mPuRotation;
+	Float mPuAnimation;
+
+	// Drawables
+	BaseDrawable* mGlowDrawable;
+	std::weak_ptr<BaseDrawable> mDrawableKnob;
 	std::weak_ptr<BaseDrawable> mDrawableHandle;
+	std::weak_ptr<BaseDrawable> mDrawableDoor;
+
+	// Texts
+	std::shared_ptr<OverlayText> mTexts[1];
 };

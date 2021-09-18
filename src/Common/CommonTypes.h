@@ -12,6 +12,7 @@
 #define RESOURCE_SCENE_WORLD_3 "scenes/world_3.glb"
 #define RESOURCE_SCENE_WORLD_WALL "scenes/world_wall.glb"
 #define RESOURCE_SCENE_SAFE "scenes/safe.glb"
+#define RESOURCE_SCENE_POWERUP "scenes/powerup.glb"
 
 #define RESOURCE_MESH_PLANE_SPRITE "mesh_plane_sprite"
 #define RESOURCE_MESH_PLANE_WATER "mesh_plane_water"
@@ -36,6 +37,7 @@
 #define RESOURCE_TEXTURE_WATER_DISPLACEMENT "tex_water_dm"
 #define RESOURCE_TEXTURE_WATER_TEXTURE "tex_water_tm"
 #define RESOURCE_TEXTURE_WORLD_1_WEM "tex_world_1_wem"
+#define RESOURCE_TEXTURE_GLOW "tex_glow"
 #define RESOURCE_TEXTURE_CUBEMAP_SKYBOX_1 "tex_cubemap_skybox_1"
 #define RESOURCE_TEXTURE_GUI_SETTINGS "tex_gui_settings"
 #define RESOURCE_TEXTURE_GUI_REPLAY "tex_gui_replay"
@@ -95,6 +97,7 @@
 #define RESOURCE_AUDIO_ELECTRIC "electric"
 #define RESOURCE_AUDIO_STAR_PREFIX "star_"
 #define RESOURCE_AUDIO_CONGRATS_PREFIX "congrats_"
+#define RESOURCE_AUDIO_SAFE_OPEN "safe_open"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"

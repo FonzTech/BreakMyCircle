@@ -397,11 +397,19 @@ void LevelSelector::update()
 	{
 		return;
 	}
-	
+
+#ifdef GO_LS_SKY_PLANE_ENABLED
+	// Update sky plane
+	(*mSkyManipulator)
+		.resetTransformation()
+		.scale(Vector3(GO_LS_SCENERY_LENGTH, GO_LS_SCENERY_LENGTH, 1.0f))
+		.translate(mPosition + Vector3(0.0f, 0.0f, -GO_LS_SKYPLANE_DISTANCE));
+#endif
+
 #if NDEBUG or _DEBUG
 	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
 	{
-		if (mLevelGuiAnim[0] == 0.0f)
+		if (!RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->empty())
 		{
 			for (auto& item : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
 			{
@@ -414,7 +422,7 @@ void LevelSelector::update()
 			mLevelInfo.currentViewingLevelId = 1U;
 			mScreenButtons[GO_LS_GUI_PLAY]->callback(GO_LS_GUI_PLAY);
 		}
-		else
+		else if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
 		{
 			Debug{} << "Level state to Finished SUCCESS";
 			finishCurrentLevel(true);
@@ -422,16 +430,8 @@ void LevelSelector::update()
 	}
 #endif
 
-#ifdef GO_LS_SKY_PLANE_ENABLED
-	// Update sky plane
-	(*mSkyManipulator)
-		.resetTransformation()
-		.scale(Vector3(GO_LS_SCENERY_LENGTH, GO_LS_SCENERY_LENGTH, 1.0f))
-		.translate(mPosition + Vector3(0.0f, 0.0f, -GO_LS_SKYPLANE_DISTANCE));
-#endif
-
 	// Check if there is any on-going action on top
-	if (mLevelInfo.state == GO_LS_LEVEL_INIT && RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->size() > 0)
+	if (mLevelInfo.state == GO_LS_LEVEL_INIT && !RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->empty())
 	{
 		return;
 	}
@@ -1979,25 +1979,7 @@ void LevelSelector::createPowerupView()
 	for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 	{
 		// Get correct icon for this powerup
-		std::string tn;
-		switch (i)
-		{
-		case 0:
-			tn = RESOURCE_TEXTURE_GUI_PU_BOMB;
-			break;
-
-		case 1:
-			tn = RESOURCE_TEXTURE_GUI_PU_PLASMA;
-			break;
-
-		case 2:
-			tn = RESOURCE_TEXTURE_GUI_PU_TIME;
-			break;
-
-		case 3:
-			tn = RESOURCE_TEXTURE_GUI_PU_ELECTRIC;
-			break;
-		}
+		const std::string tn = CommonUtility::singleton->getTextureNameForPowerup(i);
 
 		// Clickable icon
 		{
