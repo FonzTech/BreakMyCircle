@@ -8,6 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -29,15 +31,13 @@ public final class TokenSender extends Thread {
             c = (HttpsURLConnection) url.openConnection();
             c.setReadTimeout(15000);
             c.setConnectTimeout(30000);
+            c.setRequestMethod("POST");
             c.setDoInput(true);
             c.setDoOutput(true);
 
             {
-                final JSONObject json = new JSONObject();
-                json.put("token", mToken);
-
                 final OutputStream os = c.getOutputStream();
-                os.write(json.toString().getBytes());
+                os.write(("token=" + URLEncoder.encode(mToken, StandardCharsets.UTF_8.name())).getBytes());
                 os.close();
             }
 
@@ -52,7 +52,7 @@ public final class TokenSender extends Thread {
             baos.close();
 
             final JSONObject json = new JSONObject(new String(baos.toByteArray()));
-            Log.d(TAG, json.toString());
+            Log.d(TAG, "FCM Register Token - " + json.toString());
         }
         catch (final Exception e) {
             e.printStackTrace();

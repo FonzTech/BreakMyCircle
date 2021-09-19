@@ -1,6 +1,9 @@
 <resources>
     <string name="default_notification_channel_id">default_notification_channel_breakmycircle</string>
     <string name="app_name">Break My Circle</string>
+    <string name="exit_alert">Are you sure you want to exit?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string name="unknown_error">Unknown error</string>
     <string name="ad_error">Error while showing ad. Please, be sure you are connected to the internet.</string>
     <string name="ad_not_available">This function is not available at the moment. Excuse us.</string>

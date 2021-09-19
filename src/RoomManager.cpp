@@ -118,13 +118,17 @@ bool RoomManager::SaveData::load()
 	}
 
 	// Load powerup amounts
-	const auto jsonPowerups = jsonData.find("powerupAmounts");
-	if (jsonPowerups != jsonData.end())
+	const std::array<std::string, 2> entries = { "powerupAmounts", "levelScores" };
+	for (auto i = 0; i < entries.size(); ++i)
 	{
-		for (auto& item : (*jsonPowerups).items())
+		const auto jsonMap = jsonData.find(entries.at(i));
+		if (jsonMap != jsonData.end())
 		{
-			const auto key = UnsignedInt(std::stoi(item.key()));
-			powerupAmounts[key] = item.value().get<Int>();
+			for (auto& item : (*jsonMap).items())
+			{
+				const auto key = UnsignedInt(std::stoi(item.key()));
+				(i == 0 ? powerupAmounts : levelScores)[key] = item.value().get<Int>();
+			}
 		}
 	}
 
@@ -145,13 +149,20 @@ bool RoomManager::SaveData::save()
 		{ "maxLevelId", maxLevelId },
 		{ "coinTotal", coinTotal },
 		{ "coinCurrent", coinCurrent },
-		{ "powerupAmounts", std::unordered_map<std::string, Int>() }
+		{ "powerupAmounts", std::unordered_map<std::string, Int>() },
+		{ "levelScores", std::unordered_map<std::string, Int>() }
 	};
 
-	for (auto& item : powerupAmounts)
+	for (const auto& item : powerupAmounts)
 	{
 		const auto& key = std::to_string(item.first);
 		jsonData["powerupAmounts"][key] = item.second;
+	}
+
+	for (const auto& item : levelScores)
+	{
+		const auto& key = std::to_string(item.first);
+		jsonData["levelScores"][key] = item.second;
 	}
 
 	Utility::Directory::writeString(CommonUtility::singleton->mConfig.saveFile, jsonData.dump());

@@ -736,14 +736,17 @@ void LevelSelector::update()
 								{
 									if (spo->levelIndex < RoomManager::singleton->mSaveData.maxLevelId)
 									{
-										// Stop scrolling
-										mScrollVelocity = Vector3(0.0f);
+									    if (mSettingsOpened <= 0.01f && mLevelAnim <= 0.01f)
+                                        {
+                                            // Stop scrolling
+                                            mScrollVelocity = Vector3(0.0f);
 
-										// Open level window
-										clickLevelButton(&it2->second, spo);
+                                            // Open level window
+                                            clickLevelButton(&it2->second, spo);
 
-										// Play sound
-										playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
+                                            // Play sound
+                                            playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
+										}
 									}
 									else
 									{
@@ -1067,6 +1070,13 @@ void LevelSelector::clickLevelButton(const LS_ScenerySelector * sc, const LS_Pic
 	else
 	{
 		mLevelInfo.nextLevelPos = sc->scenery.lock()->mPosition + po->position + Vector3(0.0f, 0.0f, -8.0f);
+	}
+
+	// Display score for selected level
+    {
+        const auto& dm = RoomManager::singleton->mSaveData.levelScores;
+        const auto& it = dm.find(mLevelInfo.selectedLevelId);
+        mLevelInfo.score = it != dm.end() ? it->second : 0;
 	}
 }
 
@@ -1764,6 +1774,9 @@ void LevelSelector::finishCurrentLevel(const bool success)
         mLevelInfo.score = 0;
 		mLevelInfo.playedScore = -1;
 	}
+
+	// Set score for save data
+    RoomManager::singleton->mSaveData.levelScores[mLevelInfo.selectedLevelId] = mLevelInfo.score;
 
 	// Reset temporary stats
 	RoomManager::singleton->mSaveData.coinCurrent = 0;

@@ -25,7 +25,7 @@ protected:
 	Object3D* mSafeManipulator;
 	Object3D* mPowerupManipulator;
 
-	Int mPowerupIndex;
+	UnsignedInt mPowerupIndex;
 	Int mMode;
 	Float mGlowAnim;
 	Float mScale;

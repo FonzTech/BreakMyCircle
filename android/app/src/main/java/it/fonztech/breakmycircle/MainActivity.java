@@ -1,5 +1,7 @@
 package it.fonztech.breakmycircle;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import org.json.JSONObject;
@@ -11,13 +13,31 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class MainActivity extends EngineActivity implements Runnable {
+public class MainActivity extends EngineActivity implements Runnable, DialogInterface.OnClickListener {
+    protected AlertDialog mDialog;
+
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getIntent().putExtra("game_safeminigame", "1");
         new Thread(this).start();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDialog != null) {
+            mDialog.cancel();
+            mDialog = null;
+        }
+        else {
+            mDialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.exit_alert)
+                    .setPositiveButton(R.string.yes, this)
+                    .setNegativeButton(R.string.no, this)
+                    .create();
+            mDialog.show();
+        }
     }
 
     @Override
@@ -84,6 +104,19 @@ public class MainActivity extends EngineActivity implements Runnable {
             if (c != null) {
                 c.disconnect();
             }
+        }
+    }
+
+    @Override
+    public void onClick(DialogInterface dialogInterface, int i) {
+        switch (i) {
+            case AlertDialog.BUTTON_POSITIVE:
+                super.onBackPressed();
+                break;
+
+            case AlertDialog.BUTTON_NEGATIVE:
+                onBackPressed();
+                break;
         }
     }
 

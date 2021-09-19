@@ -31,7 +31,7 @@ SafeMinigame::SafeMinigame(const Int parentIndex) : GameObject(parentIndex)
 	mPuAnimation = 0.0f;
 
 	// Get powerup index to obtain
-	mPowerupIndex = std::rand() % GO_LS_MAX_POWERUP_COUNT;
+	mPowerupIndex = UnsignedInt(std::rand() % GO_LS_MAX_POWERUP_COUNT);
 
 	// Get assets
 	mSafeManipulator = new Object3D{ mManipulator.get() };
@@ -294,10 +294,11 @@ void SafeMinigame::draw(BaseDrawable* baseDrawable, const Matrix4& transformatio
 	}
 	else
 	{
-		const bool b2 = baseDrawable->mMesh->label() == "FaceV" || baseDrawable->mMesh->label() == "PowerupV";
 #ifdef CORRADE_TARGET_ANDROID
+		const bool b2 = baseDrawable->mMesh->label() == "FaceV" || baseDrawable->mMesh->label() == "PowerupV";
         const auto ambientColor = b2 ? 0x303030_rgbf : 0x909090_rgbf;
 #else
+		const bool b2 = false;
         const auto ambientColor = 0x909090_rgbf;
 #endif
 
@@ -322,7 +323,18 @@ void SafeMinigame::collidedWith(const std::unique_ptr<std::unordered_set<GameObj
 void SafeMinigame::obtainPowerup()
 {
 	Debug{} << "Obtain powerup" << mPowerupIndex;
-	++RoomManager::singleton->mSaveData.powerupAmounts[mPowerupIndex];
+
+	auto& dm = RoomManager::singleton->mSaveData.powerupAmounts;
+	const auto& key = UnsignedInt(GO_LS_GUI_POWERUP + mPowerupIndex);
+	const auto& it = dm.find(key);
+	if (it == dm.end())
+	{
+		RoomManager::singleton->mSaveData.powerupAmounts[key] = 1;
+	}
+	else
+	{
+		RoomManager::singleton->mSaveData.powerupAmounts[key] = it->second + 1;
+	}
 	RoomManager::singleton->mSaveData.save();
 }
 

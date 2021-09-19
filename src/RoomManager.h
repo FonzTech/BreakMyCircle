@@ -53,6 +53,7 @@ public:
 		Int coinTotal;
 		Int coinCurrent;
 		std::unordered_map<UnsignedInt, Int> powerupAmounts;
+		std::unordered_map<UnsignedInt, Int> levelScores;
 	};
 
 	// Game Object layer data holder
