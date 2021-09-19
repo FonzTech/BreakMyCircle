@@ -57,7 +57,7 @@ public:
 	struct Graph
 	{
 		std::unordered_set<GameObject*> set;
-		Int attached;
+		bool attached;
 	};
 
 	// Struct for explosion data
@@ -86,7 +86,7 @@ public:
 	Int destroyDisjointBubbles();
 
 	Int destroyNearbyBubblesImpl(BubbleCollisionGroup* group);
-	std::unique_ptr<Graph> destroyDisjointBubblesImpl(std::unordered_set<Bubble*> & group);
+	std::unique_ptr<Graph> destroyDisjointBubblesImpl(std::unordered_set<Bubble*> & group, const bool attached);
 
 	Color3 mAmbientColor;
 

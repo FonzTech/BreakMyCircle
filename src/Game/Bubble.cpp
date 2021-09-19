@@ -259,7 +259,7 @@ Int Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
 Int Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
 {
 	// Cycle through all collided game objects
-	Range3D eb = { mPosition - Vector3(1.5f), mPosition + Vector3(1.5f) };
+	Range3D eb = { mPosition - Vector3(1.25f), mPosition + Vector3(1.25f) };
 	std::unique_ptr<std::unordered_set<GameObject*>> collided = RoomManager::singleton->mCollisionManager->checkCollision(eb, this, { GOT_BUBBLE });
 	for (const auto& item : *collided)
 	{
@@ -302,8 +302,14 @@ Int Bubble::destroyDisjointBubbles()
 			Bubble* bubble = *it;
 			group.erase(it);
 
+			// Check if bubble is about to be destroyed
+			if (bubble->mDestroyMe)
+			{
+				continue;
+			}
+
 			// Perform DFS-like algorithm
-			std::unique_ptr<Graph> graph = bubble->destroyDisjointBubblesImpl(group);
+			std::unique_ptr<Graph> graph = bubble->destroyDisjointBubblesImpl(group, false);
 			// graph->set.insert(bubble);
 
 			Debug{} << "Graph" << (graph->attached ? "attached" : "not attached") << "bubbles are" << graph->set.size();
@@ -374,15 +380,15 @@ Int Bubble::destroyDisjointBubbles()
 	return shootAmount;
 }
 
-std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered_set<Bubble*> & group)
+std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered_set<Bubble*> & group, const bool attached)
 {
 	// BBox for adjacent bubbles
-	Range3D bbox(mPosition - Vector3(1.5f), mPosition + Vector3(1.5f));
+	Range3D bbox(mPosition - Vector3(1.25f), mPosition + Vector3(1.25f));
 
 	// Check for collisions against other game objects (DFS-like graph)
 	std::unique_ptr<std::unordered_set<GameObject*>> collided = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this, { GOT_BUBBLE });
 	std::unique_ptr<Graph> graph = std::make_unique<Graph>();
-	graph->attached = 0;
+	graph->attached = attached;
 
 	// Cycle through all collided game objects
 	if (collided->size() > 0)
@@ -412,7 +418,7 @@ std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered
 				}
 
 				// Perform DFS-like algorithm
-				std::unique_ptr<Graph> result = bi->destroyDisjointBubblesImpl(group);
+				std::unique_ptr<Graph> result = bi->destroyDisjointBubblesImpl(group, graph->attached || attachedToCeiling);
 
 				/*
 					Check if graph is eligible or not for deletion.
@@ -430,7 +436,11 @@ std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered
 		}
 
 		// Add self-bubble, if necessary
-		if (!graph->attached)
+		if (mPosition.y() >= -0.1f)
+		{
+			graph->attached = true;
+		}
+		else
 		{
 			graph->set.insert(this);
 		}
@@ -438,6 +448,10 @@ std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered
 	else if (mPosition.y() < -0.1f)
 	{
 		graph->set.insert(this);
+	}
+	else
+	{
+		graph->attached = true;
 	}
 
 	return graph;
