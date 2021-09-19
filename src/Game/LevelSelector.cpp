@@ -17,6 +17,7 @@
 #include "Bubble.h"
 #include "Congrats.h"
 #include "FallingBubble.h"
+#include "SafeMinigame.h"
 
 #ifdef CORRADE_TARGET_ANDROID
 #include <android/native_activity.h>
@@ -120,6 +121,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		mLevelInfo.numberOfPlays = 0;
 		mLevelInfo.score = -1;
 		mLevelInfo.lastLevelPos = Vector3(0.0f);
+		mLevelInfo.isSafeMinigameDone = false;
 	}
 
 	// Cached variables for GUI
@@ -1082,7 +1084,7 @@ void LevelSelector::clickLevelButton(const LS_ScenerySelector * sc, const LS_Pic
 
 void LevelSelector::windowForCommon()
 {
-	const auto& dsl = mCbEaseInOut.value(mSettingsAnim + mLevelAnim)[1];
+	const auto& dsl = mCbEaseInOut.value(mSettingsAnim + (mLevelInfo.isSafeMinigameDone ? 0.0f : mLevelAnim))[1];
 	const auto& p0 = Vector2(0.0f, getScaledVerticalPadding());
 	const auto& d0 = mCbEaseInOut.value(mLevelGuiAnim[0])[1];
 	// const auto& d1 = mCbEaseInOut.value(mLevelGuiAnim[1])[1];
@@ -1130,7 +1132,7 @@ void LevelSelector::windowForSettings()
 {
 	const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 	const auto& ds = mCbEaseInOut.value(mSettingsAnim)[1];
-	const auto& dl = mCbEaseInOut.value(mLevelAnim)[1];
+	const auto& dl = mCbEaseInOut.value(mLevelInfo.isSafeMinigameDone ? 0.0f : mLevelAnim)[1];
 
 	// Animation for "Settings" button
 	{
@@ -1198,7 +1200,7 @@ void LevelSelector::windowForCurrentLevelView()
 	const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 
 	const bool& isFinished = mLevelInfo.state >= GO_LS_LEVEL_FINISHED;
-	const auto& d = mCbEaseInOut.value(mLevelAnim)[1];
+	const auto& d = mCbEaseInOut.value(mLevelInfo.isSafeMinigameDone ? 0.0f : mLevelAnim)[1];
 	const auto& s = mCbEaseInOut.value(mSettingsAnim)[1];
 	//const auto& p = mLevelInfo.state == GO_LS_LEVEL_STARTED ? s * 0.96f : 0.0f;
 
@@ -1357,7 +1359,7 @@ void LevelSelector::windowForCurrentLevelView()
 void LevelSelector::manageLevelState()
 {
 	// Variables for later
-	bool animate[4] = { false, false, false, false };
+	bool animate[5] = { false, false, false, false, true };
 
 	// Control level state
 	switch (mLevelInfo.state)
@@ -1365,9 +1367,9 @@ void LevelSelector::manageLevelState()
 	case GO_LS_LEVEL_INIT:
 
 		// Animations
-		if (mLevelButtonScaleAnim > 0.0f)
+		if (mLevelButtonScaleAnim <= 0.0f)
 		{
-			manageGuiLevelAnim(0, true);
+			animate[4] = false;
 		}
 
 		// Animate when a level is clicked
@@ -1605,6 +1607,7 @@ void LevelSelector::manageLevelState()
 		{
 			// Reset level state
 			mLevelInfo.state = GO_LS_LEVEL_INIT;
+			mLevelInfo.isSafeMinigameDone = false;
 
 			// Reset level stats
 			mLevelInfo.score = -1;
@@ -1617,6 +1620,21 @@ void LevelSelector::manageLevelState()
 			mPosition = mLevelInfo.currentLevelPos + (mLevelInfo.nextLevelPos - mLevelInfo.currentLevelPos) * (1.0f - mLevelAnim);
 			handleScrollableCameraPosition(mPosition - oldPosition);
 			handleScrollableScenery();
+		}
+
+		break;
+
+	case GO_LS_LEVEL_SAFE_MINIGAME:
+
+		// Remove GUI
+		animate[4] = false;
+
+		// Check for minigame state
+		if (RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->empty())
+		{
+			mLevelAnim = 1.0f;
+			mLevelInfo.isSafeMinigameDone = true;
+			mLevelInfo.state = GO_LS_LEVEL_RESTORING;
 		}
 
 		break;
@@ -1652,6 +1670,7 @@ void LevelSelector::manageLevelState()
 	}
 
 	// Animate level GUIs
+	manageGuiLevelAnim(0, animate[4]);
 	manageGuiLevelAnim(1, animate[0]);
 	manageGuiLevelAnim(4, animate[2]);
 	manageGuiLevelAnim(5, animate[3]);
@@ -1828,6 +1847,7 @@ void LevelSelector::prepareForReplay()
 
 	// Trigger the level start for the same level
 	mLevelInfo.state = GO_LS_LEVEL_INIT;
+	mLevelInfo.isSafeMinigameDone = false;
 
 	++mLevelInfo.numberOfRetries;
 	startLevel(mLevelInfo.currentViewingLevelId);
@@ -2443,8 +2463,26 @@ void LevelSelector::createGuis()
 				}
 			}
 
-			// Restore level state to init
-			mLevelInfo.state = GO_LS_LEVEL_RESTORING;
+			// Check for "Safe" minigame (the first time the user plays the game)
+			if (RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_FIRST_SAFE)
+			{
+				// Restore level state to init
+				mLevelInfo.state = GO_LS_LEVEL_RESTORING;
+			}
+			else
+			{
+				// Set level state to special
+				mLevelInfo.state = GO_LS_LEVEL_SAFE_MINIGAME;
+
+				// Mark minigame to be done
+				RoomManager::singleton->mSaveData.flags |= GO_RM_SD_FLAG_FIRST_SAFE;
+				RoomManager::singleton->mSaveData.save();
+
+				// Trigger minigame
+				const std::shared_ptr<SafeMinigame> sm = std::make_shared<SafeMinigame>(GOL_PERSP_SECOND, -1.0f);
+				sm->setupCamera();
+				RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(sm);
+			}
 
 			// Update stats
 			RoomManager::singleton->mSaveData.coinCurrent = 0;

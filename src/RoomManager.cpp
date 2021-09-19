@@ -63,6 +63,7 @@ bool RoomManager::SaveData::load()
 {
 	// Set default value
 	{
+		flags = 0U;
 		maxLevelId = 2U;
 		coinTotal = 0;
 		coinCurrent = 0;
@@ -99,10 +100,16 @@ bool RoomManager::SaveData::load()
 		}
 	}
 
+	// Flags
+	{
+		const auto value = jsonData.find("flags");
+		flags = value != jsonData.end() ? (*value).get<UnsignedInt>() : 2U;
+	}
+
 	// Max level ID
 	{
 		const auto value = jsonData.find("maxLevelId");
-		 maxLevelId = value != jsonData.end() ? (*value).get<UnsignedInt>() : 2U;
+		maxLevelId = value != jsonData.end() ? (*value).get<UnsignedInt>() : 2U;
 	}
 
 	// Coin total
@@ -146,6 +153,7 @@ bool RoomManager::SaveData::save()
 
 	// Dump JSON data to file
 	nlohmann::json jsonData = {
+		{ "flags", flags },
 		{ "maxLevelId", maxLevelId },
 		{ "coinTotal", coinTotal },
 		{ "coinCurrent", coinCurrent },
@@ -469,6 +477,14 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 0.0f, 0.0f, 0.0f, 0.2f }, GO_LL_TYPE_BLACK);
 		p->mPosition = { xp, player->mPosition.y() + 56.0f, 0.1f };
 		p->setScale(Vector3(50.0f, 50.0f, 1.0f));
+		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
+	}
+
+	// Top limit line
+	{
+		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 0.25f, 0.25f, 0.25f, 1.0f }, GO_LL_TYPE_BLACK);
+		p->mPosition = { 0.0f, 1.25f, 0.1f };
+		p->setScale(Vector3(16.0f, 0.2f, 1.0f));
 		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
 	}
 

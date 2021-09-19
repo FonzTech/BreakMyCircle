@@ -17,13 +17,13 @@ std::shared_ptr<GameObject> SafeMinigame::getInstance(const nlohmann::json & par
 	return nullptr;
 }
 
-SafeMinigame::SafeMinigame(const Int parentIndex) : GameObject(parentIndex)
+SafeMinigame::SafeMinigame(const Int parentIndex, const Float startingScale) : GameObject(parentIndex)
 {
 	// Assign members
 	mParentIndex = parentIndex;
 	mMode = 0;
 	mGlowAnim = 0.0f;
-	mScale = 0.0f;
+	mScale = startingScale;
 	mAnimY = 0.0f;
 	mAngleHandle = 0.0f;
 	mAngleDoor = 0.0f;
@@ -120,14 +120,6 @@ const Int SafeMinigame::getType() const
 
 void SafeMinigame::update()
 {
-	// Animate glow plane
-	mGlowAnim += mDeltaTime;
-	(*mGlowManipulator)
-		.resetTransformation()
-		.scale(Vector3(Math::min(1.0f, mScale) * 0.25f))
-		.rotateZ(Deg(mGlowAnim * 90.0f))
-		.translate(mPosition - Vector3(0.0f, 0.0f, 0.04f));
-
 	// Handle mode
 	switch (mMode)
 	{
@@ -236,7 +228,7 @@ void SafeMinigame::update()
 	{
 		(*mSafeManipulator)
 			.resetTransformation()
-			.scale(Vector3(mScale < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::smoothstep(mScale)) : 1.0f))
+			.scale(Vector3(mScale < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::smoothstep(Math::max(0.0f, mScale))) : 1.0f))
 			.translate(Vector3(mPosition));
 
 		const Float rotDoor = mAngleDoor < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::smoothstep(mAngleDoor)) : 1.0f;
@@ -269,7 +261,6 @@ void SafeMinigame::update()
 		}
 	}
 
-
 	// Set transformations for powerup
 	{
 		const Float rot = mPuRotation;
@@ -279,6 +270,14 @@ void SafeMinigame::update()
 			.rotateY(Deg(rot * 180.0f))
 			.translate(mMode >= 3 && mMode < 6 ? mPosition + Vector3(0.0f, 0.0f, mPuAnimation) : Vector3(1000.0f));
 	}
+
+	// Animate glow plane
+	mGlowAnim += mDeltaTime;
+	(*mGlowManipulator)
+		.resetTransformation()
+		.scale(Vector3(Math::clamp(mScale, 0.0f, 1.0f) * 0.25f))
+		.rotateZ(Deg(mGlowAnim * 90.0f))
+		.translate(mPosition - Vector3(0.0f, 0.0f, 0.04f));
 }
 
 void SafeMinigame::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
@@ -318,6 +317,14 @@ void SafeMinigame::draw(BaseDrawable* baseDrawable, const Matrix4& transformatio
 
 void SafeMinigame::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
 {
+}
+
+void SafeMinigame::setupCamera()
+{
+	// Set camera parameters
+	auto& layer = RoomManager::singleton->mGoLayers[mParentIndex];
+	layer.cameraEye = Vector3(0.0f, 0.0f, 0.4f);
+	layer.cameraTarget = Vector3(0.0f);
 }
 
 void SafeMinigame::obtainPowerup()

@@ -39,6 +39,7 @@
 #define GO_LS_LEVEL_STARTED 2
 #define GO_LS_LEVEL_FINISHED 3
 #define GO_LS_LEVEL_RESTORING 4
+#define GO_LS_LEVEL_SAFE_MINIGAME 5
 
 #define GO_LS_AUDIO_WIN 1
 #define GO_LS_AUDIO_LOSE 2
@@ -143,6 +144,7 @@ private:
 		Float difficulty;
 		Float startingTime;
 		Vector3 lastLevelPos;
+		bool isSafeMinigameDone;
 
 		std::weak_ptr<GameObject> playerPointer;
 		std::weak_ptr<GameObject> limitLinePointer;

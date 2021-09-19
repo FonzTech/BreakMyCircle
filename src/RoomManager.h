@@ -4,6 +4,8 @@
 #define GOL_PERSP_SECOND 1
 #define GOL_ORTHO_FIRST 2
 
+#define GO_RM_SD_FLAG_FIRST_SAFE 1 << 0
+
 #include <memory>
 #include <vector>
 #include <nlohmann/json.hpp>
@@ -49,6 +51,7 @@ public:
 		bool load();
 		bool save();
 
+		UnsignedInt flags;
 		UnsignedInt maxLevelId;
 		Int coinTotal;
 		Int coinCurrent;

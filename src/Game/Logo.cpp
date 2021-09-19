@@ -425,13 +425,9 @@ void Logo::continueLogic()
 	// Check if safe minigame is required
 	if (mSafeMinigame)
 	{
-		// Set camera parameters
-		auto& layer = RoomManager::singleton->mGoLayers[mParentIndex];
-		layer.cameraEye = Vector3(0.0f, 0.0f, 0.4f);
-		layer.cameraTarget = Vector3(0.0f);
-
 		// Create game object
 		const std::shared_ptr<SafeMinigame> sm = std::make_shared<SafeMinigame>(mParentIndex);
+		sm->setupCamera();
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(sm);
 	}
 }
