@@ -192,7 +192,7 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 
 		if (!assets.meshes[i])
 		{
-			const auto name = importer->meshName(i);
+			const auto& name = importer->meshName(i);
 			Debug{} << "Importing mesh" << i << name;
 
 			Containers::Optional<Trade::MeshData> meshData = importer->mesh(i);
@@ -204,7 +204,10 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 
 			// Compile the mesh
 			GL::Mesh mesh = MeshTools::compile(*meshData);
-			mesh.setLabel(name);
+			{
+				const auto& p = name.find('_');
+				mesh.setLabel(p != std::string::npos ? name.substr(0, p) : name);
+			}
 
 			// Add to resources
 			CommonUtility::singleton->manager.set(assets.meshes[i].key(), std::move(mesh));

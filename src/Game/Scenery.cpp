@@ -36,7 +36,10 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 	mParentIndex = parentIndex;
 	mModelIndex = modelIndex;
 	mLightPosition = Vector3(0.0f);
+	mAlphaCheckTimer = 5.0f;
 	mFrame = 0.0f;
+
+	mAnim = { 0.0f, 0.0f, 0.0f };
 
 	// Fill manipulator list
 	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
@@ -63,16 +66,28 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 				.translate(mPosition + Vector3(0.0f, 0.3f, 0.0f));
 
 			rk = RESOURCE_SCENE_WORLD_1;
+
+			mAnim.rotateFactor = 5.0f;
+			mAnim.scaleFactor = 1.0f;
+
 			break;
 
 		case 1:
 			mManipulatorList[0]->translate(Vector3(0.0f, 0.3f, 0.0f));
 			rk = RESOURCE_SCENE_WORLD_2;
+
+			mAnim.rotateFactor = 2.5f;
+			mAnim.scaleFactor = 0.25f;
+
 			break;
 
 		case 2:
 			mManipulatorList[0]->translate(Vector3(0.0f, 0.3f, 0.0f));
 			rk = RESOURCE_SCENE_WORLD_3;
+
+			mAnim.rotateFactor = 5.0f;
+			mAnim.scaleFactor = 0.05f;
+
 			break;
 		}
 
@@ -86,6 +101,29 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 			.translate(mPosition + Vector3(0.0f, 0.6f, -25.0f));
 
 		am.loadAssets(*this, *mManipulatorList[2], RESOURCE_SCENE_WORLD_WALL, this);
+	}
+
+	// Get wind-animated objects
+	{
+		const std::unordered_set<std::string> names = { "PalmTreeBarkV", "PalmTreeLeavesVT", "PalmV", "CactusV", "PineVT", "PineTrunkV" };
+		for (const auto& item : mDrawables)
+		{
+			if (names.find(item->mMesh->label()) != names.end())
+			{
+				mWindRotateObjects.emplace_back(item);
+			}
+		}
+	}
+
+	{
+		const std::unordered_set<std::string> names = { "LeavesVT", "BushesVT", "BushLeavesVT", "TreeVT" };
+		for (const auto& item : mDrawables)
+		{
+			if (names.find(item->mMesh->label()) != names.end())
+			{
+				mWindScaleObjects.emplace_back(item);
+			}
+		}
 	}
 
 	// Create water drawable AFTER
@@ -115,6 +153,51 @@ const Int Scenery::getType() const
 
 void Scenery::update()
 {
+	// Alpha check timer
+	mAlphaCheckTimer -= mDeltaTime;
+	if (mAlphaCheckTimer <= 0.0f)
+	{
+		mAlphaCheckTimer = 5.0f;
+		for (auto& item : mDrawables)
+		{
+			if (CommonUtility::singleton->stringEndsWith(item->mMesh->label(), "T"))
+			{
+				item->pushToFront();
+			}
+		}
+	}
+
+	// Animate wind objects
+	mAnim.frame += mDeltaTime * 0.5f;
+	{
+		const Float angle = Math::sin(Rad(mAnim.frame));
+		for (auto& item : mWindRotateObjects)
+		{
+			if (item.expired())
+			{
+				continue;
+			}
+
+			const auto& d = item.lock();
+			(*d)
+				.resetTransformation()
+				.rotateX(Deg(angle * mAnim.rotateFactor));
+		}
+
+		for (auto& item : mWindScaleObjects)
+		{
+			if (item.expired())
+			{
+				continue;
+			}
+
+			const auto& d = item.lock();
+			(*d)
+				.resetTransformation()
+				.scale(Vector3(1.0f, 1.0f, angle * mAnim.scaleFactor + 0.75f));
+		}
+	}
+
 	// Update frame
 	mFrame += mDeltaTime * 0.5f;
 	while (mFrame > 1.0f)

@@ -702,7 +702,7 @@ void LevelSelector::update()
 						if (!ita->second.expired())
 						{
 							const auto& pu = ita->second.lock();
-							if (pu->isPickupable() && (pu->mPosition - (mPosition + Vector3(0.0f, 0.0f, cameraDist))).length() < 10.0f)
+							if (pu->isPickupable() && (pu->mPosition - (mPosition + Vector3(0.0f, 0.0f, cameraDist))).length() < 30.0f)
 							{
 								pu->setDestroyState(true);
 

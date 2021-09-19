@@ -28,6 +28,13 @@ public:
 
 protected:
 
+	struct ObjectAnimations
+	{
+		Float frame;
+		Float rotateFactor;
+		Float scaleFactor;
+	};
+
 	struct WaterDrawableHolder
 	{
 		std::shared_ptr<GameDrawable<WaterShader>> drawable;
@@ -46,9 +53,15 @@ protected:
 	Vector3 mLightPosition;
 
 	// Animation
+	Float mAlphaCheckTimer;
 	Float mFrame;
+	ObjectAnimations mAnim;
 	// std::unique_ptr<CubicBezier2D> mCubicBezier;
 
 	// Water objects
 	std::unordered_map<BaseDrawable*, WaterDrawableHolder> mWaterHolders;
+
+	// Wind-animated objects
+	std::vector<std::weak_ptr<BaseDrawable>> mWindRotateObjects;
+	std::vector<std::weak_ptr<BaseDrawable>> mWindScaleObjects;
 };
