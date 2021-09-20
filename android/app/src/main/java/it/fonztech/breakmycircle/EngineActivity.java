@@ -98,9 +98,12 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         }
     };
 
+    public static boolean IS_ACTIVE = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        IS_ACTIVE = true;
 
         mCanShowAds = true;
 
@@ -201,6 +204,12 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         catch (Exception e) {
             throw new RuntimeException(e.getMessage() != null ? e.getMessage() : "Unknown exception error");
         }
+    }
+
+    @Override
+    protected final void onDestroy() {
+        super.onDestroy();
+        IS_ACTIVE = false;
     }
 
     @Override

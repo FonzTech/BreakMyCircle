@@ -258,6 +258,7 @@ void Logo::update()
 		{
 			if (!mLightDirection)
 			{
+				mLightPosition.data()[1] = 11.0f;
 				mLightDirection = true;
 			}
 		}
@@ -265,6 +266,7 @@ void Logo::update()
 		{
 			if (mLightDirection)
 			{
+				mLightPosition.data()[1] = -1.0f;
 				mLightDirection = false;
 			}
 		}
