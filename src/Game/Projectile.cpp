@@ -1,6 +1,7 @@
 #include "Projectile.h"
 
 #include <thread>
+#include <functional>
 #include <Magnum/GL/DefaultFramebuffer.h>
 
 #include "../AssetManager.h"
@@ -113,14 +114,43 @@ void Projectile::update()
 	// Update bounding box
 	updateBBox();
 
-	// Check for collision against other bubbles
-	const std::unique_ptr<std::unordered_set<GameObject*>> bubbles = RoomManager::singleton->mCollisionManager->checkCollision(mBbox, this, { GOT_BUBBLE });
-	if (!bubbles->empty())
+	// Check for collision against blackhole
 	{
-		collidedWith(bubbles);
+		const std::function<bool(GameObject* go)> verifier = [](GameObject* go) {
+			const Bubble* b = static_cast<Bubble*>(go);
+			return b->mAmbientColor == BUBBLE_BLACKHOLE;
+		};
+
+		const auto bbox = Range3D{ mBbox.min() - Vector3(6.0f), mBbox.max() + Vector3(6.0f) };
+		const std::unique_ptr<std::unordered_set<GameObject*>> bubbles = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this, { GOT_BUBBLE }, verifier);
+		{
+			for (const auto& b : *bubbles)
+			{
+				if (b->mPosition.x() < mPosition.x())
+				{
+					mVelocity.data()[0] -= mDeltaTime * 4.0f;
+				}
+				else
+				{
+					mVelocity.data()[0] += mDeltaTime * 4.0f;
+				}
+			}
+		}
 	}
+
+	// Check for collision against other bubbles
+	{
+		const std::unique_ptr<std::unordered_set<GameObject*>> bubbles = RoomManager::singleton->mCollisionManager->checkCollision(mBbox, this, { GOT_BUBBLE });
+		{
+			if (!bubbles->empty())
+			{
+				collidedWith(bubbles);
+			}
+		}
+	}
+
 	// Check if projectile reached the top ceiling
-	else if (mPosition.y() > 0.0f)
+	if (mPosition.y() > 0.0f)
 	{
 		snapToGrid(nullptr);
 	}
