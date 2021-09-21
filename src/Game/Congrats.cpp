@@ -139,7 +139,3 @@ void Congrats::update()
 void Congrats::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
 }
-
-void Congrats::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}

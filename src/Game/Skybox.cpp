@@ -58,10 +58,6 @@ void Skybox::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 		.draw(*baseDrawable->mMesh);
 }
 
-void Skybox::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 void Skybox::createDrawable(const std::string & name)
 {
 	// Get mesh

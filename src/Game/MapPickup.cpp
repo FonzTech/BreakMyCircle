@@ -90,10 +90,6 @@ void MapPickup::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMa
 		.draw(*baseDrawable->mMesh);
 }
 
-void MapPickup::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 void MapPickup::setObjectId(const UnsignedInt id)
 {
 	for (auto& item : mDrawables)

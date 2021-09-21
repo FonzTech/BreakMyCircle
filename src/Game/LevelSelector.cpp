@@ -817,10 +817,6 @@ void LevelSelector::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 #endif
 }
 
-void LevelSelector::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 void LevelSelector::shootCallback(const Int state, const Color3 & preColor, const Color3 & postColor, const Int amount)
 {
 	switch (state)

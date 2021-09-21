@@ -56,10 +56,6 @@ void LimitLine::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMa
 		.draw(*baseDrawable->mMesh);
 }
 
-void LimitLine::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 const Int LimitLine::getCustomType() const
 {
 	return mCustomType;

@@ -70,10 +70,6 @@ void OverlayText::draw(BaseDrawable* baseDrawable, const Matrix4& transformation
 	}
 }
 
-void OverlayText::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 void OverlayText::drawDetached()
 {
 	draw(mDrawables.at(0).get(), Matrix4(Magnum::NoInit), *RoomManager::singleton->mCamera);

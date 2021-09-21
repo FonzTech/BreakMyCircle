@@ -198,10 +198,6 @@ void Dialog::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 {
 }
 
-void Dialog::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 std::shared_ptr<OverlayText>& Dialog::getTitleDrawable()
 {
 	return mTitle;

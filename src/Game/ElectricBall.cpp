@@ -165,7 +165,3 @@ void ElectricBall::draw(BaseDrawable* baseDrawable, const Matrix4& transformatio
 			.draw(*baseDrawable->mMesh);
 	}
 }
-
-void ElectricBall::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}

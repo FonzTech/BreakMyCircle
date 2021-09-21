@@ -304,10 +304,6 @@ void Logo::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix,
 	}
 }
 
-void Logo::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 void Logo::buildAnimations()
 {
 	// Create animation player

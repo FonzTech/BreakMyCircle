@@ -315,10 +315,6 @@ void SafeMinigame::draw(BaseDrawable* baseDrawable, const Matrix4& transformatio
 	}
 }
 
-void SafeMinigame::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 void SafeMinigame::setupCamera()
 {
 	// Set camera parameters

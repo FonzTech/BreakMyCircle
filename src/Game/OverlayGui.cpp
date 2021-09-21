@@ -67,10 +67,6 @@ void OverlayGui::draw(BaseDrawable* baseDrawable, const Matrix4& transformationM
 	}
 }
 
-void OverlayGui::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 void OverlayGui::setRotationInDegrees(const Float rotation)
 {
 	mRotation = Rad(Deg(rotation));

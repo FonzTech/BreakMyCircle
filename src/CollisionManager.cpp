@@ -5,7 +5,7 @@ CollisionManager::CollisionManager()
 {
 }
 
-std::unique_ptr<std::unordered_set<GameObject*>> CollisionManager::checkCollision(const Range3D & bbox, const GameObject* go, const std::unordered_set<Int> & types) const
+std::unique_ptr<std::unordered_set<GameObject*>> CollisionManager::checkCollision(const Range3D & bbox, const GameObject* go, const std::unordered_set<Int> & types, const Containers::Optional<std::function<bool(GameObject* collided)>> & verifier) const
 {
 	const Int type = go->getType();
 	std::unique_ptr<std::unordered_set<GameObject*>> set = std::make_unique<std::unordered_set<GameObject*>>();
@@ -21,10 +21,13 @@ std::unique_ptr<std::unordered_set<GameObject*>> CollisionManager::checkCollisio
 		}
 		else if (Math::intersects(bbox, gos->at(i)->mBbox))
 		{
-			GameObject* p = gi.get();
-			if (set->find(p) == set->end())
+			if (verifier == Containers::NullOpt || (*verifier)(gi.get()))
 			{
-				set->insert(p);
+				GameObject* p = gi.get();
+				if (set->find(p) == set->end())
+				{
+					set->insert(p);
+				}
 			}
 		}
 	}

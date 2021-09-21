@@ -305,10 +305,6 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 	}
 }
 
-void Scenery::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 void Scenery::createWaterDrawable()
 {
 	// Get mesh and shader

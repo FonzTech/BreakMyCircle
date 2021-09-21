@@ -63,10 +63,6 @@ void OverlayGuiDetached::draw(BaseDrawable* baseDrawable, const Matrix4& transfo
 	drawDetached();
 }
 
-void OverlayGuiDetached::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 void OverlayGuiDetached::drawDetached()
 {
 	switch (mCustomType)

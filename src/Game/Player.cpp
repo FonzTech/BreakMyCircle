@@ -373,10 +373,6 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	shader.draw(*baseDrawable->mMesh);
 }
 
-void Player::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 void Player::postConstruct()
 {
 	const std::shared_ptr<ElectricBall> go = std::make_shared<ElectricBall>(mParentIndex);

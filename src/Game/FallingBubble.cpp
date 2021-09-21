@@ -1,4 +1,4 @@
-#include "FallingBubble.h"
+#include "FallingBubble.h"	
 
 #include <thread>
 
@@ -111,6 +111,7 @@ void FallingBubble::update()
 	{
 	case GO_FB_TYPE_BUBBLE:
 	case GO_FB_TYPE_STONE:
+	case GO_FB_TYPE_BLACKHOLE:
 
 		// Advance falling animation
 		if (mDelay > 0.0f)
@@ -202,13 +203,6 @@ void FallingBubble::update()
 
 		break;
 
-	case GO_FB_TYPE_BLACKHOLE:
-
-		(*mManipulator)
-			.resetTransformation()
-			.scale(Vector3(2.0f))
-			.translate(mPosition + Vector3(0.0f, 0.0f, 0.2f));
-
 		break;
 	}
 }
@@ -241,10 +235,6 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 			.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
 			.draw(*baseDrawable->mMesh);
 	}
-}
-
-void FallingBubble::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
 }
 
 std::shared_ptr<Audio::Playable3D>& FallingBubble::buildSound()

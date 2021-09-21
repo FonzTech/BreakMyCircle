@@ -203,10 +203,6 @@ void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	}
 }
 
-void Bubble::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 void Bubble::updateBBox()
 {
 	mBbox = Range3D{ mPosition - Vector3(0.8f), mPosition + Vector3(0.8f) };

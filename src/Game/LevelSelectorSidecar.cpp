@@ -74,10 +74,6 @@ void LevelSelectorSidecar::draw(BaseDrawable* baseDrawable, const Matrix4& trans
 	}
 }
 
-void LevelSelectorSidecar::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
-{
-}
-
 void LevelSelectorSidecar::setScale(const Vector3 & scale)
 {
 	mScale = scale;
