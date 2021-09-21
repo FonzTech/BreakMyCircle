@@ -21,7 +21,7 @@ SafeMinigame::SafeMinigame(const Int parentIndex, const Float startingScale) : G
 {
 	// Assign members
 	mParentIndex = parentIndex;
-	mMode = 0;
+	mMode = -1;
 	mGlowAnim = 0.0f;
 	mScale = startingScale;
 	mAnimY = 0.0f;
@@ -95,9 +95,25 @@ SafeMinigame::SafeMinigame(const Int parentIndex, const Float startingScale) : G
 	}
 
 	// Load audios
-	for (UnsignedInt i = 0; i < 2; ++i)
+	for (UnsignedInt i = 0; i < 3; ++i)
 	{
-		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(i == 0 ? RESOURCE_AUDIO_COIN : RESOURCE_AUDIO_SAFE_OPEN);
+		std::string an;
+		switch (i)
+		{
+		case 0:
+			an = RESOURCE_AUDIO_COIN;
+			break;
+
+		case 1:
+			an = RESOURCE_AUDIO_SAFE_OPEN;
+			break;
+
+		case 2:
+			an = RESOURCE_AUDIO_GLORY;
+			break;
+		}
+
+		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(an);
 		mPlayables[i] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
 		mPlayables[i]->source()
 			.setBuffer(buffer)
@@ -123,6 +139,16 @@ void SafeMinigame::update()
 	// Handle mode
 	switch (mMode)
 	{
+	case -1:
+		mScale += mDeltaTime;
+		if (mScale >= 0.0f)
+		{
+			playSfxAudio(2);
+			mScale = 0.0f;
+			mMode = 0;
+		}
+		break;
+
 	case 0:
 		// Compute animations
 		if (mScale < 1.0f)

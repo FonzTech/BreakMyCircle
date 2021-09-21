@@ -101,6 +101,7 @@
 #define RESOURCE_AUDIO_STAR_PREFIX "star_"
 #define RESOURCE_AUDIO_CONGRATS_PREFIX "congrats_"
 #define RESOURCE_AUDIO_SAFE_OPEN "safe_open"
+#define RESOURCE_AUDIO_GLORY "glory"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"
