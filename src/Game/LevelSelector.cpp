@@ -50,14 +50,6 @@ std::unordered_map<Int, std::array<Vector3, 6>> LevelSelector::sLevelButtonPosit
 		Vector3(-7.93295f, 0.3f, -4.16931f),
 		Vector3(-1.2867f, 0.3f, -11.4327f),
 		Vector3(5.35956f, 0.3f, -19.2658f)
-	}),
-	std::make_pair(2, std::array<Vector3, 6>{
-		Vector3(6.9727f, 0.3f, 20.1046f),
-		Vector3(0.221052f, 0.3f, 12.0666f),
-		Vector3(-6.41381f, 0.3f, 5.51524f),
-		Vector3(-7.93295f, 0.3f, -4.16931f),
-		Vector3(-1.2867f, 0.3f, -11.4327f),
-		Vector3(5.35956f, 0.3f, -19.2658f)
 	})
 };
 
@@ -1036,16 +1028,17 @@ void LevelSelector::handleScrollableScenery()
 				}
 			}
 
+			const Int si = Math::min(1, modelIndex);
 			{
 				const auto& go = std::make_shared<LevelSelectorSidecar>(GOL_PERSP_FIRST, levelIndex);
-				go->mPosition = tp + sLevelButtonPositions[modelIndex][i];
+				go->mPosition = tp + sLevelButtonPositions[si][i];
 				go->setScale(Vector3(0.0f));
 				go->setParameters(bs->texture, objectId);
 				bs->sidecar = (std::shared_ptr<LevelSelectorSidecar>&) RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(go, true);
 			}
 
 			// Apply the same transformations
-			bs->position = sLevelButtonPositions[modelIndex][i];
+			bs->position = sLevelButtonPositions[si][i];
 		}
 	}
 }
