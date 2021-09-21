@@ -862,6 +862,9 @@ void LevelSelector::shootCallback(const Int state, const Color3 & preColor, cons
 			RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go);
 		}
 
+		// Fix level transparency
+		RoomManager::singleton->fixLevelTransparency();
+
 		break;
 	}
 }

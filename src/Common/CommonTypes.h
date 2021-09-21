@@ -26,6 +26,8 @@
 #define RESOURCE_TEXTURE_EXPLOSION "tex_explosion"
 #define RESOURCE_TEXTURE_LIGHTNING "tex_lightning"
 #define RESOURCE_TEXTURE_LIGHTORB "tex_lightorb"
+#define RESOURCE_TEXTURE_BLACKHOLE_BG "tex_blackhole_bg"
+#define RESOURCE_TEXTURE_BLACKHOLE_FG "tex_blackhole_fg"
 #define RESOURCE_TEXTURE_BUBBLE_RED "tex_bubble_red"
 #define RESOURCE_TEXTURE_BUBBLE_GREEN "tex_bubble_green"
 #define RESOURCE_TEXTURE_BUBBLE_BLUE "tex_bubble_blue"

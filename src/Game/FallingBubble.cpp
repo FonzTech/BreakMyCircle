@@ -29,7 +29,7 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 	mMaxVerticalSpeed = maxVerticalSpeed;
 
 	// Create sparkle plane
-	if (mCustomType == GO_FB_TYPE_BUBBLE)
+	if (mCustomType == GO_FB_TYPE_BUBBLE || mCustomType == GO_FB_TYPE_BLACKHOLE)
 	{
 		// Init members
 		mVelocity = Vector3(0.0f);
@@ -201,6 +201,15 @@ void FallingBubble::update()
 			.translate(mPosition);
 
 		break;
+
+	case GO_FB_TYPE_BLACKHOLE:
+
+		(*mManipulator)
+			.resetTransformation()
+			.scale(Vector3(2.0f))
+			.translate(mPosition + Vector3(0.0f, 0.0f, 0.2f));
+
+		break;
 	}
 }
 
@@ -244,6 +253,7 @@ std::shared_ptr<Audio::Playable3D>& FallingBubble::buildSound()
 	switch (mCustomType)
 	{
 	case GO_FB_TYPE_BUBBLE:
+	case GO_FB_TYPE_BLACKHOLE:
 		filename = RESOURCE_AUDIO_BUBBLE_FALL;
 		break;
 

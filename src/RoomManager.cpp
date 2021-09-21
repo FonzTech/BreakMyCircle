@@ -35,7 +35,8 @@ std::unordered_map<UnsignedInt, RoomManager::BubbleData> RoomManager::sBubbleCol
 	{ BUBBLE_BOMB.toSrgbInt(), { BUBBLE_BOMB, RESOURCE_TEXTURE_WHITE } },
 	{ BUBBLE_PLASMA.toSrgbInt(), { BUBBLE_PLASMA, RESOURCE_TEXTURE_WHITE } },
 	{ BUBBLE_ELECTRIC.toSrgbInt(), { BUBBLE_ELECTRIC, RESOURCE_TEXTURE_WHITE } },
-	{ BUBBLE_STONE.toSrgbInt(), { BUBBLE_STONE, RESOURCE_TEXTURE_WHITE } }
+	{ BUBBLE_STONE.toSrgbInt(), { BUBBLE_STONE, RESOURCE_TEXTURE_WHITE } },
+	{ BUBBLE_BLACKHOLE.toSrgbInt(), { BUBBLE_BLACKHOLE, RESOURCE_TEXTURE_WHITE } }
 };
 
 std::array<UnsignedInt, 7U> RoomManager::sBubbleKeys = {
@@ -357,12 +358,45 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	// Delete game level layer
 	mGoLayers[GOL_PERSP_SECOND].list->clear();
 
-	// Create bubbles
-	const siv::PerlinNoise perlin(seed);
-
+	// Create variables
 	const double fSeed(seed);
 	const Float fSquare(xlen);
 	const Int iSeed(seed);
+
+	const Float len = fSquare * 2.0f; // "2" is the fixed diameter of a "game bubble"
+	const Float playerY = -13.0f - len;
+
+	// Get middle Y position
+	const auto yp = playerY * 0.5f - 1.0f;
+
+	// Create player limit line, just above the player
+	{
+		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 1.0f, 0.0f, 0.0f, 1.0f }, GO_LL_TYPE_RED);
+		p->mPosition = { fSquare, playerY + 6.0f, 0.2f };
+		p->setScale(Vector3(100.0f, 0.2f, 1.0f));
+		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
+	}
+
+	// Create left and right limit line
+	for (UnsignedInt i = 0; i < 2; ++i)
+	{
+		const Float xp = i ? len + 50.0f : -50.0f;
+		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 0.0f, 0.0f, 0.0f, 0.2f }, GO_LL_TYPE_BLACK);
+		p->mPosition = { xp, playerY + 56.0f, 0.1f };
+		p->setScale(Vector3(50.0f, 50.0f, 1.0f));
+		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
+	}
+
+	// Top limit line
+	{
+		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 0.25f, 0.25f, 0.25f, 1.0f }, GO_LL_TYPE_BLACK);
+		p->mPosition = { 0.0f, 1.25f, 0.1f };
+		p->setScale(Vector3(16.0f, 0.2f, 1.0f));
+		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
+	}
+
+	// Create bubbles
+	const siv::PerlinNoise perlin(seed);
 
 	const double xf = xlen / frequency;
 	const double yf = ylen / frequency;
@@ -442,50 +476,20 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 		}
 	}
 
+	// Fix transparency issues for some bubbles
+	fixLevelTransparency();
+
 	// Setup projectile parameters
-	const Float len = fSquare * 2.0f; // "2" is the fixed diameter of a "game bubble"
-	{
-		Projectile::setGlobalParameters(1.0f, len - 1.0f);
-	}
+	Projectile::setGlobalParameters(1.0f, len - 1.0f);
 
 	// Create player
 	std::shared_ptr<GameObject> player = nullptr;
-
 	{
 		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 		const auto& p = std::make_shared<Player>(GOL_PERSP_SECOND, shootCallback);
-		p->mPosition = { fSquare, -13.0f - len, 0.0f };
+		p->mPosition = { fSquare, playerY, 0.0f };
 		p->mCameraDist = (50.0f / (1.0f / ar) * 0.95f) + fSquare;
 		player = RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p, true);
-	}
-
-	// Get middle Y position
-	const auto yp = player->mPosition.y() * 0.5f - 1.0f;
-
-	// Create player limit line, just above the player
-	{
-		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 1.0f, 0.0f, 0.0f, 1.0f }, GO_LL_TYPE_RED);
-		p->mPosition = { fSquare, player->mPosition.y() + 6.0f, 0.2f };
-		p->setScale(Vector3(100.0f, 0.2f, 1.0f));
-		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
-	}
-
-	// Create left and right limit line
-	for (UnsignedInt i = 0; i < 2; ++i)
-	{
-		const Float xp = i ? len + 50.0f : -50.0f;
-		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 0.0f, 0.0f, 0.0f, 0.2f }, GO_LL_TYPE_BLACK);
-		p->mPosition = { xp, player->mPosition.y() + 56.0f, 0.1f };
-		p->setScale(Vector3(50.0f, 50.0f, 1.0f));
-		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
-	}
-
-	// Top limit line
-	{
-		std::shared_ptr<LimitLine> p = std::make_shared<LimitLine>(GOL_PERSP_SECOND, Color4{ 0.25f, 0.25f, 0.25f, 1.0f }, GO_LL_TYPE_BLACK);
-		p->mPosition = { 0.0f, 1.25f, 0.1f };
-		p->setScale(Vector3(16.0f, 0.2f, 1.0f));
-		RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(p);
 	}
 
 	// Call post-construct for player
@@ -497,11 +501,6 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 		gol.cameraEye = { fSquare, yp, 1.0f };
 		gol.cameraTarget = { fSquare, yp, 0.0f };
 	}
-
-	/*
-	mCameraEye = { 20.0f, -35.0f, 20.0f };
-	mCameraTarget = { 8.0f, -35.0f, 0.0f };
-	*/
 }
 
 std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseValue(const std::uint32_t seed, const double value)
@@ -522,14 +521,28 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		const bool isHole = isInRange(value, 0.09) || isInRange(value, 0.54) || isInRange(value, 0.98);
 		const bool isCoin = isInRange(value, 0.15, 0.03) || isInRange(value, 0.65, 0.03) || isInRange(value, 0.90, 0.03);
 		const bool isStone = isInRange(value, 0.05) || isInRange(value, 0.37) || isInRange(value, 0.86);
+		const bool isBlackhole = isInRange(value, 0.10) || isInRange(value, 0.42) || isInRange(value, 0.76);
 
 		if (isHole)
 		{
 			d->key = -1;
 		}
-		else if (isCoin || isStone)
+		else if (isCoin || isStone || isBlackhole)
 		{
-			const auto k = isCoin ? BUBBLE_COIN.toSrgbInt() : BUBBLE_STONE.toSrgbInt();
+			UnsignedInt k = 0U;
+			if (isCoin)
+			{
+				k = BUBBLE_COIN.toSrgbInt();
+			}
+			else if (isStone)
+			{
+				k = BUBBLE_STONE.toSrgbInt();
+			}
+			else if (isBlackhole)
+			{
+				k = BUBBLE_BLACKHOLE.toSrgbInt();
+			}
+
 			const auto& vd = sBubbleColors[k];
 			params["color"] = {
 				{ "int", k },
@@ -561,4 +574,19 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 Float RoomManager::isInRange(const double source, const double dest, const double range)
 {
 	return Math::abs(source - dest) < range;
+}
+
+void RoomManager::fixLevelTransparency()
+{
+	for (auto& item : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
+	{
+		if (item->getType() == GOT_BUBBLE)
+		{
+			auto& p = (std::shared_ptr<Bubble>&)item;
+			if (p->mAmbientColor == BUBBLE_BLACKHOLE)
+			{
+				p->pushToFront();
+			}
+		}
+	}
 }

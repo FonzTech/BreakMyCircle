@@ -43,13 +43,14 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 	mAmbientColor = ambientColor;
 	mShakePos = Vector3(0.0f);
 	mShakeFact = 0.0f;
+	mBlackholeAnim = 0.0f;
 
 	// Load asset for "Coin" game object, if required
 	if (mAmbientColor == BUBBLE_COIN)
 	{
-		mItemManipulator = new Object3D{ mManipulator.get() };
+		mItemManipulator.push_back(std::move(new Object3D{ mManipulator.get() }));
 
-		AssetManager().loadAssets(*this, *mItemManipulator, RESOURCE_SCENE_COIN, this);
+		AssetManager().loadAssets(*this, *mItemManipulator.at(0), RESOURCE_SCENE_COIN, this);
 		mRotation = Float(Rad(Deg(std::rand() % 360)));
 
 		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
@@ -59,10 +60,39 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 		AssetManager().loadAssets(*this, *mManipulator, RESOURCE_SCENE_STONE, this);
 		mRotation = 0.0f;
 	}
+	else if (mAmbientColor == BUBBLE_BLACKHOLE)
+	{
+		for (UnsignedInt i = 0; i < 5U; ++i)
+		{
+			// Variables
+			const bool first = i == 0U;
+			if (!first)
+			{
+				mItemManipulator.push_back(std::move(new Object3D{ mManipulator.get() }));
+				mItemParams.push_back(1.0f + 0.5f * Float(i));
+			}
+
+			// Load assets
+			Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D::Position, Shaders::Flat3D::TextureCoordinates>(RESOURCE_MESH_PLANE_FLAT);
+			Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(first ? RESOURCE_TEXTURE_BLACKHOLE_BG : RESOURCE_TEXTURE_BLACKHOLE_FG);
+			Resource<GL::AbstractShaderProgram, Shaders::Flat3D> resShader = CommonUtility::singleton->getFlat3DShader();
+
+			// Create drawable
+			auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
+			std::shared_ptr<GameDrawable<Shaders::Flat3D>> d = std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, resShader, resMesh, resTexture);
+			d->setParent(first ? mManipulator.get() : mItemManipulator.at(i - 1U));
+			d->setDrawCallback(this);
+			d->setObjectId(i - 1);
+			mDrawables.emplace_back(d);
+		}
+
+		// Init members
+		mRotation = 0.0f;
+	}
 	else
 	{
-		mRotation = 0.0f;
 		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
+		mRotation = 0.0f;
 	}
 }
 
@@ -84,24 +114,62 @@ void Bubble::update()
 	}
 
 	// Update transformations
-	const bool& isCoin = mAmbientColor == BUBBLE_COIN;
-	if (isCoin)
+	if (mAmbientColor == BUBBLE_COIN)
 	{
-		mRotation += mDeltaTime * Constants::pi();
+		mRotation += mDeltaTime;
 
-		(*mItemManipulator)
+		(*mItemManipulator.at(0))
 			.resetTransformation()
 			.scale(Vector3(0.75f))
 			.rotateX(Rad(Deg(90.0f)))
-			.rotateY(Rad(mRotation))
+			.rotateY(Deg(mRotation * 180.0f))
 			.translate(Vector3(0.0f, 0.0f, -0.5f));
+
+		(*mManipulator)
+			.resetTransformation();
+	}
+	else if (mAmbientColor == BUBBLE_BLACKHOLE)
+	{
+		mRotation += mDeltaTime;
+
+		mBlackholeAnim -= mDeltaTime * 0.25f;
+		if (mBlackholeAnim < 0.0f)
+		{
+			mBlackholeAnim = 1.0f;
+		}
+
+		for (Int i = 0; i < 4; ++i)
+		{
+			mItemParams[i] = mItemParams[i] - mDeltaTime;
+			if (mItemParams[i] < 0.0f)
+			{
+				mItemParams[i] = 1.0f;
+			}
+
+			(*mItemManipulator.at(i))
+				.resetTransformation()
+				.scale(Vector3(mItemParams[i] * 3.0f))
+				.translate(Vector3(0.0f, 0.0f, 0.1f + 0.1f * Float(i)));
+		}
+
+		(*mManipulator)
+			.resetTransformation()
+			.rotateZ(Deg(mRotation * 90.0f))
+			.scale(Vector3(2.0f))
+			.translate(Vector3(0.0f, 0.0f, 0.2f));
+	}
+	else
+	{
+		(*mManipulator)
+			.resetTransformation();
 	}
 
-	const Vector3 shakeVect = mShakeFact > 0.001f ? mShakePos * std::sin(mShakeFact * Constants::pi()) : Vector3(0.0f);
-
-	(*mManipulator)
-		.resetTransformation()
-		.translate(mPosition + shakeVect);
+	// Apply shake effect
+	{
+		const Vector3 shakeVect = mShakeFact > 0.001f ? mShakePos * std::sin(mShakeFact * Constants::pi()) : Vector3(0.0f);
+		(*mManipulator)
+			.translate(mPosition + shakeVect);
+	}
 
 	// Update bounding box
 	updateBBox();
@@ -109,17 +177,30 @@ void Bubble::update()
 
 void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPosition(mPosition + Vector3(0.0f, 0.0f, 1.5f))
-		.setLightColor(mAmbientColor == BUBBLE_COIN ? 0xd0d0d0_rgbf : 0x808080_rgbf)
-		.setSpecularColor(0xffffff00_rgbaf)
-		.setAmbientColor(0xc0c0c0_rgbf)
-		.setDiffuseColor(0x808080_rgbf)
-		.setTransformationMatrix(transformationMatrix)
-		.setNormalMatrix(transformationMatrix.normalMatrix())
-		.setProjectionMatrix(camera.projectionMatrix())
-		.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
-		.draw(*baseDrawable->mMesh);
+	if (mAmbientColor == BUBBLE_BLACKHOLE)
+	{
+		const Float alpha = baseDrawable == mDrawables[0].get() ? 1.0f : Math::sin(Deg(Math::clamp(mItemParams[baseDrawable->getObjectId()], 0.0f, 1.0f) * 180.0f));
+		((Shaders::Flat3D&)baseDrawable->getShader())
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+			.bindTexture(*baseDrawable->mTexture)
+			.setColor(Color4{ 1.0f, 1.0f, 1.0f, alpha })
+			.setAlphaMask(0.001f)
+			.draw(*baseDrawable->mMesh);
+	}
+	else
+	{
+		((Shaders::Phong&) baseDrawable->getShader())
+			.setLightPosition(mPosition + Vector3(0.0f, 0.0f, 1.5f))
+			.setLightColor(mAmbientColor == BUBBLE_COIN ? 0xd0d0d0_rgbf : 0x808080_rgbf)
+			.setSpecularColor(0xffffff00_rgbaf)
+			.setAmbientColor(0xc0c0c0_rgbf)
+			.setDiffuseColor(0x808080_rgbf)
+			.setTransformationMatrix(transformationMatrix)
+			.setNormalMatrix(transformationMatrix.normalMatrix())
+			.setProjectionMatrix(camera.projectionMatrix())
+			.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
+			.draw(*baseDrawable->mMesh);
+	}
 }
 
 void Bubble::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
@@ -471,6 +552,10 @@ Int Bubble::getCustomTypeForFallingBubble(const Color3 & color)
 	else if (color == BUBBLE_STONE)
 	{
 		return GO_FB_TYPE_STONE;
+	}
+	else if (color == BUBBLE_BLACKHOLE)
+	{
+		return GO_FB_TYPE_BLACKHOLE;
 	}
 	else
 	{

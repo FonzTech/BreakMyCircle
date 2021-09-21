@@ -7,6 +7,7 @@
 #define BUBBLE_PLASMA 0x000003_rgbf
 #define BUBBLE_ELECTRIC 0x000004_rgbf
 #define BUBBLE_STONE 0x000005_rgbf
+#define BUBBLE_BLACKHOLE 0x000006_rgbf
 #define BUBBLE_COLOR_RED 0xff0000_rgbf
 #define BUBBLE_COLOR_GREEN 0x00ff00_rgbf
 #define BUBBLE_COLOR_BLUE 0x0000ff_rgbf
@@ -102,8 +103,10 @@ private:
 	};
 
 	// Class members
-	Object3D* mItemManipulator;
+	std::vector<Object3D*> mItemManipulator;
+	std::vector<Float> mItemParams;
 	Vector3 mShakePos;
 	Float mShakeFact;
 	Float mRotation;
+	Float mBlackholeAnim;
 };

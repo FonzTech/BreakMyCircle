@@ -153,6 +153,7 @@ public:
 	void prepareRoom(const bool stopBgMusic);
 	void loadRoom(const std::string & name);
 	void createLevelRoom(const std::shared_ptr<IShootCallback> & shootCallback, const Int xlen, const Int ylen, const std::uint32_t seed, const std::int32_t octaves, const double frequency);
+	void fixLevelTransparency();
 
 protected:
 	// Instantiator data holder

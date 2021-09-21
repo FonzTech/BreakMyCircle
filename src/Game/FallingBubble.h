@@ -5,6 +5,7 @@
 #define GO_FB_TYPE_COIN 3
 #define GO_FB_TYPE_BOMB 4
 #define GO_FB_TYPE_STONE 5
+#define GO_FB_TYPE_BLACKHOLE 6
 
 #include <unordered_set>
 #include <nlohmann/json.hpp>
