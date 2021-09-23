@@ -65,7 +65,11 @@ bool RoomManager::SaveData::load()
 	// Set default value
 	{
 		flags = 0U;
+#if NDEBUG or _DEBUG
+		maxLevelId = 48U;
+#else
 		maxLevelId = 2U;
+#endif
 		coinTotal = 0;
 		coinCurrent = 0;
 

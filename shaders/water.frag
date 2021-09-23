@@ -29,9 +29,10 @@ void main()
 	float angle = fract(wm.r + frame) * PI * 2.0;
 	
 	vec2 dc;
+  // Don't "fract" here
 	{
-		dc.x = fract(tc.x + cos(angle) * speed * 0.01);
-		dc.y = fract(tc.y + sin(angle) * speed * 0.01);
+		dc.x = tc.x + cos(angle) * speed * 0.01;
+		dc.y = tc.y + sin(angle) * speed * 0.01;
 	}
 	
 	// Water color

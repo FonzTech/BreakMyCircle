@@ -8,13 +8,14 @@
 #include "../GameObject.h"
 #include "../Graphics/GameDrawable.h"
 #include "../Shaders/WaterShader.h"
+#include "../Shaders/StarRoadShader.h"
 
 class Scenery : public GameObject
 {
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	Scenery(const Int parentIndex, const Int modelIndex);
+	Scenery(const Int parentIndex, const Int modelIndex, const Int subType = 0);
 	~Scenery();
 
 	const Int getType() const override;
@@ -29,6 +30,7 @@ protected:
 
 	struct ObjectAnimations
 	{
+		Float inc;
 		Float frame;
 		Float rotateFactor;
 		Float scaleFactor;
@@ -48,6 +50,7 @@ protected:
 
 	// Object data
 	Int mModelIndex;
+	Int mSubType;
 	bool mAnimateInGameCamera;
 	Vector3 mLightPosition;
 
@@ -55,7 +58,11 @@ protected:
 	Float mAlphaCheckTimer;
 	Float mFrame;
 	ObjectAnimations mAnim;
-	// std::unique_ptr<CubicBezier2D> mCubicBezier;
+
+	// Star road
+	Resource<GL::AbstractShaderProgram, StarRoadShader> mStarRoadShader;
+	Resource<GL::Texture2D> mStarRoadAlphaMap;
+	std::weak_ptr<BaseDrawable> mStarRoad;
 
 	// Water objects
 	std::unordered_map<BaseDrawable*, WaterDrawableHolder> mWaterHolders;

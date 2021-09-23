@@ -196,6 +196,7 @@
     <ClCompile Include="src\Shaders\ScreenQuadShader.cpp" />
     <ClCompile Include="src\Game\Skybox.cpp" />
     <ClCompile Include="src\Shaders\SpriteShader.cpp" />
+    <ClCompile Include="src\Shaders\StarRoadShader.cpp" />
     <ClCompile Include="src\Shaders\WaterShader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -242,6 +243,7 @@
     <ClInclude Include="src\Common\CommonTypes.h" />
     <ClInclude Include="src\InputManager.h" />
     <ClInclude Include="src\Game\Player.h" />
+    <ClInclude Include="src\Shaders\StarRoadShader.h" />
     <ClInclude Include="src\Shaders\WaterShader.h" />
   </ItemGroup>
   <ItemGroup>

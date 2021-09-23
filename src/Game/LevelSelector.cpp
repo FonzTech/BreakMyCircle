@@ -973,7 +973,7 @@ void LevelSelector::handleScrollableScenery()
 
 		// Create scenery
 		{
-			const std::shared_ptr<Scenery> go = std::make_unique<Scenery>(GOL_PERSP_FIRST, modelIndex);
+			const std::shared_ptr<Scenery> go = std::make_unique<Scenery>(GOL_PERSP_FIRST, modelIndex, Math::abs(yp) % 2);
 			go->mManipulator->translate(tp);
 			go->mPosition = tp;
 			mSceneries[yp].scenery = (std::shared_ptr<Scenery>&) RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(go, true);
@@ -1962,7 +1962,7 @@ Int LevelSelector::computeScore()
 
 Int LevelSelector::getModelIndex(const Int yp)
 {
-	return Int(Math::floor(Float(Math::abs(yp)) / 2.0f)) % 3;
+	return Int(Math::floor(Float(Math::abs(yp)) / 2.0f)) % 4;
 }
 
 Vector3 LevelSelector::getLastLevelPos()

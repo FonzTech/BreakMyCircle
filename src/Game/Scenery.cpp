@@ -29,22 +29,23 @@ std::shared_ptr<GameObject> Scenery::getInstance(const nlohmann::json & params)
 	return p;
 }
 
-Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(parentIndex)
+Scenery::Scenery(const Int parentIndex, const Int modelIndex, const Int subType) : GameObject(parentIndex)
 {
 	// Init members
 	// mCubicBezier = std::make_unique<CubicBezier2D>(Vector2(0.0f, 0.0f), Vector2(0.11f, -0.02f), Vector2(0.0f, 1.01f), Vector2(1.0f));
 	mParentIndex = parentIndex;
 	mModelIndex = modelIndex;
+	mSubType = subType;
 	mLightPosition = Vector3(0.0f);
 	mAlphaCheckTimer = 5.0f;
 	mFrame = 0.0f;
 
-	mAnim = { 0.0f, 0.0f, 0.0f };
+	mAnim = { 1.0f, 0.0f, 0.0f, 0.0f };
 
 	// Fill manipulator list
-	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
-	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
-	mManipulatorList.push_back(new Object3D{ mManipulator.get() });
+	mManipulatorList.push_back(std::move(new Object3D{ mManipulator.get() }));
+	mManipulatorList.push_back(std::move(new Object3D{ mManipulator.get() }));
+	mManipulatorList.push_back(std::move(new Object3D{ mManipulator.get() }));
 
 	// Apply transformations
 	(*mManipulatorList[0])
@@ -67,26 +68,39 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 
 			rk = RESOURCE_SCENE_WORLD_1;
 
+			mAnim.inc = 0.5f;
 			mAnim.rotateFactor = 5.0f;
 			mAnim.scaleFactor = 1.0f;
 
 			break;
 
 		case 1:
-			mManipulatorList[0]->translate(Vector3(0.0f, 0.3f, 0.0f));
 			rk = RESOURCE_SCENE_WORLD_2;
 
+			mAnim.inc = 0.5f;
 			mAnim.rotateFactor = 2.5f;
 			mAnim.scaleFactor = 0.25f;
 
 			break;
 
 		case 2:
-			mManipulatorList[0]->translate(Vector3(0.0f, 0.3f, 0.0f));
 			rk = RESOURCE_SCENE_WORLD_3;
 
+			mAnim.inc = 0.5f;
 			mAnim.rotateFactor = 5.0f;
 			mAnim.scaleFactor = 0.05f;
+
+			break;
+
+		case 3:
+			rk = RESOURCE_SCENE_WORLD_4;
+
+			mAnim.inc = 3.0f;
+			mAnim.rotateFactor = 5.0f;
+			mAnim.scaleFactor = 0.05f;
+
+			mStarRoadShader = CommonUtility::singleton->getStarRoadShader();
+			mStarRoadAlphaMap = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_STARROAD_ALPHAMAP);
 
 			break;
 		}
@@ -105,21 +119,46 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex) : GameObject(paren
 
 	// Get wind-animated objects
 	{
-		const std::unordered_set<std::string> names = { "PalmTreeBarkV", "PalmTreeLeavesVT", "PalmV", "CactusV", "PineVT", "PineTrunkV" };
+		const std::unordered_set<std::string> names1 = { "PalmTreeBarkV", "PalmTreeLeavesVT", "PalmV", "CactusV", "PineVT", "PineTrunkV", "SaturnGlobeV" };
+		const std::unordered_set<std::string> names2 = { "LeavesVT", "BushesVT", "BushLeavesVT", "TreeVT" };
+
 		for (const auto& item : mDrawables)
 		{
-			if (names.find(item->mMesh->label()) != names.end())
+			const auto& label = item->mMesh->label();
+
+			// Saturn Globe
+			if (label == "SaturnGlobeV")
+			{
+				if (mSubType == 0)
+				{
+					item->mTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_MOON);
+				}
+			}
+
+			// Star Road
+			if (label == "RoadSideVT")
+			{
+				mStarRoad = item;
+			}
+			// Saturn Ring
+			else if (label == "SaturnRingVT")
+			{
+				(*item)
+					.resetTransformation()
+					.rotateX(Deg(mSubType == 0 ? 0.0f : -5.0f));
+
+				if (mSubType == 0)
+				{
+					item->translate(Vector3(0.0f, -500.0f, 0.0f));
+				}
+			}
+			// Rotate
+			else if (names1.find(label) != names1.end())
 			{
 				mWindRotateObjects.emplace_back(item);
 			}
-		}
-	}
-
-	{
-		const std::unordered_set<std::string> names = { "LeavesVT", "BushesVT", "BushLeavesVT", "TreeVT" };
-		for (const auto& item : mDrawables)
-		{
-			if (names.find(item->mMesh->label()) != names.end())
+			// Scale
+			else if (names2.find(label) != names2.end())
 			{
 				mWindScaleObjects.emplace_back(item);
 			}
@@ -168,9 +207,9 @@ void Scenery::update()
 	}
 
 	// Animate wind objects
-	mAnim.frame += mDeltaTime * 0.5f;
+	mAnim.frame += mDeltaTime * mAnim.inc;
 	{
-		const Float angle = Math::sin(Rad(mAnim.frame));
+		const Float angle = mModelIndex == 3 ? Float(Deg(mAnim.frame)) : Math::sin(Rad(mAnim.frame));
 		for (auto& item : mWindRotateObjects)
 		{
 			if (item.expired())
@@ -179,9 +218,26 @@ void Scenery::update()
 			}
 
 			const auto& d = item.lock();
-			(*d)
-				.resetTransformation()
-				.rotateX(Deg(angle * mAnim.rotateFactor));
+
+			if (mModelIndex == 3)
+			{
+				(*d)
+					.resetTransformation()
+					.rotateY(Deg(angle * mAnim.rotateFactor))
+					.rotateX(Deg(15.0f))
+					.rotateY(Deg(45.0f));
+
+				if (mSubType == 0 && d->mMesh->label() == "SaturnGlobeV")
+				{
+					d->translate(Vector3(0.0f, 0.0f, 10.0f));
+				}
+			}
+			else
+			{
+				(*d)
+					.resetTransformation()
+					.rotateX(Deg(angle * mAnim.rotateFactor));
+			}
 		}
 
 		for (auto& item : mWindScaleObjects)
@@ -278,6 +334,16 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 			.bindDisplacementTexture(*it->second.parameters.displacementTexture)
 			.bindWaterTexture(*it->second.parameters.waterTexture)
 			.bindEffectsTexture(*it->second.parameters.effectsTexture)
+			.draw(*baseDrawable->mMesh);
+	}
+	else if (!mStarRoad.expired() && mStarRoad.lock().get() == baseDrawable)
+	{
+		(*mStarRoadShader)
+			.setTransformationMatrix(transformationMatrix)
+			.setProjectionMatrix(camera.projectionMatrix())
+			.bindDisplacementTexture(*baseDrawable->mTexture)
+			.bindAlphaMapTexture(*mStarRoadAlphaMap)
+			.setIndex(mFrame)
 			.draw(*baseDrawable->mMesh);
 	}
 	else

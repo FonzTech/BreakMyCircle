@@ -28,6 +28,7 @@
 #include "../Shaders/SpriteShader.h"
 #include "../Shaders/PlasmaShader.h"
 #include "../Shaders/WaterShader.h"
+#include "../Shaders/StarRoadShader.h"
 #include "../GameObject.h"
 
 using namespace Magnum;
@@ -159,5 +160,6 @@ public:
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> getFlat3DShader();
 	Resource<GL::AbstractShaderProgram, PlasmaShader> getPlasmaShader();
 	Resource<GL::AbstractShaderProgram, WaterShader> getWaterShader();
+	Resource<GL::AbstractShaderProgram, StarRoadShader> getStarRoadShader();
 	std::string getTextureNameForPowerup(const UnsignedInt index);
 };
