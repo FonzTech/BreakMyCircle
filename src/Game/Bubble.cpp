@@ -149,7 +149,7 @@ void Bubble::update()
 			(*mItemManipulator.at(i))
 				.resetTransformation()
 				.scale(Vector3(mItemParams[i] * 3.0f))
-				.translate(Vector3(0.0f, 0.0f, 0.1f + 0.1f * Float(i)));
+				.translate(Vector3(0.0f, 0.0f, 0.01f + 0.01f * Float(i)));
 		}
 
 		(*mManipulator)

@@ -405,6 +405,8 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	const double xf = xlen / frequency;
 	const double yf = ylen / frequency;
 
+	Float pzBh = 0.0f;
+
 	for (Int i = 0; i < ylen; ++i)
 	{
 		for (Int j = 0; j < xlen; ++j)
@@ -412,6 +414,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 			// Working variables
 			double y = (double) i;
 			double x = (double) j;
+			Float pz = 0.0f;
 
 			// Work with noise value to get the actual in-game object
 			std::unique_ptr<Instantiator> pi = nullptr;
@@ -435,6 +438,11 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 						const auto& c2 = c1->find("int");
 						if (*c2 != BUBBLE_COIN.toSrgbInt() || i > 1)
 						{
+							if (*c2 == BUBBLE_BLACKHOLE.toSrgbInt())
+							{
+								pzBh += 0.1f;
+								pz = pzBh;
+							}
 							break;
 						}
 					}
@@ -473,9 +481,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 				startX = 1.0f;
 			}
 
-			Vector3 position = { startX + Float(x) * 2.0f, Float(y) * -2.0f, 0.0f };
-
-			gameObject->mPosition = position;
+			gameObject->mPosition = Vector3{ startX + Float(x) * 2.0f, Float(y) * -2.0f, pz };
 			RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].push_back(gameObject);
 		}
 	}
