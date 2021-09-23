@@ -33,23 +33,16 @@ StarRoadShader::StarRoadShader()
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(link());
 
-	mTransformationMatrixUniform = uniformLocation("transformationMatrix");
-	mProjectionMatrixUniform = uniformLocation("projectionMatrix");
+	mTransformationProjectionMatrixUniform = uniformLocation("transformationProjectionMatrix");
 	mIndexUniform = uniformLocation("index");
 
 	setUniform(uniformLocation("displacementData"), DisplacementTextureUnit);
 	setUniform(uniformLocation("alphaMapData"), AlphaMapTextureUnit);
 }
 
-StarRoadShader& StarRoadShader::setTransformationMatrix(const Matrix4& transformationMatrix)
+StarRoadShader& StarRoadShader::setTransformationProjectionMatrix(const Matrix4 & matrix)
 {
-	setUniform(mTransformationMatrixUniform, transformationMatrix);
-	return *this;
-}
-
-StarRoadShader& StarRoadShader::setProjectionMatrix(const Matrix4& projectionMatrix)
-{
-	setUniform(mProjectionMatrixUniform, projectionMatrix);
+	setUniform(mTransformationProjectionMatrixUniform, matrix);
 	return *this;
 }
 

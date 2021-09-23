@@ -33,9 +33,7 @@ SpriteShader::SpriteShader()
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(link());
 
-	mTransformationMatrixUniform = uniformLocation("transformationMatrix");
-	mProjectionMatrixUniform = uniformLocation("projectionMatrix");
-
+	mTransformationProjectionMatrixUniform = uniformLocation("transformationProjectionMatrix");
 	mColorUniform = uniformLocation("color");
 	mIndexUniform = uniformLocation("index");
 	mRowsUniform = uniformLocation("rows");
@@ -44,15 +42,9 @@ SpriteShader::SpriteShader()
 	setUniform(uniformLocation("textureData"), TextureUnit);
 }
 
-SpriteShader& SpriteShader::setTransformationMatrix(const Matrix4& transformationMatrix)
+SpriteShader& SpriteShader::setTransformationProjectionMatrix(const Matrix4 & matrix)
 {
-	setUniform(mTransformationMatrixUniform, transformationMatrix);
-	return *this;
-}
-
-SpriteShader& SpriteShader::setProjectionMatrix(const Matrix4& projectionMatrix)
-{
-	setUniform(mProjectionMatrixUniform, projectionMatrix);
+	setUniform(mTransformationProjectionMatrixUniform, matrix);
 	return *this;
 }
 

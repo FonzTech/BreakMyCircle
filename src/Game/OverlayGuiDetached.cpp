@@ -78,8 +78,7 @@ void OverlayGuiDetached::drawDetached()
 
 	case GO_OGD_PLASMA:
 		(*((PlasmaShader*)mShader))
-			.setProjectionMatrix(mProjectionMatrix)
-			.setTransformationMatrix(mManipulator->transformation())
+			.setTransformationProjectionMatrix(mProjectionMatrix * mManipulator->transformation())
 			.draw(*mMesh);
 		break;
 	}

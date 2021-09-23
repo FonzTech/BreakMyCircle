@@ -15,13 +15,12 @@ public:
 
 	explicit PlasmaShader();
 
-	PlasmaShader& setTransformationMatrix(const Matrix4& transformationMatrix);
-	PlasmaShader& setProjectionMatrix(const Matrix4& projectionMatrix);
+	PlasmaShader& setTransformationProjectionMatrix(const Matrix4 & matrix);
 	PlasmaShader& setSize(const Vector2 & size);
 	PlasmaShader& setTime(const Float time);
 
 private:
-	Int mTransformationMatrixUniform;
+	Int mTransformationProjectionMatrixUniform;
 	Int mProjectionMatrixUniform;
 	Int mSizeUniform, mTimeUniform;
 };

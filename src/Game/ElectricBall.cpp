@@ -156,8 +156,7 @@ void ElectricBall::draw(BaseDrawable* baseDrawable, const Matrix4& transformatio
 	{
 		((SpriteShader&)baseDrawable->getShader())
 			.bindTexture(*baseDrawable->mTexture)
-			.setTransformationMatrix(transformationMatrix)
-			.setProjectionMatrix(camera.projectionMatrix())
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 			.setColor(0xffffffff_rgbaf)
 			.setIndex(mWrapper.parameters.index)
 			.setRows(mWrapper.parameters.rows)

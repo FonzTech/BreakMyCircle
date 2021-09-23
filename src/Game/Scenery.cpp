@@ -325,8 +325,7 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 	if (it != mWaterHolders.end())
 	{
 		((WaterShader&)baseDrawable->getShader())
-			.setTransformationMatrix(transformationMatrix)
-			.setProjectionMatrix(camera.projectionMatrix())
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 			.setFrame(it->second.parameters.frame)
 			.setSpeed(it->second.parameters.speed)
 			.setSize(it->second.parameters.size)
@@ -339,8 +338,7 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 	else if (!mStarRoad.expired() && mStarRoad.lock().get() == baseDrawable)
 	{
 		(*mStarRoadShader)
-			.setTransformationMatrix(transformationMatrix)
-			.setProjectionMatrix(camera.projectionMatrix())
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 			.bindDisplacementTexture(*baseDrawable->mTexture)
 			.bindAlphaMapTexture(*mStarRoadAlphaMap)
 			.setIndex(mFrame)

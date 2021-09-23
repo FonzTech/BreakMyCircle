@@ -26,8 +26,7 @@ public:
 
 	explicit WaterShader();
 
-	WaterShader& setTransformationMatrix(const Matrix4& transformationMatrix);
-	WaterShader& setProjectionMatrix(const Matrix4& projectionMatrix);
+	WaterShader& setTransformationProjectionMatrix(const Matrix4 & matrix);
 	WaterShader& setFrame(const Float frame);
 	WaterShader& setSpeed(const Float speed);
 	WaterShader& setSize(const Vector2 & size);
@@ -44,7 +43,7 @@ private:
 		EffectsTextureUnit = 2
 	};
 
-	Int mTransformationMatrixUniform;
+	Int mTransformationProjectionMatrixUniform;
 	Int mProjectionMatrixUniform;
 	Int mFrameUniform, mSpeedUniform, mSizeUniform;
 	Int mHorizonColorUniform;

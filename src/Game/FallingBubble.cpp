@@ -213,8 +213,7 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 	{
 		((SpriteShader&)baseDrawable->getShader())
 			.bindTexture(*baseDrawable->mTexture)
-			.setTransformationMatrix(transformationMatrix)
-			.setProjectionMatrix(camera.projectionMatrix())
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 			.setColor(mAmbientColor)
 			.setIndex(mWrapper.parameters.index)
 			.setRows(mWrapper.parameters.rows)

@@ -22,10 +22,8 @@ public:
 
 	explicit SpriteShader();
 
-	SpriteShader& setTransformationMatrix(const Matrix4& transformationMatrix);
-	SpriteShader& setProjectionMatrix(const Matrix4& projectionMatrix);
+	SpriteShader& setTransformationProjectionMatrix(const Matrix4 & matrix);
 	SpriteShader& bindTexture(GL::Texture2D& texture);
-
 	SpriteShader& setColor(const Color4& color);
 	SpriteShader& setIndex(const Float index);
 	SpriteShader& setRows(const Float rows);
@@ -37,7 +35,7 @@ private:
 		TextureUnit = 0
 	};
 
-	Int mTransformationMatrixUniform;
+	Int mTransformationProjectionMatrixUniform;
 	Int mProjectionMatrixUniform;
 
 	Int mColorUniform;

@@ -33,8 +33,7 @@ WaterShader::WaterShader()
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(link());
 
-	mTransformationMatrixUniform = uniformLocation("transformationMatrix");
-	mProjectionMatrixUniform = uniformLocation("projectionMatrix");
+	mTransformationProjectionMatrixUniform = uniformLocation("transformationProjectionMatrix");
 	mFrameUniform = uniformLocation("frame");
 	mSpeedUniform = uniformLocation("speed");
 	mSizeUniform = uniformLocation("size");
@@ -45,15 +44,9 @@ WaterShader::WaterShader()
 	setUniform(uniformLocation("effectsData"), EffectsTextureUnit);
 }
 
-WaterShader& WaterShader::setTransformationMatrix(const Matrix4& transformationMatrix)
+WaterShader& WaterShader::setTransformationProjectionMatrix(const Matrix4 & matrix)
 {
-	setUniform(mTransformationMatrixUniform, transformationMatrix);
-	return *this;
-}
-
-WaterShader& WaterShader::setProjectionMatrix(const Matrix4& projectionMatrix)
-{
-	setUniform(mProjectionMatrixUniform, projectionMatrix);
+	setUniform(mTransformationProjectionMatrixUniform, matrix);
 	return *this;
 }
 

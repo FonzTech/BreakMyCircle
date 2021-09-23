@@ -15,9 +15,7 @@ public:
 
 	explicit StarRoadShader();
 
-	StarRoadShader& setTransformationMatrix(const Matrix4& transformationMatrix);
-	StarRoadShader& setProjectionMatrix(const Matrix4& projectionMatrix);
-
+	StarRoadShader& setTransformationProjectionMatrix(const Matrix4 & matrix);
 	StarRoadShader& bindDisplacementTexture(GL::Texture2D& texture);
 	StarRoadShader& bindAlphaMapTexture(GL::Texture2D& texture);
 	StarRoadShader& setIndex(const Float index);
@@ -29,7 +27,7 @@ private:
 		AlphaMapTextureUnit = 1
 	};
 
-	Int mTransformationMatrixUniform;
+	Int mTransformationProjectionMatrixUniform;
 	Int mProjectionMatrixUniform;
 
 	Int mIndexUniform;

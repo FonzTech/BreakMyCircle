@@ -33,21 +33,14 @@ PlasmaShader::PlasmaShader()
 
 	CORRADE_INTERNAL_ASSERT_OUTPUT(link());
 
-	mTransformationMatrixUniform = uniformLocation("transformationMatrix");
-	mProjectionMatrixUniform = uniformLocation("projectionMatrix");
+	mTransformationProjectionMatrixUniform = uniformLocation("transformationProjectionMatrix");
 	mSizeUniform = uniformLocation("size");
 	mTimeUniform = uniformLocation("time");
 }
 
-PlasmaShader& PlasmaShader::setTransformationMatrix(const Matrix4& transformationMatrix)
+PlasmaShader& PlasmaShader::setTransformationProjectionMatrix(const Matrix4 & matrix)
 {
-	setUniform(mTransformationMatrixUniform, transformationMatrix);
-	return *this;
-}
-
-PlasmaShader& PlasmaShader::setProjectionMatrix(const Matrix4& projectionMatrix)
-{
-	setUniform(mProjectionMatrixUniform, projectionMatrix);
+	setUniform(mTransformationProjectionMatrixUniform, matrix);
 	return *this;
 }
 
