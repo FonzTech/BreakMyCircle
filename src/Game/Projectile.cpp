@@ -34,6 +34,7 @@ std::shared_ptr<GameObject> Projectile::getInstance(const nlohmann::json & param
 Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : GameObject(parentIndex), mAnimation(0.0f), mCustomTexture(nullptr)
 {
 	// Initialize members
+	mParentIndex = parentIndex;
 	mAmbientColor = ambientColor;
 	mVelocity = Vector3(0.0f);
 	mSpeed = 50.0f;

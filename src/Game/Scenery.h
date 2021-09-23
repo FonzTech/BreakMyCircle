@@ -9,6 +9,7 @@
 #include "../Graphics/GameDrawable.h"
 #include "../Shaders/WaterShader.h"
 #include "../Shaders/StarRoadShader.h"
+#include "Fireball.h"
 
 class Scenery : public GameObject
 {
@@ -22,9 +23,10 @@ public:
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 
-	const Int getModelIndex() const;
-	const void setLightPosition(const Vector3 & lightPosition);
-	const void animateInGameCamera();
+	Int getModelIndex() const;
+	void setLightPosition(const Vector3 & lightPosition);
+	void animateInGameCamera();
+	void createFireball();
 
 protected:
 
@@ -63,6 +65,7 @@ protected:
 	Resource<GL::AbstractShaderProgram, StarRoadShader> mStarRoadShader;
 	Resource<GL::Texture2D> mStarRoadAlphaMap;
 	std::weak_ptr<BaseDrawable> mStarRoad;
+	std::weak_ptr<Fireball> mFireball;
 
 	// Water objects
 	std::unordered_map<BaseDrawable*, WaterDrawableHolder> mWaterHolders;

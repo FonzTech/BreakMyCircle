@@ -45,6 +45,7 @@
 #define RESOURCE_TEXTURE_CUBEMAP_SKYBOX_1 "tex_cubemap_skybox_1"
 #define RESOURCE_TEXTURE_STARROAD_ALPHAMAP "tex_starroad_am"
 #define RESOURCE_TEXTURE_MOON "tex_moon"
+#define RESOURCE_TEXTURE_FIRE "tex_fire"
 #define RESOURCE_TEXTURE_GUI_SETTINGS "tex_gui_settings"
 #define RESOURCE_TEXTURE_GUI_REPLAY "tex_gui_replay"
 #define RESOURCE_TEXTURE_GUI_NEXT "tex_gui_next"
@@ -128,6 +129,7 @@
 #define GOT_MAPPICKUP 15
 #define GOT_LEVEL_SELECTOR_SIDECAR 16
 #define GOT_SAFE_MINIGAME 17
+#define GOT_FIREBALL 18
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>

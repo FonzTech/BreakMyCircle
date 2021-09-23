@@ -155,6 +155,7 @@ if(CORRADE_TARGET_ANDROID)
         src/Shaders/PlasmaShader.cpp
         src/Shaders/ScreenQuadShader.cpp
         src/Shaders/SpriteShader.cpp
+        src/Shaders/StarRoadShader.cpp
         src/Shaders/WaterShader.cpp
     )
 
@@ -200,6 +201,7 @@ else()
         src/Shaders/PlasmaShader.cpp
         src/Shaders/ScreenQuadShader.cpp
         src/Shaders/SpriteShader.cpp
+        src/Shaders/StarRoadShader.cpp
         src/Shaders/WaterShader.cpp
     )
 endif()

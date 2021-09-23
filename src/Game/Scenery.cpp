@@ -165,7 +165,7 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex, const Int subType)
 		}
 	}
 
-	// Create water drawable AFTER
+	// Create transparent drawables AFTER
 	if (modelIndex == 0)
 	{
 		createWaterDrawable();
@@ -183,6 +183,12 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex, const Int subType)
 Scenery::~Scenery()
 {
 	Debug{} << "Scenery with model index" << mModelIndex << "is destructed";
+
+	if (!mFireball.expired())
+	{
+		mFireball.lock()->mDestroyMe = true;
+		mFireball.reset();
+	}
 }
 
 const Int Scenery::getType() const
@@ -414,17 +420,24 @@ void Scenery::createWaterDrawable(const WaterDrawableHolder & fromWdh)
 	mWaterHolders[wdh.drawable.get()] = std::move(wdh);
 }
 
-const Int Scenery::getModelIndex() const
+Int Scenery::getModelIndex() const
 {
 	return mModelIndex;
 }
 
-const void Scenery::setLightPosition(const Vector3 & lightPosition)
+void Scenery::setLightPosition(const Vector3 & lightPosition)
 {
 	mLightPosition = lightPosition;
 }
 
-const void Scenery::animateInGameCamera()
+void Scenery::animateInGameCamera()
 {
 	mAnimateInGameCamera = true;
+}
+
+void Scenery::createFireball()
+{
+	const std::shared_ptr<Fireball> ib = std::make_shared<Fireball>(mParentIndex);
+	ib->mPosition = mPosition + Vector3(20.0f, 0.0f, 0.0f);
+	mFireball = (std::shared_ptr<Fireball>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib, true);
 }
