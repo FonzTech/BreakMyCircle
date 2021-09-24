@@ -26,7 +26,7 @@ Dialog::Dialog(const Int parentIndex, const UnsignedInt messageCapacity, const U
 		const std::shared_ptr<OverlayGui> go = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_WHITE);
 		go->setColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 		go->setPosition({ 0.0f, 0.0f });
-		go->setSize({ 1.0f, 1.0f });
+		go->setSize({ 1.0f * Math::max(1.0f, RoomManager::singleton->getWindowAspectRatio()), 1.0f });
 		go->setAnchor({ 0.0f, 0.0f });
 
 		mBackground = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);

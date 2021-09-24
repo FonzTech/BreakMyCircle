@@ -190,7 +190,7 @@ void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	else
 	{
 		((Shaders::Phong&) baseDrawable->getShader())
-			.setLightPosition(mPosition + Vector3(0.0f, 0.0f, 1.5f))
+			.setLightPosition(mPosition + Vector3(0.0f, 1.0f * RoomManager::singleton->getWindowAspectRatio(), 1.5f))
 			.setLightColor(mAmbientColor == BUBBLE_COIN ? 0xd0d0d0_rgbf : 0x808080_rgbf)
 			.setSpecularColor(0xffffff00_rgbaf)
 			.setAmbientColor(0xc0c0c0_rgbf)

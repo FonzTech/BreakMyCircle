@@ -67,11 +67,13 @@ bool RoomManager::SaveData::load()
 		flags = 0U;
 #if NDEBUG or _DEBUG
 		maxLevelId = 48U;
+		coinTotal = 50;
+		coinCurrent = 0;
 #else
 		maxLevelId = 2U;
-#endif
 		coinTotal = 0;
 		coinCurrent = 0;
+#endif
 
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
@@ -495,7 +497,7 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	// Create player
 	std::shared_ptr<GameObject> player = nullptr;
 	{
-		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
+		const auto& ar = RoomManager::singleton->getWindowAspectRatio() * Math::max(1.0f, RoomManager::singleton->getWindowAspectRatio() * 0.647f);
 		const auto& p = std::make_shared<Player>(GOL_PERSP_SECOND, shootCallback);
 		p->mPosition = { fSquare, playerY, 0.0f };
 		p->mCameraDist = (50.0f / (1.0f / ar) * 0.95f) + fSquare;

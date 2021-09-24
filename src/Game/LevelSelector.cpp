@@ -120,6 +120,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	{
 		mTimer = { 0.0f, 0 };
 		mCoins = { Float(RoomManager::singleton->mSaveData.coinTotal), RoomManager::singleton->mSaveData.coinTotal };
+		Debug{} << "okok" << RoomManager::singleton->mSaveData.coinTotal;
 	}
 
 	// Powerup view
@@ -2054,7 +2055,7 @@ void LevelSelector::createPowerupView()
 
 				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST, UnsignedInt(message.length()), UnsignedInt(title.length()));
 				o->getTitleDrawable()->mColor = { 1.0f, 0.8f, 0.25f, 1.0f };
-				o->getMessageDrawable()->mSize = Vector2(getWidthReferenceFactor());
+				o->getMessageDrawable()->mSize = Vector2(Math::min(1.0f, getWidthReferenceFactor()));
 				o->setTitlePosition({ 0.0f, 0.36f - getScaledVerticalPadding(), 0.0f });
 				o->setMessagePosition({ 0.0f, 0.175f, 0.0f });
 				o->setTitle(title);

@@ -345,7 +345,7 @@ void SafeMinigame::setupCamera()
 {
 	// Set camera parameters
 	auto& layer = RoomManager::singleton->mGoLayers[mParentIndex];
-	layer.cameraEye = Vector3(0.0f, 0.0f, 0.4f);
+	layer.cameraEye = Vector3(0.0f, 0.0f, 0.75f * RoomManager::singleton->getWindowAspectRatio());
 	layer.cameraTarget = Vector3(0.0f);
 }
 

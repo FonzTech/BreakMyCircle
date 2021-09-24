@@ -335,7 +335,7 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	if (isBubble || isBomb)
 	{
 		shader
-			.setLightPosition(mPosition + Vector3(-1.0f, 2.0f, 10.0f))
+			.setLightPosition(mPosition + Vector3(-1.0f, 10.0f * RoomManager::singleton->getWindowAspectRatio(), 10.0f))
 			.setLightColor(0x202020_rgbf)
 			.setSpecularColor(0xffffff00_rgbaf)
 			.setAmbientColor(0x909090_rgbf)
@@ -344,7 +344,7 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	else
 	{
 		shader
-			.setLightPosition(mPosition + Vector3(-4.0f, 14.0f, 20.0f))
+			.setLightPosition(mPosition + Vector3(-4.0f, 30.0f * RoomManager::singleton->getWindowAspectRatio(), 20.0f))
 			.setLightColor(0xffffff60_rgbaf)
 			.setSpecularColor(0xffffff00_rgbaf)
 			.setAmbientColor(0xa0a0a0_rgbf)
