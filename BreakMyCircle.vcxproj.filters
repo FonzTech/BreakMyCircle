@@ -174,8 +174,8 @@
     <ClCompile Include="src\Shaders\StarRoadShader.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game\Fireball.cpp">
-      <Filter>Header Files\Game</Filter>
+    <ClCompile Include="src\Shaders\SunShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -314,8 +314,8 @@
     <ClInclude Include="src\Shaders\StarRoadShader.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game\Fireball.h">
-      <Filter>Source Files\Game</Filter>
+    <ClInclude Include="src\Shaders\SunShader.h">
+      <Filter>Header Files\Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

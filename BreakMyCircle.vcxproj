@@ -167,7 +167,6 @@
     <ClCompile Include="src\Game\Congrats.cpp" />
     <ClCompile Include="src\Game\Dialog.cpp" />
     <ClCompile Include="src\Game\ElectricBall.cpp" />
-    <ClCompile Include="src\Game\Fireball.cpp" />
     <ClCompile Include="src\Game\LevelSelector.cpp" />
     <ClCompile Include="src\Game\LevelSelectorSidecar.cpp" />
     <ClCompile Include="src\Game\LimitLine.cpp" />
@@ -198,6 +197,7 @@
     <ClCompile Include="src\Game\Skybox.cpp" />
     <ClCompile Include="src\Shaders\SpriteShader.cpp" />
     <ClCompile Include="src\Shaders\StarRoadShader.cpp" />
+    <ClCompile Include="src\Shaders\SunShader.cpp" />
     <ClCompile Include="src\Shaders\WaterShader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -213,7 +213,6 @@
     <ClInclude Include="src\Game\Congrats.h" />
     <ClInclude Include="src\Game\Dialog.h" />
     <ClInclude Include="src\Game\ElectricBall.h" />
-    <ClInclude Include="src\Game\Fireball.h" />
     <ClInclude Include="src\Game\LevelSelector.h" />
     <ClInclude Include="src\Game\LevelSelectorSidecar.h" />
     <ClInclude Include="src\Game\LimitLine.h" />
@@ -246,6 +245,7 @@
     <ClInclude Include="src\InputManager.h" />
     <ClInclude Include="src\Game\Player.h" />
     <ClInclude Include="src\Shaders\StarRoadShader.h" />
+    <ClInclude Include="src\Shaders\SunShader.h" />
     <ClInclude Include="src\Shaders\WaterShader.h" />
   </ItemGroup>
   <ItemGroup>

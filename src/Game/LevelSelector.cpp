@@ -981,11 +981,6 @@ void LevelSelector::handleScrollableScenery()
 			Debug{} << "Scenery with model index" << modelIndex << "is created at position" << yp;
 		}
 
-		if (modelIndex == 3)
-		{
-			mSceneries[yp].scenery.lock()->createFireball();
-		}
-
 		// Create level selectors
 #if NDEBUG or _DEBUG
 		if (mSceneries[yp].buttons.size())

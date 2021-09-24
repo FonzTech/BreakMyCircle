@@ -85,6 +85,7 @@
 #define RESOURCE_SHADER_CUBEMAP "shader_cubemap"
 #define RESOURCE_SHADER_FLAT3D "shader_flat3d"
 #define RESOURCE_SHADER_PLASMA "shader_plasma"
+#define RESOURCE_SHADER_SUN "shader_sun"
 #define RESOURCE_SHADER_DISTANCE_FIELD_VECTOR "shader_distance_field_vector"
 
 #define RESOURCE_FONT_UBUNTU_TITLE "ubuntu-title"
@@ -129,7 +130,6 @@
 #define GOT_MAPPICKUP 15
 #define GOT_LEVEL_SELECTOR_SIDECAR 16
 #define GOT_SAFE_MINIGAME 17
-#define GOT_FIREBALL 18
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>

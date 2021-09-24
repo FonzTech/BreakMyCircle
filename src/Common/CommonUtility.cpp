@@ -242,6 +242,13 @@ Resource<GL::AbstractShaderProgram, StarRoadShader> CommonUtility::getStarRoadSh
 	});
 }
 
+Resource<GL::AbstractShaderProgram, SunShader> CommonUtility::getSunShader()
+{
+	return getSpecializedShader<SunShader>(RESOURCE_SHADER_SUN, [] {
+		return (std::unique_ptr<GL::AbstractShaderProgram>) std::make_unique<SunShader>();
+	});
+}
+
 std::unique_ptr<std::string> CommonUtility::getValueFromIntent(const std::string & key)
 {
 #ifdef CORRADE_TARGET_ANDROID

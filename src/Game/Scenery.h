@@ -8,8 +8,8 @@
 #include "../GameObject.h"
 #include "../Graphics/GameDrawable.h"
 #include "../Shaders/WaterShader.h"
+#include "../Shaders/SunShader.h"
 #include "../Shaders/StarRoadShader.h"
-#include "Fireball.h"
 
 class Scenery : public GameObject
 {
@@ -62,10 +62,12 @@ protected:
 	ObjectAnimations mAnim;
 
 	// Star road
+	Resource<GL::AbstractShaderProgram, SunShader> mSunShader;
 	Resource<GL::AbstractShaderProgram, StarRoadShader> mStarRoadShader;
+	Resource<GL::Texture2D> mSunAlphaMap;
 	Resource<GL::Texture2D> mStarRoadAlphaMap;
 	std::weak_ptr<BaseDrawable> mStarRoad;
-	std::weak_ptr<Fireball> mFireball;
+	std::weak_ptr<BaseDrawable> mSun;
 
 	// Water objects
 	std::unordered_map<BaseDrawable*, WaterDrawableHolder> mWaterHolders;

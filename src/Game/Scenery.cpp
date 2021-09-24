@@ -99,6 +99,9 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex, const Int subType)
 			mAnim.rotateFactor = 5.0f;
 			mAnim.scaleFactor = 0.05f;
 
+			mSunShader = CommonUtility::singleton->getSunShader();
+			mSunAlphaMap = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_WATER_DISPLACEMENT);
+
 			mStarRoadShader = CommonUtility::singleton->getStarRoadShader();
 			mStarRoadAlphaMap = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_STARROAD_ALPHAMAP);
 
@@ -133,6 +136,10 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex, const Int subType)
 				{
 					item->mTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_MOON);
 				}
+			}
+			else if (label == "SunGlobeV")
+			{
+				mSun = item;
 			}
 
 			// Star Road
@@ -183,12 +190,6 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex, const Int subType)
 Scenery::~Scenery()
 {
 	Debug{} << "Scenery with model index" << mModelIndex << "is destructed";
-
-	if (!mFireball.expired())
-	{
-		mFireball.lock()->mDestroyMe = true;
-		mFireball.reset();
-	}
 }
 
 const Int Scenery::getType() const
@@ -262,9 +263,9 @@ void Scenery::update()
 
 	// Update frame
 	mFrame += mDeltaTime * 0.5f;
-	while (mFrame > 1.0f)
+	while (mFrame > 1000.0f)
 	{
-		mFrame -= 1.0f;
+		mFrame -= 1000.0f;
 	}
 
 	for (auto& wh : mWaterHolders)
@@ -347,6 +348,15 @@ void Scenery::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatr
 			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 			.bindDisplacementTexture(*baseDrawable->mTexture)
 			.bindAlphaMapTexture(*mStarRoadAlphaMap)
+			.setIndex(mFrame)
+			.draw(*baseDrawable->mMesh);
+	}
+	else if (!mSun.expired() && mSun.lock().get() == baseDrawable)
+	{
+		(*mSunShader)
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+			.bindDisplacementTexture(*mSunAlphaMap)
+			.bindColorTexture(*baseDrawable->mTexture)
 			.setIndex(mFrame)
 			.draw(*baseDrawable->mMesh);
 	}
@@ -433,11 +443,4 @@ void Scenery::setLightPosition(const Vector3 & lightPosition)
 void Scenery::animateInGameCamera()
 {
 	mAnimateInGameCamera = true;
-}
-
-void Scenery::createFireball()
-{
-	const std::shared_ptr<Fireball> ib = std::make_shared<Fireball>(mParentIndex);
-	ib->mPosition = mPosition + Vector3(20.0f, 0.0f, 0.0f);
-	mFireball = (std::shared_ptr<Fireball>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib, true);
 }
