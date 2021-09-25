@@ -1,0 +1,377 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AF47A60E26FFE431008C9704 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF47A60D26FFE431008C9704 /* Main.swift */; };
+		AF47A61526FFE73C008C9704 /* GameWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61426FFE73C008C9704 /* GameWrapper.mm */; };
+		AF47A62D26FFE8A4008C9704 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61D26FFE8A1008C9704 /* Engine.cpp */; };
+		AF47A62E26FFE8A4008C9704 /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61F26FFE8A2008C9704 /* InputManager.cpp */; };
+		AF47A62F26FFE8A4008C9704 /* RoomManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62026FFE8A2008C9704 /* RoomManager.cpp */; };
+		AF47A63026FFE8A4008C9704 /* AssetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62126FFE8A2008C9704 /* AssetManager.cpp */; };
+		AF47A63226FFE8A4008C9704 /* Audio in Resources */ = {isa = PBXBuildFile; fileRef = AF47A62626FFE8A3008C9704 /* Audio */; };
+		AF47A63326FFE8A4008C9704 /* GameObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62726FFE8A3008C9704 /* GameObject.cpp */; };
+		AF47A63426FFE8A4008C9704 /* CollisionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62826FFE8A4008C9704 /* CollisionManager.cpp */; };
+		AFFB4E3C26FF48DE00FD2500 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AF47A60D26FFE431008C9704 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
+		AF47A61226FFE6BE008C9704 /* GameWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameWrapper.h; sourceTree = "<group>"; };
+		AF47A61326FFE73B008C9704 /* breakmycircle-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "breakmycircle-Bridging-Header.h"; sourceTree = "<group>"; };
+		AF47A61426FFE73C008C9704 /* GameWrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GameWrapper.mm; sourceTree = "<group>"; };
+		AF47A61A26FFE8A1008C9704 /* RoomManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoomManager.h; path = ../../../src/RoomManager.h; sourceTree = "<group>"; };
+		AF47A61D26FFE8A1008C9704 /* Engine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Engine.cpp; path = ../../../src/Engine.cpp; sourceTree = "<group>"; };
+		AF47A61E26FFE8A2008C9704 /* GameObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GameObject.h; path = ../../../src/GameObject.h; sourceTree = "<group>"; };
+		AF47A61F26FFE8A2008C9704 /* InputManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputManager.cpp; path = ../../../src/InputManager.cpp; sourceTree = "<group>"; };
+		AF47A62026FFE8A2008C9704 /* RoomManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RoomManager.cpp; path = ../../../src/RoomManager.cpp; sourceTree = "<group>"; };
+		AF47A62126FFE8A2008C9704 /* AssetManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AssetManager.cpp; path = ../../../src/AssetManager.cpp; sourceTree = "<group>"; };
+		AF47A62226FFE8A2008C9704 /* AssetManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AssetManager.h; path = ../../../src/AssetManager.h; sourceTree = "<group>"; };
+		AF47A62326FFE8A3008C9704 /* InputManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputManager.h; path = ../../../src/InputManager.h; sourceTree = "<group>"; };
+		AF47A62526FFE8A3008C9704 /* Engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Engine.h; path = ../../../src/Engine.h; sourceTree = "<group>"; };
+		AF47A62626FFE8A3008C9704 /* Audio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Audio; path = ../../../src/Audio; sourceTree = "<group>"; };
+		AF47A62726FFE8A3008C9704 /* GameObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameObject.cpp; path = ../../../src/GameObject.cpp; sourceTree = "<group>"; };
+		AF47A62826FFE8A4008C9704 /* CollisionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CollisionManager.cpp; path = ../../../src/CollisionManager.cpp; sourceTree = "<group>"; };
+		AF47A62926FFE8A4008C9704 /* CollisionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollisionManager.h; path = ../../../src/CollisionManager.h; sourceTree = "<group>"; };
+		AFFB4E3426FF48DC00FD2500 /* breakmycircle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = breakmycircle.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AFFB4E4026FF48DE00FD2500 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AFFB4E3126FF48DC00FD2500 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AF47A61926FFE856008C9704 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				AF47A62626FFE8A3008C9704 /* Audio */,
+				AF47A61226FFE6BE008C9704 /* GameWrapper.h */,
+				AF47A61426FFE73C008C9704 /* GameWrapper.mm */,
+				AF47A62126FFE8A2008C9704 /* AssetManager.cpp */,
+				AF47A62226FFE8A2008C9704 /* AssetManager.h */,
+				AF47A62826FFE8A4008C9704 /* CollisionManager.cpp */,
+				AF47A62926FFE8A4008C9704 /* CollisionManager.h */,
+				AF47A61D26FFE8A1008C9704 /* Engine.cpp */,
+				AF47A62526FFE8A3008C9704 /* Engine.h */,
+				AF47A62726FFE8A3008C9704 /* GameObject.cpp */,
+				AF47A61E26FFE8A2008C9704 /* GameObject.h */,
+				AF47A61F26FFE8A2008C9704 /* InputManager.cpp */,
+				AF47A62326FFE8A3008C9704 /* InputManager.h */,
+				AF47A62026FFE8A2008C9704 /* RoomManager.cpp */,
+				AF47A61A26FFE8A1008C9704 /* RoomManager.h */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		AFFB4E2B26FF48DC00FD2500 = {
+			isa = PBXGroup;
+			children = (
+				AFFB4E3626FF48DC00FD2500 /* breakmycircle */,
+				AFFB4E3526FF48DC00FD2500 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AFFB4E3526FF48DC00FD2500 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AFFB4E3426FF48DC00FD2500 /* breakmycircle.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AFFB4E3626FF48DC00FD2500 /* breakmycircle */ = {
+			isa = PBXGroup;
+			children = (
+				AF47A61926FFE856008C9704 /* Sources */,
+				AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */,
+				AFFB4E4026FF48DE00FD2500 /* Info.plist */,
+				AF47A60D26FFE431008C9704 /* Main.swift */,
+				AF47A61326FFE73B008C9704 /* breakmycircle-Bridging-Header.h */,
+			);
+			path = breakmycircle;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AFFB4E3326FF48DC00FD2500 /* breakmycircle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AFFB4E4326FF48DE00FD2500 /* Build configuration list for PBXNativeTarget "breakmycircle" */;
+			buildPhases = (
+				AFFB4E3026FF48DC00FD2500 /* Sources */,
+				AFFB4E3126FF48DC00FD2500 /* Frameworks */,
+				AFFB4E3226FF48DC00FD2500 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = breakmycircle;
+			productName = breakmycircle;
+			productReference = AFFB4E3426FF48DC00FD2500 /* breakmycircle.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AFFB4E2C26FF48DC00FD2500 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1240;
+				LastUpgradeCheck = 1240;
+				TargetAttributes = {
+					AFFB4E3326FF48DC00FD2500 = {
+						CreatedOnToolsVersion = 12.4;
+						LastSwiftMigration = 1240;
+					};
+				};
+			};
+			buildConfigurationList = AFFB4E2F26FF48DC00FD2500 /* Build configuration list for PBXProject "breakmycircle" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AFFB4E2B26FF48DC00FD2500;
+			productRefGroup = AFFB4E3526FF48DC00FD2500 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AFFB4E3326FF48DC00FD2500 /* breakmycircle */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AFFB4E3226FF48DC00FD2500 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AFFB4E3C26FF48DE00FD2500 /* Assets.xcassets in Resources */,
+				AF47A63226FFE8A4008C9704 /* Audio in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AFFB4E3026FF48DC00FD2500 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF47A63026FFE8A4008C9704 /* AssetManager.cpp in Sources */,
+				AF47A62E26FFE8A4008C9704 /* InputManager.cpp in Sources */,
+				AF47A60E26FFE431008C9704 /* Main.swift in Sources */,
+				AF47A62D26FFE8A4008C9704 /* Engine.cpp in Sources */,
+				AF47A63426FFE8A4008C9704 /* CollisionManager.cpp in Sources */,
+				AF47A62F26FFE8A4008C9704 /* RoomManager.cpp in Sources */,
+				AF47A61526FFE73C008C9704 /* GameWrapper.mm in Sources */,
+				AF47A63326FFE8A4008C9704 /* GameObject.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AFFB4E4126FF48DE00FD2500 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AFFB4E4226FF48DE00FD2500 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AFFB4E4426FF48DE00FD2500 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = breakmycircle/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "breakmycircle/breakmycircle-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AFFB4E4526FF48DE00FD2500 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				INFOPLIST_FILE = breakmycircle/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "breakmycircle/breakmycircle-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AFFB4E2F26FF48DC00FD2500 /* Build configuration list for PBXProject "breakmycircle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AFFB4E4126FF48DE00FD2500 /* Debug */,
+				AFFB4E4226FF48DE00FD2500 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AFFB4E4326FF48DE00FD2500 /* Build configuration list for PBXNativeTarget "breakmycircle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AFFB4E4426FF48DE00FD2500 /* Debug */,
+				AFFB4E4526FF48DE00FD2500 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AFFB4E2C26FF48DC00FD2500 /* Project object */;
+}

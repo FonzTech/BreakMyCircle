@@ -26,18 +26,32 @@ endif()
 ## Compile for Windows from Windows/macOS/Linux
 ```
 mkdir build && cd build
-cmake -DCMAKE_INSTALL_PREFIX="D:/Development/C++/corrade-bin" ..
+cmake .. ^
+  -DCMAKE_INSTALL_PREFIX="D:/Development/C++/corrade-bin" ^
+  -DCORRADE_RC_EXECUTABLE=D:/Development/C++/corrade-bin/bin/corrade-rc.exe ^
+  -DTARGET_GLES2=OFF ^
+  -DWITH_RC=ON ^
+  -DWITH_ANDROIDAPPLICATION=ON ^
+  -DWITH_TINYGLTFIMPORTER=ON ^
+  -DWITH_PNGIMPORTER=ON ^
+  -DWITH_STBVORBISAUDIOIMPORTER=ON ^
+  -DWITH_STBTRUETYPEFONT=ON ^
+  -DWITH_SDL2APPLICATION=ON ^
+  -DWITH_SHADERTOOLS=ON ^
+  -DWITH_AUDIO=ON ^
+  -DWITH_ANYSCENEIMPORTER=ON ^
+  -DWITH_ANYIMAGEIMPORTER=ON
 cmake --build .
 cmake --build . --target install
 ```
 
 ## Compile for Android
 
-This process should be repeat for both `arm64-v8a` and `x86_64`, and respectively lib suffixes `aarch64-linux-android` and `x86_64`for Target API Level 30.
+This process should be repeated for both `arm64-v8a` and `x86_64`, and respectively lib suffixes `aarch64-linux-android` and `x86_64` for Target API Level 30.
 
 ### First common step
 ```
-mkdir build-android-arm64 && cd build-android-arm64
+mkdir build && cd build
 ```
 
 ### Windows 10 (NDK 22.0.7026061)
@@ -60,9 +74,71 @@ cmake .. ^
   -DCMAKE_FIND_ROOT_PATH=D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot ^
   -DCMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX=/aarch64-linux-android/30 ^
   -DLIB_SUFFIX=/aarch64-linux-android/30 ^
-  -DCORRADE_RC_EXECUTABLE=D:\Development\C++\corrade-bin\bin\corrade-rc.exe ^
+  -DCORRADE_RC_EXECUTABLE=D:/Development/C++/corrade-bin/bin/corrade-rc.exe ^
   -DTARGET_GLES2=OFF ^
-  -DWITH_ANDROIDAPPLICATION=ON
+  -DWITH_RC=ON ^
+  -DWITH_ANDROIDAPPLICATION=ON ^
+  -DWITH_TINYGLTFIMPORTER=ON ^
+  -DWITH_PNGIMPORTER=ON ^
+  -DWITH_STBVORBISAUDIOIMPORTER=ON ^
+  -DWITH_STBTRUETYPEFONT=ON ^
+  -DWITH_SDL2APPLICATION=ON ^
+  -DWITH_SHADERTOOLS=ON ^
+  -DWITH_AUDIO=ON ^
+  -DWITH_ANYSCENEIMPORTER=ON ^
+  -DWITH_ANYIMAGEIMPORTER=ON
+```
+
+### Last common step
+```
+cmake --build .
+cmake --build . --target install
+```
+
+## Compile for iOS
+
+This process allows a single step to compile `arm64` and `x86_64` in a single shot, by specifing a value like `arm64;x86_64;armv7;armv7s` for the `CMAKE_OSX_ARCHITECTURES` variable. However, from iOS 11 and beyond, only 64-bit architectures are supported.
+
+Toolchains must be downloaded from [https://github.com/mosra/toolchains](https://github.com/mosra/toolchains), whose contents goes into the `toolchains` folder of *Corrade* and *Magnum Graphics* library.
+
+- `CORRADE_RC_EXECUTABLE` can be omitted, by installing the *last stable Corrade* build using Homebrew, with the following command: `brew install mosra/magnum/corrade`
+
+- `CMAKE_TOOLCHAIN_FILE` must NOT be set when compiling *OpenAL*.
+
+- `PNG_LIBRARY` and `PNG_PNG_INCLUDE_DIR` must be set when compiling *libpng*. Try, respectively, with values `/usr/local/` and `/usr/local/include`.
+
+The script `build-script/iosbuild.sh` must be used to compile correctly for iOS. Also, this script must be edited, so only `arm64` and `x86_64` get compiled and installed as available dependencies. Look for other things which don't meet this requirements, such as `lipo` commands used to create a single library, which are used for iOS Simulator, for example.
+
+### First common step
+```
+mkdir build && cd build
+```
+
+### MacOS (Xcode 12.4)
+```
+cmake .. \
+  -G Xcode \
+  -DCMAKE_SYSTEM_NAME=iOS \
+  -DCMAKE_TOOLCHAIN_FILE=../toolchains/generic/iOS.cmake \
+  -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk \
+  -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+  -DCMAKE_INSTALL_PREFIX=~/ios-libs \
+  -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+  -DBUILD_PLUGINS_STATIC=ON \
+  -DBUILD_STATIC=ON \
+  -DSKIP_INSTALL_PROGRAMS=ON \
+  -DTARGET_GLES2=OFF \
+  -DWITH_RC=ON \
+  -DWITH_ANDROIDAPPLICATION=ON \
+  -DWITH_TINYGLTFIMPORTER=ON \
+  -DWITH_PNGIMPORTER=ON \
+  -DWITH_STBVORBISAUDIOIMPORTER=ON \
+  -DWITH_STBTRUETYPEFONT=ON \
+  -DWITH_SDL2APPLICATION=ON \
+  -DWITH_SHADERTOOLS=ON \
+  -DWITH_AUDIO=ON \
+  -DWITH_ANYSCENEIMPORTER=ON \
+  -DWITH_ANYIMAGEIMPORTER=ON
 ```
 
 ### Last common step

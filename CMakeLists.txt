@@ -5,7 +5,11 @@ if(NOT CORRADE_TARGET_ANDROID)
     set(CMAKE_VS_PLATFORM_TOOLSET "v141") # BEFORE ON cmake build
 endif()
 
-project(BreakMyCircle CXX)
+if(CORRADE_TARGET_ANDROID OR CORRADE_TARGET_IOS)
+  project(native-lib CXX)
+else()
+  project(BreakMyCircle CXX)
+endif()
 
 if(NOT CORRADE_TARGET_ANDROID)
     set(CMAKE_BUILD_TYPE "Debug")
@@ -115,7 +119,7 @@ set_directory_properties(PROPERTIES CORRADE_USE_PEDANTIC_FLAGS ON)
 if(CORRADE_TARGET_ANDROID)
 
     add_library(
-        native-lib
+        ${PROJECT_NAME}
         SHARED
         src/AssetManager.cpp
         src/Audio/StreamedAudioBuffer.cpp
@@ -210,7 +214,7 @@ endif()
 
 if(CORRADE_TARGET_ANDROID)
 
-  target_link_libraries(native-lib PRIVATE
+  target_link_libraries(${PROJECT_NAME} PRIVATE
     Corrade::Main
     Magnum::Application
     Magnum::Audio
@@ -226,12 +230,12 @@ if(CORRADE_TARGET_ANDROID)
   )
 
   if (MAGNUM_BUILD_STATIC AND USE_MAGNUM_FONT)
-    target_link_libraries(native-lib PRIVATE
+    target_link_libraries(${PROJECT_NAME} PRIVATE
         Magnum::MagnumFont
     )
   endif()
 
-  target_link_libraries(native-lib PRIVATE
+  target_link_libraries(${PROJECT_NAME} PRIVATE
       MagnumPlugins::StbVorbisAudioImporter
       MagnumPlugins::StbTrueTypeFont
       MagnumPlugins::TinyGltfImporter
@@ -267,6 +271,14 @@ else()
       MagnumPlugins::PngImporter
   )
 
+endif()
+
+if(CORRADE_TARGET_IOS)
+  set_target_properties(my-application PROPERTIES
+    MACOSX_BUNDLE ON
+    MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/MacOSXBundleInfo.plist.in
+    XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED "YES"
+  )
 endif()
 
 if(NOT CORRADE_TARGET_ANDROID)
