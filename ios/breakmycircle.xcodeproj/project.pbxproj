@@ -8,18 +8,42 @@
 
 /* Begin PBXBuildFile section */
 		AF47A60E26FFE431008C9704 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF47A60D26FFE431008C9704 /* Main.swift */; };
-		AF47A61526FFE73C008C9704 /* GameWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61426FFE73C008C9704 /* GameWrapper.mm */; };
-		AF47A62D26FFE8A4008C9704 /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61D26FFE8A1008C9704 /* Engine.cpp */; };
-		AF47A62E26FFE8A4008C9704 /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61F26FFE8A2008C9704 /* InputManager.cpp */; };
-		AF47A62F26FFE8A4008C9704 /* RoomManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62026FFE8A2008C9704 /* RoomManager.cpp */; };
-		AF47A63026FFE8A4008C9704 /* AssetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62126FFE8A2008C9704 /* AssetManager.cpp */; };
-		AF47A63226FFE8A4008C9704 /* Audio in Resources */ = {isa = PBXBuildFile; fileRef = AF47A62626FFE8A3008C9704 /* Audio */; };
-		AF47A63326FFE8A4008C9704 /* GameObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62726FFE8A3008C9704 /* GameObject.cpp */; };
-		AF47A63426FFE8A4008C9704 /* CollisionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62826FFE8A4008C9704 /* CollisionManager.cpp */; };
-		AFBB5D3326FFEE3000D48B1B /* Graphics in Resources */ = {isa = PBXBuildFile; fileRef = AFBB5D2F26FFEE2F00D48B1B /* Graphics */; };
-		AFBB5D3426FFEE3000D48B1B /* Game in Resources */ = {isa = PBXBuildFile; fileRef = AFBB5D3026FFEE2F00D48B1B /* Game */; };
-		AFBB5D3526FFEE3000D48B1B /* Common in Resources */ = {isa = PBXBuildFile; fileRef = AFBB5D3126FFEE2F00D48B1B /* Common */; };
-		AFBB5D3626FFEE3000D48B1B /* Shaders in Resources */ = {isa = PBXBuildFile; fileRef = AFBB5D3226FFEE2F00D48B1B /* Shaders */; };
+		AFB14BEF27006FB5005837DE /* Audio in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62626FFE8A3008C9704 /* Audio */; };
+		AFB14BF027006FB5005837DE /* Common in Sources */ = {isa = PBXBuildFile; fileRef = AFBB5D3126FFEE2F00D48B1B /* Common */; };
+		AFB14BF127006FB5005837DE /* Game in Sources */ = {isa = PBXBuildFile; fileRef = AFBB5D3026FFEE2F00D48B1B /* Game */; };
+		AFB14BF227006FB5005837DE /* Graphics in Sources */ = {isa = PBXBuildFile; fileRef = AFBB5D2F26FFEE2F00D48B1B /* Graphics */; };
+		AFB14BF327006FB5005837DE /* Shaders in Sources */ = {isa = PBXBuildFile; fileRef = AFBB5D3226FFEE2F00D48B1B /* Shaders */; };
+		AFB14BF427006FB5005837DE /* GameWrapper.h in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61226FFE6BE008C9704 /* GameWrapper.h */; };
+		AFB14BF527006FB5005837DE /* GameWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61426FFE73C008C9704 /* GameWrapper.mm */; };
+		AFB14BF627006FB5005837DE /* AssetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62126FFE8A2008C9704 /* AssetManager.cpp */; };
+		AFB14BF727006FB5005837DE /* AssetManager.h in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62226FFE8A2008C9704 /* AssetManager.h */; };
+		AFB14BF827006FB5005837DE /* CollisionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62826FFE8A4008C9704 /* CollisionManager.cpp */; };
+		AFB14BF927006FB5005837DE /* CollisionManager.h in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62926FFE8A4008C9704 /* CollisionManager.h */; };
+		AFB14BFA27006FB5005837DE /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61D26FFE8A1008C9704 /* Engine.cpp */; };
+		AFB14BFB27006FB5005837DE /* Engine.h in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62526FFE8A3008C9704 /* Engine.h */; };
+		AFB14BFC27006FB5005837DE /* GameObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62726FFE8A3008C9704 /* GameObject.cpp */; };
+		AFB14BFD27006FB5005837DE /* GameObject.h in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61E26FFE8A2008C9704 /* GameObject.h */; };
+		AFB14BFE27006FB5005837DE /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61F26FFE8A2008C9704 /* InputManager.cpp */; };
+		AFB14BFF27006FB5005837DE /* InputManager.h in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62326FFE8A3008C9704 /* InputManager.h */; };
+		AFB14C0027006FB5005837DE /* RoomManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AF47A62026FFE8A2008C9704 /* RoomManager.cpp */; };
+		AFB14C0127006FB5005837DE /* RoomManager.h in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61A26FFE8A1008C9704 /* RoomManager.h */; };
+		AFB14C0227006FB5005837DE /* BridgingHeader.h in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61326FFE73B008C9704 /* BridgingHeader.h */; };
+		AFB14C292700726B005837DE /* libCorradeInterconnect.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C0F27007185005837DE /* libCorradeInterconnect.a */; };
+		AFB14C2A2700726B005837DE /* libCorradePluginManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C0E27007184005837DE /* libCorradePluginManager.a */; };
+		AFB14C2B2700726B005837DE /* libCorradeTestSuite.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C0727007182005837DE /* libCorradeTestSuite.a */; };
+		AFB14C2C2700726B005837DE /* libCorradeUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C0927007182005837DE /* libCorradeUtility.a */; };
+		AFB14C2D2700726B005837DE /* libMagnum.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C0627007181005837DE /* libMagnum.a */; };
+		AFB14C2E2700726B005837DE /* libMagnumAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C0827007182005837DE /* libMagnumAudio.a */; };
+		AFB14C2F2700726B005837DE /* libMagnumGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C0C27007184005837DE /* libMagnumGL.a */; };
+		AFB14C302700726B005837DE /* libMagnumMeshTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C0D27007184005837DE /* libMagnumMeshTools.a */; };
+		AFB14C312700726B005837DE /* libMagnumPrimitives.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C0A27007183005837DE /* libMagnumPrimitives.a */; };
+		AFB14C322700726B005837DE /* libMagnumSceneGraph.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C1F270071B8005837DE /* libMagnumSceneGraph.a */; };
+		AFB14C332700726C005837DE /* libMagnumSdl2Application.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C0B27007183005837DE /* libMagnumSdl2Application.a */; };
+		AFB14C342700726C005837DE /* libMagnumShaders.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C1C270071B8005837DE /* libMagnumShaders.a */; };
+		AFB14C352700726C005837DE /* libMagnumText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C1A270071B7005837DE /* libMagnumText.a */; };
+		AFB14C362700726C005837DE /* libMagnumTextureTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C1D270071B8005837DE /* libMagnumTextureTools.a */; };
+		AFB14C372700726C005837DE /* libMagnumTrade.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C1B270071B7005837DE /* libMagnumTrade.a */; };
+		AFB14C382700726C005837DE /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AFB14C1E270071B8005837DE /* libSDL2.a */; };
 		AFFB4E3C26FF48DE00FD2500 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +65,23 @@
 		AF47A62726FFE8A3008C9704 /* GameObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameObject.cpp; path = ../../../src/GameObject.cpp; sourceTree = "<group>"; };
 		AF47A62826FFE8A4008C9704 /* CollisionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CollisionManager.cpp; path = ../../../src/CollisionManager.cpp; sourceTree = "<group>"; };
 		AF47A62926FFE8A4008C9704 /* CollisionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CollisionManager.h; path = ../../../src/CollisionManager.h; sourceTree = "<group>"; };
+		AFB14C0627007181005837DE /* libMagnum.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnum.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnum.a"; sourceTree = "<group>"; };
+		AFB14C0727007182005837DE /* libCorradeTestSuite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradeTestSuite.a; path = "../../../Users/etuitus/ios-libs/lib/libCorradeTestSuite.a"; sourceTree = "<group>"; };
+		AFB14C0827007182005837DE /* libMagnumAudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumAudio.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumAudio.a"; sourceTree = "<group>"; };
+		AFB14C0927007182005837DE /* libCorradeUtility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradeUtility.a; path = "../../../Users/etuitus/ios-libs/lib/libCorradeUtility.a"; sourceTree = "<group>"; };
+		AFB14C0A27007183005837DE /* libMagnumPrimitives.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumPrimitives.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumPrimitives.a"; sourceTree = "<group>"; };
+		AFB14C0B27007183005837DE /* libMagnumSdl2Application.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumSdl2Application.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumSdl2Application.a"; sourceTree = "<group>"; };
+		AFB14C0C27007184005837DE /* libMagnumGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumGL.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumGL.a"; sourceTree = "<group>"; };
+		AFB14C0D27007184005837DE /* libMagnumMeshTools.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumMeshTools.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumMeshTools.a"; sourceTree = "<group>"; };
+		AFB14C0E27007184005837DE /* libCorradePluginManager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradePluginManager.a; path = "../../../Users/etuitus/ios-libs/lib/libCorradePluginManager.a"; sourceTree = "<group>"; };
+		AFB14C0F27007185005837DE /* libCorradeInterconnect.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradeInterconnect.a; path = "../../../Users/etuitus/ios-libs/lib/libCorradeInterconnect.a"; sourceTree = "<group>"; };
+		AFB14C1A270071B7005837DE /* libMagnumText.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumText.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumText.a"; sourceTree = "<group>"; };
+		AFB14C1B270071B7005837DE /* libMagnumTrade.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumTrade.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumTrade.a"; sourceTree = "<group>"; };
+		AFB14C1C270071B8005837DE /* libMagnumShaders.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumShaders.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumShaders.a"; sourceTree = "<group>"; };
+		AFB14C1D270071B8005837DE /* libMagnumTextureTools.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumTextureTools.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumTextureTools.a"; sourceTree = "<group>"; };
+		AFB14C1E270071B8005837DE /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = "../../../Users/etuitus/ios-libs/lib/libSDL2.a"; sourceTree = "<group>"; };
+		AFB14C1F270071B8005837DE /* libMagnumSceneGraph.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumSceneGraph.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumSceneGraph.a"; sourceTree = "<group>"; };
+		AFB14C392700726C005837DE /* libMagnumDebugTools.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumDebugTools.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumDebugTools.a"; sourceTree = "<group>"; };
 		AFBB5D2F26FFEE2F00D48B1B /* Graphics */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Graphics; path = ../../../src/Graphics; sourceTree = "<group>"; };
 		AFBB5D3026FFEE2F00D48B1B /* Game */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Game; path = ../../../src/Game; sourceTree = "<group>"; };
 		AFBB5D3126FFEE2F00D48B1B /* Common */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Common; path = ../../../src/Common; sourceTree = "<group>"; };
@@ -55,6 +96,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AFB14C382700726C005837DE /* libSDL2.a in Frameworks */,
+				AFB14C292700726B005837DE /* libCorradeInterconnect.a in Frameworks */,
+				AFB14C2C2700726B005837DE /* libCorradeUtility.a in Frameworks */,
+				AFB14C2A2700726B005837DE /* libCorradePluginManager.a in Frameworks */,
+				AFB14C2B2700726B005837DE /* libCorradeTestSuite.a in Frameworks */,
+				AFB14C2D2700726B005837DE /* libMagnum.a in Frameworks */,
+				AFB14C322700726B005837DE /* libMagnumSceneGraph.a in Frameworks */,
+				AFB14C312700726B005837DE /* libMagnumPrimitives.a in Frameworks */,
+				AFB14C342700726C005837DE /* libMagnumShaders.a in Frameworks */,
+				AFB14C332700726C005837DE /* libMagnumSdl2Application.a in Frameworks */,
+				AFB14C352700726C005837DE /* libMagnumText.a in Frameworks */,
+				AFB14C362700726C005837DE /* libMagnumTextureTools.a in Frameworks */,
+				AFB14C302700726B005837DE /* libMagnumMeshTools.a in Frameworks */,
+				AFB14C2F2700726B005837DE /* libMagnumGL.a in Frameworks */,
+				AFB14C372700726C005837DE /* libMagnumTrade.a in Frameworks */,
+				AFB14C2E2700726B005837DE /* libMagnumAudio.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,11 +145,36 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		AFB14C0527007181005837DE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AFB14C392700726C005837DE /* libMagnumDebugTools.a */,
+				AFB14C1F270071B8005837DE /* libMagnumSceneGraph.a */,
+				AFB14C1C270071B8005837DE /* libMagnumShaders.a */,
+				AFB14C1A270071B7005837DE /* libMagnumText.a */,
+				AFB14C1D270071B8005837DE /* libMagnumTextureTools.a */,
+				AFB14C1B270071B7005837DE /* libMagnumTrade.a */,
+				AFB14C1E270071B8005837DE /* libSDL2.a */,
+				AFB14C0F27007185005837DE /* libCorradeInterconnect.a */,
+				AFB14C0E27007184005837DE /* libCorradePluginManager.a */,
+				AFB14C0727007182005837DE /* libCorradeTestSuite.a */,
+				AFB14C0927007182005837DE /* libCorradeUtility.a */,
+				AFB14C0627007181005837DE /* libMagnum.a */,
+				AFB14C0827007182005837DE /* libMagnumAudio.a */,
+				AFB14C0C27007184005837DE /* libMagnumGL.a */,
+				AFB14C0D27007184005837DE /* libMagnumMeshTools.a */,
+				AFB14C0A27007183005837DE /* libMagnumPrimitives.a */,
+				AFB14C0B27007183005837DE /* libMagnumSdl2Application.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		AFFB4E2B26FF48DC00FD2500 = {
 			isa = PBXGroup;
 			children = (
 				AFFB4E3626FF48DC00FD2500 /* breakmycircle */,
 				AFFB4E3526FF48DC00FD2500 /* Products */,
+				AFB14C0527007181005837DE /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -173,12 +255,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AFBB5D3526FFEE3000D48B1B /* Common in Resources */,
-				AFBB5D3326FFEE3000D48B1B /* Graphics in Resources */,
 				AFFB4E3C26FF48DE00FD2500 /* Assets.xcassets in Resources */,
-				AFBB5D3626FFEE3000D48B1B /* Shaders in Resources */,
-				AFBB5D3426FFEE3000D48B1B /* Game in Resources */,
-				AF47A63226FFE8A4008C9704 /* Audio in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,14 +266,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AF47A63026FFE8A4008C9704 /* AssetManager.cpp in Sources */,
-				AF47A62E26FFE8A4008C9704 /* InputManager.cpp in Sources */,
+				AFB14BEF27006FB5005837DE /* Audio in Sources */,
+				AFB14BF027006FB5005837DE /* Common in Sources */,
+				AFB14BF127006FB5005837DE /* Game in Sources */,
+				AFB14BF227006FB5005837DE /* Graphics in Sources */,
+				AFB14BF327006FB5005837DE /* Shaders in Sources */,
+				AFB14BF627006FB5005837DE /* AssetManager.cpp in Sources */,
+				AFB14BF727006FB5005837DE /* AssetManager.h in Sources */,
+				AFB14BF827006FB5005837DE /* CollisionManager.cpp in Sources */,
+				AFB14BF927006FB5005837DE /* CollisionManager.h in Sources */,
+				AFB14BFA27006FB5005837DE /* Engine.cpp in Sources */,
+				AFB14BFB27006FB5005837DE /* Engine.h in Sources */,
+				AFB14BFC27006FB5005837DE /* GameObject.cpp in Sources */,
+				AFB14BFD27006FB5005837DE /* GameObject.h in Sources */,
+				AFB14BFE27006FB5005837DE /* InputManager.cpp in Sources */,
+				AFB14BFF27006FB5005837DE /* InputManager.h in Sources */,
+				AFB14C0027006FB5005837DE /* RoomManager.cpp in Sources */,
+				AFB14C0127006FB5005837DE /* RoomManager.h in Sources */,
+				AFB14BF427006FB5005837DE /* GameWrapper.h in Sources */,
+				AFB14BF527006FB5005837DE /* GameWrapper.mm in Sources */,
+				AFB14C0227006FB5005837DE /* BridgingHeader.h in Sources */,
 				AF47A60E26FFE431008C9704 /* Main.swift in Sources */,
-				AF47A62D26FFE8A4008C9704 /* Engine.cpp in Sources */,
-				AF47A63426FFE8A4008C9704 /* CollisionManager.cpp in Sources */,
-				AF47A62F26FFE8A4008C9704 /* RoomManager.cpp in Sources */,
-				AF47A61526FFE73C008C9704 /* GameWrapper.mm in Sources */,
-				AF47A63326FFE8A4008C9704 /* GameObject.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,11 +414,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				HEADER_SEARCH_PATHS = (
 					"/Users/etuitus/ios-libs/include",
 					"/Users/etuitus/ios-libs/platform/arm64-ios/include/SDL2",
@@ -357,11 +449,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				HEADER_SEARCH_PATHS = (
 					"/Users/etuitus/ios-libs/include",
 					"/Users/etuitus/ios-libs/platform/arm64-ios/include/SDL2",
