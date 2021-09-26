@@ -103,7 +103,7 @@ cmake --build . --target install
 
 ## Compile for iOS
 
-This process allows a single step to compile `arm64` and `x86_64` in a single shot, by specifing a value like `arm64;x86_64;armv7;armv7s` for the `CMAKE_OSX_ARCHITECTURES` variable. However, from iOS 11 and beyond, only 64-bit architectures are supported.
+This process allows a single step to compile multiple architectures in a single shot, by specifing a value like `arm64;armv7;armv7s` for the `CMAKE_OSX_ARCHITECTURES` variable. However, from iOS 11 and beyond, only 64-bit architectures are supported. So, we are setting the value `arm64`.
 
 Toolchains must be downloaded from [https://github.com/mosra/toolchains](https://github.com/mosra/toolchains), whose contents goes into the `toolchains` folder of *Corrade* and *Magnum Graphics* library.
 
@@ -131,7 +131,7 @@ cmake .. \
   -DCMAKE_SYSTEM_NAME=iOS \
   -DCMAKE_TOOLCHAIN_FILE=../toolchains/generic/iOS.cmake \
   -DCMAKE_OSX_SYSROOT=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk \
-  -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64" \
+  -DCMAKE_OSX_ARCHITECTURES="arm64" \
   -DCMAKE_INSTALL_PREFIX=~/ios-libs \
   -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
   -DBUILD_PLUGINS_STATIC=ON \
