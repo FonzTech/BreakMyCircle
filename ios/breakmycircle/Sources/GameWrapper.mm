@@ -2,8 +2,12 @@
 #import "Engine.h"
 
 @implementation GameWrapper
-- (void) sayHello {
-    printf("ok\n");
+
+- (void) startApp {
+    int argc = 0;
+    char* argv[0];
+    Engine app(Engine::Arguments{argc, argv});
+    app.exec();
 }
 
 @end
