@@ -52,7 +52,7 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
         }
         else
         {
-            setPowerupInfo(BuildConfig.DEBUG ? 1 : amount);
+            setPowerupInfo(Utility.DEBUG ? 1 : amount);
         }
     }
 

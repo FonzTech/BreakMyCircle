@@ -277,7 +277,7 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         runOnUiThread(() -> {
             if (mCanShowAds) {
                 final AdRequest adRequest = new AdRequest.Builder().build();
-                InterstitialAd.load(EngineActivity.this, BuildConfig.DEBUG ? INTERSTITIAL_AD_DEV : INTERSTITIAL_AD_PROD, adRequest, interstitialAdLoadCallback);
+                InterstitialAd.load(EngineActivity.this, Utility.DEBUG ? INTERSTITIAL_AD_DEV : INTERSTITIAL_AD_PROD, adRequest, interstitialAdLoadCallback);
             }
             else {
                 setRewardedInfo(ADS_NOT_AVAILABLE_TYPE, 0);
@@ -290,7 +290,7 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         runOnUiThread(() -> {
             if (mCanShowAds) {
                 final AdRequest adRequest = new AdRequest.Builder().build();
-                RewardedAd.load(EngineActivity.this, BuildConfig.DEBUG ? REWARDED_AD_DEV : REWARDED_AD_PROD, adRequest, rewardedAdLoadCallback);
+                RewardedAd.load(EngineActivity.this, Utility.DEBUG ? REWARDED_AD_DEV : REWARDED_AD_PROD, adRequest, rewardedAdLoadCallback);
             }
             else {
                 setRewardedInfo(ADS_NOT_AVAILABLE_TYPE, 0);
