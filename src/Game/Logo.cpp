@@ -290,8 +290,9 @@ void Logo::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix,
 	}
 	else
 	{
+		const Float lightX = mFinishTimer < -1.0f ? 0.0f : RoomManager::singleton->getWindowAspectRatio() * 4.0f;
 		((Shaders::Phong&) baseDrawable->getShader())
-			.setLightPosition(mLightPosition + Vector3(RoomManager::singleton->getWindowAspectRatio() * 4.0f, 0.0f, 0.0f))
+			.setLightPosition(mLightPosition + Vector3(lightX, 0.0f, 0.0f))
 			.setLightColor(0xffffff60_rgbaf)
 			.setSpecularColor(0xffffff00_rgbaf)
 			.setAmbientColor(0x505050ff_rgbaf)

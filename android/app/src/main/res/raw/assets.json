@@ -122,6 +122,9 @@
   "scenes/world_3.glb": {
     "version": 1
   },
+  "scenes/world_4.glb": {
+    "version": 1
+  },
   "scenes/safe.glb": {
     "version": 1
   },
@@ -131,10 +134,10 @@
   "scenes/powerup.glb": {
     "version": 1
   },
-  "shaders/cubemap.frag": {
+  "shaders/cubemap.vert": {
     "version": 1
   },
-  "shaders/cubemap.vert": {
+  "shaders/cubemap.frag": {
     "version": 1
   },
   "shaders/passthrough.vert": {
@@ -156,6 +159,9 @@
     "version": 1
   },
   "shaders/starroad.frag": {
+    "version": 1
+  },
+  "shaders/sun.frag": {
     "version": 1
   },
   "textures/bubble_blue.png": {
@@ -180,6 +186,9 @@
     "version": 1
   },
   "textures/bubble_yellow.png": {
+    "version": 1
+  },
+  "textures/moon.png": {
     "version": 1
   },
   "textures/explosion.png": {
