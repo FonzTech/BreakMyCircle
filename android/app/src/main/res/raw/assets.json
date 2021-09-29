@@ -182,6 +182,12 @@
   "textures/bubble_red.png": {
     "version": 1
   },
+  "textures/blackhole_bg.png": {
+    "version": 1
+  },
+  "textures/blackhole_fg.png": {
+    "version": 1
+  },
   "textures/bubble_translucent.png": {
     "version": 1
   },

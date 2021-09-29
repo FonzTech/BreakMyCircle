@@ -28,6 +28,11 @@ endif()
 ```
 
 ## Compile for Windows from Windows/macOS/Linux
+
+Change paths accordingly to the host system and your needs.
+
+Change the `^` characters, used in Windows' CMD, to `\` when using Linux or macOS.
+
 ```
 mkdir build && cd build
 cmake .. ^

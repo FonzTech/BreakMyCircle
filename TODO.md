@@ -41,13 +41,15 @@
 ~~- Pause background music when showing ads.~~
 ~~- Implement save/load game.~~
 ~~- Implement ads with back-end management to avoid Google's shit.~~
+~~- Implement push notifications to increase powerups count.~~
 
 # On-going tasks
-- Implement push notifications to increase powerups count.
+- Improve level selector scrolling
+- Fix transparency when blackholes and explode-effect overlaps.
 
 # To be verified
 - Implement other level game objects, such as rocks, holes, and others...
-- Improve collision detection and animations due to "async" between `update` and draw`.
+- Improve collision detection and animations due to "async" between `update` and `draw`.
 
 # Optional tasks
 - Use `magnum-fontconverter` instead of loading `TTF` directly.
