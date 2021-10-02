@@ -532,8 +532,12 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 
 		const bool isHole = isInRange(value, 0.09) || isInRange(value, 0.54) || isInRange(value, 0.98);
 		const bool isCoin = isInRange(value, 0.15, 0.03) || isInRange(value, 0.65, 0.03) || isInRange(value, 0.90, 0.03);
-		const bool isStone = isInRange(value, 0.02) || isInRange(value, 0.35) || isInRange(value, 0.89);
-		const bool isBlackhole = isInRange(value, 0.10) || isInRange(value, 0.42) || isInRange(value, 0.76);
+
+		const double stf = double(seed % 25U) / 25.0 * 0.01;
+		const bool isStone = isInRange(value, 0.02, stf) || isInRange(value, 0.35, stf) || isInRange(value, 0.89, stf);
+
+		const double bhf = double(seed % 50U) / 50.0 * 0.01;
+		const bool isBlackhole = isInRange(value, 0.10, bhf) || isInRange(value, 0.42, bhf) || isInRange(value, 0.76, bhf);
 
 		if (isHole)
 		{

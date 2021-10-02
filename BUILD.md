@@ -74,13 +74,13 @@ cmake .. ^
   -DCMAKE_TOOLCHAIN_FILE=D:\AndroidSDK\ndk-bundle\build\cmake\android.toolchain.cmake ^
   -DCMAKE_SYSTEM_NAME=Android ^
   -DCMAKE_SYSTEM_VERSION=30 ^
+  -DCMAKE_BUILD_TYPE=Release ^
   -DNDK_MIN_PLATFORM_LEVEL=21 ^
   -DANDROID_PLATFORM=21 ^
   -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a ^
   -DANDROID_ABI=arm64-v8a ^
   -DCMAKE_ANDROID_STL_TYPE=c++_static ^
   -DCMAKE_CXX_STANDARD=11 ^
-  -DCMAKE_BUILD_TYPE=Release ^
   -DCMAKE_INSTALL_PREFIX=D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot/usr ^
   -DCMAKE_FIND_ROOT_PATH=D:/AndroidSDK/ndk-bundle/toolchains/llvm/prebuilt/windows-x86_64/sysroot ^
   -DCMAKE_FIND_LIBRARY_CUSTOM_LIB_SUFFIX=/aarch64-linux-android/30 ^
@@ -139,6 +139,7 @@ cmake .. \
   -DCMAKE_OSX_ARCHITECTURES="arm64" \
   -DCMAKE_INSTALL_PREFIX=~/ios-libs \
   -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+  -DCMAKE_BUILD_TYPE=Release \
   -DBUILD_PLUGINS_STATIC=ON \
   -DBUILD_STATIC=ON \
   -DSKIP_INSTALL_PROGRAMS=ON \

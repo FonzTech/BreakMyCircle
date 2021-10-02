@@ -2457,7 +2457,7 @@ void LevelSelector::createGuis()
 			}
 
 			// Check for "Safe" minigame (the first time the user plays the game)
-			if (RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_FIRST_SAFE)
+			if (!mLevelInfo.success || RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_FIRST_SAFE)
 			{
 				// Restore level state to init
 				mLevelInfo.state = GO_LS_LEVEL_RESTORING;
