@@ -64,6 +64,7 @@
 
 #include "../GameObject.h"
 #include "Dialog.h"
+#include "Onboarding.h"
 #include "MapPickup.h"
 #include "LevelSelectorSidecar.h"
 #include "Callbacks/IShootCallback.h"
@@ -217,6 +218,7 @@ private:
 	Float getWidthReferenceFactor();
 
 	std::weak_ptr<Dialog> mDialog;
+	std::weak_ptr<Onboarding> mOnboarding;
 
 #ifdef GO_LS_SKY_PLANE_ENABLED
 	std::shared_ptr<GameDrawable<Shaders::Flat3D>> mSkyPlane;
@@ -234,6 +236,7 @@ private:
 	Float mLevelStartedAnim;
 	bool mLevelEndingAnim;
 	Float mHelpTipsTimer;
+	bool mDisplayMiniOnboarding;
 
 	std::unordered_map<Int, LS_ScenerySelector> mSceneries;
 

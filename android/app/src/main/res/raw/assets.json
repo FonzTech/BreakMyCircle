@@ -281,6 +281,21 @@
   "textures/gui_loading.png": {
     "version": 1
   },
+  "textures/gui_textcloud.png": {
+    "version": 1
+  },
+  "textures/gui_ob_o1.png": {
+    "version": 1
+  },
+  "textures/gui_ob_o2.png": {
+    "version": 1
+  },
+  "textures/gui_ob_o3.png": {
+    "version": 1
+  },
+  "textures/gui_ob_o4.png": {
+    "version": 1
+  },
   "textures/lightning.png": {
     "version": 1
   },

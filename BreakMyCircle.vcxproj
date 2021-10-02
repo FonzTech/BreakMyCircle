@@ -171,6 +171,7 @@
     <ClCompile Include="src\Game\LevelSelectorSidecar.cpp" />
     <ClCompile Include="src\Game\LimitLine.cpp" />
     <ClCompile Include="src\Game\MapPickup.cpp" />
+    <ClCompile Include="src\Game\Onboarding.cpp" />
     <ClCompile Include="src\Game\OverlayGui.cpp" />
     <ClCompile Include="src\Game\OverlayGuiDetached.cpp" />
     <ClCompile Include="src\Game\OverlayText.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="src\Game\LevelSelectorSidecar.h" />
     <ClInclude Include="src\Game\LimitLine.h" />
     <ClInclude Include="src\Game\MapPickup.h" />
+    <ClInclude Include="src\Game\Onboarding.h" />
     <ClInclude Include="src\Game\OverlayGui.h" />
     <ClInclude Include="src\Game\OverlayGuiDetached.h" />
     <ClInclude Include="src\Game\OverlayText.h" />

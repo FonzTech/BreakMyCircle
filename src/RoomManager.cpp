@@ -65,6 +65,8 @@ bool RoomManager::SaveData::load()
 	// Set default value
 	{
 		flags = 0U;
+		onboardIndex = 0;
+
 #if NDEBUG or _DEBUG
 		maxLevelId = 48U;
 		coinTotal = 50;
@@ -146,6 +148,12 @@ bool RoomManager::SaveData::load()
 		}
 	}
 
+	// Onboard index
+	{
+		const auto value = jsonData.find("onboardIndex");
+		onboardIndex = value != jsonData.end() ? (*value).get<Int>() : 0;
+	}
+
 	return true;
 }
 
@@ -165,7 +173,8 @@ bool RoomManager::SaveData::save()
 		{ "coinTotal", coinTotal },
 		{ "coinCurrent", coinCurrent },
 		{ "powerupAmounts", std::unordered_map<std::string, Int>() },
-		{ "levelScores", std::unordered_map<std::string, Int>() }
+		{ "levelScores", std::unordered_map<std::string, Int>() },
+		{ "onboardIndex", onboardIndex },
 	};
 
 	for (const auto& item : powerupAmounts)

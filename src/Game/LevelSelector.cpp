@@ -103,6 +103,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mLevelEndingAnim = false;
 
     mWatchForPowerup = 0U;
+	mDisplayMiniOnboarding = false;
 
 	// Level info
 	{
@@ -120,7 +121,6 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	{
 		mTimer = { 0.0f, 0 };
 		mCoins = { Float(RoomManager::singleton->mSaveData.coinTotal), RoomManager::singleton->mSaveData.coinTotal };
-		Debug{} << "okok" << RoomManager::singleton->mSaveData.coinTotal;
 	}
 
 	// Powerup view
@@ -249,6 +249,13 @@ LevelSelector::~LevelSelector()
 	{
 		mDialog.lock()->mDestroyMe = true;
 		mDialog.reset();
+	}
+
+	// Destroy onboarding, if present
+	if (!mOnboarding.expired())
+	{
+		mOnboarding.lock()->mDestroyMe = true;
+		mOnboarding.reset();
 	}
 
 	// Clear all maps
@@ -429,6 +436,54 @@ void LevelSelector::update()
 
 	// Check if there is any on-going action on top
 	if (mLevelInfo.state == GO_LS_LEVEL_INIT && !RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->empty())
+	{
+		return;
+	}
+
+	// Check if onboarding is active
+	if (mOnboarding.expired())
+	{
+		if (RoomManager::singleton->mSaveData.onboardIndex == 2)
+		{
+			++RoomManager::singleton->mSaveData.onboardIndex;
+			RoomManager::singleton->mSaveData.flags |= GO_RM_SD_FLAG_ONBOARDING_A;
+			RoomManager::singleton->mSaveData.save();
+		}
+		else if (!(RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_ONBOARDING_A))
+		{
+			const std::shared_ptr<Onboarding> go = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, ++RoomManager::singleton->mSaveData.onboardIndex);
+			mOnboarding = (std::shared_ptr<Onboarding>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+			return;
+		}
+
+		if (mDisplayMiniOnboarding && mLevelButtonScaleAnim >= 0.99f)
+		{
+			if (mLevelInfo.success)
+			{
+				if (!(RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_ONBOARDING_B))
+				{
+					const std::shared_ptr<Onboarding> go = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, 3);
+					mOnboarding = (std::shared_ptr<Onboarding>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+
+					RoomManager::singleton->mSaveData.flags |= GO_RM_SD_FLAG_ONBOARDING_B;
+					RoomManager::singleton->mSaveData.save();
+				}
+			}
+			else
+			{
+				if (!(RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_ONBOARDING_C))
+				{
+					const std::shared_ptr<Onboarding> go = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, 4);
+					mOnboarding = (std::shared_ptr<Onboarding>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+
+					RoomManager::singleton->mSaveData.flags |= GO_RM_SD_FLAG_ONBOARDING_C;
+					RoomManager::singleton->mSaveData.save();
+				}
+			}
+			mDisplayMiniOnboarding = false;
+		}
+	}
+	else
 	{
 		return;
 	}
@@ -1604,6 +1659,9 @@ void LevelSelector::manageLevelState()
 
 			// Reset level stats
 			mLevelInfo.score = -1;
+
+			// Display mini-onboarding, depending on level state
+			mDisplayMiniOnboarding = true;
 		}
 
 		// Animate jump to new level

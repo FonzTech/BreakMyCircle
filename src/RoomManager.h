@@ -5,6 +5,9 @@
 #define GOL_ORTHO_FIRST 2
 
 #define GO_RM_SD_FLAG_FIRST_SAFE 1 << 0
+#define GO_RM_SD_FLAG_ONBOARDING_A 1 << 1
+#define GO_RM_SD_FLAG_ONBOARDING_B 1 << 2
+#define GO_RM_SD_FLAG_ONBOARDING_C 1 << 3
 
 #include <memory>
 #include <vector>
@@ -57,6 +60,8 @@ public:
 		Int coinCurrent;
 		std::unordered_map<UnsignedInt, Int> powerupAmounts;
 		std::unordered_map<UnsignedInt, Int> levelScores;
+
+		Int onboardIndex;
 	};
 
 	// Game Object layer data holder

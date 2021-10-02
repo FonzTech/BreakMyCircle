@@ -73,6 +73,8 @@
 #define RESOURCE_TEXTURE_GUI_HAPPY "tex_gui_happy"
 #define RESOURCE_TEXTURE_GUI_HELP "tex_gui_help"
 #define RESOURCE_TEXTURE_GUI_LOADING "tex_gui_loading"
+#define RESOURCE_TEXTURE_GUI_TEXTCLOUD "tex_gui_textcloud"
+#define RESOURCE_TEXTURE_GUI_OB_PREFIX "tex_gui_ob_o"
 #define RESOURCE_TEXTURE_WHITE "tex_white"
 
 #define RESOURCE_SHADER_COLORED_PHONG "shader_colored_phong"
@@ -130,6 +132,7 @@
 #define GOT_MAPPICKUP 15
 #define GOT_LEVEL_SELECTOR_SIDECAR 16
 #define GOT_SAFE_MINIGAME 17
+#define GOT_ONBOARDING 18
 
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>

@@ -1,4 +1,16 @@
-# Things to do
+# On-going tasks
+- Add Onboarding for UI/UX on mobile.
+- Improve level selector scrolling.
+- Fix transparency when blackholes and explode-effect overlaps.
+- Fix collision detection for projectile on its side.
+
+# To be verified
+- Implement other level game objects, such as rocks, holes, and others...
+
+# Optional tasks
+- Use `magnum-fontconverter` instead of loading `TTF` directly.
+
+# Tasks done
 
 - ~~Asset Manager decoupled from game objects.~~
 - ~~Make IDrawCallback a callback to receive updates, such as drawable transformations (position, rotation, etc&#8230;).~~
@@ -42,14 +54,4 @@
 ~~- Implement save/load game.~~
 ~~- Implement ads with back-end management to avoid Google's shit.~~
 ~~- Implement push notifications to increase powerups count.~~
-
-# On-going tasks
-- Improve level selector scrolling
-- Fix transparency when blackholes and explode-effect overlaps.
-
-# To be verified
-- Implement other level game objects, such as rocks, holes, and others...
-- Improve collision detection and animations due to "async" between `update` and `draw`.
-
-# Optional tasks
-- Use `magnum-fontconverter` instead of loading `TTF` directly.
+~~- Improve collision detection and animations due to "async" between `update` and `draw`.~~
