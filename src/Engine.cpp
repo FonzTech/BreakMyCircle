@@ -32,11 +32,15 @@ const std::unordered_set<Int> Engine::GO_DRAW_DETACHED = {
 };
 #endif
 
+Engine::Engine(const Arguments& arguments) :
 #ifdef CORRADE_TARGET_ANDROID
-Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, ENGINE_CONFIGURATION }, mFrameTime(0.0f)
+Platform::Application{ arguments, ENGINE_CONFIGURATION }
+#elif defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
+Platform::Application{ arguments, Configuration{}.setWindowFlags(Configuration::WindowFlag::Resizable) }
 #else
-Engine::Engine(const Arguments& arguments) : Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setSize({ 432, 768 }) }, mFrameTime(0.0f)
+Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setSize({ 432, 768 }) }
 #endif
+, mFrameTime(0.0f)
 {
 	// Setup window
 #ifdef CORRADE_TARGET_ANDROID

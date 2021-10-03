@@ -42,13 +42,18 @@
 		0560458E270A0AE90080AA3E /* ScreenQuadShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604587270A0AE90080AA3E /* ScreenQuadShader.cpp */; };
 		0560458F270A0AE90080AA3E /* StarRoadShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604588270A0AE90080AA3E /* StarRoadShader.cpp */; };
 		05604590270A0AE90080AA3E /* SunShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604589270A0AE90080AA3E /* SunShader.cpp */; };
-		0560459C270A0AFC0080AA3E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604595270A0AFC0080AA3E /* main.cpp */; };
 		0560459D270A0AFC0080AA3E /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604596270A0AFC0080AA3E /* Engine.cpp */; };
 		0560459E270A0AFC0080AA3E /* GameObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604597270A0AFC0080AA3E /* GameObject.cpp */; };
 		0560459F270A0AFC0080AA3E /* RoomManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604598270A0AFC0080AA3E /* RoomManager.cpp */; };
 		056045A0270A0AFC0080AA3E /* CollisionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604599270A0AFC0080AA3E /* CollisionManager.cpp */; };
 		056045A1270A0AFC0080AA3E /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459A270A0AFC0080AA3E /* InputManager.cpp */; };
 		056045A2270A0AFC0080AA3E /* AssetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459B270A0AFC0080AA3E /* AssetManager.cpp */; };
+		056045AD270A22C50080AA3E /* libpng16.16.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045AC270A22C50080AA3E /* libpng16.16.dylib */; };
+		056045AF270A23410080AA3E /* libpng16.16.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 056045AC270A22C50080AA3E /* libpng16.16.dylib */; };
+		056045B2270A23A80080AA3E /* libSDL2-2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */; };
+		056045B3270A23BD0080AA3E /* libSDL2-2.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */; };
+		056045B5270A255E0080AA3E /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 056045B4270A25290080AA3E /* Main.cpp */; };
+		056045B7270A25DA0080AA3E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045B6270A25DA0080AA3E /* Foundation.framework */; };
 		05F22C732709F0DA00C34B15 /* libMagnumTrade.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C632709F0DA00C34B15 /* libMagnumTrade.a */; };
 		05F22C742709F0DA00C34B15 /* libMagnumShaders.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C642709F0DA00C34B15 /* libMagnumShaders.a */; };
 		05F22C752709F0DA00C34B15 /* libMagnumAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C652709F0DA00C34B15 /* libMagnumAudio.a */; };
@@ -76,12 +81,23 @@
 		05F22CA72709F55F00C34B15 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CA02709F51A00C34B15 /* OpenGLES.framework */; };
 		05F22CAA2709F56F00C34B15 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CA92709F56F00C34B15 /* OpenAL.framework */; };
 		05F22CF42709F63B00C34B15 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF32709F63B00C34B15 /* UIKit.framework */; };
-		AF47A60E26FFE431008C9704 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF47A60D26FFE431008C9704 /* Main.swift */; };
-		AFB14BF427006FB5005837DE /* GameWrapper.h in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61226FFE6BE008C9704 /* GameWrapper.h */; };
-		AFB14BF527006FB5005837DE /* GameWrapper.mm in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61426FFE73C008C9704 /* GameWrapper.mm */; };
-		AFB14C0227006FB5005837DE /* BridgingHeader.h in Sources */ = {isa = PBXBuildFile; fileRef = AF47A61326FFE73B008C9704 /* BridgingHeader.h */; };
 		AFFB4E3C26FF48DE00FD2500 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		056045B0270A23410080AA3E /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				056045B3270A23BD0080AA3E /* libSDL2-2.0.dylib in Embed Libraries */,
+				056045AF270A23410080AA3E /* libpng16.16.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StreamedAudioBuffer.cpp; path = ../src/Audio/StreamedAudioBuffer.cpp; sourceTree = "<group>"; };
@@ -126,6 +142,11 @@
 		05604599270A0AFC0080AA3E /* CollisionManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = CollisionManager.cpp; path = ../src/CollisionManager.cpp; sourceTree = "<group>"; };
 		0560459A270A0AFC0080AA3E /* InputManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = InputManager.cpp; path = ../src/InputManager.cpp; sourceTree = "<group>"; };
 		0560459B270A0AFC0080AA3E /* AssetManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = AssetManager.cpp; path = ../src/AssetManager.cpp; sourceTree = "<group>"; };
+		056045AA270A223B0080AA3E /* libpng16.16.38.git.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng16.16.38.git.dylib; path = "../../../../Development/ios-sim64/lib/libpng16.16.38.git.dylib"; sourceTree = "<group>"; };
+		056045AC270A22C50080AA3E /* libpng16.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng16.16.dylib; path = "../../../../Development/ios-sim64/lib/libpng16.16.dylib"; sourceTree = "<group>"; };
+		056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2-2.0.dylib"; path = "../../../../Development/ios-sim64/lib/libSDL2-2.0.dylib"; sourceTree = "<group>"; };
+		056045B4270A25290080AA3E /* Main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Main.cpp; sourceTree = "<group>"; };
+		056045B6270A25DA0080AA3E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		05F22C632709F0DA00C34B15 /* libMagnumTrade.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumTrade.a; path = "../../../../Development/ios-sim64/lib/libMagnumTrade.a"; sourceTree = "<group>"; };
 		05F22C642709F0DA00C34B15 /* libMagnumShaders.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumShaders.a; path = "../../../../Development/ios-sim64/lib/libMagnumShaders.a"; sourceTree = "<group>"; };
 		05F22C652709F0DA00C34B15 /* libMagnumAudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumAudio.a; path = "../../../../Development/ios-sim64/lib/libMagnumAudio.a"; sourceTree = "<group>"; };
@@ -158,10 +179,6 @@
 		05F22CF92709F6E800C34B15 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		05F22CFC2709F72700C34B15 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		05F22D002709F8AF00C34B15 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
-		AF47A60D26FFE431008C9704 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
-		AF47A61226FFE6BE008C9704 /* GameWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameWrapper.h; sourceTree = "<group>"; };
-		AF47A61326FFE73B008C9704 /* BridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingHeader.h; sourceTree = "<group>"; };
-		AF47A61426FFE73C008C9704 /* GameWrapper.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GameWrapper.mm; sourceTree = "<group>"; };
 		AFB14C0627007181005837DE /* libMagnum.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnum.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnum.a"; sourceTree = "<group>"; };
 		AFB14C0727007182005837DE /* libCorradeTestSuite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradeTestSuite.a; path = "../../../Users/etuitus/ios-libs/lib/libCorradeTestSuite.a"; sourceTree = "<group>"; };
 		AFB14C0827007182005837DE /* libMagnumAudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumAudio.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumAudio.a"; sourceTree = "<group>"; };
@@ -189,10 +206,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				056045B7270A25DA0080AA3E /* Foundation.framework in Frameworks */,
 				05F22CF42709F63B00C34B15 /* UIKit.framework in Frameworks */,
 				05F22CA72709F55F00C34B15 /* OpenGLES.framework in Frameworks */,
 				05F22CAA2709F56F00C34B15 /* OpenAL.framework in Frameworks */,
 				05F22C7B2709F0DA00C34B15 /* libpng16.a in Frameworks */,
+				056045AD270A22C50080AA3E /* libpng16.16.dylib in Frameworks */,
+				056045B2270A23A80080AA3E /* libSDL2-2.0.dylib in Frameworks */,
 				05F22C7C2709F0DA00C34B15 /* libSDL2.a in Frameworks */,
 				05F22C9E2709F4C800C34B15 /* libSDL2main.a in Frameworks */,
 				05F22C7E2709F0DA00C34B15 /* libCorradeInterconnect.a in Frameworks */,
@@ -317,9 +337,7 @@
 		AF47A61926FFE856008C9704 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				AF47A61226FFE6BE008C9704 /* GameWrapper.h */,
-				AF47A61426FFE73C008C9704 /* GameWrapper.mm */,
-				AF47A61326FFE73B008C9704 /* BridgingHeader.h */,
+				056045B4270A25290080AA3E /* Main.cpp */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -327,6 +345,10 @@
 		AFB14C0527007181005837DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				056045B6270A25DA0080AA3E /* Foundation.framework */,
+				056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */,
+				056045AC270A22C50080AA3E /* libpng16.16.dylib */,
+				056045AA270A223B0080AA3E /* libpng16.16.38.git.dylib */,
 				05F22D002709F8AF00C34B15 /* CoreBluetooth.framework */,
 				05F22CFC2709F72700C34B15 /* GameController.framework */,
 				05F22CF92709F6E800C34B15 /* AVFoundation.framework */,
@@ -409,7 +431,6 @@
 				AF47A61926FFE856008C9704 /* Sources */,
 				AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */,
 				AFFB4E4026FF48DE00FD2500 /* Info.plist */,
-				AF47A60D26FFE431008C9704 /* Main.swift */,
 			);
 			path = BreakMyCircle;
 			sourceTree = "<group>";
@@ -424,6 +445,7 @@
 				AFFB4E3026FF48DC00FD2500 /* Sources */,
 				AFFB4E3126FF48DC00FD2500 /* Frameworks */,
 				AFFB4E3226FF48DC00FD2500 /* Resources */,
+				056045B0270A23410080AA3E /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -518,17 +540,13 @@
 				0560458E270A0AE90080AA3E /* ScreenQuadShader.cpp in Sources */,
 				0560458F270A0AE90080AA3E /* StarRoadShader.cpp in Sources */,
 				05604590270A0AE90080AA3E /* SunShader.cpp in Sources */,
-				0560459C270A0AFC0080AA3E /* main.cpp in Sources */,
 				0560459D270A0AFC0080AA3E /* Engine.cpp in Sources */,
 				0560459E270A0AFC0080AA3E /* GameObject.cpp in Sources */,
 				0560459F270A0AFC0080AA3E /* RoomManager.cpp in Sources */,
 				056045A0270A0AFC0080AA3E /* CollisionManager.cpp in Sources */,
 				056045A1270A0AFC0080AA3E /* InputManager.cpp in Sources */,
 				056045A2270A0AFC0080AA3E /* AssetManager.cpp in Sources */,
-				AFB14BF427006FB5005837DE /* GameWrapper.h in Sources */,
-				AFB14BF527006FB5005837DE /* GameWrapper.mm in Sources */,
-				AFB14C0227006FB5005837DE /* BridgingHeader.h in Sources */,
-				AF47A60E26FFE431008C9704 /* Main.swift in Sources */,
+				056045B5270A255E0080AA3E /* Main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
