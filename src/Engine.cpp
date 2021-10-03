@@ -68,7 +68,12 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
 	// Init common utility
 	CommonUtility::singleton = std::make_unique<CommonUtility>();
 
-#ifdef CORRADE_TARGET_ANDROID
+#if defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
+    
+    CommonUtility::singleton->mConfig.assetDir = std::string(ios_GetAssetDir());
+    
+#elif CORRADE_TARGET_ANDROID
+    
 	CommonUtility::singleton->mConfig.nativeActivity = nativeActivity();
 
     const std::array<std::string, 4> params = { "asset_dir", "canvas_vertical_height", "density", "save_file" };
@@ -85,7 +90,7 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
 			switch (i)
 			{
 			case 0U:
-				CommonUtility::singleton->mConfig.assetDir = *value;
+                    CommonUtility::singleton->mConfig.assetDir = *value;
 				break;
 
 			case 1U:
@@ -102,6 +107,7 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
 			}
         }
     }
+    
 #endif
 
     Debug{} << "Asset base directory is" << CommonUtility::singleton->mConfig.assetDir;

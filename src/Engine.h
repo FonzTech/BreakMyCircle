@@ -20,6 +20,10 @@
 
 #define ENGINE_CONFIGURATION Configuration{}.setTitle("BreakMyCircle")
 
+#if defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
+extern "C" const char* ios_GetAssetDir();
+#endif
+
 using namespace Magnum;
 
 class Engine : public Platform::Application
