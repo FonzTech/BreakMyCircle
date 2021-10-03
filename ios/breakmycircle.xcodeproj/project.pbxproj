@@ -389,7 +389,7 @@
 				0560457D270A0AB60080AA3E /* Game */,
 				05604581270A0AD80080AA3E /* Graphics */,
 				05604592270A0AEB0080AA3E /* Shaders */,
-				AFFB4E3626FF48DC00FD2500 /* breakmycircle */,
+				AFFB4E3626FF48DC00FD2500 /* BreakMyCircle */,
 				AFFB4E3526FF48DC00FD2500 /* Products */,
 				AFB14C0527007181005837DE /* Frameworks */,
 			);
@@ -403,7 +403,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		AFFB4E3626FF48DC00FD2500 /* breakmycircle */ = {
+		AFFB4E3626FF48DC00FD2500 /* BreakMyCircle */ = {
 			isa = PBXGroup;
 			children = (
 				AF47A61926FFE856008C9704 /* Sources */,
@@ -411,7 +411,7 @@
 				AFFB4E4026FF48DE00FD2500 /* Info.plist */,
 				AF47A60D26FFE431008C9704 /* Main.swift */,
 			);
-			path = breakmycircle;
+			path = BreakMyCircle;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
