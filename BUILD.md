@@ -10,6 +10,10 @@ This is necessary, since Windows 10 SDK can change from time to time, so some bu
 
 Also, be aware of cache when working with Android Studio. You may have to delete manually the entire `.cxx` directory, otherwise you end up with mixed files, inconsistent builds and strange (fake) errors.
 
+Possibly, you may avoid to compile *Test* and *Utility* programs when working on dependencies, such as *OpenAL* and *libPNG*, expecially on mobile platforms like iOS, where binaries require *Code Signing*.
+
+You may avoid to compile dynamic libraries for *SDL2* when working for mobile platforms.
+
 [Here](https://gitlab.com/fonztech-personal/magnum-edited-sources) can be found the Magnum's Edited Sources, along with other dependencies, which add required capatibilies and fixes, such as:
 - fixes on `CMakeLists.txt` for Windows 10 SDK
 - pause/resume capability on AndroidApplication with correct GLES Window/Surface/Context handling.
@@ -123,6 +127,10 @@ Toolchains must be downloaded from [https://github.com/mosra/toolchains](https:/
 - Apple Clang argument `-std=c++17` must be used.  `libc++` must be used as *C++ Standard Library*.
 
 - File list in various *Build Phases* must be fixed, otherwise the compilation will not succed. If it succeded, the binary would be bloated with useless files (such as Source files!!). Beware of "Xcode magic"... bleh.
+
+- To build for iOS-Simulator, you must:
+  - set `CMAKE_OSX_ARCHITECTURES` to `x86_64`;
+  - set `CMAKE_OSX_SYSROOT` to `/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk`.
 
 ### First common step
 ```
