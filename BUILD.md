@@ -143,10 +143,10 @@ Toolchains must be downloaded from [https://github.com/mosra/toolchains](https:/
 - Like the Android guide, the `-fno-rtti` custom flag must be set in *Build Settings*, in *Other C++ Flags*.
 
 - The following frameworks must be added in *Build Phases*:
+  - Foundation
   - UIKit
   - OpenGLES
   - OpenAL
-  - GameController
 
 ### First common step
 ```
