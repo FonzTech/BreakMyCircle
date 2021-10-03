@@ -2,7 +2,7 @@
 
 This project makes use of C++17. **NO GNU-C++17**!!
 
-## About CMakeLists.txt for Corrade/Magnum
+## About CMakeLists.txt for dependencies
 
 Please, take note of this snippet below, and replace the `project` directive with the below snippet.
 
