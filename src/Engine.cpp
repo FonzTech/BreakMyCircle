@@ -13,7 +13,7 @@
 using namespace Magnum::Math::Literals;
 
 const Float Engine::mDrawFrameTime =
-#ifdef CORRADE_TARGET_ANDROID
+#if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
 0.016f
 #else
 0.009f
@@ -620,8 +620,8 @@ void Engine::updateMouseButtonStates(MouseMoveEvent& event)
 {
 	// Get current mouse position
 	InputManager::singleton->mMousePosition = event.position();
-
-#ifdef CORRADE_TARGET_ANDROID
+    
+#if defined(CORRADE_TARGET_ANDROID)
 	InputManager::singleton->setMouseState(Platform::Application::MouseEvent::Button::None, true);
 #else
 	// Get pressed buttons for this mouse move event

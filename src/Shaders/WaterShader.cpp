@@ -12,7 +12,7 @@
 WaterShader::WaterShader()
 {
 	// Setup shader from file
-#ifdef CORRADE_TARGET_ANDROID
+#if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
 	MAGNUM_ASSERT_GL_VERSION_SUPPORTED(GL::Version::GLES300);
 
 	GL::Shader vert{ GL::Version::GLES300, GL::Shader::Type::Vertex };

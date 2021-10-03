@@ -40,7 +40,7 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType) : GameObject
 	mOverlayGuis[1]->setAnchor({ 0.0f, 1.0f });
 
 	// Behaviour depending on provided type
-	const auto& ar = Math::min(1.0f, RoomManager::singleton->getWindowAspectRatio());
+	// const auto& ar = Math::min(1.0f, RoomManager::singleton->getWindowAspectRatio());
 	std::string text;
 
 	switch (mCustomType)

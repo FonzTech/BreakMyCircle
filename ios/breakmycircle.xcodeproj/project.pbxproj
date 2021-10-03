@@ -695,7 +695,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = /Users/alfonso/Documents/Workspace/BreakMyCircle/src;
 			};
 			name = Debug;
 		};
@@ -742,7 +742,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = breakmycircle/Sources/BridgingHeader.h;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = /Users/alfonso/Documents/Workspace/BreakMyCircle/src;
 			};
 			name = Release;
 		};

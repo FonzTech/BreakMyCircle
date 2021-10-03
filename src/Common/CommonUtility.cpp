@@ -20,7 +20,7 @@
 #include "../Graphics/GameDrawable.h"
 
 #ifdef CORRADE_TARGET_ANDROID
-#define DEBUG_OPENGL_CALLS
+// #define DEBUG_OPENGL_CALLS
 #include <android/native_activity.h>
 #endif
 
@@ -161,7 +161,7 @@ void CommonUtility::createGameSphere(GameObject* gameObject, Object3D & manipula
 #ifndef CORRADE_TARGET_ANDROID
 	if (it == RoomManager::singleton->sBubbleColors.end())
 	{
-		CORRADE_ASSERT(false, "Color " + std::to_string(color.toSrgbInt()) + " for bubble was invalid");
+        CORRADE_CONSTEXPR_ASSERT(false, "Color " + std::to_string(color.toSrgbInt()) + " for bubble was invalid");
 	}
 #endif
 

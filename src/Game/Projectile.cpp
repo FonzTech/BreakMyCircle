@@ -204,7 +204,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 
 		if (gameObjects != nullptr && !gameObjects->empty())
 		{
-			const Float sy = getSnappedYPos();
+			// const Float sy = getSnappedYPos();
 			for (const auto& item : *gameObjects)
 			{
 				if (item->getType() == GOT_BUBBLE)
