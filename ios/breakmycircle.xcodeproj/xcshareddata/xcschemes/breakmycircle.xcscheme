@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "AFFB4E3326FF48DC00FD2500"
-               BuildableName = "breakmycircle.app"
-               BlueprintName = "breakmycircle"
+               BuildableName = "breakmycircle_sim.app"
+               BlueprintName = "breakmycircle_sim"
                ReferencedContainer = "container:breakmycircle.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -45,8 +45,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "AFFB4E3326FF48DC00FD2500"
-            BuildableName = "breakmycircle.app"
-            BlueprintName = "breakmycircle"
+            BuildableName = "breakmycircle_sim.app"
+            BlueprintName = "breakmycircle_sim"
             ReferencedContainer = "container:breakmycircle.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,8 +62,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "AFFB4E3326FF48DC00FD2500"
-            BuildableName = "breakmycircle.app"
-            BlueprintName = "breakmycircle"
+            BuildableName = "breakmycircle_sim.app"
+            BlueprintName = "breakmycircle_sim"
             ReferencedContainer = "container:breakmycircle.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

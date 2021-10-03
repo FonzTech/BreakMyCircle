@@ -10,9 +10,17 @@ This is necessary, since Windows 10 SDK can change from time to time, so some bu
 
 Also, be aware of cache when working with Android Studio. You may have to delete manually the entire `.cxx` directory, otherwise you end up with mixed files, inconsistent builds and strange (fake) errors.
 
-Possibly, you may avoid to compile *Test* and *Utility* programs when working on dependencies, such as *OpenAL* and *libPNG*, expecially on mobile platforms like iOS, where binaries require *Code Signing*.
+## Cross-Compiling tips
 
-You may avoid to compile dynamic libraries for *SDL2* when working for mobile platforms.
+- Avoid compile *Test* and *Utility* programs when working on dependencies, such as *OpenAL* and *libPNG*, expecially on mobile platforms like iOS, where binaries require *Code Signing*.
+
+- Avoid compile dynamic libraries for *SDL2* when working for mobile platforms.
+
+- Don't build all `SDL_SUBSYSTEMS` for *SDL2*, otherwise iOS will have to be linked against `CoreBluetooth` and other potentially undesired frameworks, unless you are planning to add game-pad support to your application. This means you'll have to add Bluetooth permission if you use SDL2 library with the game-pad support, which is useless (if you don't really require it), expecially if you use Magnum integration.
+
+  To exclude "problematic subsystems" from the build (`Joystick` and `Haptic`), set the `SDL_SUBSYSTEMS` to:
+
+  - `Audio Video Render Events Threads Timers File Loadso Filesystem Sensor Locale`.
 
 [Here](https://gitlab.com/fonztech-personal/magnum-edited-sources) can be found the Magnum's Edited Sources, along with other dependencies, which add required capatibilies and fixes, such as:
 - fixes on `CMakeLists.txt` for Windows 10 SDK
@@ -131,6 +139,14 @@ Toolchains must be downloaded from [https://github.com/mosra/toolchains](https:/
 - To build for iOS-Simulator, you must:
   - set `CMAKE_OSX_ARCHITECTURES` to `x86_64`;
   - set `CMAKE_OSX_SYSROOT` to `/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk`.
+
+- Like the Android guide, the `-fno-rtti` custom flag must be set in *Build Settings*, in *Other C++ Flags*.
+
+- The following frameworks must be added in *Build Phases*:
+  - UIKit
+  - OpenGLES
+  - OpenAL
+  - GameController
 
 ### First common step
 ```

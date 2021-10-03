@@ -17,10 +17,12 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
@@ -33,7 +35,7 @@
 	<dict/>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
-		<string>armv7</string>
+		<string>opengles-3</string>
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
@@ -47,11 +49,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-    <key>UIRequiredDeviceCapabilities</key>
-    <array>
-        <string>opengles-3</string>
-    </array>
-    <key>NSHighResolutionCapable</key>
-    <true/>
 </dict>
 </plist>
