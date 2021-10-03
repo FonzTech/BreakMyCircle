@@ -120,11 +120,11 @@ Toolchains must be downloaded from [https://github.com/mosra/toolchains](https:/
 
 - `CMAKE_TOOLCHAIN_FILE` must NOT be set when compiling *OpenAL*.
 
-- `PNG_LIBRARY` and `PNG_PNG_INCLUDE_DIR` must be set when compiling *libpng*. Try, respectively, with values `/usr/local/` and `/usr/local/include`.
+- `PNG_LIBRARY` and `PNG_PNG_INCLUDE_DIR` must be set when compiling *Magnum*. Try, respectively, with values `/usr/local/` and `/usr/local/include`. Otherwise, try your own path where you compiled *libPNG* manually.
 
-- For *SDL2*, the script `build-script/iosbuild.sh` must be used to compile correctly for iOS. Also, this script must be edited, so only `arm64` and `x86_64` get compiled and installed as available dependencies. Look for other things which don't meet this requirements, such as `lipo` commands used to create a single library, which are used for iOS Simulator, for example.
+- For *SDL2*, although the same build method/pipeline/whatever-you-use shall be used, along other dependencies, the script `build-script/iosbuild.sh` can be used to compile correctly for iOS. Also, this script must be edited, so only `arm64` and `x86_64` get compiled and installed as available dependencies. Look for other things which don't meet this requirements, such as `lipo` commands used to create a single library, which are used for iOS Simulator, for example.
 
-- Apple Clang argument `-std=c++17` must be used.  `libc++` must be used as *C++ Standard Library*.
+- In your Xcode project, Apple Clang argument `-std=c++17` must be used.  `libc++` must be used as *C++ Standard Library*.
 
 - File list in various *Build Phases* must be fixed, otherwise the compilation will not succed. If it succeded, the binary would be bloated with useless files (such as Source files!!). Beware of "Xcode magic"... bleh.
 
