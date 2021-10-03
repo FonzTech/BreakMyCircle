@@ -331,7 +331,7 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 	}
 
 	// Recursively add children
-	for (const std::size_t & id : objectData->children())
+	for (const auto& id : objectData->children())
 	{
 		processChildrenAssets(gameObject, assets, importer, *objectNode, UnsignedInt(id), drawCallback);
 	}

@@ -48,7 +48,7 @@ public:
 		mDrawCallback = gd->mDrawCallback;
 	}
 
-	ClassShaderType& getShader()
+	ClassShaderType& getShader() override
 	{
 		return *mShader;
 	}

@@ -376,7 +376,6 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 	// Create variables
 	const double fSeed(seed);
 	const Float fSquare(xlen);
-	const Int iSeed(seed);
 
 	const Float len = fSquare * 2.0f; // "2" is the fixed diameter of a "game bubble"
 	const Float playerY = -13.0f - len;
