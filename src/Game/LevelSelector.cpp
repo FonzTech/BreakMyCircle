@@ -483,10 +483,6 @@ void LevelSelector::update()
 			mDisplayMiniOnboarding = false;
 		}
 	}
-	else
-	{
-		return;
-	}
 
 	// Overlay for common
 	windowForCommon();
@@ -596,7 +592,7 @@ void LevelSelector::update()
 	}
 
 	// Handle button clicks
-	const auto& lbs = InputManager::singleton->mMouseStates[PRIMARY_BUTTON];
+	const auto& lbs = mOnboarding.expired() ? InputManager::singleton->mMouseStates[PRIMARY_BUTTON] : IM_STATE_NOT_PRESSED;
 	{
 		if (mClickTimer >= 0.0f)
 		{
@@ -1437,7 +1433,7 @@ void LevelSelector::manageLevelState()
 			animate[2] = (mPosition - mLevelInfo.lastLevelPos).length() > 50.0f;
 		}
 
-		if (!mSettingsOpened && mLevelButtonScaleAnim >= 0.99f && mLevelInfo.currentViewingLevelId == 0U)
+		if (mDialog.expired() && mOnboarding.expired() && !mSettingsOpened && mLevelButtonScaleAnim >= 0.99f && mLevelInfo.currentViewingLevelId == 0U)
 		{
 			const auto ov = mHelpTipsTimer;
 			mHelpTipsTimer += mDeltaTime;

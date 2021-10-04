@@ -276,7 +276,6 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 			}
 		}
 	}
-	Debug{} << "mAmbientColormAmbientColor" << mAmbientColor;
 
 	// Check if projectile is a bomb
 	Int shootAmount = 0;
@@ -324,7 +323,13 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 	// Check if projectile is an electric bubble
 	else if (preColor == BUBBLE_ELECTRIC)
 	{
-		std::vector<std::shared_ptr<Bubble>> bubbles;
+		std::vector<Bubble*> bubbles;
+
+		for (const auto& item : *gameObjects)
+		{
+			bubbles.push_back((Bubble*)item);
+		}
+
 		const auto& list = RoomManager::singleton->mGoLayers[mParentIndex].list;
 
 		for (Int i = 0, j = std::rand(); i != list->size(); ++i, j = std::rand())
@@ -335,7 +340,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 				const auto& b = (std::shared_ptr<Bubble>&)item;
 				if (b->mAmbientColor == mAmbientColor)
 				{
-					bubbles.push_back(b);
+					bubbles.push_back(b.get());
 					if (bubbles.size() >= 3)
 					{
 						break;
