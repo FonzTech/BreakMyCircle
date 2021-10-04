@@ -7,6 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0535E8F6270A3E41009462B0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604595270A0AFC0080AA3E /* main.cpp */; };
+		0535E8F9270A4267009462B0 /* Startup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* Startup.swift */; };
+		0535EA62270A4DE7009462B0 /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0535EA61270A4DE7009462B0 /* assets.json */; };
+		0535EAD9270A51BD009462B0 /* paths in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD1270A51BC009462B0 /* paths */; };
+		0535EADA270A51BD009462B0 /* rooms in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD2270A51BC009462B0 /* rooms */; };
+		0535EADB270A51BD009462B0 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD3270A51BC009462B0 /* shaders */; };
+		0535EADC270A51BD009462B0 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD4270A51BC009462B0 /* fonts */; };
+		0535EADD270A51BD009462B0 /* scenes in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD5270A51BD009462B0 /* scenes */; };
+		0535EADE270A51BD009462B0 /* audios in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD6270A51BD009462B0 /* audios */; };
+		0535EADF270A51BD009462B0 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD7270A51BD009462B0 /* textures */; };
+		0535EAE1270A55B1009462B0 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C9D2709F4AE00C34B15 /* libSDL2main.a */; };
+		0535EAE2270A6130009462B0 /* libAnySceneImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C902709F38600C34B15 /* libAnySceneImporter.a */; };
 		05604540270A0A350080AA3E /* StreamedAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */; };
 		05604541270A0A350080AA3E /* StreamedAudioPlayable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */; };
 		0560454A270A0A850080AA3E /* PlasmaSquareRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604548270A0A850080AA3E /* PlasmaSquareRenderer.cpp */; };
@@ -52,7 +64,6 @@
 		056045AF270A23410080AA3E /* libpng16.16.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 056045AC270A22C50080AA3E /* libpng16.16.dylib */; };
 		056045B2270A23A80080AA3E /* libSDL2-2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */; };
 		056045B3270A23BD0080AA3E /* libSDL2-2.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */; };
-		056045B5270A255E0080AA3E /* Main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 056045B4270A25290080AA3E /* Main.cpp */; };
 		056045B7270A25DA0080AA3E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045B6270A25DA0080AA3E /* Foundation.framework */; };
 		05F22C732709F0DA00C34B15 /* libMagnumTrade.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C632709F0DA00C34B15 /* libMagnumTrade.a */; };
 		05F22C742709F0DA00C34B15 /* libMagnumShaders.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C642709F0DA00C34B15 /* libMagnumShaders.a */; };
@@ -62,8 +73,6 @@
 		05F22C782709F0DA00C34B15 /* libMagnumMeshTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C682709F0DA00C34B15 /* libMagnumMeshTools.a */; };
 		05F22C792709F0DA00C34B15 /* libMagnumTextureTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C692709F0DA00C34B15 /* libMagnumTextureTools.a */; };
 		05F22C7A2709F0DA00C34B15 /* libMagnum.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C6A2709F0DA00C34B15 /* libMagnum.a */; };
-		05F22C7B2709F0DA00C34B15 /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C6B2709F0DA00C34B15 /* libpng16.a */; };
-		05F22C7C2709F0DA00C34B15 /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C6C2709F0DA00C34B15 /* libSDL2.a */; };
 		05F22C7D2709F0DA00C34B15 /* libMagnumSdl2Application.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C6D2709F0DA00C34B15 /* libMagnumSdl2Application.a */; };
 		05F22C7E2709F0DA00C34B15 /* libCorradeInterconnect.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C6E2709F0DA00C34B15 /* libCorradeInterconnect.a */; };
 		05F22C7F2709F0DA00C34B15 /* libCorradeUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C6F2709F0DA00C34B15 /* libCorradeUtility.a */; };
@@ -72,12 +81,10 @@
 		05F22C822709F0DA00C34B15 /* libMagnumText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C722709F0DA00C34B15 /* libMagnumText.a */; };
 		05F22C842709F11B00C34B15 /* libCorradeUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C6F2709F0DA00C34B15 /* libCorradeUtility.a */; };
 		05F22C8F2709F37200C34B15 /* libStbTrueTypeFont.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C8E2709F37200C34B15 /* libStbTrueTypeFont.a */; };
-		05F22C942709F38600C34B15 /* libAnySceneImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C902709F38600C34B15 /* libAnySceneImporter.a */; };
 		05F22C952709F38600C34B15 /* libTinyGltfImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C912709F38600C34B15 /* libTinyGltfImporter.a */; };
 		05F22C962709F38600C34B15 /* libPngImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C922709F38600C34B15 /* libPngImporter.a */; };
 		05F22C972709F38600C34B15 /* libAnyImageImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C932709F38600C34B15 /* libAnyImageImporter.a */; };
 		05F22C992709F3CE00C34B15 /* libStbVorbisAudioImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C8C2709F35900C34B15 /* libStbVorbisAudioImporter.a */; };
-		05F22C9E2709F4C800C34B15 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C9D2709F4AE00C34B15 /* libSDL2main.a */; };
 		05F22CA72709F55F00C34B15 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CA02709F51A00C34B15 /* OpenGLES.framework */; };
 		05F22CAA2709F56F00C34B15 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CA92709F56F00C34B15 /* OpenAL.framework */; };
 		05F22CF42709F63B00C34B15 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF32709F63B00C34B15 /* UIKit.framework */; };
@@ -100,6 +107,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0535E8F8270A4267009462B0 /* Startup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Startup.swift; sourceTree = "<group>"; };
+		0535EA61270A4DE7009462B0 /* assets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = assets.json; path = ../android/app/src/main/res/raw/assets.json; sourceTree = "<group>"; };
+		0535EAD1270A51BC009462B0 /* paths */ = {isa = PBXFileReference; lastKnownFileType = folder; name = paths; path = ../paths; sourceTree = "<group>"; };
+		0535EAD2270A51BC009462B0 /* rooms */ = {isa = PBXFileReference; lastKnownFileType = folder; name = rooms; path = ../rooms; sourceTree = "<group>"; };
+		0535EAD3270A51BC009462B0 /* shaders */ = {isa = PBXFileReference; lastKnownFileType = folder; name = shaders; path = ../shaders; sourceTree = "<group>"; };
+		0535EAD4270A51BC009462B0 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = fonts; path = ../fonts; sourceTree = "<group>"; };
+		0535EAD5270A51BD009462B0 /* scenes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scenes; path = ../scenes; sourceTree = "<group>"; };
+		0535EAD6270A51BD009462B0 /* audios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = audios; path = ../audios; sourceTree = "<group>"; };
+		0535EAD7270A51BD009462B0 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = textures; path = ../textures; sourceTree = "<group>"; };
 		0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StreamedAudioBuffer.cpp; path = ../src/Audio/StreamedAudioBuffer.cpp; sourceTree = "<group>"; };
 		0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StreamedAudioPlayable.cpp; path = ../src/Audio/StreamedAudioPlayable.cpp; sourceTree = "<group>"; };
 		05604548270A0A850080AA3E /* PlasmaSquareRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PlasmaSquareRenderer.cpp; path = ../src/Common/CustomRenderers/PlasmaSquareRenderer.cpp; sourceTree = "<group>"; };
@@ -145,7 +161,6 @@
 		056045AA270A223B0080AA3E /* libpng16.16.38.git.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng16.16.38.git.dylib; path = "../../../../Development/ios-sim64/lib/libpng16.16.38.git.dylib"; sourceTree = "<group>"; };
 		056045AC270A22C50080AA3E /* libpng16.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng16.16.dylib; path = "../../../../Development/ios-sim64/lib/libpng16.16.dylib"; sourceTree = "<group>"; };
 		056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2-2.0.dylib"; path = "../../../../Development/ios-sim64/lib/libSDL2-2.0.dylib"; sourceTree = "<group>"; };
-		056045B4270A25290080AA3E /* Main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Main.cpp; sourceTree = "<group>"; };
 		056045B6270A25DA0080AA3E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		05F22C632709F0DA00C34B15 /* libMagnumTrade.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumTrade.a; path = "../../../../Development/ios-sim64/lib/libMagnumTrade.a"; sourceTree = "<group>"; };
 		05F22C642709F0DA00C34B15 /* libMagnumShaders.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumShaders.a; path = "../../../../Development/ios-sim64/lib/libMagnumShaders.a"; sourceTree = "<group>"; };
@@ -210,11 +225,9 @@
 				05F22CF42709F63B00C34B15 /* UIKit.framework in Frameworks */,
 				05F22CA72709F55F00C34B15 /* OpenGLES.framework in Frameworks */,
 				05F22CAA2709F56F00C34B15 /* OpenAL.framework in Frameworks */,
-				05F22C7B2709F0DA00C34B15 /* libpng16.a in Frameworks */,
 				056045AD270A22C50080AA3E /* libpng16.16.dylib in Frameworks */,
 				056045B2270A23A80080AA3E /* libSDL2-2.0.dylib in Frameworks */,
-				05F22C7C2709F0DA00C34B15 /* libSDL2.a in Frameworks */,
-				05F22C9E2709F4C800C34B15 /* libSDL2main.a in Frameworks */,
+				0535EAE1270A55B1009462B0 /* libSDL2main.a in Frameworks */,
 				05F22C7E2709F0DA00C34B15 /* libCorradeInterconnect.a in Frameworks */,
 				05F22C7F2709F0DA00C34B15 /* libCorradeUtility.a in Frameworks */,
 				05F22C762709F0DA00C34B15 /* libCorradePluginManager.a in Frameworks */,
@@ -225,23 +238,46 @@
 				05F22C842709F11B00C34B15 /* libCorradeUtility.a in Frameworks */,
 				05F22C782709F0DA00C34B15 /* libMagnumMeshTools.a in Frameworks */,
 				05F22C792709F0DA00C34B15 /* libMagnumTextureTools.a in Frameworks */,
-				05F22C7A2709F0DA00C34B15 /* libMagnum.a in Frameworks */,
 				05F22C7D2709F0DA00C34B15 /* libMagnumSdl2Application.a in Frameworks */,
 				05F22C802709F0DA00C34B15 /* libMagnumSceneGraph.a in Frameworks */,
 				05F22C812709F0DA00C34B15 /* libMagnumGL.a in Frameworks */,
 				05F22C822709F0DA00C34B15 /* libMagnumText.a in Frameworks */,
+				05F22C7A2709F0DA00C34B15 /* libMagnum.a in Frameworks */,
 				05F22C992709F3CE00C34B15 /* libStbVorbisAudioImporter.a in Frameworks */,
 				05F22C8F2709F37200C34B15 /* libStbTrueTypeFont.a in Frameworks */,
-				05F22C942709F38600C34B15 /* libAnySceneImporter.a in Frameworks */,
 				05F22C952709F38600C34B15 /* libTinyGltfImporter.a in Frameworks */,
 				05F22C962709F38600C34B15 /* libPngImporter.a in Frameworks */,
 				05F22C972709F38600C34B15 /* libAnyImageImporter.a in Frameworks */,
+				0535EAE2270A6130009462B0 /* libAnySceneImporter.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0535E8F7270A4259009462B0 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				0535E8F8270A4267009462B0 /* Startup.swift */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		0535E90F270A4D01009462B0 /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				0535EA61270A4DE7009462B0 /* assets.json */,
+				0535EAD6270A51BD009462B0 /* audios */,
+				0535EAD4270A51BC009462B0 /* fonts */,
+				0535EAD1270A51BC009462B0 /* paths */,
+				0535EAD2270A51BC009462B0 /* rooms */,
+				0535EAD5270A51BD009462B0 /* scenes */,
+				0535EAD3270A51BC009462B0 /* shaders */,
+				0535EAD7270A51BD009462B0 /* textures */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
 		0560453D270A0A200080AA3E /* Audio */ = {
 			isa = PBXGroup;
 			children = (
@@ -334,14 +370,6 @@
 			name = Base;
 			sourceTree = "<group>";
 		};
-		AF47A61926FFE856008C9704 /* Sources */ = {
-			isa = PBXGroup;
-			children = (
-				056045B4270A25290080AA3E /* Main.cpp */,
-			);
-			path = Sources;
-			sourceTree = "<group>";
-		};
 		AFB14C0527007181005837DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -405,6 +433,7 @@
 		AFFB4E2B26FF48DC00FD2500 = {
 			isa = PBXGroup;
 			children = (
+				0535E90F270A4D01009462B0 /* Assets */,
 				05604594270A0AF20080AA3E /* Base */,
 				0560453D270A0A200080AA3E /* Audio */,
 				05604543270A0A490080AA3E /* Common */,
@@ -428,7 +457,7 @@
 		AFFB4E3626FF48DC00FD2500 /* BreakMyCircle */ = {
 			isa = PBXGroup;
 			children = (
-				AF47A61926FFE856008C9704 /* Sources */,
+				0535E8F7270A4259009462B0 /* Sources */,
 				AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */,
 				AFFB4E4026FF48DE00FD2500 /* Info.plist */,
 			);
@@ -495,6 +524,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				AFFB4E3C26FF48DE00FD2500 /* Assets.xcassets in Resources */,
+				0535EA62270A4DE7009462B0 /* assets.json in Resources */,
+				0535EAD9270A51BD009462B0 /* paths in Resources */,
+				0535EADA270A51BD009462B0 /* rooms in Resources */,
+				0535EADF270A51BD009462B0 /* textures in Resources */,
+				0535EADE270A51BD009462B0 /* audios in Resources */,
+				0535EADD270A51BD009462B0 /* scenes in Resources */,
+				0535EADC270A51BD009462B0 /* fonts in Resources */,
+				0535EADB270A51BD009462B0 /* shaders in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -505,6 +542,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0535E8F9270A4267009462B0 /* Startup.swift in Sources */,
 				05604540270A0A350080AA3E /* StreamedAudioBuffer.cpp in Sources */,
 				05604541270A0A350080AA3E /* StreamedAudioPlayable.cpp in Sources */,
 				0560454A270A0A850080AA3E /* PlasmaSquareRenderer.cpp in Sources */,
@@ -546,7 +584,7 @@
 				056045A0270A0AFC0080AA3E /* CollisionManager.cpp in Sources */,
 				056045A1270A0AFC0080AA3E /* InputManager.cpp in Sources */,
 				056045A2270A0AFC0080AA3E /* AssetManager.cpp in Sources */,
-				056045B5270A255E0080AA3E /* Main.cpp in Sources */,
+				0535E8F6270A3E41009462B0 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -570,7 +608,7 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -631,7 +669,7 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
@@ -705,11 +743,11 @@
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fno-rtti",
-					"-lstdc++11",
 				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = breakmycircle/Sources/BridgingHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -753,11 +791,11 @@
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fno-rtti",
-					"-lstdc++11",
 				);
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = breakmycircle/Sources/BridgingHeader.h;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = /Users/alfonso/Documents/Workspace/BreakMyCircle/src;

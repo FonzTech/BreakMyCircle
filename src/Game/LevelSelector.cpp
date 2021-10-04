@@ -501,7 +501,7 @@ void LevelSelector::update()
 
 	if (isViewingLevel || isViewingSettings)
 	{
-		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
+		// const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 		const auto& lbs = InputManager::singleton->mMouseStates[PRIMARY_BUTTON];
 
 		if (lbs == IM_STATE_PRESSED)
