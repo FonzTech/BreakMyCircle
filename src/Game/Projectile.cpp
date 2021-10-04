@@ -52,8 +52,9 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 	else if (mAmbientColor == BUBBLE_ELECTRIC)
 	{
 		const std::shared_ptr<ElectricBall> go = std::make_shared<ElectricBall>(mParentIndex);
-		mElectricBall = (std::shared_ptr<ElectricBall>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
+		mElectricBall = go;
 		mElectricBall->playSfxAudio(0);
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(go);
 	}
 	else
 	{
@@ -193,6 +194,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 	// Get row index
 	const Color3 preColor = mAmbientColor;
 	const Int thisRowIndex = getRowIndexByBubble();
+	const bool workOnColor = mAmbientColor == BUBBLE_PLASMA || mAmbientColor == BUBBLE_ELECTRIC;
 
 	// Get nearest bubble
 	Containers::Optional<Color3> collidedColor = Containers::NullOpt;
@@ -222,7 +224,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 							(item->mPosition.x() < mPosition.x() ? leftBubble : rightBubble)= b;
 						}
 
-						if (CommonUtility::singleton->isBubbleColorValid(b->mAmbientColor))
+						if (workOnColor && CommonUtility::singleton->isBubbleColorValid(b->mAmbientColor))
 						{
 							collidedColor = b->mAmbientColor;
 						}
@@ -257,7 +259,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 	};
 
 	// Mutate the color, if this projectile is a plasma or electric bubble
-	if (mAmbientColor == BUBBLE_PLASMA || mAmbientColor == BUBBLE_ELECTRIC)
+	if (workOnColor)
 	{
 		if (collidedColor != Containers::NullOpt)
 		{
@@ -316,7 +318,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 
 			if (destroyLater != nullptr)
 			{
-				destroyLater->destroyDisjointBubbles();
+				destroyLater->destroyDisjointBubbles(offsetZ);
 			}
 		}
 	}
@@ -331,30 +333,41 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		}
 
 		const auto& list = RoomManager::singleton->mGoLayers[mParentIndex].list;
-
-		for (Int i = 0, j = std::rand(); i != list->size(); ++i, j = std::rand())
+		for (const auto& item : *list)
 		{
-			const auto& item = list->at((i + j) % list->size());
 			if (item->getType() == GOT_BUBBLE)
 			{
-				const auto& b = (std::shared_ptr<Bubble>&)item;
-				if (b->mAmbientColor == mAmbientColor)
+				const Int i = std::rand() % list->size();
+				const Int j = std::rand() % list->size();
+
+				if (i <= j)
 				{
-					bubbles.push_back(b.get());
-					if (bubbles.size() >= 3)
+					const auto& b = (std::shared_ptr<Bubble>&)item;
+					if (b->mAmbientColor == mAmbientColor)
 					{
-						break;
+						bubbles.push_back(b.get());
+						if (bubbles.size() >= 5)
+						{
+							break;
+						}
 					}
 				}
 			}
 		}
 
 		// Destroy nearby bubbles and disjoint bubble groups
+		Float offsetZ = 0.7f;
 		for (auto& b : bubbles)
 		{
-			if (shootAmount = b->destroyNearbyBubbles(false, 0.6f))
+			Int thisAmount = 0;
+			if (thisAmount = b->destroyNearbyBubbles(false, offsetZ))
 			{
-				shootAmount += b->destroyDisjointBubbles();
+				shootAmount += thisAmount;
+				offsetZ += Float(thisAmount) * 0.02f;
+
+				thisAmount = b->destroyDisjointBubbles(offsetZ + Float(shootAmount) * 0.02f);
+				shootAmount += thisAmount;
+				offsetZ += Float(thisAmount) * 0.02f;
 			}
 		}
 	}
@@ -379,9 +392,9 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		}
 
 		// Destroy nearby bubbles and disjoint bubble groups
-		if (shootAmount = b->destroyNearbyBubbles(false, 0.6f))
+		if (shootAmount = b->destroyNearbyBubbles(false, 0.3f))
 		{
-			shootAmount += b->destroyDisjointBubbles();
+			shootAmount += b->destroyDisjointBubbles(0.3f + Float(shootAmount) * 0.02f);
 		}
 		else
 		{

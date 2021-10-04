@@ -10,7 +10,7 @@
 #define GO_RM_SD_FLAG_ONBOARDING_C 1 << 3
 
 #include <memory>
-#include <vector>
+#include <unordered_set>
 #include <nlohmann/json.hpp>
 
 #include <Magnum/Magnum.h>
@@ -39,7 +39,7 @@
 
 using namespace Magnum;
 
-typedef std::vector<std::shared_ptr<GameObject>> GameObjectList;
+typedef std::unordered_set<std::shared_ptr<GameObject>> GameObjectList;
 
 class RoomManager
 {
@@ -83,14 +83,8 @@ public:
 
 		void push_back(const std::shared_ptr<GameObject> & go)
 		{
-			list->push_back(std::move(go));
-			list->back()->mParentIndex = index;
-		}
-
-		std::shared_ptr<GameObject> & push_back(const std::shared_ptr<GameObject> & go, const bool _dummy)
-		{
-			push_back(go);
-			return list->back();
+			go->mParentIndex = index;
+			list->insert(go);
 		}
 	};
 

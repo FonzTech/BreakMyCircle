@@ -91,7 +91,8 @@ SafeMinigame::SafeMinigame(const Int parentIndex, const Float startingScale) : G
 		go->mOutlineColor.data()[3] = 0.0f;
 		go->setText(text);
 
-		mTexts[0] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+		mTexts[0] = go;
+		RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go);
 	}
 
 	// Load audios

@@ -23,38 +23,35 @@ Dialog::Dialog(const Int parentIndex, const UnsignedInt messageCapacity, const U
 
 	// Create background
 	{
-		const std::shared_ptr<OverlayGui> go = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_WHITE);
-		go->setColor({ 0.0f, 0.0f, 0.0f, 0.0f });
-		go->setPosition({ 0.0f, 0.0f });
-		go->setSize({ 1.0f * Math::max(1.0f, RoomManager::singleton->getWindowAspectRatio()), 1.0f });
-		go->setAnchor({ 0.0f, 0.0f });
-
-		mBackground = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
+		mBackground = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_WHITE);
+		mBackground->setColor({ 0.0f, 0.0f, 0.0f, 0.0f });
+		mBackground->setPosition({ 0.0f, 0.0f });
+		mBackground->setSize({ 1.0f * Math::max(1.0f, RoomManager::singleton->getWindowAspectRatio()), 1.0f });
+		mBackground->setAnchor({ 0.0f, 0.0f });
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(mBackground);
 	}
 
 	// Create title
 	if (titleCapacity != 0U)
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, titleCapacity);
-		go->mColor = Color4(1.0f, 1.0f, 1.0f, 0.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
-		go->mPosition = Vector3(0.0f, 0.4f, 0.0f);
-		go->setSize(Vector2(1.0f));
-		go->setText("---");
-
-		mTitle = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
+		mTitle = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, titleCapacity);
+		mTitle->mColor = Color4(1.0f, 1.0f, 1.0f, 0.0f);
+		mTitle->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
+		mTitle->mPosition = Vector3(0.0f, 0.4f, 0.0f);
+		mTitle->setSize(Vector2(1.0f));
+		mTitle->setText("---");
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(mTitle);
 	}
 
 	// Create message
 	{
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, messageCapacity);
-		go->mColor = Color4(1.0f, 1.0f, 1.0f, 0.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
-		go->mPosition = Vector3(0.0f, 0.3f, 0.0f);
-		go->setSize(Vector2(1.0f));
-		go->setText("---");
-
-		mMessage = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
+		mMessage = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, messageCapacity);
+		mMessage->mColor = Color4(1.0f, 1.0f, 1.0f, 0.0f);
+		mMessage->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
+		mMessage->mPosition = Vector3(0.0f, 0.3f, 0.0f);
+		mMessage->setSize(Vector2(1.0f));
+		mMessage->setText("---");
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(mMessage);
 	}
 }
 
@@ -237,6 +234,7 @@ void Dialog::addAction(const std::string & text, const std::function<void(Unsign
 	buttonGui->setPosition(Vector2(0.0f, yp) + offset.xy());
 	buttonGui->setSize({ isLong ? 0.36f : 0.18f, 0.09f });
 	buttonGui->setAnchor({ 0.0f, 0.0f });
+	RoomManager::singleton->mGoLayers[mParentIndex].push_back(buttonGui);
 
 	const std::shared_ptr<OverlayText> buttonText = std::make_shared<OverlayText>(mParentIndex, Text::Alignment::MiddleCenter, capacity != 0U ? capacity : UnsignedInt(text.length()));
 	buttonText->mPosition = Vector3(0.0f, yp, 0.0f) + offset;
@@ -244,11 +242,12 @@ void Dialog::addAction(const std::string & text, const std::function<void(Unsign
 	buttonText->mOutlineColor = Color4(0.81f, 0.42f, 0.14f, 0.0f);
 	buttonText->setSize(Vector2(0.8f));
 	buttonText->setText(text);
+	RoomManager::singleton->mGoLayers[mParentIndex].push_back(buttonText);
 
 	mActions.push_back({
 		callback,
-		(std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(buttonGui, true),
-		(std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(buttonText, true),
+		buttonGui,
+		buttonText,
 		0.0f
 	});
 }
@@ -283,11 +282,11 @@ void Dialog::setMode(const Int mode)
 
 	case GO_DG_MODE_LOADING:
 		{
-			const std::shared_ptr<OverlayGui> buttonGui = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_GUI_LOADING);
-			buttonGui->setPosition({ 0.0f, -0.25f });
-			buttonGui->setSize(Vector2(0.25f));
-			buttonGui->setAnchor(Vector2(0.0f));
-			mLoading = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(buttonGui, true);
+			mLoading = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_GUI_LOADING);
+			mLoading->setPosition({ 0.0f, -0.25f });
+			mLoading->setSize(Vector2(0.25f));
+			mLoading->setAnchor(Vector2(0.0f));
+			RoomManager::singleton->mGoLayers[mParentIndex].push_back(mLoading);
 		}
 
 		for (auto& action : mActions)

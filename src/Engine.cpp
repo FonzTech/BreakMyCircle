@@ -232,24 +232,22 @@ void Engine::tickEvent()
 		// Update all game objects on this layer
 		if (currentGol->updateEnabled)
 		{
-            for (UnsignedInt i = 0; i != gos->size(); ++i)
+            for (auto& go : *gos)
             {
-                std::shared_ptr<GameObject> & go = gos->at(i);
 				go->mDeltaTime = mDeltaTime;
 				go->update();
 			}
 
 			// Destroy all marked objects as such on this layer
-			for (UnsignedInt i = 0; i < gos->size();)
+			for (auto it = gos->begin(); it != gos->end();)
 			{
-				std::shared_ptr<GameObject> & go = gos->at(i);
-				if (go->mDestroyMe)
+				if ((*it)->mDestroyMe)
 				{
-					gos->erase(gos->begin() + i);
+					it = gos->erase(it);
 				}
 				else
 				{
-					++i;
+					++it;
 				}
 			}
 		}

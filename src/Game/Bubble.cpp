@@ -354,9 +354,9 @@ Int Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
 	return group->size();
 }
 
-Int Bubble::destroyDisjointBubbles()
+Int Bubble::destroyDisjointBubbles(const Float offsetZ)
 {
-	auto future = std::async(std::launch::async, [this]() {
+	auto future = std::async(std::launch::async, [this,offsetZ]() {
 		// Create list of bubbles
 		std::unordered_set<Bubble*> group;
 		for (const auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
@@ -394,11 +394,12 @@ Int Bubble::destroyDisjointBubbles()
 			// Destroy all bubbles obtained from the previous function
 			if (!graph->attached)
 			{
+				Int i = 0;
 				for (auto& item : graph->set)
 				{
 					{
 						GraphNode gn;
-						gn.position = item->mPosition;
+						gn.position = item->mPosition + Vector3(0.0f, 0.0f, offsetZ + Float(++i) * 0.01f);
 						gn.color = ((Bubble*)item)->mAmbientColor;
 						fps->push(gn);
 					}

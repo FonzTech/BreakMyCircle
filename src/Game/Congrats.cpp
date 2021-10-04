@@ -11,12 +11,12 @@ Congrats::Congrats(const Int parentIndex, const Int customType) : GameObject(par
 {
 	// Create GUI
 	{
-		const std::shared_ptr<OverlayGui> go = std::make_shared<OverlayGui>(parentIndex, RESOURCE_TEXTURE_GUI_CONGRATS);
-		go->setPosition({ 0.0f, 0.0f });
-		go->setSize({ 0.0f, 0.0f });
-		go->setAnchor({ 0.0f, 0.0f });
-		go->setColor({ 1.0f, 1.0f, 1.0f, 0.0f });
-		mOverlayGui = (std::shared_ptr<OverlayGui>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+		mOverlayGui = std::make_shared<OverlayGui>(parentIndex, RESOURCE_TEXTURE_GUI_CONGRATS);
+		mOverlayGui->setPosition({ 0.0f, 0.0f });
+		mOverlayGui->setSize({ 0.0f, 0.0f });
+		mOverlayGui->setAnchor({ 0.0f, 0.0f });
+		mOverlayGui->setColor({ 1.0f, 1.0f, 1.0f, 0.0f });
+		RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(mOverlayGui);
 	}
 
 	// Create text
@@ -45,14 +45,13 @@ Congrats::Congrats(const Int parentIndex, const Int customType) : GameObject(par
 			break;
 		}
 
-		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, text.length());
-		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
-		go->mColor = Color4(0.868f, 0.241f, 0.186f, 1.0f);
-		go->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
-		go->setSize(Vector2(1.0f));
-		go->setText(text);
-
-		mOverlayText = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+		mOverlayText = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, text.length());
+		mOverlayText->mPosition = Vector3(2.0f, 2.0f, 0.0f);
+		mOverlayText->mColor = Color4(0.868f, 0.241f, 0.186f, 1.0f);
+		mOverlayText->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
+		mOverlayText->setSize(Vector2(1.0f));
+		mOverlayText->setText(text);
+		RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(mOverlayText);
 	}
 
 	// Load audio

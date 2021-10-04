@@ -119,7 +119,8 @@ Logo::Logo(const Int parentIndex) : GameObject()
 		go->mOutlineColor.data()[3] = 0.0f;
 		go->setText(text);
 
-		mTexts[0] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+		mTexts[0] = go;
+		RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go);
 	}
 
 	{
@@ -130,7 +131,8 @@ Logo::Logo(const Int parentIndex) : GameObject()
 		go->mOutlineColor.data()[3] = 0.0f;
 		go->setText(text);
 
-		mTexts[1] = (std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go, true);
+		mTexts[1] = go;
+		RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go);
 	}
 
 	// Build animations

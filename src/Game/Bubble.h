@@ -78,13 +78,12 @@ public:
 	void update() override;
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 
-	void collidedWith(const Int requestCode, const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects);
 	void updateBBox();
 	void applyRippleEffect(const Vector3& center);
 	void playStompSound();
 
 	Int destroyNearbyBubbles(const bool force, const Float offsetZ);
-	Int destroyDisjointBubbles();
+	Int destroyDisjointBubbles(const Float offsetZ);
 
 	Int destroyNearbyBubblesImpl(BubbleCollisionGroup* group);
 	std::unique_ptr<Graph> destroyDisjointBubblesImpl(std::unordered_set<Bubble*> & group, const bool attached);

@@ -88,7 +88,9 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType) : GameObject
 		ot->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
 		ot->setSize(Vector2(0.0f));
 		ot->setText(text);
-		mOverlayTexts.push_back((std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(ot, true));
+
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(ot);
+		mOverlayTexts.push_back(ot);
 	}
 
 	{
@@ -100,7 +102,9 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType) : GameObject
 		ot->mColor = Color4(1.0f, 0.5f, 0.5f, 0.0f);
 		ot->setSize(Vector2(0.0f));
 		ot->setText(text);
-		mOverlayTexts.push_back((std::shared_ptr<OverlayText>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(ot, true));
+
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(ot);
+		mOverlayTexts.push_back(ot);
 	}
 }
 

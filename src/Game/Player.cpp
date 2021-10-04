@@ -189,7 +189,8 @@ void Player::update()
 				}
 
 				// Prevent shooting by keeping a reference (also, add the projectile to game object list)
-				mProjectile = RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
+				mProjectile = go;
+				RoomManager::singleton->mGoLayers[mParentIndex].push_back(go);
 
 				// Update color for next bubble
 				mProjColors[0] = mProjColors[1];
@@ -376,9 +377,10 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 void Player::postConstruct()
 {
 	const std::shared_ptr<ElectricBall> go = std::make_shared<ElectricBall>(mParentIndex);
-	mElectricBall = (std::shared_ptr<ElectricBall>&) RoomManager::singleton->mGoLayers[mParentIndex].push_back(go, true);
+	mElectricBall = go;
 	mElectricBall->mPosition = Vector3(10000.0f);
 	mElectricBall->playSfxAudio(0);
+	RoomManager::singleton->mGoLayers[mParentIndex].push_back(go);
 }
 
 void Player::setupProjectile(const Int index)
