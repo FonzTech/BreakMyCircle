@@ -1,8 +1,9 @@
 # On-going tasks
-- Add Onboarding for UI/UX on mobile.
 - Improve level selector scrolling.
 - Fix transparency when blackholes and explode-effect overlaps.
 - Fix collision detection for projectile on its side.
+- Implement projectile-swap for player, while both bubbles are "valid" (no powerups).
+- Add shooting path while player is aiming.
 
 # To be verified
 - Implement other level game objects, such as rocks, holes, and others...
@@ -55,3 +56,4 @@
 ~~- Implement ads with back-end management to avoid Google's shit.~~
 ~~- Implement push notifications to increase powerups count.~~
 ~~- Improve collision detection and animations due to "async" between `update` and `draw`.~~
+~~- Add Onboarding for UI/UX on mobile.~~
