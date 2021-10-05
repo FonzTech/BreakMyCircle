@@ -91,7 +91,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mPosition = getLastLevelPos() - Vector3(0.0f, 0.0f, 5.0f);
 
 	mScrolling = {
-		Vector2i(GO_LS_RESET_MOUSE_VALUE, -1),
+		Containers::NullOpt,
 		Vector3(0.0f),
 		Vector3(0.0f),
 		0.0f
@@ -129,7 +129,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 	// Powerup view
 	{
-		mPuView.startX = GO_LS_RESET_MOUSE_VALUE;
+		mPuView.startX = Containers::NullOpt;
 		mPuView.scrollX = 0.0f;
 
 		const std::unordered_map<UnsignedInt, Int> prices = {
@@ -533,15 +533,15 @@ void LevelSelector::update()
 		}
 		else if (lbs >= IM_STATE_PRESSING)
 		{
-			if (mPuView.startX != GO_LS_RESET_MOUSE_VALUE)
+			if (mPuView.startX != Containers::NullOpt)
 			{
-				mPuView.scrollX += Float(InputManager::singleton->mMousePosition.x() - mPuView.startX) * (0.005f / CommonUtility::singleton->mConfig.displayDensity);
+				mPuView.scrollX += Float(InputManager::singleton->mMousePosition.x() - *mPuView.startX) * (0.005f / CommonUtility::singleton->mConfig.displayDensity);
 				mPuView.startX = InputManager::singleton->mMousePosition.x();
 			}
 		}
 		else if (lbs == IM_STATE_RELEASED)
 		{
-			mPuView.startX = GO_LS_RESET_MOUSE_VALUE;
+			mPuView.startX = Containers::NullOpt;
 		}
 		else
 		{
@@ -553,7 +553,7 @@ void LevelSelector::update()
 	}
 	else
 	{
-		mPuView.startX = GO_LS_RESET_MOUSE_VALUE;
+		mPuView.startX = Containers::NullOpt;
 	}
 
 	windowForCurrentLevelView();
@@ -685,9 +685,9 @@ void LevelSelector::update()
 	else if (lbs >= IM_STATE_PRESSED)
 	{
 		// Update mouse delta
-		if (mScrolling.prevMousePos.x() > GO_LS_RESET_MOUSE_VALUE)
+		if (mScrolling.prevMousePos != Containers::NullOpt)
 		{
-			const Vector2i mouseDelta = InputManager::singleton->mMousePosition - mScrolling.prevMousePos;
+			const Vector2i mouseDelta = InputManager::singleton->mMousePosition - *mScrolling.prevMousePos;
 			if (mouseDelta.isZero())
 			{
 				mScrolling.velocity = Vector3(0.0f);
@@ -706,7 +706,7 @@ void LevelSelector::update()
 	else
 	{
 		// Reset mouse value
-		mScrolling.prevMousePos.data()[0] = GO_LS_RESET_MOUSE_VALUE;
+		mScrolling.prevMousePos = Containers::NullOpt;
 
 		// Reset click index
 		mClickIndex = -1;

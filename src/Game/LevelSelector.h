@@ -2,7 +2,6 @@
 
 #define GO_LS_SCENERY_LENGTH 50.0f
 #define GO_LS_MAX_SCROLL_VELOCITY 0.5f
-#define GO_LS_RESET_MOUSE_VALUE -10000
 #define GO_LS_CLICK_TAP_MAX_DELAY 0.3
 
 #define GO_LS_TEXT_LEVEL 0U
@@ -169,7 +168,7 @@ private:
 
 	struct LS_PowerupView
 	{
-		Int startX;
+		Containers::Optional<Int> startX;
 		Float scrollX;
 		std::unordered_map<UnsignedInt, LS_CachedVariable<Int, Int>> counts;
 		std::unordered_map<UnsignedInt, Int> prices;
@@ -177,7 +176,7 @@ private:
 
 	struct LS_Scroll
 	{
-		Vector2i prevMousePos;
+		Containers::Optional<Vector2i> prevMousePos;
 		Vector3 release;
 		Vector3 velocity;
 		Float factor;
