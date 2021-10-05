@@ -1,7 +1,7 @@
 #pragma once
 
 #define GO_LS_SCENERY_LENGTH 50.0f
-#define GO_LS_MAX_SCROLL_THRESHOLD 0.005f
+#define GO_LS_MAX_SCROLL_THRESHOLD 0.001f
 #define GO_LS_MAX_SCROLL_VELOCITY 0.5f
 #define GO_LS_RESET_MOUSE_VALUE -10000
 #define GO_LS_CLICK_TAP_MAX_DELAY 0.3
@@ -176,6 +176,14 @@ private:
 		std::unordered_map<UnsignedInt, Int> prices;
 	};
 
+	struct LS_Scroll
+	{
+		Vector2i prevMousePos;
+		Vector3 release;
+		Vector3 velocity;
+		Float factor;
+	};
+
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);
 	void createSkyPlane();
 	void handleScrollableCameraPosition(const Vector3 & delta);
@@ -225,8 +233,7 @@ private:
 	Object3D* mSkyManipulator;
 #endif
 
-	Vector2i mPrevMousePos;
-	Vector3 mScrollVelocity;
+	LS_Scroll mScrolling;
 	Float mLevelButtonScaleAnim;
 
 	Math::CubicBezier2D<Float> mCbEaseInOut;

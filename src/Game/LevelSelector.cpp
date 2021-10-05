@@ -90,8 +90,12 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	// Init members
 	mPosition = getLastLevelPos() - Vector3(0.0f, 0.0f, 5.0f);
 
-	mPrevMousePos = Vector2i(GO_LS_RESET_MOUSE_VALUE, -1);
-	mScrollVelocity = Vector3(0.0f);
+	mScrolling = {
+		Vector2i(GO_LS_RESET_MOUSE_VALUE, -1),
+		Vector3(0.0f),
+		Vector3(0.0f),
+		0.0f
+	};
 	mClickIndex = -1;
 	mClickTimer = 0.0f;
 	mLevelButtonScaleAnim = 0.0f;
@@ -451,7 +455,7 @@ void LevelSelector::update()
 		}
 		else if (!(RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_ONBOARDING_A))
 		{
-			const auto& p = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, ++RoomManager::singleton->mSaveData.onboardIndex);
+			const auto& p = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, ++RoomManager::singleton->mSaveData.onboardIndex, getScaledVerticalPadding());
 			mOnboarding = p;
 			RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(p);
 			return;
@@ -463,7 +467,7 @@ void LevelSelector::update()
 			{
 				if (!(RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_ONBOARDING_B))
 				{
-					const auto& p = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, 3);
+					const auto& p = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, 3, getScaledVerticalPadding());
 					mOnboarding = p;
 					RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(p);
 
@@ -475,7 +479,7 @@ void LevelSelector::update()
 			{
 				if (!(RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_ONBOARDING_C))
 				{
-					const auto& p = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, 4);
+					const auto& p = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, 4, getScaledVerticalPadding());
 					mOnboarding = p;
 					RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(p);
 
@@ -486,6 +490,16 @@ void LevelSelector::update()
 			mDisplayMiniOnboarding = false;
 		}
 	}
+#if NDEBUG or _DEBUG
+	else if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_PRESSED)
+	{
+		RoomManager::singleton->mSaveData.flags |= GO_RM_SD_FLAG_ONBOARDING_A;
+		RoomManager::singleton->mSaveData.save();
+
+		mOnboarding.lock()->mDestroyMe = true;
+		mOnboarding.reset();
+	}
+#endif
 
 	// Overlay for common
 	windowForCommon();
@@ -664,70 +678,56 @@ void LevelSelector::update()
 	{
 		if (!isViewingLevel && !mSettingsOpened && mLevelInfo.state == GO_LS_LEVEL_INIT && !mLevelEndingAnim)
 		{
-            mPrevMousePos = InputManager::singleton->mMousePosition;
+			mScrolling.prevMousePos = InputManager::singleton->mMousePosition;
 			mClickStartTime = std::chrono::system_clock::now();
 		}
 	}
 	else if (lbs >= IM_STATE_PRESSED)
 	{
 		// Update mouse delta
-		if (mPrevMousePos.x() > GO_LS_RESET_MOUSE_VALUE)
+		if (mScrolling.prevMousePos.x() > GO_LS_RESET_MOUSE_VALUE)
 		{
-			const Vector2i mouseDelta = InputManager::singleton->mMousePosition - mPrevMousePos;
+			const Vector2i mouseDelta = InputManager::singleton->mMousePosition - mScrolling.prevMousePos;
 			if (mouseDelta.isZero())
 			{
-				mScrollVelocity = Vector3(0.0f);
+				mScrolling.velocity = Vector3(0.0f);
 			}
 			else
 			{
 				const Vector3 scrollDelta = Vector3(Float(mouseDelta.x()), 0.0f, Float(mouseDelta.y())) * -0.05f;
-				mScrollVelocity = scrollDelta;
+				mScrolling.velocity = scrollDelta;
 			}
 
 			// Update previous mouse state
-			mPrevMousePos = InputManager::singleton->mMousePosition;
+			mScrolling.prevMousePos = InputManager::singleton->mMousePosition;
 		}
 	}
 	// Reset scrolling behaviour
 	else
 	{
 		// Reset mouse value
-		mPrevMousePos.data()[0] = GO_LS_RESET_MOUSE_VALUE;
+		mScrolling.prevMousePos.data()[0] = GO_LS_RESET_MOUSE_VALUE;
 
 		// Reset click index
 		mClickIndex = -1;
 
-		// Handle scroll inertia
-		if (!mScrollVelocity.isZero())
+		// Kinetic scrolling
+		if (lbs == IM_STATE_RELEASED)
 		{
-			for (UnsignedInt i = 0; i < 3; ++i)
+			mScrolling.release = mScrolling.velocity;
+			mScrolling.factor = 1.0f;
+		}
+
+		// Handle scroll inertia
+		if (!mScrolling.velocity.isZero())
+		{
+			mScrolling.factor -= mDeltaTime * 0.5f;
+			if (mScrolling.factor < 0.0f)
 			{
-#ifdef CORRADE_TARGET_ANDROID
-                const Float maxVelocity = GO_LS_MAX_SCROLL_VELOCITY / (CommonUtility::singleton->mConfig.displayDensity * (i == 0 ? 4.0f : 1.0f)) * 0.25f;
-#else
-                const Float maxVelocity = GO_LS_MAX_SCROLL_VELOCITY / (CommonUtility::singleton->mConfig.displayDensity);
-#endif
-				if (mScrollVelocity.data()[i] < -maxVelocity)
-				{
-					mScrollVelocity.data()[i] = -maxVelocity;
-				}
-				else if (mScrollVelocity.data()[i] > maxVelocity)
-				{
-					mScrollVelocity.data()[i] = maxVelocity;
-				}
+				mScrolling.factor = 0.0f;
 			}
 
-			Vector3 scrollDelta = mScrollVelocity;
-			for (UnsignedInt i = 0; i < 3; ++i)
-			{
-				if (std::abs(scrollDelta[i]) < GO_LS_MAX_SCROLL_THRESHOLD)
-				{
-					mScrollVelocity[i] = 0.0f;
-					scrollDelta[i] = 0.0f;
-				}
-			}
-
-			mScrollVelocity -= scrollDelta * mDeltaTime;
+			mScrolling.velocity = Math::lerp(Vector3(0.0f), mScrolling.release, Animation::Easing::exponentialIn(mScrolling.factor));
 		}
 
 		// Check for click release
@@ -788,7 +788,8 @@ void LevelSelector::update()
 									    if (mSettingsOpened <= 0.01f && mLevelAnim <= 0.01f)
                                         {
                                             // Stop scrolling
-                                            mScrollVelocity = Vector3(0.0f);
+											mScrolling.velocity = Vector3(0.0f);
+											mScrolling.release = Vector3(0.0f);
 
                                             // Open level window
                                             clickLevelButton(&it2->second, spo);
@@ -814,11 +815,11 @@ void LevelSelector::update()
 		}
 	}
 
-	if (!mScrollVelocity.isZero())
+	if (!mScrolling.velocity.isZero())
 	{
 		// Increment by delta
 		const auto mOldPosition = mPosition;
-		mPosition += mScrollVelocity;
+		mPosition += mScrolling.velocity;
 
 		// Limit on various axis
 		{
@@ -1416,10 +1417,7 @@ void LevelSelector::manageLevelState()
 	case GO_LS_LEVEL_INIT:
 
 		// Animations
-		if (mLevelButtonScaleAnim <= 0.0f)
-		{
-			animate[4] = false;
-		}
+		animate[4] = mLevelButtonScaleAnim > 0.0f && mOnboarding.expired();
 
 		// Animate when a level is clicked
 		if (mLevelInfo.currentViewingLevelId != 0U)
@@ -1437,8 +1435,6 @@ void LevelSelector::manageLevelState()
 		{
 			animate[2] = (mPosition - mLevelInfo.lastLevelPos).length() > 50.0f;
 		}
-
-		animate[4] = mOnboarding.expired();
 
 		if (mDialog.expired() && mOnboarding.expired() && !mSettingsOpened && mLevelButtonScaleAnim >= 0.99f && mLevelInfo.currentViewingLevelId == 0U)
 		{
@@ -2378,7 +2374,8 @@ void LevelSelector::createGuis()
 				if (mSettingsOpened)
 				{
 					// Stop scrolling
-					mScrollVelocity = Vector3(0.0f);
+					mScrolling.velocity = Vector3(0.0f);
+					mScrolling.release = Vector3(0.0f);
 
 					// Game logic
 					audioIndex = GO_LS_AUDIO_PAUSE_IN;
