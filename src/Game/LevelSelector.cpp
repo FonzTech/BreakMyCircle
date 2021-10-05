@@ -714,8 +714,22 @@ void LevelSelector::update()
 		// Kinetic scrolling
 		if (lbs == IM_STATE_RELEASED)
 		{
-			mScrolling.release = mScrolling.velocity;
-			mScrolling.factor = 1.0f;
+            mScrolling.factor = 1.0f;
+            mScrolling.release = mScrolling.velocity / CommonUtility::singleton->mConfig.displayDensity;
+
+			const Float limit = GO_LS_MAX_SCROLL_VELOCITY / CommonUtility::singleton->mConfig.displayDensity;
+            for (UnsignedInt i = 0; i < 3; ++i)
+            {
+                auto* p = &mScrolling.release.data()[i];
+				if (*p < -limit)
+				{
+					*p = -limit;
+				}
+				else if (*p > limit)
+				{
+					*p = limit;
+				}
+            }
 		}
 
 		// Handle scroll inertia
@@ -785,7 +799,7 @@ void LevelSelector::update()
 								{
 									if (spo->levelIndex < RoomManager::singleton->mSaveData.maxLevelId)
 									{
-									    if (mSettingsOpened <= 0.01f && mLevelAnim <= 0.01f)
+									    if (mSettingsAnim <= 0.01f && mLevelAnim <= 0.01f)
                                         {
                                             // Stop scrolling
 											mScrolling.velocity = Vector3(0.0f);
