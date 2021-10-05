@@ -44,7 +44,6 @@ private:
 	};
 
 	Int mTransformationProjectionMatrixUniform;
-	Int mProjectionMatrixUniform;
 	Int mFrameUniform, mSpeedUniform, mSizeUniform;
 	Int mHorizonColorUniform;
 };
