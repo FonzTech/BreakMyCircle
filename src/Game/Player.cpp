@@ -35,6 +35,7 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 	// Initialize members
 	mAnimation[0] = 0.0f;
 	mAnimation[1] = 0.0f;
+	mAnimation[2] = 0.0f;
 
 	// Load asset as first drawable
 	{
@@ -160,8 +161,19 @@ void Player::update()
 		}
 	}
 
+	// Check for bubble swap
+	if (mIsSwapping)
+	{
+		// Check for end
+		mAnimation[2] -= mDeltaTime;
+		if (mAnimation[2] <= 0.0f)
+		{
+			mAnimation[2] = 0.0f;
+			mIsSwapping = false;
+		}
+	}
 	// Check for mouse input
-	if (mCanShoot)
+	else if (mCanShoot)
 	{
 		const auto& bs = InputManager::singleton->mMouseStates[PRIMARY_BUTTON];
 		if (bs == IM_STATE_PRESSED)
@@ -172,59 +184,80 @@ void Player::update()
 		{
 			if (mProjectile.expired())
 			{
-				// Create projectile
-				std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mParentIndex, mProjColors[0]);
-				go->mPosition = mPosition;
-				go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
-
-				if (mProjColors[0] == BUBBLE_PLASMA)
+				// Check if bubble swap was requested
+				if (getBubbleSwapArea().contains(InputManager::singleton->mMousePosition))
 				{
-					go->setCustomTexture(mPlasmaSquareRenderer.getRenderedTexture());
-				}
+					if (CommonUtility::singleton->isBubbleColorValid(mProjColors[0]))
+					{
+						// Start animation
+						mAnimation[2] = 1.0f;
+						mIsSwapping = true;
 
-				// Assign shoot callback
-				if (!mShootCallback.expired())
+						// Swap colors
+						const auto x = mProjColors[1];
+						mProjColors[1] = mProjColors[0];
+						mProjColors[0] = x;
+
+						setupProjectile(0);
+						setupProjectile(1);
+					}
+				}
+				else
 				{
-					go->mShootCallback = mShootCallback;
+					// Create projectile
+					std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mParentIndex, mProjColors[0]);
+					go->mPosition = mPosition;
+					go->mVelocity = -Vector3(Math::cos(mShootAngle), Math::sin(mShootAngle), 0.0f);
+
+					if (mProjColors[0] == BUBBLE_PLASMA)
+					{
+						go->setCustomTexture(mPlasmaSquareRenderer.getRenderedTexture());
+					}
+
+					// Assign shoot callback
+					if (!mShootCallback.expired())
+					{
+						go->mShootCallback = mShootCallback;
+					}
+
+					// Prevent shooting by keeping a reference (also, add the projectile to game object list)
+					mProjectile = go;
+					RoomManager::singleton->mGoLayers[mParentIndex].push_back(go);
+
+					// Update color for next bubble
+					mProjColors[0] = mProjColors[1];
+					mProjColors[1] = getRandomEligibleColor(1)->at(0);
+
+					setupProjectile(0);
+					setupProjectile(1);
+
+					/*
+					mProjTextures[0] = mProjTextures[1];
+					mProjTextures[1] = getTextureResourceForIndex(1);
+
+					mSphereDrawables[0]->mTexture = mProjTextures[0];
+					*/
+
+					/*
+					// Reset animation for new projectile
+					mProjPath->mProgress = Float(mProjPath->getSize());
+					*/
+
+					// Play random sound
+					{
+						const UnsignedInt index = std::rand() % 3;
+						playSfxAudio(index);
+					}
+
+					// Launch callback
+					if (!mShootCallback.expired())
+					{
+						mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_STARTED, go->mAmbientColor, go->mAmbientColor, 0);
+					}
+
+					// Reset animation factor
+					mAnimation[1] = 1.0f;
 				}
-
-				// Prevent shooting by keeping a reference (also, add the projectile to game object list)
-				mProjectile = go;
-				RoomManager::singleton->mGoLayers[mParentIndex].push_back(go);
-
-				// Update color for next bubble
-				mProjColors[0] = mProjColors[1];
-				mProjColors[1] = getRandomEligibleColor(1)->at(0);
-
-				setupProjectile(0);
-				setupProjectile(1);
-
-				/*
-				mProjTextures[0] = mProjTextures[1];
-				mProjTextures[1] = getTextureResourceForIndex(1);
-
-				mSphereDrawables[0]->mTexture = mProjTextures[0];
-				*/
-
-				/*
-				// Reset animation for new projectile
-				mProjPath->mProgress = Float(mProjPath->getSize());
-				*/
-
-				// Play random sound
-				{
-					const UnsignedInt index = std::rand() % 3;
-					playSfxAudio(index);
-				}
-
-				// Launch callback
-				if (!mShootCallback.expired())
-				{
-					mShootCallback.lock()->shootCallback(ISC_STATE_SHOOT_STARTED, go->mAmbientColor, go->mAmbientColor, 0);
-				}
-
-				// Reset animation factor
-				mAnimation[1] = 1.0f;
 			}
 		}
 	}
@@ -235,6 +268,10 @@ void Player::update()
 		.rotateX(Deg(90.0f))
 		.rotateZ(Deg(mShootAngle) + Deg(90.0f))
 		.translate(mPosition);
+
+	const Rad angle = Rad(Deg((1.0f - mAnimation[2]) * 180.0f));
+	const Float ac = Math::cos(angle);
+	const Float as = Math::sin(angle);
 
 	// Primary projectile
 	{
@@ -291,11 +328,18 @@ void Player::update()
 		// Otherwise, it's an ordinary bubble / plasma bubble
 		else
 		{
-			// Make bubble visible
+			const Float s1 = 1.0f + mAnimation[1] * 0.5f;
+			const Float s2 = mAnimation[2] * 0.5f;
+
+			const Float x1 = 3.0f + ac * 3.0f;
+			const Float x2 = 6.0f * mAnimation[1];
+			const Float y1 = as * 3.0f;
+
+			// Make bubbles visible
 			(*mSphereManipulator[0])
 				.resetTransformation()
-				.scale(Vector3(1.0f + mAnimation[1] * 0.5f))
-				.translate(mPosition + Vector3(6.0f * mAnimation[1], 0.0f, 0.0f));
+				.scale(Vector3(s1 + s2))
+				.translate(mPosition + Vector3(x1 + x2, y1, 0.0f));
 
 			// Make bomb invisible
 			(*mBombManipulator)
@@ -318,10 +362,16 @@ void Player::update()
 		}
 
 		{
+			const Float s1 = 1.5f - mAnimation[1] * 1.5f;
+			const Float s2 = mAnimation[2] * -0.5f;
+
+			const Float x1 = 3.0f - ac * 3.0f;
+			const Float y1 = as * -3.0f;
+
 			(*mSphereManipulator[1])
 				.resetTransformation()
-				.scale(Vector3(1.5f - mAnimation[1] * 1.5f))
-				.translate(mPosition + Vector3(6.0f, 0.0f, 0.0f));
+				.scale(Vector3(s1 + s2))
+				.translate(mPosition + Vector3(x1, y1, 0.0f));
 		}
 	}
 }
@@ -445,4 +495,13 @@ Resource<GL::Texture2D> Player::getTextureResourceForIndex(const UnsignedInt ind
 	Debug{} << "Loading texture" << rk << "for player projectile with index" << index;
 
 	return CommonUtility::singleton->loadTexture(rk);
+}
+
+Range2Di Player::getBubbleSwapArea()
+{
+	const Vector2 ws = RoomManager::singleton->getWindowSize();
+	return {
+		Vector2i(Int(ws.x() * 0.35f), Int(ws.y() * 0.75f)),
+		Vector2i(Int(ws.x() * 0.65f), Int(ws.y()))
+	};
 }

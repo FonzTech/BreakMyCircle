@@ -58,5 +58,8 @@ protected:
 	BaseDrawable* mSphereDrawables[2];
 	BaseDrawable* mBombDrawables[3];
 
-	Float mAnimation[2];
+	Float mAnimation[3];
+	bool mIsSwapping;
+
+	Range2Di getBubbleSwapArea();
 };
