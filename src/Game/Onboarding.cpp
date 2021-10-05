@@ -29,7 +29,7 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType, const Float 
 		p->setPosition({ 1000.0f, 1000.0f });
 		p->setSize({ 0.0f, 0.0f });
 		p->setAnchor({ 0.0f, 1.0f });
-		p->mColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
+		p->update();
 
 		mOverlayGuis.push_back(p);
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(p);
@@ -40,7 +40,7 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType, const Float 
 		p->setPosition({ 1000.0f, 1000.0f });
 		p->setSize({ 0.0f, 0.0f });
 		p->setAnchor({ 0.0f, 1.0f });
-		p->mColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
+		p->update();
 
 		mOverlayGuis.push_back(p);
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(p);
@@ -162,11 +162,9 @@ void Onboarding::update()
 
 	mOverlayGuis[0]->setPosition({ 0.0f, -0.2f - nv });
 	mOverlayGuis[0]->setSize({ 0.45f, 0.45f });
-	mOverlayGuis[0]->mColor = Color4(1.0f);
 
 	mOverlayGuis[1]->setPosition({ 0.0f, -0.5f - nv });
 	mOverlayGuis[1]->setSize({ 0.3f, 0.3f });
-	mOverlayGuis[1]->mColor = Color4(1.0f);
 
 	for (auto& text : mOverlayTexts)
 	{
