@@ -12,7 +12,7 @@
 #include "RoomManager.h"
 #include "Shaders/ScreenQuadShader.h"
 
-#ifdef CORRADE_TARGET_ANDROID
+#if defined(CORRADE_TARGET_ANDROID)
 #include <Magnum/Platform/AndroidApplication.h>
 #else
 #include <Magnum/Platform/Sdl2Application.h>

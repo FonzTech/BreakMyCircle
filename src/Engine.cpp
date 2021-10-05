@@ -72,7 +72,7 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
     
     CommonUtility::singleton->mConfig.assetDir = std::string(ios_GetAssetDir());
     
-#elif CORRADE_TARGET_ANDROID
+#elif defined(CORRADE_TARGET_ANDROID)
     
 	CommonUtility::singleton->mConfig.nativeActivity = nativeActivity();
 
