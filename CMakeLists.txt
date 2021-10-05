@@ -142,6 +142,7 @@ if(CORRADE_TARGET_ANDROID)
         src/Game/LimitLine.cpp
         src/Game/Logo.cpp
         src/Game/MapPickup.cpp
+        src/Game/Onboarding.cpp
         src/Game/OverlayGui.cpp
         src/Game/OverlayGuiDetached.cpp
         src/Game/OverlayText.cpp
@@ -190,6 +191,7 @@ else()
         src/Game/LimitLine.cpp
         src/Game/Logo.cpp
         src/Game/MapPickup.cpp
+        src/Game/Onboarding.cpp
         src/Game/OverlayGui.cpp
         src/Game/OverlayGuiDetached.cpp
         src/Game/OverlayText.cpp

@@ -14,7 +14,7 @@ std::shared_ptr<GameObject> Onboarding::getInstance(const nlohmann::json & param
 	return nullptr;
 }
 
-Onboarding::Onboarding(const Int parentIndex, const Int customType) : GameObject(parentIndex)
+Onboarding::Onboarding(const Int parentIndex, const Int customType, const Float verticalPadding) : GameObject(parentIndex)
 {
 	// Assign members
 	mParentIndex = parentIndex;
@@ -24,20 +24,27 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType) : GameObject
 	mEnd = false;
 
 	// Create GUI
-	mOverlayGuis.push_back(std::move(std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_GUI_TEXTCLOUD)));
-	RoomManager::singleton->mGoLayers[mParentIndex].push_back(mOverlayGuis[0]);
+	{
+		const auto& p = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_GUI_TEXTCLOUD);
+		p->setPosition({ 1000.0f, 1000.0f });
+		p->setSize({ 0.0f, 0.0f });
+		p->setAnchor({ 0.0f, 1.0f });
+		p->mColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	mOverlayGuis.push_back(std::move(std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_GUI_OB_PREFIX + std::to_string(customType))));
-	RoomManager::singleton->mGoLayers[mParentIndex].push_back(mOverlayGuis[1]);
+		mOverlayGuis.push_back(p);
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(p);
+	}
 
-	// Place on screen
-	mOverlayGuis[0]->setPosition({ 2.0f, 2.0f });
-	mOverlayGuis[0]->setSize({ 0.45f, 0.45f });
-	mOverlayGuis[0]->setAnchor({ 0.0f, 1.0f });
+	{
+		const auto& p = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_GUI_OB_PREFIX + std::to_string(customType));
+		p->setPosition({ 1000.0f, 1000.0f });
+		p->setSize({ 0.0f, 0.0f });
+		p->setAnchor({ 0.0f, 1.0f });
+		p->mColor = Color4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	mOverlayGuis[1]->setPosition({ 2.0f, 2.0f });
-	mOverlayGuis[1]->setSize({ 0.3f, 0.3f });
-	mOverlayGuis[1]->setAnchor({ 0.0f, 1.0f });
+		mOverlayGuis.push_back(p);
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(p);
+	}
 
 	// Behaviour depending on provided type
 	// const auto& ar = Math::min(1.0f, RoomManager::singleton->getWindowAspectRatio());
@@ -83,7 +90,7 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType) : GameObject
 	// Create texts
 	{
 		const auto& ot = std::make_shared<OverlayText>(mParentIndex, Text::Alignment::MiddleCenter, text.length());
-		ot->mPosition = Vector3(0.0f, 0.1125f, 0.0f);
+		ot->mPosition = Vector3(0.0f, 0.1125f - verticalPadding, 0.0f);
 		ot->mColor = Color4(0.95f, 0.95f, 0.95f, 1.0f);
 		ot->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
 		ot->setSize(Vector2(0.0f));
@@ -97,7 +104,7 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType) : GameObject
 		text = "Tap to continue";
 
 		const auto& ot = std::make_shared<OverlayText>(mParentIndex, Text::Alignment::MiddleCenter, text.length());
-		ot->mPosition = Vector3(0.0f, 0.375f, 0.0f);
+		ot->mPosition = Vector3(0.0f, 0.375f - verticalPadding, 0.0f);
 		ot->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		ot->mColor = Color4(1.0f, 0.5f, 0.5f, 0.0f);
 		ot->setSize(Vector2(0.0f));
@@ -154,7 +161,12 @@ void Onboarding::update()
 	const auto& nv = 1.0f - iv;
 
 	mOverlayGuis[0]->setPosition({ 0.0f, -0.2f - nv });
+	mOverlayGuis[0]->setSize({ 0.45f, 0.45f });
+	mOverlayGuis[0]->mColor = Color4(1.0f);
+
 	mOverlayGuis[1]->setPosition({ 0.0f, -0.5f - nv });
+	mOverlayGuis[1]->setSize({ 0.3f, 0.3f });
+	mOverlayGuis[1]->mColor = Color4(1.0f);
 
 	for (auto& text : mOverlayTexts)
 	{
