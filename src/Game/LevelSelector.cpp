@@ -113,7 +113,6 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	{
 		mLevelInfo.currentViewingLevelId = 0U;
 		mLevelInfo.state = GO_LS_LEVEL_INIT;
-		mLevelInfo.nextLevelAnim = 0.0f;
 		mLevelInfo.numberOfRetries = 0;
 		mLevelInfo.numberOfPlays = 0;
 		mLevelInfo.score = -1;
@@ -694,7 +693,13 @@ void LevelSelector::update()
 			}
 			else
 			{
-				const Vector3 scrollDelta = Vector3(Float(mouseDelta.x()), 0.0f, Float(mouseDelta.y())) * -0.05f;
+#if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
+				const auto p = Vector2(mouseDelta).normalized();
+#else
+				const auto p = mouseDelta;
+#endif
+
+				const Vector3 scrollDelta = Vector3(p.x(), 0.0f, Float(mouseDelta.y())) * -0.05f;
 				mScrolling.velocity = scrollDelta;
 			}
 
@@ -777,7 +782,7 @@ void LevelSelector::update()
 						const auto& itb = mPickableObjectRefs.find(oid);
 						if (itb != mPickableObjectRefs.end())
 						{
-							const auto& it2 = mSceneries.find(itb->second.sceneryIndex);
+							const auto& it2 = mSceneries.find(itb->second);
 							if (it2 == mSceneries.end())
 							{
 								Error{} << "Scenery from PickableObjectRef" << it2->first << "was not found. This should not happen";
@@ -1071,7 +1076,7 @@ void LevelSelector::handleScrollableScenery()
 			const UnsignedInt objectId = UnsignedInt(-yp) * 6U + UnsignedInt(i + 1) + 100U;
 			const UnsignedInt levelIndex = objectId - 100U;
 
-			mPickableObjectRefs[objectId] = { yp, Int(mSceneries[yp].buttons.size()) - 1 };
+			mPickableObjectRefs[objectId] = yp;
 
 			bs->levelIndex = levelIndex;
 			bs->objectId = objectId;

@@ -126,7 +126,6 @@ private:
 	struct LS_PickableObjectRef
 	{
 		Int sceneryIndex;
-		Int objectIndex;
 	};
 
 	struct LS_LevelInfo
@@ -149,7 +148,6 @@ private:
 
 		bool delayedChecks;
 		Vector3 currentLevelPos, nextLevelPos;
-		Float nextLevelAnim;
 		bool success;
 	};
 
@@ -254,7 +252,7 @@ private:
 	Float mLevelAnim;
 
 	std::chrono::system_clock::time_point mClickStartTime;
-	std::unordered_map<UnsignedInt, LS_PickableObjectRef> mPickableObjectRefs;
+	std::unordered_map<UnsignedInt, Int> mPickableObjectRefs;
 
 	LS_LevelInfo mLevelInfo;
 	Float mLevelGuiAnim[6];
