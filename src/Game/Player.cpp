@@ -36,6 +36,7 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 	mAnimation[0] = 0.0f;
 	mAnimation[1] = 0.0f;
 	mAnimation[2] = 0.0f;
+	mAnimation[3] = 1.0f;
 
 	// Load asset as first drawable
 	{
@@ -69,6 +70,26 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 				break;
 			}
 		}
+	}
+
+	// Create "swap" icon
+	{
+		// Load assets
+		mSwapManipulator = new Object3D{ mManipulator.get() };
+
+		Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D::Position, Shaders::Flat3D::TextureCoordinates>(RESOURCE_MESH_PLANE_FLAT);
+		Resource<GL::AbstractShaderProgram, Shaders::Flat3D> shader = CommonUtility::singleton->getFlat3DShader();
+		Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SWAP);
+
+		// Create drawable
+		auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;
+
+		const std::shared_ptr<GameDrawable<Shaders::Flat3D>> td = std::static_pointer_cast<GameDrawable<Shaders::Flat3D>>(std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, texture));
+		td->setParent(mSwapManipulator);
+		td->setDrawCallback(this);
+		mDrawables.emplace_back(td);
+
+		mSwapDrawable = td.get();
 	}
 
 	/*
@@ -105,9 +126,9 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 	}
 
 	// Load sound effects
-	for (UnsignedInt i = 0; i < 3; ++i)
+	for (UnsignedInt i = 0; i < 4; ++i)
 	{
-		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(RESOURCE_AUDIO_SHOT_PREFIX + std::to_string(i + 1));
+		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(i < 3 ? RESOURCE_AUDIO_SHOT_PREFIX + std::to_string(i + 1) : RESOURCE_AUDIO_SWAP);
 		mPlayables[i] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
 		mPlayables[i]->source()
 			.setBuffer(buffer)
@@ -200,6 +221,14 @@ void Player::update()
 
 						setupProjectile(0);
 						setupProjectile(1);
+
+						playSfxAudio(3);
+
+						// Swap animation
+						if (mAnimation[3] >= 1.0f)
+						{
+							mAnimation[3] = 0.0f;
+						}
 					}
 				}
 				else
@@ -262,12 +291,31 @@ void Player::update()
 		}
 	}
 
+	// Main manipulation
+	(*mManipulator)
+		.resetTransformation()
+		.translate(mPosition);
+
+	// Swap manipulation
+	{
+		mAnimation[3] += mDeltaTime * 0.5f;
+		if (mAnimation[3] > 6.0f)
+		{
+			mAnimation[3] = 0.0f;
+		}
+	}
+
+	(*mSwapManipulator)
+		.resetTransformation()
+		.rotateZ(Deg(mAnimation[3] * 210.0f))
+		.scale(Vector3(4.0f))
+		.translate(Vector3(0.0f, 0.0f, -0.5f));
+
 	// Shooter manipulation
 	(*mShooterManipulator)
 		.resetTransformation()
 		.rotateX(Deg(90.0f))
-		.rotateZ(Deg(mShootAngle) + Deg(90.0f))
-		.translate(mPosition);
+		.rotateZ(Deg(mShootAngle) + Deg(90.0f));
 
 	const Rad angle = Rad(Deg((1.0f - mAnimation[2]) * 180.0f));
 	const Float ac = Math::cos(angle);
@@ -290,7 +338,7 @@ void Player::update()
 			// Make bomb visible
 			(*mBombManipulator)
 				.resetTransformation()
-				.translate(mPosition + Vector3(0.0f, 0.0f, 0.05f));
+				.translate(Vector3(0.0f, 0.0f, 0.05f));
 
 			// Make spark rotate
 			(*mBombDrawables[0])
@@ -339,7 +387,7 @@ void Player::update()
 			(*mSphereManipulator[0])
 				.resetTransformation()
 				.scale(Vector3(s1 + s2))
-				.translate(mPosition + Vector3(x1 + x2, y1, 0.0f));
+				.translate(Vector3(x1 + x2, y1, 0.0f));
 
 			// Make bomb invisible
 			(*mBombManipulator)
@@ -371,57 +419,69 @@ void Player::update()
 			(*mSphereManipulator[1])
 				.resetTransformation()
 				.scale(Vector3(s1 + s2))
-				.translate(mPosition + Vector3(x1, y1, 0.0f));
+				.translate(Vector3(x1, y1, 0.0f));
 		}
 	}
 }
 
 void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	// Setup light shading
-	const auto& isBubble = baseDrawable == mSphereDrawables[0] || baseDrawable == mSphereDrawables[1];
-	const auto& isBomb = baseDrawable == mBombDrawables[0] || baseDrawable == mBombDrawables[1];
-
-	auto& shader = (Shaders::Phong&) baseDrawable->getShader();
-	if (isBubble || isBomb)
+	if (baseDrawable == mSwapDrawable)
 	{
-		shader
-			.setLightPosition(mPosition + Vector3(-1.0f, 10.0f * RoomManager::singleton->getWindowAspectRatio(), 10.0f))
-			.setLightColor(0x202020_rgbf)
-			.setSpecularColor(0xffffff00_rgbaf)
-			.setAmbientColor(0x909090_rgbf)
-			.setDiffuseColor(0x909090_rgbf);
+		((Shaders::Flat3D&)baseDrawable->getShader())
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+			.bindTexture(*baseDrawable->mTexture)
+			.setColor(Color4{ 1.0f, 1.0f, 1.0f, Math::sin(Deg(Math::min(180.0f, mAnimation[3] * 180.0f))) })
+			.setAlphaMask(0.001f)
+			.draw(*baseDrawable->mMesh);
 	}
 	else
 	{
+		// Setup light shading
+		const auto& isBubble = baseDrawable == mSphereDrawables[0] || baseDrawable == mSphereDrawables[1];
+		const auto& isBomb = baseDrawable == mBombDrawables[0] || baseDrawable == mBombDrawables[1];
+
+		auto& shader = (Shaders::Phong&) mSphereDrawables[0]->getShader();
+		if (isBubble || isBomb)
+		{
+			shader
+				.setLightPosition(mPosition + Vector3(-1.0f, 10.0f * RoomManager::singleton->getWindowAspectRatio(), 10.0f))
+				.setLightColor(0x202020_rgbf)
+				.setSpecularColor(0xffffff00_rgbaf)
+				.setAmbientColor(0x909090_rgbf)
+				.setDiffuseColor(0x909090_rgbf);
+		}
+		else
+		{
+			shader
+				.setLightPosition(mPosition + Vector3(-4.0f, 30.0f * RoomManager::singleton->getWindowAspectRatio(), 20.0f))
+				.setLightColor(0xffffff60_rgbaf)
+				.setSpecularColor(0xffffff00_rgbaf)
+				.setAmbientColor(0xa0a0a0_rgbf)
+				.setDiffuseColor(0xffffff_rgbf);
+		}
+
+		// Setup matrixes
 		shader
-			.setLightPosition(mPosition + Vector3(-4.0f, 30.0f * RoomManager::singleton->getWindowAspectRatio(), 20.0f))
-			.setLightColor(0xffffff60_rgbaf)
-			.setSpecularColor(0xffffff00_rgbaf)
-			.setAmbientColor(0xa0a0a0_rgbf)
-			.setDiffuseColor(0xffffff_rgbf);
-	}
+			.setTransformationMatrix(transformationMatrix)
+			.setNormalMatrix(transformationMatrix.normalMatrix())
+			.setProjectionMatrix(camera.projectionMatrix());
 
-	// Setup matrixes
-	shader
-		.setTransformationMatrix(transformationMatrix)
-		.setNormalMatrix(transformationMatrix.normalMatrix())
-		.setProjectionMatrix(camera.projectionMatrix());
+		// Bind textures
+		if (baseDrawable == mSphereDrawables[0] && mProjColors[0] == BUBBLE_PLASMA)
+		{
+			mPlasmaSquareRenderer.renderTexture();
+			GL::Texture2D &texture = mPlasmaSquareRenderer.getRenderedTexture();
+			shader.bindTextures(&texture, &texture, nullptr, nullptr);
+		}
+		else
+		{
+			shader.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr);
+		}
 
-	// Bind textures
-	if (baseDrawable == mSphereDrawables[0] && mProjColors[0] == BUBBLE_PLASMA)
-	{
-		mPlasmaSquareRenderer.renderTexture();
-		GL::Texture2D &texture = mPlasmaSquareRenderer.getRenderedTexture();
-		shader.bindTextures(&texture, &texture, nullptr, nullptr);
+		// Draw mesh using setup shader
+		shader.draw(*baseDrawable->mMesh);
 	}
-	else
-	{
-		shader.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr);
-	}
-
-	// Draw mesh using setup shader
-	shader.draw(*baseDrawable->mMesh);
 }
 
 void Player::postConstruct()
@@ -442,6 +502,11 @@ void Player::setPrimaryProjectile(const Color3 & color)
 {
 	mProjColors[0] = color;
 	setupProjectile(0);
+
+	if (color == BUBBLE_ELECTRIC)
+	{
+		mElectricBall->pushToFront();
+	}
 }
 
 std::unique_ptr<std::vector<Color3>> Player::getRandomEligibleColor(const UnsignedInt times)

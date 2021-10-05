@@ -157,13 +157,10 @@ void CommonUtility::createGameSphere(GameObject* gameObject, Object3D & manipula
 	Debug{} << "Created bubble with color" << color.toSrgbInt();
 
 	const auto& it = RoomManager::singleton->sBubbleColors.find(color.toSrgbInt());
-
-#ifndef CORRADE_TARGET_ANDROID
 	if (it == RoomManager::singleton->sBubbleColors.end())
 	{
         CORRADE_CONSTEXPR_ASSERT(false, "Color " + std::to_string(color.toSrgbInt()) + " for bubble was invalid");
 	}
-#endif
 
 	// Load texture
 	Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(it->second.textureKey);

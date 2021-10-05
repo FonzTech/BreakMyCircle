@@ -54,11 +54,13 @@ protected:
 	Object3D* mShooterManipulator;
 	Object3D* mSphereManipulator[2];
 	Object3D* mBombManipulator;
+	Object3D* mSwapManipulator;
 
 	BaseDrawable* mSphereDrawables[2];
 	BaseDrawable* mBombDrawables[3];
+	BaseDrawable* mSwapDrawable;
 
-	Float mAnimation[3];
+	Float mAnimation[4];
 	bool mIsSwapping;
 
 	Range2Di getBubbleSwapArea();

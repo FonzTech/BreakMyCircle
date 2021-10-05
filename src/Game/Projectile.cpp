@@ -303,22 +303,19 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 			}
 
 			std::shared_ptr<Bubble> destroyLater = nullptr;
-			Float offsetZ = 0.3f;
-
 			const Float r = getRadiusForExplosion();
 			for (auto& item : bubbles)
 			{
 				const Float d = Math::abs((item->mPosition - mPosition).length());
-				if (d <= r && item->mAmbientColor != BUBBLE_COIN && item->destroyNearbyBubbles(true, offsetZ))
+				if (d <= r && item->mAmbientColor != BUBBLE_COIN && item->destroyNearbyBubbles(true))
 				{
 					destroyLater = item;
-					offsetZ += 0.05f;
 				}
 			}
 
 			if (destroyLater != nullptr)
 			{
-				destroyLater->destroyDisjointBubbles(offsetZ);
+				destroyLater->destroyDisjointBubbles();
 			}
 		}
 	}
@@ -356,18 +353,15 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		}
 
 		// Destroy nearby bubbles and disjoint bubble groups
-		Float offsetZ = 0.7f;
 		for (auto& b : bubbles)
 		{
 			Int thisAmount = 0;
-			if (thisAmount = b->destroyNearbyBubbles(false, offsetZ))
+			if (thisAmount = b->destroyNearbyBubbles(false))
 			{
 				shootAmount += thisAmount;
-				offsetZ += Float(thisAmount) * 0.02f;
 
-				thisAmount = b->destroyDisjointBubbles(offsetZ + Float(shootAmount) * 0.02f);
+				thisAmount = b->destroyDisjointBubbles();
 				shootAmount += thisAmount;
-				offsetZ += Float(thisAmount) * 0.02f;
 			}
 		}
 	}
@@ -392,9 +386,9 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		}
 
 		// Destroy nearby bubbles and disjoint bubble groups
-		if (shootAmount = b->destroyNearbyBubbles(false, 0.3f))
+		if (shootAmount = b->destroyNearbyBubbles(false))
 		{
-			shootAmount += b->destroyDisjointBubbles(0.3f + Float(shootAmount) * 0.02f);
+			shootAmount += b->destroyDisjointBubbles();
 		}
 		else
 		{

@@ -29,7 +29,6 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType, const Float 
 		p->setPosition({ 1000.0f, 1000.0f });
 		p->setSize({ 0.0f, 0.0f });
 		p->setAnchor({ 0.0f, 1.0f });
-		p->update();
 
 		mOverlayGuis.push_back(p);
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(p);
@@ -40,7 +39,6 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType, const Float 
 		p->setPosition({ 1000.0f, 1000.0f });
 		p->setSize({ 0.0f, 0.0f });
 		p->setAnchor({ 0.0f, 1.0f });
-		p->update();
 
 		mOverlayGuis.push_back(p);
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(p);

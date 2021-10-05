@@ -231,7 +231,7 @@ void Bubble::playStompSound()
 	playSfxAudio(0);
 }
 
-Int Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
+Int Bubble::destroyNearbyBubbles(const bool force)
 {
 	// Data for later
 	std::unique_ptr<std::queue<GraphNode>> fps = nullptr;
@@ -292,7 +292,6 @@ Int Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
 
 	Int shootAmount = Int(fps->size());
 
-	Float posZ = offsetZ;
 	if (!fps->empty())
 	{
 		bool playSound = !force;
@@ -303,7 +302,7 @@ Int Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
 
 			// Create sparkle
 			const std::shared_ptr<FallingBubble> ib = std::make_shared<FallingBubble>(mParentIndex, gn.color, GO_FB_TYPE_SPARK);
-			ib->mPosition = gn.position + Vector3(0.0f, 0.0f, posZ);
+			ib->mPosition = gn.position;
 			RoomManager::singleton->mGoLayers[mParentIndex].push_back(ib);
 
 			// Play sound only once
@@ -313,9 +312,6 @@ Int Bubble::destroyNearbyBubbles(const bool force, const Float offsetZ)
 				ib->playSfxAudio(0);
 				playSound = false;
 			}
-
-			// Increment work variable
-			posZ += 0.075f;
 
 			// Remove from graph
 			fps->pop();
@@ -354,9 +350,9 @@ Int Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
 	return group->size();
 }
 
-Int Bubble::destroyDisjointBubbles(const Float offsetZ)
+Int Bubble::destroyDisjointBubbles()
 {
-	auto future = std::async(std::launch::async, [this,offsetZ]() {
+	auto future = std::async(std::launch::async, [this]() {
 		// Create list of bubbles
 		std::unordered_set<Bubble*> group;
 		for (const auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
@@ -394,12 +390,11 @@ Int Bubble::destroyDisjointBubbles(const Float offsetZ)
 			// Destroy all bubbles obtained from the previous function
 			if (!graph->attached)
 			{
-				Int i = 0;
 				for (auto& item : graph->set)
 				{
 					{
 						GraphNode gn;
-						gn.position = item->mPosition + Vector3(0.0f, 0.0f, offsetZ + Float(++i) * 0.01f);
+						gn.position = item->mPosition;
 						gn.color = ((Bubble*)item)->mAmbientColor;
 						fps->push(gn);
 					}

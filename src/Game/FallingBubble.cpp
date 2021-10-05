@@ -5,6 +5,7 @@
 #include <Corrade/Containers/PointerStl.h>
 #include <Magnum/ImageView.h>
 #include <Magnum/GL/Buffer.h>
+#include <Magnum/Shaders/Flat.h>
 
 #include "../Common/CommonUtility.h"
 #include "../Graphics/GameDrawable.h"
@@ -40,20 +41,12 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 	}
 	else if (mCustomType == GO_FB_TYPE_SPARK)
 	{
-		// Get sparkles texture
-		Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SPARKLES);
+		// Init members
+		mDelay = 0.0f;
 
-		// Create plane
-		const std::shared_ptr<GameDrawable<SpriteShader>> td = std::static_pointer_cast<GameDrawable<SpriteShader>>(CommonUtility::singleton->createSpriteDrawable(mParentIndex, *mManipulator, resTexture, this));
-		mDrawables.emplace_back(td);
-
-		// Create shader data wrapper
-		mWrapper.shader = &td->getShader();
-		mWrapper.parameters.index = 0.0f;
-		mWrapper.parameters.total = 16.0f;
-		mWrapper.parameters.rows = 4.0f;
-		mWrapper.parameters.columns = 4.0f;
-		mWrapper.speed = 16.0f;
+		// Load assets
+		AssetManager().loadAssets(*this, *mManipulator, RESOURCE_SCENE_SPARKLE, this);
+		mFlatShader = CommonUtility::singleton->getFlat3DShader();
 	}
 	else if (mCustomType == GO_FB_TYPE_COIN)
 	{
@@ -182,12 +175,18 @@ void FallingBubble::update()
 
 	case GO_FB_TYPE_SPARK:
 
-		checkForSpriteEnding();
+		mDelay += mDeltaTime;
+		if (mDelay >= 1.0f)
+		{
+			mDelay = 1.0f;
+			mDestroyMe = true;
+		}
 
 		(*mManipulator)
 			.resetTransformation()
-			.scale(Vector3(3.0f, 3.0f, 1.0f))
-			.translate(mPosition);
+			.rotateZ(Deg(mDelay * 210.0f))
+			.scale(Vector3(Math::sin(Deg(mDelay * 180.0f)) * 2.0f))
+			.translate(mPosition + Vector3(0.0f, 0.0f, 0.05f));
 
 		break;
 
@@ -209,7 +208,16 @@ void FallingBubble::update()
 
 void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (mCustomType == GO_FB_TYPE_SPARK || mCustomType == GO_FB_TYPE_BOMB)
+	if (mCustomType == GO_FB_TYPE_SPARK)
+	{
+		((Shaders::Flat3D&)*mFlatShader)
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+			.bindTexture(*baseDrawable->mTexture)
+			.setColor(mAmbientColor)
+			.setAlphaMask(0.001f)
+			.draw(*baseDrawable->mMesh);
+	}
+	else if (mCustomType == GO_FB_TYPE_BOMB)
 	{
 		((SpriteShader&)baseDrawable->getShader())
 			.bindTexture(*baseDrawable->mTexture)

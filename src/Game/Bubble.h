@@ -13,7 +13,7 @@
 #define BUBBLE_COLOR_BLUE 0x0000ff_rgbf
 #define BUBBLE_COLOR_YELLOW 0xffff00_rgbf
 #define BUBBLE_COLOR_PURPLE 0xff00ff_rgbf
-#define BUBBLE_COLOR_ORANGE 0xffff_rgbf
+#define BUBBLE_COLOR_ORANGE 0xff8000_rgbf
 #define BUBBLE_COLOR_CYAN 0x00ffff_rgbf
 
 #include <unordered_set>
@@ -82,8 +82,8 @@ public:
 	void applyRippleEffect(const Vector3& center);
 	void playStompSound();
 
-	Int destroyNearbyBubbles(const bool force, const Float offsetZ);
-	Int destroyDisjointBubbles(const Float offsetZ);
+	Int destroyNearbyBubbles(const bool force);
+	Int destroyDisjointBubbles();
 
 	Int destroyNearbyBubblesImpl(BubbleCollisionGroup* group);
 	std::unique_ptr<Graph> destroyDisjointBubblesImpl(std::unordered_set<Bubble*> & group, const bool attached);

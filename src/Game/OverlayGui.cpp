@@ -41,6 +41,10 @@ OverlayGui::OverlayGui(const Int parentIndex, const std::string & textureName) :
 	td->setParent(mManipulator.get());
 	td->setDrawCallback(this);
 	mDrawables.emplace_back(td);
+
+	(*mManipulator)
+		.resetTransformation()
+		.scale(Vector3(0.0f));
 }
 
 const Int OverlayGui::getType() const

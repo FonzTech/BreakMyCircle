@@ -77,6 +77,9 @@
   "audios/glory.ogg": {
     "version": 1
   },
+  "audios/swap.ogg": {
+    "version": 1
+  },
   "fonts/ubuntu-title.ttf": {
     "version": 1
   },
@@ -132,6 +135,9 @@
     "version": 1
   },
   "scenes/powerup.glb": {
+    "version": 1
+  },
+  "scenes/sparkle.glb": {
     "version": 1
   },
   "shaders/cubemap.vert": {
@@ -305,9 +311,6 @@
   "textures/skybox_1_px.png": {
     "version": 1
   },
-  "textures/sparkles.png": {
-    "version": 1
-  },
   "textures/water_dm.png": {
     "version": 1
   },
@@ -327,6 +330,9 @@
     "version": 1
   },
   "textures/fire.png": {
+    "version": 1
+  },
+  "textures/swap.png": {
     "version": 1
   }
 }

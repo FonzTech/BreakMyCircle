@@ -15,6 +15,7 @@
 #define RESOURCE_SCENE_WORLD_WALL "scenes/world_wall.glb"
 #define RESOURCE_SCENE_SAFE "scenes/safe.glb"
 #define RESOURCE_SCENE_POWERUP "scenes/powerup.glb"
+#define RESOURCE_SCENE_SPARKLE "scenes/sparkle.glb"
 
 #define RESOURCE_MESH_PLANE_SPRITE "mesh_plane_sprite"
 #define RESOURCE_MESH_PLANE_WATER "mesh_plane_water"
@@ -23,7 +24,6 @@
 #define RESOURCE_MESH_PLANE_PLASMA "mesh_plane_plasma"
 #define RESOURCE_MESH_CUBE "mesh_plane_cube"
 
-#define RESOURCE_TEXTURE_SPARKLES "tex_sparkles"
 #define RESOURCE_TEXTURE_EXPLOSION "tex_explosion"
 #define RESOURCE_TEXTURE_LIGHTNING "tex_lightning"
 #define RESOURCE_TEXTURE_LIGHTORB "tex_lightorb"
@@ -46,6 +46,7 @@
 #define RESOURCE_TEXTURE_STARROAD_ALPHAMAP "tex_starroad_am"
 #define RESOURCE_TEXTURE_MOON "tex_moon"
 #define RESOURCE_TEXTURE_FIRE "tex_fire"
+#define RESOURCE_TEXTURE_SWAP "tex_swap"
 #define RESOURCE_TEXTURE_GUI_SETTINGS "tex_gui_settings"
 #define RESOURCE_TEXTURE_GUI_REPLAY "tex_gui_replay"
 #define RESOURCE_TEXTURE_GUI_NEXT "tex_gui_next"
@@ -110,6 +111,7 @@
 #define RESOURCE_AUDIO_CONGRATS_PREFIX "congrats_"
 #define RESOURCE_AUDIO_SAFE_OPEN "safe_open"
 #define RESOURCE_AUDIO_GLORY "glory"
+#define RESOURCE_AUDIO_SWAP "swap"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"
