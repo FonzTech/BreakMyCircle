@@ -15,6 +15,8 @@ class Projectile : public GameObject
 public:
 	static void setGlobalParameters(const Float leftX, const Float rightX);
 
+	static Float LEFT_X, RIGHT_X, MID_X;
+
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
 	Projectile(const Int parentIndex, const Color3& ambientColor);
@@ -36,8 +38,6 @@ public:
 	std::weak_ptr<IShootCallback> mShootCallback;
 
 protected:
-	static Float LEFT_X, RIGHT_X, MID_X;
-
 	void snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects);
 	void updateBBox();
 

@@ -63,6 +63,8 @@ protected:
 
 	Float mAnimation[4];
 	bool mIsSwapping;
+	Float mAimLength;
+	Float mAimTimer;
 
 	// Methods 
 	Range2Di getBubbleSwapArea();

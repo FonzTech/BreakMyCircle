@@ -37,6 +37,9 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 	mAnimation[1] = 0.0f;
 	mAnimation[2] = 0.0f;
 	mAnimation[3] = 1.0f;
+	mIsSwapping = false;
+	mAimLength = 0.0f;
+	mAimTimer = 0.25;
 
 	// Load asset as first drawable
 	{
@@ -332,130 +335,203 @@ void Player::update()
 		.rotateX(Deg(90.0f))
 		.rotateZ(Deg(mShootAngle) + Deg(90.0f));
 
-	const Rad angle = Rad(Deg((1.0f - mAnimation[2]) * 180.0f));
-	const Float ac = Math::cos(angle);
-	const Float as = Math::sin(angle);
-
-	// Primary projectile
+	// Projectiles animation
 	{
-		// Apply transformations to bubbles
-		// const Vector3 pos = position + mProjPath->getCurrentPosition();
+		const Rad angle = Rad(Deg((1.0f - mAnimation[2]) * 180.0f));
+		const Float ac = Math::cos(angle);
+		const Float as = Math::sin(angle);
 
-		// Main - Plasma bubble
-		if (mProjColors[0] == BUBBLE_BOMB)
+		// Primary projectile
 		{
-			// Make bubble invisible
-			(*mSphereManipulator[0])
-				.resetTransformation()
-				.scale(Vector3(0.0f))
-				.translate(Vector3(10000.0f));
+			// Apply transformations to bubbles
+			// const Vector3 pos = position + mProjPath->getCurrentPosition();
 
-			// Make bomb visible
-			(*mBombManipulator)
-				.resetTransformation()
-				.translate(Vector3(0.0f, 0.0f, 0.05f));
+			// Main - Plasma bubble
+			if (mProjColors[0] == BUBBLE_BOMB)
+			{
+				// Make bubble invisible
+				(*mSphereManipulator[0])
+					.resetTransformation()
+					.scale(Vector3(0.0f))
+					.translate(Vector3(10000.0f));
 
-			// Make spark rotate
-			(*mBombDrawables[0])
-				.resetTransformation()
-				.rotateZ(Deg(Math::floor(mAnimation[0] * 1440.0f / 90.0f) * 90.0f));
+				// Make bomb visible
+				(*mBombManipulator)
+					.resetTransformation()
+					.translate(Vector3(0.0f, 0.0f, 0.05f));
 
-			// Make electric bubble invisible
-			mElectricBall->mPosition = Vector3(10000.0f);
-			mElectricBall->mPlayables[0]->setGain(0.0f);
+				// Make spark rotate
+				(*mBombDrawables[0])
+					.resetTransformation()
+					.rotateZ(Deg(Math::floor(mAnimation[0] * 1440.0f / 90.0f) * 90.0f));
+
+				// Make electric bubble invisible
+				mElectricBall->mPosition = Vector3(10000.0f);
+				mElectricBall->mPlayables[0]->setGain(0.0f);
+			}
+			// Main - Electric bubble
+			else if (mProjColors[0] == BUBBLE_ELECTRIC)
+			{
+				// Make bubble invisible
+				(*mSphereManipulator[0])
+					.resetTransformation()
+					.scale(Vector3(0.0f))
+					.translate(Vector3(10000.0f));
+
+				// Make bomb invisible
+				(*mBombManipulator)
+					.resetTransformation()
+					.scale(Vector3(0.0f))
+					.translate(Vector3(10000.0f));
+
+				// Make spark rotate
+				(*mBombDrawables[0])
+					.resetTransformation()
+					.rotateZ(Deg(Math::floor(mAnimation[0] * 1440.0f / 90.0f) * 90.0f));
+
+				// Make electric bubble visible
+				mElectricBall->mPosition = mPosition;
+				mElectricBall->mPlayables[0]->setGain(RoomManager::singleton->getSfxGain());
+			}
+			// Otherwise, it's an ordinary bubble / plasma bubble
+			else
+			{
+				const Float s1 = 1.0f + mAnimation[1] * 0.5f;
+				const Float s2 = mAnimation[2] * 0.5f;
+
+				const Float x1 = 3.0f + ac * 3.0f;
+				const Float x2 = 6.0f * mAnimation[1];
+				const Float y1 = as * 3.0f;
+
+				// Make bubbles visible
+				(*mSphereManipulator[0])
+					.resetTransformation()
+					.scale(Vector3(s1 + s2))
+					.translate(Vector3(x1 + x2, y1, 0.0f));
+
+				// Make bomb invisible
+				(*mBombManipulator)
+					.resetTransformation()
+					.scale(Vector3(0.0f))
+					.translate(Vector3(10000.0f));
+
+				// Make electric bubble invisible
+				mElectricBall->mPosition = Vector3(10000.0f);
+				mElectricBall->mPlayables[0]->setGain(0.0f);
+			}
 		}
-		// Main - Electric bubble
-		else if (mProjColors[0] == BUBBLE_ELECTRIC)
+
+		// Secondary projectile
 		{
-			// Make bubble invisible
-			(*mSphereManipulator[0])
-				.resetTransformation()
-				.scale(Vector3(0.0f))
-				.translate(Vector3(10000.0f));
+			mAnimation[1] -= mDeltaTime * 2.0f;
+			if (mAnimation[1] < 0.0f)
+			{
+				mAnimation[1] = 0.0f;
+			}
 
-			// Make bomb invisible
-			(*mBombManipulator)
-				.resetTransformation()
-				.scale(Vector3(0.0f))
-				.translate(Vector3(10000.0f));
+			{
+				const Float s1 = 1.5f - mAnimation[1] * 1.5f;
+				const Float s2 = mAnimation[2] * -0.5f;
 
-			// Make spark rotate
-			(*mBombDrawables[0])
-				.resetTransformation()
-				.rotateZ(Deg(Math::floor(mAnimation[0] * 1440.0f / 90.0f) * 90.0f));
+				const Float x1 = 3.0f - ac * 3.0f;
+				const Float y1 = as * -3.0f;
 
-			// Make electric bubble visible
-			mElectricBall->mPosition = mPosition;
-			mElectricBall->mPlayables[0]->setGain(RoomManager::singleton->getSfxGain());
-		}
-		// Otherwise, it's an ordinary bubble / plasma bubble
-		else
-		{
-			const Float s1 = 1.0f + mAnimation[1] * 0.5f;
-			const Float s2 = mAnimation[2] * 0.5f;
-
-			const Float x1 = 3.0f + ac * 3.0f;
-			const Float x2 = 6.0f * mAnimation[1];
-			const Float y1 = as * 3.0f;
-
-			// Make bubbles visible
-			(*mSphereManipulator[0])
-				.resetTransformation()
-				.scale(Vector3(s1 + s2))
-				.translate(Vector3(x1 + x2, y1, 0.0f));
-
-			// Make bomb invisible
-			(*mBombManipulator)
-				.resetTransformation()
-				.scale(Vector3(0.0f))
-				.translate(Vector3(10000.0f));
-
-			// Make electric bubble invisible
-			mElectricBall->mPosition = Vector3(10000.0f);
-			mElectricBall->mPlayables[0]->setGain(0.0f);
+				(*mSphereManipulator[1])
+					.resetTransformation()
+					.scale(Vector3(s1 + s2))
+					.translate(Vector3(x1, y1, 0.0f));
+			}
 		}
 	}
 
-	// Secondary projectile
-	{
-		mAnimation[1] -= mDeltaTime * 2.0f;
-		if (mAnimation[1] < 0.0f)
-		{
-			mAnimation[1] = 0.0f;
-		}
-
-		{
-			const Float s1 = 1.5f - mAnimation[1] * 1.5f;
-			const Float s2 = mAnimation[2] * -0.5f;
-
-			const Float x1 = 3.0f - ac * 3.0f;
-			const Float y1 = as * -3.0f;
-
-			(*mSphereManipulator[1])
-				.resetTransformation()
-				.scale(Vector3(s1 + s2))
-				.translate(Vector3(x1, y1, 0.0f));
-		}
-	}
-
-	// Display aiming
+	// Compute aiming
 	{
 		const Rad af = mShootAngle + Rad(Deg(180.0f));
 		const Float ac = Math::cos(af);
 		const Float as = Math::sin(af);
-		const Float len = 4.0f;
-		const Float lend = len * 2.0f + 2.5f;
 
-		(*mShootPathManipulator[0])
-			.resetTransformation()
-			.scale(Vector3(len, 0.2f, 1.0f))
-			.rotateZ(af)
-			.translate(Vector3(ac * lend, as * lend, -0.25f));
+		mAimTimer -= mDeltaTime;
+		if (mAimTimer < 0.0f)
+		{
+			// Reset timer
+			mAimTimer = 0.1f;
 
-		(*mShootPathManipulator[1])
-			.resetTransformation()
-			.scale(Vector3(0.0f))
-			.rotateX(Deg(90.0f));
+			// Compute two-path aim
+			mAimLength = 0.0f;
+			while (true)
+			{
+				const Vector3 p = mPosition + Vector3(ac * mAimLength, as * mAimLength, 0.0f);
+				const Range3D bbox = {
+					p - Vector3(0.5f),
+					p + Vector3(0.5f)
+				};
+
+				const std::unique_ptr<std::unordered_set<GameObject*>> collided = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this, { GOT_BUBBLE });
+				if (collided != nullptr && !collided->empty())
+				{
+					const auto& b = collided->cbegin();
+					const Float xx = Math::abs((*b)->mPosition.x() - mPosition.x());
+					const Float yy = Math::abs(((*b)->mPosition.y() - 1.0f) - mPosition.y());
+					mAimLength = Math::sqrt(xx * xx + yy * yy) * 0.5f;
+					break;
+				}
+
+				if (p.y() >= 1.0f)
+				{
+					const Float yy = mPosition.y() - 1.0f;
+					const Float xx = Math::tan(Rad(Deg(90.0f)) - af) * yy;
+					mAimLength = Math::sqrt(xx * xx + yy * yy) * 0.5f;
+					break;
+				}
+				else
+				{
+					const bool c1 = p.x() <= Projectile::LEFT_X;
+					const bool c2 = p.x() >= Projectile::RIGHT_X;
+					if (c1 || c2)
+					{
+						const Float xx = c1 ? mPosition.x() - Projectile::LEFT_X : (Projectile::RIGHT_X - mPosition.x());
+						const Float yy = Math::tan(af) * xx;
+
+						mAimLength = Math::sqrt(xx * xx + yy * yy) * 0.5f;
+						break;
+					}
+					else
+					{
+						mAimLength += 1.0f;
+					}
+				}
+			}
+		}
+
+		{
+			const Float len = mAimLength + 3.0f;
+			const Float lsc = mAimLength - 4.0f;
+
+			if (lsc >= 0.25f)
+			{
+				(*mShootPathManipulator[0])
+					.resetTransformation()
+					.scale(Vector3(lsc, 0.2f, 1.0f))
+					.rotateZ(af)
+					.translate(Vector3(ac * len, as * len, 0.2f));
+
+				(*mShootPathManipulator[1])
+					.resetTransformation()
+					.scale(Vector3(0.0f))
+					.rotateX(Deg(90.0f));
+			}
+			else
+			{
+				(*mShootPathManipulator[0])
+					.resetTransformation()
+					.scale(Vector3(0.0f));
+
+				(*mShootPathManipulator[1])
+					.resetTransformation()
+					.scale(Vector3(0.0f));
+			}
+
+		}
 	}
 }
 
