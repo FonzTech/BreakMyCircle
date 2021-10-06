@@ -1,12 +1,12 @@
 # On-going tasks
-- Improve level selector scrolling.
-- Fix transparency when blackholes and explode-effect overlaps.
 - Fix collision detection for projectile on its side.
-- Implement projectile-swap for player, while both bubbles are "valid" (no powerups).
 - Add shooting path while player is aiming.
+- Save settings to device.
 
 # To be verified
 - Implement other level game objects, such as rocks, holes, and others...
+- Fix transparency when blackholes and explode-effect overlaps.
+- Improve level selector scrolling.
 
 # Optional tasks
 - Use `magnum-fontconverter` instead of loading `TTF` directly.
@@ -57,3 +57,4 @@
 ~~- Implement push notifications to increase powerups count.~~
 ~~- Improve collision detection and animations due to "async" between `update` and `draw`.~~
 ~~- Add Onboarding for UI/UX on mobile.~~
+~~- Implement projectile-swap for player, while both bubbles are "valid" (no powerups).~~

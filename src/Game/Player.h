@@ -55,13 +55,15 @@ protected:
 	Object3D* mSphereManipulator[2];
 	Object3D* mBombManipulator;
 	Object3D* mSwapManipulator;
+	Object3D* mShootPathManipulator[2];
 
 	BaseDrawable* mSphereDrawables[2];
 	BaseDrawable* mBombDrawables[3];
-	BaseDrawable* mSwapDrawable;
+	std::unordered_set<BaseDrawable*> mFlatDrawables;
 
 	Float mAnimation[4];
 	bool mIsSwapping;
 
+	// Methods 
 	Range2Di getBubbleSwapArea();
 };

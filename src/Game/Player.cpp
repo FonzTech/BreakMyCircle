@@ -72,24 +72,39 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 		}
 	}
 
-	// Create "swap" icon
+	// Create lines
+	for (UnsignedInt i = 0; i < 3; ++i)
 	{
-		// Load assets
-		mSwapManipulator = new Object3D{ mManipulator.get() };
+		// Create manipulator
+		Object3D* m;
 
+		const bool isShoot = i < 2;
+		if (isShoot)
+		{
+			mShootPathManipulator[i] = new Object3D{ mManipulator.get() };
+			m = mShootPathManipulator[i];
+		}
+		else
+		{
+			mSwapManipulator = new Object3D{ mManipulator.get() };
+			m = mSwapManipulator;
+		}
+
+		// Load assets
 		Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D::Position, Shaders::Flat3D::TextureCoordinates>(RESOURCE_MESH_PLANE_FLAT);
 		Resource<GL::AbstractShaderProgram, Shaders::Flat3D> shader = CommonUtility::singleton->getFlat3DShader();
-		Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SWAP);
+		Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(isShoot ? RESOURCE_TEXTURE_WHITE : RESOURCE_TEXTURE_SWAP);
 
 		// Create drawable
 		auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;
 
 		const std::shared_ptr<GameDrawable<Shaders::Flat3D>> td = std::static_pointer_cast<GameDrawable<Shaders::Flat3D>>(std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, texture));
-		td->setParent(mSwapManipulator);
+		td->setParent(m);
 		td->setDrawCallback(this);
+		td->setObjectId(isShoot ? 100U : 101U);
 		mDrawables.emplace_back(td);
 
-		mSwapDrawable = td.get();
+		mFlatDrawables.insert(td.get());
 	}
 
 	/*
@@ -422,16 +437,37 @@ void Player::update()
 				.translate(Vector3(x1, y1, 0.0f));
 		}
 	}
+
+	// Display aiming
+	{
+		const Rad af = mShootAngle + Rad(Deg(180.0f));
+		const Float ac = Math::cos(af);
+		const Float as = Math::sin(af);
+		const Float len = 4.0f;
+		const Float lend = len * 2.0f + 2.5f;
+
+		(*mShootPathManipulator[0])
+			.resetTransformation()
+			.scale(Vector3(len, 0.2f, 1.0f))
+			.rotateZ(af)
+			.translate(Vector3(ac * lend, as * lend, -0.25f));
+
+		(*mShootPathManipulator[1])
+			.resetTransformation()
+			.scale(Vector3(0.0f))
+			.rotateX(Deg(90.0f));
+	}
 }
 
 void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (baseDrawable == mSwapDrawable)
+	if (mFlatDrawables.find(baseDrawable) != mFlatDrawables.end())
 	{
+		const bool isShoot = baseDrawable->getObjectId() == 100U;
 		((Shaders::Flat3D&)baseDrawable->getShader())
 			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 			.bindTexture(*baseDrawable->mTexture)
-			.setColor(Color4{ 1.0f, 1.0f, 1.0f, Math::sin(Deg(Math::min(180.0f, mAnimation[3] * 180.0f))) })
+			.setColor(Color4{ 1.0f, 1.0f, 1.0f, isShoot ? 1.0f : Math::sin(Deg(Math::min(180.0f, mAnimation[3] * 180.0f))) })
 			.setAlphaMask(0.001f)
 			.draw(*baseDrawable->mMesh);
 	}
