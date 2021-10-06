@@ -2657,6 +2657,7 @@ void LevelSelector::createGuis()
 
 			const Float level = RoomManager::singleton->getBgMusicGain() >= 0.1f ? 0.0f : 0.25f;
 			RoomManager::singleton->setBgMusicGain(level);
+			RoomManager::singleton->mSaveData.save();
 
 			((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_BGMUSIC]->drawable)->setTexture(RoomManager::singleton->getBgMusicGain() > 0.01f ? RESOURCE_TEXTURE_GUI_BGMUSIC_ON : RESOURCE_TEXTURE_GUI_BGMUSIC_OFF);
 			return true;
@@ -2678,6 +2679,7 @@ void LevelSelector::createGuis()
 
 			const Float level = RoomManager::singleton->getSfxGain() >= 0.99f ? 0.0f : 1.0f;
 			RoomManager::singleton->setSfxGain(level);
+			RoomManager::singleton->mSaveData.save();
 
 			((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_SFX]->drawable)->setTexture(RoomManager::singleton->getSfxGain() > 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
 			return true;

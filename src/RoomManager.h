@@ -62,6 +62,8 @@ public:
 		std::unordered_map<UnsignedInt, Int> levelScores;
 
 		Int onboardIndex;
+		bool musicEnabled;
+		bool sfxEnabled;
 	};
 
 	// Game Object layer data holder

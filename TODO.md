@@ -1,7 +1,6 @@
 # On-going tasks
 - Fix collision detection for projectile on its side.
 - Add shooting path while player is aiming.
-- Save settings to device.
 
 # To be verified
 - Implement other level game objects, such as rocks, holes, and others...
@@ -58,3 +57,4 @@
 ~~- Improve collision detection and animations due to "async" between `update` and `draw`.~~
 ~~- Add Onboarding for UI/UX on mobile.~~
 ~~- Implement projectile-swap for player, while both bubbles are "valid" (no powerups).~~
+~~- Save settings to device.~~

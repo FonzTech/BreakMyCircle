@@ -154,6 +154,20 @@ bool RoomManager::SaveData::load()
 		onboardIndex = value != jsonData.end() ? (*value).get<Int>() : 0;
 	}
 
+	// Music enabled
+	{
+		const auto value = jsonData.find("musicEnabled");
+		musicEnabled = value != jsonData.end() ? (*value).get<Int>() == 1 : true;
+		RoomManager::singleton->setBgMusicGain(musicEnabled ? 1.0f : 0.0f);
+	}
+
+	// SFX enabled
+	{
+		const auto value = jsonData.find("sfxEnabled");
+		sfxEnabled = value != jsonData.end() ? (*value).get<Int>() == 1 : true;
+		RoomManager::singleton->setSfxGain(sfxEnabled ? 1.0f : 0.0f);
+	}
+
 	return true;
 }
 
@@ -175,6 +189,8 @@ bool RoomManager::SaveData::save()
 		{ "powerupAmounts", std::unordered_map<std::string, Int>() },
 		{ "levelScores", std::unordered_map<std::string, Int>() },
 		{ "onboardIndex", onboardIndex },
+		{ "musicEnabled", musicEnabled ? 1 : 0 },
+		{ "sfxEnabled", sfxEnabled ? 1 : 0 },
 	};
 
 	for (const auto& item : powerupAmounts)
