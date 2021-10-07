@@ -472,14 +472,16 @@ void Player::update()
 					{
 						break;
 					}
-					mSecondPos = fp;
 					mAimAngle[i] = Rad(Deg(180.0f)) - mAimAngle[0];
+
+					mSecondPos = fp;
+					fp += mPosition;
 				}
 
 				mAimCos[i] = Math::cos(mAimAngle[i]);
 				mAimSin[i] = Math::sin(mAimAngle[i]);
 
-				mAimLength[i] = 0.0f;
+				mAimLength[i] = 0.5f;
 
 				while (true)
 				{
@@ -493,8 +495,9 @@ void Player::update()
 					if (collided != nullptr && !collided->empty())
 					{
 						const auto& b = collided->cbegin();
-						const Float xx = (*b)->mPosition.x() - fp.x();
-						const Float yy = ((*b)->mPosition.y() - 1.0f) - fp.y();
+
+						Float xx = (*b)->mPosition.x() - fp.x();
+						Float yy = ((*b)->mPosition.y() - 1.0f) - fp.y();
 
 						mAimLength[i] = Math::sqrt(xx * xx + yy * yy) * 0.5f;
 						fp = Vector3(xx, yy, mPosition.z());
@@ -523,9 +526,9 @@ void Player::update()
 						if (c1 || c2)
 						{
 							const Float xx = (c1 ? Projectile::LEFT_X : Projectile::RIGHT_X) - fp.x();
-							const Float yy = getFixedAtan(mAimAngle[i]) * xx + 1.0f;
+							const Float yy = getFixedAtan(mAimAngle[i]) * xx + 0.5f;
 
-							mAimLength[i] = Math::sqrt(xx * xx + yy * yy) * 0.5f;
+							mAimLength[i] = Math::sqrt(xx * xx + yy * yy) * 0.5f + 0.5f;
 							fp = Vector3(xx, yy, mPosition.z());
 
 							break;
@@ -550,7 +553,7 @@ void Player::update()
 					.resetTransformation()
 					.scale(Vector3(lsc1, 0.2f, 1.0f))
 					.rotateZ(mAimAngle[0])
-					.translate(Vector3(mAimCos[0] * len1, mAimSin[0] * len1, 0.2f));
+					.translate(Vector3(mAimCos[0] * len1, mAimSin[0] * len1, -0.02f));
 
 				const Float lsc2 = Math::max(0.0f, mAimLength[1]);
 
@@ -558,7 +561,7 @@ void Player::update()
 					.resetTransformation()
 					.scale(Vector3(lsc2, 0.2f, 1.0f))
 					.rotateZ(mAimAngle[1])
-					.translate(mSecondPos + Vector3(mAimCos[1] * lsc2, mAimSin[1] * lsc2, 0.2f));
+					.translate(mSecondPos + Vector3(mAimCos[1] * lsc2, mAimSin[1] * lsc2, -0.02f));
 			}
 			else
 			{
