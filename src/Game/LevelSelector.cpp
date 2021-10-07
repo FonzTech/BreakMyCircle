@@ -2011,7 +2011,7 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 	mLevelInfo.repeatLevelId = 0U;
 	mLevelInfo.delayedChecks = false;
 	mLevelInfo.state = GO_LS_LEVEL_STARTING;
-    mLevelInfo.startingTime = 120.0f + Math::floor(Float(mLevelInfo.selectedLevelId % 100U) / 5.0f) * 10.0f;
+    mLevelInfo.startingTime = 150.0f + Math::floor(Float(mLevelInfo.selectedLevelId % 100U) / 5.0f) * 15.0f;
 
 	mTimer = { mLevelInfo.startingTime, Int(mLevelInfo.startingTime) };
 
