@@ -61,11 +61,16 @@ protected:
 	BaseDrawable* mBombDrawables[3];
 	std::unordered_set<BaseDrawable*> mFlatDrawables;
 
-	Float mAnimation[4];
 	bool mIsSwapping;
-	Float mAimLength;
+	std::array<Float, 4> mAnimation;
+	std::array<Float, 2> mAimLength;
+	std::array<Rad, 2> mAimAngle;
+	std::array<Float, 2> mAimCos;
+	std::array<Float, 2> mAimSin;
+	Vector3 mSecondPos;
 	Float mAimTimer;
 
 	// Methods 
 	Range2Di getBubbleSwapArea();
+	Float getFixedAtan(const Rad & angle);
 };

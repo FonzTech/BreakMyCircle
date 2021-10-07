@@ -33,13 +33,13 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 	mParentIndex = parentIndex;
 
 	// Initialize members
-	mAnimation[0] = 0.0f;
-	mAnimation[1] = 0.0f;
-	mAnimation[2] = 0.0f;
-	mAnimation[3] = 1.0f;
 	mIsSwapping = false;
-	mAimLength = 0.0f;
-	mAimTimer = 0.25;
+	mAnimation = { 0.0f, 0.0f, 0.0f, 1.0f };
+	mAimLength = { 0.0f, -1.0f };
+	mAimAngle = { Rad(0.0f), Rad(0.0f) };
+	mAimCos = { 0.0f, 0.0f };
+	mAimSin = { 0.0f, 0.0f };
+	mAimTimer = 0.1f;
 
 	// Load asset as first drawable
 	{
@@ -446,79 +446,119 @@ void Player::update()
 
 	// Compute aiming
 	{
-		const Rad af = mShootAngle + Rad(Deg(180.0f));
-		const Float ac = Math::cos(af);
-		const Float as = Math::sin(af);
-
 		mAimTimer -= mDeltaTime;
 		if (mAimTimer < 0.0f)
 		{
 			// Reset timer
+#if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
 			mAimTimer = 0.1f;
+#else
+			mAimTimer = 0.02f;
+#endif
 
 			// Compute two-path aim
-			mAimLength = 0.0f;
-			while (true)
+			Vector3 fp = mPosition;
+			for (UnsignedInt i = 0; i < 2; ++i)
 			{
-				const Vector3 p = mPosition + Vector3(ac * mAimLength, as * mAimLength, 0.0f);
-				const Range3D bbox = {
-					p - Vector3(0.5f),
-					p + Vector3(0.5f)
-				};
-
-				const std::unique_ptr<std::unordered_set<GameObject*>> collided = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this, { GOT_BUBBLE });
-				if (collided != nullptr && !collided->empty())
+				// Compute work variables
+				if (i == 0)
 				{
-					const auto& b = collided->cbegin();
-					const Float xx = Math::abs((*b)->mPosition.x() - mPosition.x());
-					const Float yy = Math::abs(((*b)->mPosition.y() - 1.0f) - mPosition.y());
-					mAimLength = Math::sqrt(xx * xx + yy * yy) * 0.5f;
-					break;
-				}
-
-				if (p.y() >= 1.0f)
-				{
-					const Float yy = mPosition.y() - 1.0f;
-					const Float xx = Math::tan(Rad(Deg(90.0f)) - af) * yy;
-					mAimLength = Math::sqrt(xx * xx + yy * yy) * 0.5f;
-					break;
+					mAimAngle[i] = mShootAngle + Rad(Deg(180.0f));
+					mAimLength[1] = -1.0f;
 				}
 				else
 				{
-					const bool c1 = p.x() <= Projectile::LEFT_X;
-					const bool c2 = p.x() >= Projectile::RIGHT_X;
-					if (c1 || c2)
+					if (mAimLength[i] < -1.5f || mAimAngle[0] == Rad(Deg(90.0f)))
 					{
-						const Float xx = c1 ? mPosition.x() - Projectile::LEFT_X : (Projectile::RIGHT_X - mPosition.x());
-						const Float yy = Math::tan(af) * xx;
+						break;
+					}
+					mSecondPos = fp;
+					mAimAngle[i] = Rad(Deg(180.0f)) - mAimAngle[0];
+				}
 
-						mAimLength = Math::sqrt(xx * xx + yy * yy) * 0.5f;
+				mAimCos[i] = Math::cos(mAimAngle[i]);
+				mAimSin[i] = Math::sin(mAimAngle[i]);
+
+				mAimLength[i] = 0.0f;
+
+				while (true)
+				{
+					const Vector3 p = fp + Vector3(mAimCos[i] * mAimLength[i], mAimSin[i] * mAimLength[i], 0.0f);
+					const Range3D bbox = {
+						p - Vector3(0.5f),
+						p + Vector3(0.5f)
+					};
+
+					const std::unique_ptr<std::unordered_set<GameObject*>> collided = RoomManager::singleton->mCollisionManager->checkCollision(bbox, this, { GOT_BUBBLE });
+					if (collided != nullptr && !collided->empty())
+					{
+						const auto& b = collided->cbegin();
+						const Float xx = (*b)->mPosition.x() - fp.x();
+						const Float yy = ((*b)->mPosition.y() - 1.0f) - fp.y();
+
+						mAimLength[i] = Math::sqrt(xx * xx + yy * yy) * 0.5f;
+						fp = Vector3(xx, yy, mPosition.z());
+
+						if (i == 0)
+						{
+							mAimLength[1] = -2.0f;
+						}
+						break;
+					}
+
+					if (p.y() >= 1.0f)
+					{
+						const Float yy = fp.y() - 1.0f;
+						const Float xx = getFixedAtan(Rad(Deg(90.0f)) - mAimAngle[i]) * yy;
+
+						mAimLength[i] = Math::sqrt(xx * xx + yy * yy) * 0.5f;
+						fp = Vector3(xx, yy, mPosition.z());
+
 						break;
 					}
 					else
 					{
-						mAimLength += 1.0f;
+						const bool c1 = p.x() <= Projectile::LEFT_X;
+						const bool c2 = p.x() >= Projectile::RIGHT_X;
+						if (c1 || c2)
+						{
+							const Float xx = (c1 ? Projectile::LEFT_X : Projectile::RIGHT_X) - fp.x();
+							const Float yy = getFixedAtan(mAimAngle[i]) * xx + 1.0f;
+
+							mAimLength[i] = Math::sqrt(xx * xx + yy * yy) * 0.5f;
+							fp = Vector3(xx, yy, mPosition.z());
+
+							break;
+						}
+						else
+						{
+							mAimLength[i] += 1.0f;
+						}
 					}
 				}
 			}
 		}
 
 		{
-			const Float len = mAimLength + 3.0f;
-			const Float lsc = mAimLength - 4.0f;
+			const Float lsc1 = mAimLength[0] - 4.0f;
 
-			if (lsc >= 0.25f)
+			if (lsc1 >= 0.25f)
 			{
+				const Float len1 = mAimLength[0] + 3.0f;
+
 				(*mShootPathManipulator[0])
 					.resetTransformation()
-					.scale(Vector3(lsc, 0.2f, 1.0f))
-					.rotateZ(af)
-					.translate(Vector3(ac * len, as * len, 0.2f));
+					.scale(Vector3(lsc1, 0.2f, 1.0f))
+					.rotateZ(mAimAngle[0])
+					.translate(Vector3(mAimCos[0] * len1, mAimSin[0] * len1, 0.2f));
+
+				const Float lsc2 = Math::max(0.0f, mAimLength[1]);
 
 				(*mShootPathManipulator[1])
 					.resetTransformation()
-					.scale(Vector3(0.0f))
-					.rotateX(Deg(90.0f));
+					.scale(Vector3(lsc2, 0.2f, 1.0f))
+					.rotateZ(mAimAngle[1])
+					.translate(mSecondPos + Vector3(mAimCos[1] * lsc2, mAimSin[1] * lsc2, 0.2f));
 			}
 			else
 			{
@@ -601,6 +641,7 @@ void Player::postConstruct()
 	const std::shared_ptr<ElectricBall> go = std::make_shared<ElectricBall>(mParentIndex);
 	mElectricBall = go;
 	mElectricBall->mPosition = Vector3(10000.0f);
+	mElectricBall->mPlayables[0]->setGain(0.0f);
 	mElectricBall->playSfxAudio(0);
 	RoomManager::singleton->mGoLayers[mParentIndex].push_back(go);
 }
@@ -681,4 +722,9 @@ Range2Di Player::getBubbleSwapArea()
 		Vector2i(Int(ws.x() * 0.35f), Int(ws.y() * 0.75f)),
 		Vector2i(Int(ws.x() * 0.65f), Int(ws.y()))
 	};
+}
+
+Float Player::getFixedAtan(const Rad & angle)
+{
+	return Math::abs(Float(angle) - Constants::piHalf()) < 0.001f ? 0.0f : Math::tan(angle);
 }
