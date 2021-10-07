@@ -34,6 +34,7 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 
 	// Initialize members
 	mIsSwapping = false;
+	mSwapRequest = false;
 	mAnimation = { 0.0f, 0.0f, 0.0f, 1.0f };
 	mAimLength = { 0.0f, -1.0f };
 	mAimAngle = { Rad(0.0f), Rad(0.0f) };
@@ -201,6 +202,7 @@ void Player::update()
 	}
 
 	// Check for bubble swap
+	const bool isInSwap = getBubbleSwapArea().contains(InputManager::singleton->mMousePosition);
 	if (mIsSwapping)
 	{
 		// Check for end
@@ -217,16 +219,24 @@ void Player::update()
 		const auto& bs = InputManager::singleton->mMouseStates[PRIMARY_BUTTON];
 		if (bs == IM_STATE_PRESSED)
 		{
-			mShootTimeline = 1.0f;
+			// Check if bubble swap was requested
+			if (getBubbleSwapArea().contains(InputManager::singleton->mMousePosition))
+			{
+				mSwapRequest = true;
+			}
+			else
+			{
+				mShootTimeline = 1.0f;
+			}
 		}
 		else if (bs == IM_STATE_RELEASED)
 		{
 			if (mProjectile.expired())
 			{
 				// Check if bubble swap was requested
-				if (getBubbleSwapArea().contains(InputManager::singleton->mMousePosition))
+				if (mSwapRequest)
 				{
-					if (CommonUtility::singleton->isBubbleColorValid(mProjColors[0]))
+					if (isInSwap && CommonUtility::singleton->isBubbleColorValid(mProjColors[0]))
 					{
 						// Start animation
 						mAnimation[2] = 1.0f;
@@ -249,7 +259,7 @@ void Player::update()
 						}
 					}
 				}
-				else
+				else if (!isInSwap)
 				{
 					// Create projectile
 					std::shared_ptr<Projectile> go = std::make_shared<Projectile>(mParentIndex, mProjColors[0]);
@@ -305,6 +315,9 @@ void Player::update()
 					// Reset animation factor
 					mAnimation[1] = 1.0f;
 				}
+
+				// Reset swap state
+				mSwapRequest = false;
 			}
 		}
 	}
@@ -445,6 +458,18 @@ void Player::update()
 	}
 
 	// Compute aiming
+	if (mSwapRequest || isInSwap || InputManager::singleton->mMouseStates[PRIMARY_BUTTON] <= IM_STATE_NOT_PRESSED || RoomManager::singleton->mGoLayers[mParentIndex].cameraEye.z() < 35.0f)
+	{
+		(*mShootPathManipulator[0])
+			.resetTransformation()
+			.scale(Vector3(0.0f));
+
+
+		(*mShootPathManipulator[1])
+			.resetTransformation()
+			.scale(Vector3(0.0f));
+	}
+	else
 	{
 		mAimTimer -= mDeltaTime;
 		if (mAimTimer < 0.0f)
@@ -555,7 +580,7 @@ void Player::update()
 					.rotateZ(mAimAngle[0])
 					.translate(Vector3(mAimCos[0] * len1, mAimSin[0] * len1, -0.02f));
 
-				const Float lsc2 = Math::max(0.0f, mAimLength[1]);
+				const Float lsc2 = Math::max(0.0f, mAimLength[1] - 0.5f);
 
 				(*mShootPathManipulator[1])
 					.resetTransformation()

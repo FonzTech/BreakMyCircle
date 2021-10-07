@@ -62,6 +62,8 @@ protected:
 	std::unordered_set<BaseDrawable*> mFlatDrawables;
 
 	bool mIsSwapping;
+	bool mSwapRequest;
+
 	std::array<Float, 4> mAnimation;
 	std::array<Float, 2> mAimLength;
 	std::array<Rad, 2> mAimAngle;
