@@ -120,6 +120,7 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
 
 	// Init room manager
 	RoomManager::singleton = std::make_unique<RoomManager>();
+    RoomManager::singleton->setSfxGain(RoomManager::singleton->mSaveData.sfxEnabled ? 1.0f : 0.0f);
 	RoomManager::singleton->setup();
 
 	// Setup room manager

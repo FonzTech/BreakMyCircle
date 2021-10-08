@@ -164,7 +164,6 @@ bool RoomManager::SaveData::load()
 	{
 		const auto value = jsonData.find("sfxEnabled");
 		sfxEnabled = value != jsonData.end() ? (*value).get<Int>() == 1 : true;
-		RoomManager::singleton->setSfxGain(sfxEnabled ? 1.0f : 0.0f);
 	}
 
 	return true;
@@ -351,9 +350,7 @@ void RoomManager::loadRoom(const std::string & name)
 
 			mBgMusic = std::make_unique<StreamedAudioPlayable>(&mCameraObject);
 			mBgMusic->loadAudio(bgmusic);
-			mBgMusic->playable()->setGain(0.25f);
-
-			setBgMusicGain(mSaveData.musicEnabled ? 1.0f : 0.0f);
+			setBgMusicGain(mSaveData.musicEnabled ? 0.25f : 0.0f);
 		}
 	}
 
