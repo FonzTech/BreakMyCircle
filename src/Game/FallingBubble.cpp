@@ -198,9 +198,7 @@ void FallingBubble::update()
 		(*mManipulator)
 			.resetTransformation()
 			.scale(Vector3(8.0f, 8.0f, 1.0f))
-			.translate(mPosition);
-
-		break;
+			.translate(mPosition + Vector3(0.0f, 0.0f, 0.75f));
 
 		break;
 	}

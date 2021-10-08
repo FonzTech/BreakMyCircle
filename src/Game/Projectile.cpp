@@ -161,7 +161,7 @@ void Projectile::update()
 	if (mAmbientColor == BUBBLE_BOMB)
 	{
 		// Advance animation
-		mAnimation -= mVelocity[0];
+		mAnimation -= mVelocity[0] * mDeltaTime;
 	}
 
 	// Upgrade transformations

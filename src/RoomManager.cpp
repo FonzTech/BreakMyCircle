@@ -466,8 +466,9 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 						{
 							if (*c2 == BUBBLE_BLACKHOLE.toSrgbInt())
 							{
-								pzBh += 0.1f;
+								pzBh += 0.05f;
 								pz = pzBh;
+								Debug{} << "Okok" << pz;
 							}
 							break;
 						}

@@ -155,8 +155,7 @@ void Bubble::update()
 		(*mManipulator)
 			.resetTransformation()
 			.rotateZ(Deg(mRotation * 90.0f))
-			.scale(Vector3(2.0f))
-			.translate(Vector3(0.0f, 0.0f, 0.2f));
+			.scale(Vector3(2.0f));
 	}
 	else
 	{
