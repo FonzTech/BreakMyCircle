@@ -40,7 +40,7 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 	mAimAngle = { Rad(0.0f), Rad(0.0f) };
 	mAimCos = { 0.0f, 0.0f };
 	mAimSin = { 0.0f, 0.0f };
-	mAimTimer = 0.1f;
+	mAimTimer = 1.0f;
 
 	// Load asset as first drawable
 	{
@@ -476,7 +476,7 @@ void Player::update()
 	}
 
 	// Compute aiming
-	if (mSwapRequest || isInSwap || InputManager::singleton->mMouseStates[PRIMARY_BUTTON] <= IM_STATE_NOT_PRESSED || RoomManager::singleton->mGoLayers[mParentIndex].cameraEye.z() < 35.0f)
+	if (mSwapRequest || isInSwap || InputManager::singleton->mMouseStates[PRIMARY_BUTTON] <= IM_STATE_NOT_PRESSED)
 	{
 		(*mShootPathManipulator[0])
 			.resetTransformation()
@@ -494,7 +494,7 @@ void Player::update()
 		{
 			// Reset timer
 #if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
-			mAimTimer = 0.1f;
+			mAimTimer = 0.035f;
 #else
 			mAimTimer = 0.02f;
 #endif
