@@ -170,6 +170,9 @@
   "shaders/sun.frag": {
     "version": 1
   },
+  "shaders/shoot_path.frag": {
+    "version": 1
+  },
   "textures/bubble_blue.png": {
     "version": 1
   },
@@ -333,6 +336,9 @@
     "version": 1
   },
   "textures/swap.png": {
+    "version": 1
+  },
+  "textures/shoot_path.png": {
     "version": 1
   }
 }

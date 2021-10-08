@@ -38,8 +38,8 @@ private:
 	Int mTransformationProjectionMatrixUniform;
 	Int mProjectionMatrixUniform;
 
-	Int mColorUniform;
-	Int mIndexUniform, mTotalUniform;
-	Int mTexWidthUniform, mTexHeightUniform;
-	Int mRowsUniform, mColumnsUniform;
+	Float mColorUniform;
+	Float mIndexUniform, mTotalUniform;
+	Float mTexWidthUniform, mTexHeightUniform;
+	Float mRowsUniform, mColumnsUniform;
 };

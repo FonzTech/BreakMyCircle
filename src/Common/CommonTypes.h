@@ -47,6 +47,7 @@
 #define RESOURCE_TEXTURE_MOON "tex_moon"
 #define RESOURCE_TEXTURE_FIRE "tex_fire"
 #define RESOURCE_TEXTURE_SWAP "tex_swap"
+#define RESOURCE_TEXTURE_SHOOT_PATH "tex_shoot_path"
 #define RESOURCE_TEXTURE_GUI_SETTINGS "tex_gui_settings"
 #define RESOURCE_TEXTURE_GUI_REPLAY "tex_gui_replay"
 #define RESOURCE_TEXTURE_GUI_NEXT "tex_gui_next"
@@ -89,6 +90,7 @@
 #define RESOURCE_SHADER_FLAT3D "shader_flat3d"
 #define RESOURCE_SHADER_PLASMA "shader_plasma"
 #define RESOURCE_SHADER_SUN "shader_sun"
+#define RESOURCE_SHADER_SHOOT_PATH "shader_shoot_path"
 #define RESOURCE_SHADER_DISTANCE_FIELD_VECTOR "shader_distance_field_vector"
 
 #define RESOURCE_FONT_UBUNTU_TITLE "ubuntu-title"

@@ -196,6 +196,7 @@
     <ClCompile Include="src\Shaders\PlasmaShader.cpp" />
     <ClCompile Include="src\Shaders\ScreenQuadShader.cpp" />
     <ClCompile Include="src\Game\Skybox.cpp" />
+    <ClCompile Include="src\Shaders\ShootPathShader.cpp" />
     <ClCompile Include="src\Shaders\SpriteShader.cpp" />
     <ClCompile Include="src\Shaders\StarRoadShader.cpp" />
     <ClCompile Include="src\Shaders\SunShader.cpp" />
@@ -242,6 +243,7 @@
     <ClInclude Include="src\Shaders\PlasmaShader.h" />
     <ClInclude Include="src\Shaders\ScreenQuadShader.h" />
     <ClInclude Include="src\Game\Skybox.h" />
+    <ClInclude Include="src\Shaders\ShootPathShader.h" />
     <ClInclude Include="src\Shaders\SpriteShader.h" />
     <ClInclude Include="src\Common\CommonTypes.h" />
     <ClInclude Include="src\InputManager.h" />

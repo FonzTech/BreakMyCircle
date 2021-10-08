@@ -35,7 +35,7 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 	// Initialize members
 	mIsSwapping = false;
 	mSwapRequest = false;
-	mAnimation = { 0.0f, 0.0f, 0.0f, 1.0f };
+	mAnimation = { 0.0f, 0.0f, 0.0f, 1.0f, 0.0f };
 	mAimLength = { 0.0f, -1.0f };
 	mAimAngle = { Rad(0.0f), Rad(0.0f) };
 	mAimCos = { 0.0f, 0.0f };
@@ -94,21 +94,33 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 			m = mSwapManipulator;
 		}
 
-		// Load assets
-		Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D::Position, Shaders::Flat3D::TextureCoordinates>(RESOURCE_MESH_PLANE_FLAT);
-		Resource<GL::AbstractShaderProgram, Shaders::Flat3D> shader = CommonUtility::singleton->getFlat3DShader();
-		Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(isShoot ? RESOURCE_TEXTURE_WHITE : RESOURCE_TEXTURE_SWAP);
-
 		// Create drawable
 		auto& drawables = RoomManager::singleton->mGoLayers[parentIndex].drawables;
 
-		const std::shared_ptr<GameDrawable<Shaders::Flat3D>> td = std::static_pointer_cast<GameDrawable<Shaders::Flat3D>>(std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, texture));
+		std::shared_ptr<BaseDrawable> td;
+		if (isShoot)
+		{
+			Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<ShootPathShader::Position, ShootPathShader::TextureCoordinates>(RESOURCE_MESH_PLANE_FLAT);
+			Resource<GL::AbstractShaderProgram, ShootPathShader> shader = CommonUtility::singleton->getShootPathShader();
+			Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SHOOT_PATH);
+
+			td = std::static_pointer_cast<GameDrawable<ShootPathShader>>(std::make_shared<GameDrawable<ShootPathShader>>(*drawables, shader, mesh, texture));
+		}
+		else
+		{
+			Resource<GL::Mesh> mesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D::Position, Shaders::Flat3D::TextureCoordinates>(RESOURCE_MESH_PLANE_FLAT);
+			Resource<GL::AbstractShaderProgram, Shaders::Flat3D> shader = CommonUtility::singleton->getFlat3DShader();
+			Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SWAP);
+
+			td = std::static_pointer_cast<GameDrawable<Shaders::Flat3D>>(std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, texture));
+		}
+
 		td->setParent(m);
 		td->setDrawCallback(this);
-		td->setObjectId(isShoot ? 100U : 101U);
+		td->setObjectId(100U + i);
 		mDrawables.emplace_back(td);
 
-		mFlatDrawables.insert(td.get());
+		(isShoot ? mShootPathDrawables : mFlatDrawables).insert(td.get());
 	}
 
 	/*
@@ -350,6 +362,12 @@ void Player::update()
 
 	// Projectiles animation
 	{
+		mAnimation[4] += mDeltaTime;
+		while (mAnimation[4] > 30.0f)
+		{
+			mAnimation[4] -= 30.0f;
+		}
+
 		const Rad angle = Rad(Deg((1.0f - mAnimation[2]) * 180.0f));
 		const Float ac = Math::cos(angle);
 		const Float as = Math::sin(angle);
@@ -576,7 +594,7 @@ void Player::update()
 
 				(*mShootPathManipulator[0])
 					.resetTransformation()
-					.scale(Vector3(lsc1, 0.2f, 1.0f))
+					.scale(Vector3(lsc1, 0.5f, 1.0f))
 					.rotateZ(mAimAngle[0])
 					.translate(Vector3(mAimCos[0] * len1, mAimSin[0] * len1, -0.02f));
 
@@ -584,7 +602,7 @@ void Player::update()
 
 				(*mShootPathManipulator[1])
 					.resetTransformation()
-					.scale(Vector3(lsc2, 0.2f, 1.0f))
+					.scale(Vector3(lsc2, 0.5f, 1.0f))
 					.rotateZ(mAimAngle[1])
 					.translate(mSecondPos + Vector3(mAimCos[1] * lsc2, mAimSin[1] * lsc2, -0.02f));
 			}
@@ -605,13 +623,23 @@ void Player::update()
 
 void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (mFlatDrawables.find(baseDrawable) != mFlatDrawables.end())
+	const auto& it = mShootPathDrawables.find(baseDrawable);
+	if (it != mShootPathDrawables.end())
 	{
-		const bool isShoot = baseDrawable->getObjectId() == 100U;
+		const UnsignedInt id = (*it)->getObjectId() - 100U;
+		((ShootPathShader&)baseDrawable->getShader())
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+			.bindTexture(*baseDrawable->mTexture)
+			.setIndex(mAnimation[4])
+			.setSize(mAimLength[id] - (id ? 0.5f : 4.0f))
+			.draw(*baseDrawable->mMesh);
+	}
+	else if (mFlatDrawables.find(baseDrawable) != mFlatDrawables.end())
+	{
 		((Shaders::Flat3D&)baseDrawable->getShader())
 			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 			.bindTexture(*baseDrawable->mTexture)
-			.setColor(Color4{ 1.0f, 1.0f, 1.0f, isShoot ? 1.0f : Math::sin(Deg(Math::min(180.0f, mAnimation[3] * 180.0f))) })
+			.setColor(Color4{ 1.0f, 1.0f, 1.0f, Math::sin(Deg(Math::min(180.0f, mAnimation[3] * 180.0f))) })
 			.setAlphaMask(0.001f)
 			.draw(*baseDrawable->mMesh);
 	}

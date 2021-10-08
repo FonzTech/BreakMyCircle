@@ -50,7 +50,6 @@ protected:
 	Rad mShootAngle;
 
 	Color3 mProjColors[2];
-
 	Object3D* mShooterManipulator;
 	Object3D* mSphereManipulator[2];
 	Object3D* mBombManipulator;
@@ -60,11 +59,12 @@ protected:
 	BaseDrawable* mSphereDrawables[2];
 	BaseDrawable* mBombDrawables[3];
 	std::unordered_set<BaseDrawable*> mFlatDrawables;
+	std::unordered_set<BaseDrawable*> mShootPathDrawables;
 
 	bool mIsSwapping;
 	bool mSwapRequest;
 
-	std::array<Float, 4> mAnimation;
+	std::array<Float, 5> mAnimation;
 	std::array<Float, 2> mAimLength;
 	std::array<Rad, 2> mAimAngle;
 	std::array<Float, 2> mAimCos;

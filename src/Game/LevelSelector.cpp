@@ -673,6 +673,7 @@ void LevelSelector::update()
 	}
 
 	// Handle scrollable scenery
+	const Int wasClickedId = mClickIndex;
 	if (lbs == IM_STATE_PRESSED)
 	{
 		if (!isViewingLevel && !mSettingsOpened && mLevelInfo.state == GO_LS_LEVEL_INIT && !mLevelEndingAnim)
@@ -754,7 +755,7 @@ void LevelSelector::update()
 		{
 			// Check for clicked object
 			const UnsignedInt oid = InputManager::singleton->mClickedObjectId;
-			if (oid != 0U)
+			if (wasClickedId < 0 && oid != 0U)
 			{
 				const std::chrono::duration<double> diff = std::chrono::system_clock::now() - mClickStartTime;
 				if (diff.count() < GO_LS_CLICK_TAP_MAX_DELAY)

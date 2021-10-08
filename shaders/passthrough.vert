@@ -4,7 +4,6 @@ layout(location = 1) in vec2 textureCoordinates;
 out vec2 interpolatedTextureCoordinates;
 
 uniform mat4 transformationProjectionMatrix;
-uniform mat4 projectionMatrix;
 
 void main()
 {

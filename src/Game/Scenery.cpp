@@ -263,9 +263,9 @@ void Scenery::update()
 
 	// Update frame
 	mFrame += mDeltaTime * 0.5f;
-	while (mFrame > 1000.0f)
+	while (mFrame > 30.0f)
 	{
-		mFrame -= 1000.0f;
+		mFrame -= 30.0f;
 	}
 
 	for (auto& wh : mWaterHolders)

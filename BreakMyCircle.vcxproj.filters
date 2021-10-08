@@ -180,6 +180,9 @@
     <ClCompile Include="src\Game\Onboarding.cpp">
       <Filter>Source Files\Game</Filter>
     </ClCompile>
+    <ClCompile Include="src\Shaders\ShootPathShader.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\RoomManager.h">
@@ -322,6 +325,9 @@
     </ClInclude>
     <ClInclude Include="src\Game\Onboarding.h">
       <Filter>Header Files\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shaders\ShootPathShader.h">
+      <Filter>Header Files\Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
