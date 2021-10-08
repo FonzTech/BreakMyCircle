@@ -114,6 +114,7 @@
 #define RESOURCE_AUDIO_SAFE_OPEN "safe_open"
 #define RESOURCE_AUDIO_GLORY "glory"
 #define RESOURCE_AUDIO_SWAP "swap"
+#define RESOURCE_AUDIO_TIME "time"
 
 #define RESOURCE_PATH_PREFIX "path_"
 #define RESOURCE_PATH_NEW_SPHERE "new_sphere"

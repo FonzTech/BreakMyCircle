@@ -194,6 +194,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 			{ GO_LS_AUDIO_EXPLOSION, RESOURCE_AUDIO_EXPLOSION },
 			{ GO_LS_AUDIO_COIN, RESOURCE_AUDIO_COIN },
 			{ GO_LS_AUDIO_WRONG, RESOURCE_AUDIO_WRONG },
+			{ GO_LS_AUDIO_TIME, RESOURCE_AUDIO_TIME },
 			{ GO_LS_AUDIO_STAR, RESOURCE_AUDIO_STAR_PREFIX + std::string("1") },
 			{ GO_LS_AUDIO_STAR + 1, RESOURCE_AUDIO_STAR_PREFIX + std::string("2") },
 			{ GO_LS_AUDIO_STAR + 2, RESOURCE_AUDIO_STAR_PREFIX + std::string("3") }
@@ -694,12 +695,7 @@ void LevelSelector::update()
 			}
 			else
 			{
-#if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
-				const auto p = Vector2(mouseDelta).normalized();
-#else
 				const auto p = mouseDelta;
-#endif
-
 				const Vector3 scrollDelta = Vector3(p.x(), 0.0f, Float(mouseDelta.y())) * -0.05f;
 				mScrolling.velocity = scrollDelta;
 			}
@@ -1582,6 +1578,11 @@ void LevelSelector::manageLevelState()
 
 				// Update animation factor
 				mLevelGuiAnim[2] = 1.0f;
+
+				if (isTimeExpiring(mTimer.value))
+				{
+					playSfxAudio(GO_LS_AUDIO_TIME);
+				}
 			}
 		}
 
@@ -1596,7 +1597,7 @@ void LevelSelector::manageLevelState()
 		manageBackendAnimationVariable(mLevelGuiAnim[2], 1.0f, false);
 
 		{
-			const Float x = mTimer.cached >= 0 && mTimer.cached <= 15 ? 1.0f - mLevelGuiAnim[2] * 0.5f : 1.0f;
+			const Float x = isTimeExpiring(mTimer.value) ? 1.0f - mLevelGuiAnim[2] * 0.5f : 1.0f;
 			const auto& c = mLevelTexts[GO_LS_TEXT_TIME]->mColor.data();
 			c[1] = x;
 			c[2] = x;
@@ -2012,7 +2013,8 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 	mLevelInfo.repeatLevelId = 0U;
 	mLevelInfo.delayedChecks = false;
 	mLevelInfo.state = GO_LS_LEVEL_STARTING;
-    mLevelInfo.startingTime = 150.0f + Math::floor(Float(mLevelInfo.selectedLevelId % 100U) / 5.0f) * 15.0f;
+	mLevelInfo.startingTime = 150.0f + Math::floor(Float(mLevelInfo.selectedLevelId % 100U) / 5.0f) * 15.0f;
+	mLevelInfo.startingTime = 20.0f;
 
 	mTimer = { mLevelInfo.startingTime, Int(mLevelInfo.startingTime) };
 
@@ -2049,6 +2051,11 @@ Vector3 LevelSelector::getLastLevelPos()
 	const auto& zp = Math::floor(Float(RoomManager::singleton->mSaveData.maxLevelId - 2) / 6.0f) * -GO_LS_SCENERY_LENGTH;
 	const auto& zf = (RoomManager::singleton->mSaveData.maxLevelId - 2) % 6U;
 	return Vector3(0.0f, 0.0f, zp) + sLevelButtonPositions[getModelIndex(Int(zp))][zf];
+}
+
+bool LevelSelector::isTimeExpiring(const Float time)
+{
+	return mTimer.cached >= 0 && mTimer.cached <= 15;
 }
 
 void LevelSelector::manageGuiLevelAnim(const UnsignedInt index, const bool increment, const Float factor)

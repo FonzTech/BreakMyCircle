@@ -47,6 +47,8 @@
 #define GO_LS_AUDIO_EXPLOSION 6
 #define GO_LS_AUDIO_COIN 7
 #define GO_LS_AUDIO_WRONG 8
+#define GO_LS_AUDIO_WRONG 8
+#define GO_LS_AUDIO_TIME 9
 #define GO_LS_AUDIO_STAR 1000
 
 #define GO_LS_MAX_POWERUP_COUNT 4
@@ -201,6 +203,7 @@ private:
 	Int computeScore();
 	Int getModelIndex(const Int yp);
 	Vector3 getLastLevelPos();
+	bool isTimeExpiring(const Float time);
 
 	void manageGuiLevelAnim(const UnsignedInt index, const bool increment, const Float factor = 1.0f);
 	void updateTimeCounter(const Int value);
