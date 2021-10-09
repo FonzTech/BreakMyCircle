@@ -30,12 +30,6 @@ const Int Engine::GO_LAYERS[] = {
 	GOL_ORTHO_FIRST
 };
 
-#ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
-const std::unordered_set<Int> Engine::GO_DRAW_DETACHED = {
-	GOT_OVERLAY_TEXT
-};
-#endif
-
 Engine::Engine(const Arguments& arguments) :
 #ifdef CORRADE_TARGET_ANDROID
 Platform::Application{ arguments, ENGINE_CONFIGURATION }
@@ -263,37 +257,10 @@ void Engine::tickEvent()
 		}
 
 		// Draw all game objects on this layer
-#ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
-		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
-#endif
-
 		if (canDrawLayer)
 		{
 			drawInternal();
 		}
-
-		// Check for special actions
-#ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
-		if (index == GOL_ORTHO_FIRST)
-		{
-			// Set specific blend function for text
-			GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
-			GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
-
-			// Get vector as reference
-			const auto& gos = currentGol->list;
-
-			// Update all game objects on this layer
-			for (UnsignedInt i = 0; i < gos->size(); ++i)
-			{
-				std::shared_ptr<GameObject> & go = gos->at(i);
-				if (GO_DRAW_DETACHED.find(go->getType()) != GO_DRAW_DETACHED.end())
-				{
-					((std::shared_ptr<IDrawDetached>&)go)->drawDetached();
-				}
-			}
-		}
-#endif
 
 		// De-reference game object layer
 		mCurrentGol = nullptr;
@@ -313,9 +280,6 @@ void Engine::tickEvent()
 		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::One);
 
 		// Redraw
-#ifdef ENABLE_DETACHED_DRAWING_FOR_OVERLAY_TEXT
-		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha);
-#endif
 		if (canDraw)
 		{
 			drawInternal();
