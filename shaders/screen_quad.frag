@@ -42,6 +42,4 @@ void main()
     vec4 c = texture(colorOrthoFirst, interpolatedTextureCoordinates);
     fragmentColor.rgb = mix(fragmentColor.rgb, c.rgb, c.a);
   }
-    
-  fragmentColor = mix(fragmentColor, vec4(1.0), 0.99);
 }
