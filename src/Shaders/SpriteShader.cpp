@@ -12,7 +12,7 @@
 SpriteShader::SpriteShader()
 {
 	// Setup shader from file
-#if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
+#ifdef TARGET_MOBILE
 	MAGNUM_ASSERT_GL_VERSION_SUPPORTED(GL::Version::GLES300);
 
 	GL::Shader vert{ GL::Version::GLES300, GL::Shader::Type::Vertex };

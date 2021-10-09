@@ -367,8 +367,8 @@
 				05604596270A0AFC0080AA3E /* Engine.cpp */,
 				05604597270A0AFC0080AA3E /* GameObject.cpp */,
 				0560459A270A0AFC0080AA3E /* InputManager.cpp */,
-				05604595270A0AFC0080AA3E /* main.cpp */,
 				05604598270A0AFC0080AA3E /* RoomManager.cpp */,
+				05604595270A0AFC0080AA3E /* main.cpp */,
 			);
 			name = Base;
 			sourceTree = "<group>";

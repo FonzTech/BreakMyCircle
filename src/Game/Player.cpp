@@ -493,7 +493,7 @@ void Player::update()
 		if (mAimTimer < 0.0f)
 		{
 			// Reset timer
-#if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
+#ifdef TARGET_MOBILE
 			mAimTimer = 0.035f;
 #else
 			mAimTimer = 0.02f;

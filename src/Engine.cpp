@@ -6,7 +6,10 @@
 #include "RoomManager.h"
 #include "GameObject.h"
 
+#ifdef DEBUG
 #define DEBUG_OPENGL_CALLS
+#endif
+
 #ifdef DEBUG_OPENGL_CALLS
 #include <Magnum/GL/DebugOutput.h>
 #endif
@@ -14,7 +17,7 @@
 using namespace Magnum::Math::Literals;
 
 const Float Engine::mDrawFrameTime =
-#if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
+#ifdef TARGET_MOBILE
 0.016f
 #else
 0.009f
@@ -191,7 +194,7 @@ void Engine::tickEvent()
 			 */
 			if (index == GOL_PERSP_FIRST)
 			{
-#ifdef CORRADE_TARGET_ANDROID
+#ifdef TARGET_MOBILE
 				const auto& lbs = InputManager::singleton->mMouseStates[PRIMARY_BUTTON];
 				if (lbs >= IM_STATE_PRESSED)
 #endif
@@ -213,7 +216,7 @@ void Engine::tickEvent()
 					(*mCurrentGol->frameBuffer)
 							.clearColor(GLF_OBJECTID_ATTACHMENT_INDEX, Vector4ui{});
 				}
-#ifdef CORRADE_TARGET_ANDROID
+#ifdef TARGET_MOBILE
 				else if (lbs == IM_STATE_NOT_PRESSED)
 				{
 					InputManager::singleton->mClickedObjectId = 0U;

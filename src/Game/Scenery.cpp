@@ -274,7 +274,7 @@ void Scenery::update()
 	}
 
 	// Debug camera move
-#ifdef _DEBUG or NDEBUG
+#ifdef DEBUG
 	{
 		Vector3 delta;
 

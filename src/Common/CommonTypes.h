@@ -139,6 +139,14 @@
 #define GOT_SAFE_MINIGAME 17
 #define GOT_ONBOARDING 18
 
+#if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
+#define TARGET_MOBILE
+#endif
+
+#if (defined(NDEBUG) or defined(_DEBUG)) and !(defined(DEBUG))
+#define DEBUG
+#endif
+
 #include <Magnum/Magnum.h>
 #include <Corrade/Containers/Array.h>
 #include <Corrade/Containers/Optional.h>

@@ -67,7 +67,7 @@ bool RoomManager::SaveData::load()
 		flags = 0U;
 		onboardIndex = 0;
 
-#if NDEBUG or _DEBUG
+#if DEBUG
 		maxLevelId = 48U;
 		coinTotal = 50;
 		coinCurrent = 0;
@@ -79,7 +79,7 @@ bool RoomManager::SaveData::load()
 
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
-#if NDEBUG or _DEBUG
+#if DEBUG
 			powerupAmounts[GO_LS_GUI_POWERUP + i] = 2;
 #else
 			powerupAmounts[GO_LS_GUI_POWERUP + i] = 0;

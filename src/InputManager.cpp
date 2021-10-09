@@ -8,7 +8,7 @@ InputManager::InputManager()
 	mPreTickMouseStates = {};
 	mMouseStates = {};
 
-#ifndef CORRADE_TARGET_ANDROID
+#ifndef TARGET_MOBILE
 	mKeyStates = {};
 #endif
 

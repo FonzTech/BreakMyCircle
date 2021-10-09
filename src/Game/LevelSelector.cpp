@@ -412,7 +412,7 @@ void LevelSelector::update()
 		.translate(mPosition + Vector3(0.0f, 0.0f, -GO_LS_SKYPLANE_DISTANCE));
 #endif
 
-#if NDEBUG or _DEBUG
+#if DEBUG
 	if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_RELEASED)
 	{
 		if (mLevelInfo.state == GO_LS_LEVEL_INIT && !RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->empty())
@@ -490,7 +490,7 @@ void LevelSelector::update()
 			mDisplayMiniOnboarding = false;
 		}
 	}
-#if NDEBUG or _DEBUG
+#if DEBUG
 	else if (InputManager::singleton->mMouseStates[ImMouseButtons::Right] == IM_STATE_PRESSED)
 	{
 		RoomManager::singleton->mSaveData.flags |= GO_RM_SD_FLAG_ONBOARDING_A;
@@ -1055,7 +1055,7 @@ void LevelSelector::handleScrollableScenery()
 		}
 
 		// Create level selectors
-#if NDEBUG or _DEBUG
+#if DEBUG
 		if (mSceneries[yp].buttons.size())
 		{
 			Error{} << "Buttons vector for position" << yp << "should be empty, but it was not.";
