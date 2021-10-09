@@ -44,7 +44,7 @@ Platform::Application{ arguments, Configuration{}.setWindowFlags(Configuration::
 #else
 Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setSize({ 432, 768 }) }
 #endif
-, mFrameTime(0.0f)
+, mFrameTime(0.0f), mCurrentGol(nullptr)
 {
 	// Setup window
 #ifdef CORRADE_TARGET_ANDROID
