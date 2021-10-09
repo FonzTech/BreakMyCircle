@@ -19,6 +19,7 @@
 		0535EADF270A51BD009462B0 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD7270A51BD009462B0 /* textures */; };
 		0535EAE1270A55B1009462B0 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C9D2709F4AE00C34B15 /* libSDL2main.a */; };
 		0535EAE2270A6130009462B0 /* libAnySceneImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C902709F38600C34B15 /* libAnySceneImporter.a */; };
+		0545F09A2711AD980075E566 /* ShootPathShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0545F0992711AD980075E566 /* ShootPathShader.cpp */; };
 		05604540270A0A350080AA3E /* StreamedAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */; };
 		05604541270A0A350080AA3E /* StreamedAudioPlayable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */; };
 		0560454A270A0A850080AA3E /* PlasmaSquareRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604548270A0A850080AA3E /* PlasmaSquareRenderer.cpp */; };
@@ -116,6 +117,7 @@
 		0535EAD5270A51BD009462B0 /* scenes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scenes; path = ../scenes; sourceTree = "<group>"; };
 		0535EAD6270A51BD009462B0 /* audios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = audios; path = ../audios; sourceTree = "<group>"; };
 		0535EAD7270A51BD009462B0 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = textures; path = ../textures; sourceTree = "<group>"; };
+		0545F0992711AD980075E566 /* ShootPathShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShootPathShader.cpp; path = ../src/Shaders/ShootPathShader.cpp; sourceTree = "<group>"; };
 		0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StreamedAudioBuffer.cpp; path = ../src/Audio/StreamedAudioBuffer.cpp; sourceTree = "<group>"; };
 		0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StreamedAudioPlayable.cpp; path = ../src/Audio/StreamedAudioPlayable.cpp; sourceTree = "<group>"; };
 		05604548270A0A850080AA3E /* PlasmaSquareRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PlasmaSquareRenderer.cpp; path = ../src/Common/CustomRenderers/PlasmaSquareRenderer.cpp; sourceTree = "<group>"; };
@@ -349,6 +351,7 @@
 				05604585270A0AE90080AA3E /* PlasmaShader.cpp */,
 				05604587270A0AE90080AA3E /* ScreenQuadShader.cpp */,
 				05604584270A0AE90080AA3E /* SpriteShader.cpp */,
+				0545F0992711AD980075E566 /* ShootPathShader.cpp */,
 				05604588270A0AE90080AA3E /* StarRoadShader.cpp */,
 				05604589270A0AE90080AA3E /* SunShader.cpp */,
 				05604583270A0AE90080AA3E /* WaterShader.cpp */,
@@ -577,6 +580,7 @@
 				0560458D270A0AE90080AA3E /* CubeMapShader.cpp in Sources */,
 				0560458E270A0AE90080AA3E /* ScreenQuadShader.cpp in Sources */,
 				0560458F270A0AE90080AA3E /* StarRoadShader.cpp in Sources */,
+				0545F09A2711AD980075E566 /* ShootPathShader.cpp in Sources */,
 				05604590270A0AE90080AA3E /* SunShader.cpp in Sources */,
 				0560459D270A0AFC0080AA3E /* Engine.cpp in Sources */,
 				0560459E270A0AFC0080AA3E /* GameObject.cpp in Sources */,
@@ -642,7 +646,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -697,7 +701,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -728,7 +732,7 @@
 					/Users/alfonso/Development/common/include,
 				);
 				INFOPLIST_FILE = breakmycircle/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -776,7 +780,7 @@
 					/Users/alfonso/Development/common/include,
 				);
 				INFOPLIST_FILE = breakmycircle/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

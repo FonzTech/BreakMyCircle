@@ -19,8 +19,7 @@
 #include "../AssetManager.h"
 #include "../Graphics/GameDrawable.h"
 
-#ifdef CORRADE_TARGET_ANDROID
-// #define DEBUG_OPENGL_CALLS
+#if defined(CORRADE_TARGET_ANDROID)
 #include <android/native_activity.h>
 #endif
 
@@ -53,12 +52,12 @@ Resource<Audio::Buffer> CommonUtility::loadAudioData(const std::string & filenam
 		Containers::Pointer<Audio::AbstractImporter> importer = manager.loadAndInstantiate("StbVorbisAudioImporter");
 		if (!importer)
 		{
-			std::exit(1);
+            Fatal{} << "Could not instantiate audio importer";
 		}
 
 		if (!importer->openFile(mConfig.assetDir + "audios/" + filename + ".ogg"))
 		{
-			std::exit(2);
+            Fatal{} << "Could not load audio" << filename;
 		}
 
 		/*
@@ -86,9 +85,9 @@ Resource<GL::Texture2D> CommonUtility::loadTexture(const std::string & filename)
 		PluginManager::Manager<Trade::AbstractImporter> manager;
 		Containers::Pointer<Trade::AbstractImporter> importer = manager.loadAndInstantiate("PngImporter");
 
-		if (!importer || !importer->openFile(CommonUtility::singleton->mConfig.assetDir + "textures/" + filename.substr(4) + ".png"))
+		if (!importer || !importer->openFile(CommonUtility::singleton->mConfig.assetDir + "textures/" + filename + ".png"))
 		{
-			std::exit(-4);
+            Fatal{} << "Could not load texture" << filename;
 		}
 
 		// Set texture data and parameters
@@ -122,8 +121,7 @@ Resource<FontHolder> CommonUtility::loadFont(const std::string & filename)
 		fh->font = fh->manager.loadAndInstantiate("TrueTypeFont");
 		if (!fh->font || !fh->font->openFile(mConfig.assetDir + "fonts/" + filename + ".ttf", 100.0f))
 		{
-			Fatal{} << "Cannot open font file";
-			std::exit(1);
+            Fatal{} << "Cannot open font file";
 		}
 
 		// Fill glyph cache

@@ -86,8 +86,7 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 		Debug{} << "Loading asset" << fname;
 		if (!importer || !importer->openFile(fname))
 		{
-			Error{} << "Could not load asset" << fname;
-			std::exit(4);
+            Fatal{} << "Could not load asset" << fname;
 		}
 	}
 

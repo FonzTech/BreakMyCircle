@@ -87,7 +87,7 @@ void Skybox::createDrawable(const std::string & name)
 
 		if (!importer)
 		{
-			std::exit(-4);
+            Fatal{} << "Could not load PNG importer";
 		}
 
 		importer->openFile(CommonUtility::singleton->mConfig.assetDir + "textures/" + name + "_px.png");

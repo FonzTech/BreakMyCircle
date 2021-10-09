@@ -6,6 +6,7 @@
 #include "RoomManager.h"
 #include "GameObject.h"
 
+#define DEBUG_OPENGL_CALLS
 #ifdef DEBUG_OPENGL_CALLS
 #include <Magnum/GL/DebugOutput.h>
 #endif
@@ -48,9 +49,9 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
 #endif
 
 #ifdef DEBUG_OPENGL_CALLS
-        GL::Renderer::enable(GL::Renderer::Feature::DebugOutput);
-        GL::Renderer::enable(GL::Renderer::Feature::DebugOutputSynchronous);
-        GL::DebugOutput::setDefaultCallback();
+    GL::Renderer::enable(GL::Renderer::Feature::DebugOutput);
+    GL::Renderer::enable(GL::Renderer::Feature::DebugOutputSynchronous);
+    GL::DebugOutput::setDefaultCallback();
 #endif
 
 	// Set renderer features
@@ -62,15 +63,14 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
 	// Set clear color
 	GL::Renderer::setClearColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
 
-    // Start timeline
-    mTimeline.start();
-
 	// Init common utility
 	CommonUtility::singleton = std::make_unique<CommonUtility>();
 
 #if defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
     
     CommonUtility::singleton->mConfig.assetDir = std::string(ios_GetAssetDir());
+    CommonUtility::singleton->mConfig.displayDensity = ios_GetDisplayDensity();
+    CommonUtility::singleton->mConfig.saveFile = ios_GetSaveFile();
     
 #elif defined(CORRADE_TARGET_ANDROID)
     
@@ -90,7 +90,7 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
 			switch (i)
 			{
 			case 0U:
-                    CommonUtility::singleton->mConfig.assetDir = *value;
+                CommonUtility::singleton->mConfig.assetDir = *value;
 				break;
 
 			case 1U:
@@ -128,8 +128,8 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
 	viewportInternal(nullptr);
 
 	// Build room
+    mTimeline.start();
 	RoomManager::singleton->loadRoom("intro");
-	// RoomManager::singleton->createLevelRoom();
 }
 
 Engine::~Engine()
@@ -302,7 +302,7 @@ void Engine::tickEvent()
 
 	{
 		// Bind default window framebuffer
-		GL::defaultFramebuffer.bind();
+        GL::defaultFramebuffer.bind();
 
 		// Set renderer features
 		GL::Renderer::disable(GL::Renderer::Feature::Blending);
