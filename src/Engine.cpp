@@ -261,10 +261,10 @@ void Engine::tickEvent()
 		{
 			drawInternal();
 		}
-
-		// De-reference game object layer
-		mCurrentGol = nullptr;
 	}
+    
+    // De-reference game object layer
+    mCurrentGol = nullptr;
 
 	// Redraw main frame buffer
 	RoomManager::singleton->mCamera->setViewport(framebufferSize());
