@@ -164,24 +164,24 @@ void Engine::tickEvent()
 	{
 		// Get framebufferf for this buffer
 		RoomManager::singleton->setCurrentBoundParentIndex(index);
-		currentGol = &RoomManager::singleton->mGoLayers[index];
+		mCurrentGol = &RoomManager::singleton->mGoLayers[index];
 
-		const bool canDrawLayer = canDraw && currentGol->drawEnabled;
+		const bool canDrawLayer = canDraw && mCurrentGol->drawEnabled;
 
 		// Do operations on framebuffer only if drawing for it is enabled
 		if (canDrawLayer)
         {
-			if (currentGol->depthTestEnabled)
+			if (mCurrentGol->depthTestEnabled)
 			{
-				(*currentGol->frameBuffer)
+				(*mCurrentGol->frameBuffer)
 					.clear(GL::FramebufferClear::Depth | GL::FramebufferClear::Stencil);
 			}
 
 			// Multi-layer color attachment clearing
 			{
-				currentGol->frameBuffer->bind();
+				mCurrentGol->frameBuffer->bind();
 				GL::Renderer::setColorMask(false, false, false, true);
-				currentGol->frameBuffer->clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f));
+				mCurrentGol->frameBuffer->clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f));
 				GL::Renderer::setColorMask(true, true, true, true);
 			}
 
@@ -197,12 +197,12 @@ void Engine::tickEvent()
 #endif
 				{
 					// Get clicked Object ID
-					currentGol->frameBuffer->mapForRead(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX });
+					mCurrentGol->frameBuffer->mapForRead(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX });
 
 					const Vector2i position(Vector2(InputManager::singleton->mMousePosition) * CommonUtility::singleton->mScaledFramebufferSize / Vector2{ windowSize() });
 					const Vector2i fbPosition{ position.x(), mCachedFramebufferSize.y() - position.y() - 1 };
 
-					const Image2D data = currentGol->frameBuffer->read(
+					const Image2D data = mCurrentGol->frameBuffer->read(
 							Range2Di::fromSize(fbPosition, { 1, 1 }),
 							{ PixelFormat::R32UI }
 					);
@@ -210,7 +210,7 @@ void Engine::tickEvent()
 					InputManager::singleton->mClickedObjectId = data.pixels<UnsignedInt>()[0][0];
 
 					// Clear object ID buffer
-					(*currentGol->frameBuffer)
+					(*mCurrentGol->frameBuffer)
 							.clearColor(GLF_OBJECTID_ATTACHMENT_INDEX, Vector4ui{});
 				}
 #ifdef CORRADE_TARGET_ANDROID
@@ -224,20 +224,20 @@ void Engine::tickEvent()
 
 		// Set renderer features
 		GL::Renderer::enable(GL::Renderer::Feature::Blending);
-		GL::Renderer::setFeature(GL::Renderer::Feature::DepthTest, currentGol->depthTestEnabled);
+		GL::Renderer::setFeature(GL::Renderer::Feature::DepthTest, mCurrentGol->depthTestEnabled);
 		GL::Renderer::setBlendFunction(GL::Renderer::BlendFunction::SourceAlpha, GL::Renderer::BlendFunction::OneMinusSourceAlpha, GL::Renderer::BlendFunction::One, GL::Renderer::BlendFunction::One);
 
 		// Set projection for camera on this layer
-		RoomManager::singleton->mCamera->setProjectionMatrix(currentGol->projectionMatrix);
+		RoomManager::singleton->mCamera->setProjectionMatrix(mCurrentGol->projectionMatrix);
 
 		// Position camera on this layer
-		RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(currentGol->cameraEye, currentGol->cameraTarget, Vector3::yAxis()));
+		RoomManager::singleton->mCameraObject.setTransformation(Matrix4::lookAt(mCurrentGol->cameraEye, mCurrentGol->cameraTarget, Vector3::yAxis()));
 
 		// Get vector as reference
-		const auto& gos = currentGol->list;
+		const auto& gos = mCurrentGol->list;
 
 		// Update all game objects on this layer
-		if (currentGol->updateEnabled)
+		if (mCurrentGol->updateEnabled)
 		{
             for (auto& go : *gos)
             {
@@ -293,7 +293,7 @@ void Engine::tickEvent()
 #endif
 
 		// De-reference game object layer
-		currentGol = nullptr;
+		mCurrentGol = nullptr;
 	}
 
 	// Redraw main frame buffer
@@ -360,7 +360,7 @@ void Engine::drawEvent()
 void Engine::drawInternal()
 {
 	// Process main frame buffer
-	if (currentGol == nullptr)
+	if (mCurrentGol == nullptr)
 	{
 		// Draw screen quad
 		mScreenQuadShader
@@ -375,10 +375,10 @@ void Engine::drawInternal()
 	}
 	else
 	{
-		if (currentGol->orderingByZ)
+		if (mCurrentGol->orderingByZ)
 		{
 			// Z ordering
-			std::vector<std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>> drawableTransformations = RoomManager::singleton->mCamera->drawableTransformations(*currentGol->drawables);
+			std::vector<std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>> drawableTransformations = RoomManager::singleton->mCamera->drawableTransformations(*mCurrentGol->drawables);
 			std::sort(drawableTransformations.begin(), drawableTransformations.end(),
 				[](const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& a,
 					const std::pair<std::reference_wrapper<SceneGraph::Drawable3D>, Matrix4>& b) {
@@ -391,7 +391,7 @@ void Engine::drawInternal()
 		else
 		{
 			// Draw scene
-			RoomManager::singleton->mCamera->draw(*currentGol->drawables);
+			RoomManager::singleton->mCamera->draw(*mCurrentGol->drawables);
 		}
 	}
 }

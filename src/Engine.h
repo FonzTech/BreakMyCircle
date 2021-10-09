@@ -98,5 +98,5 @@ private:
 	Timeline mTimeline;
 	Float mDeltaTime;
 	ScreenQuadShader mScreenQuadShader;
-	RoomManager::GameObjectsLayer* currentGol;
+	RoomManager::GameObjectsLayer* mCurrentGol;
 };
