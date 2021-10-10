@@ -560,6 +560,10 @@ void Player::update()
 						mAimLength[i] = Math::sqrt(xx * xx + yy * yy) * 0.5f;
 						fp = Vector3(xx, yy, mPosition.z());
 
+						if (i == 0)
+						{
+							mAimLength[1] = -2.0f;
+						}
 						break;
 					}
 					else
