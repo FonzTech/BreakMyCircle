@@ -212,9 +212,8 @@ RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
 	// Create audio manager
 	mAudioContext = std::make_unique<Audio::Context>(
 		Audio::Context::Configuration{}
-		.setHrtf(Audio::Context::Configuration::Hrtf::Enabled)
+		.setHrtf(Audio::Context::Configuration::Hrtf::Disabled)
 		.setFrequency(44100)
-		.setRefreshRate(50)
 	);
 	mAudioListener = std::make_unique<Audio::Listener3D>(mScene);
 
