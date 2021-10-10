@@ -95,7 +95,7 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
             mCanShowAds = json.getBoolean("canShowAds");
             mPlayAdThreshold = json.getInt("playAdThreshold");
 
-            getIntent().putExtra("play_ad_threshold", Integer.toString(mPlayAdThreshold));
+            getIntent().putExtra(GAME_PLAY_AD_THRESHOLD, Integer.toString(mPlayAdThreshold));
         }
         catch (final Exception e) {
             e.printStackTrace();
@@ -121,13 +121,13 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
     }
 
     protected final void setPowerupInfo(final int rewardAmount) {
-        getIntent().putExtra("game_powerup_amount", Integer.toString(rewardAmount));
-        getIntent().putExtra("game_powerup_expire", Long.toString(System.currentTimeMillis() + 1000L));
+        getIntent().putExtra(GAME_GP_AMOUNT, Integer.toString(rewardAmount));
+        getIntent().putExtra(GAME_GP_EXPIRE, Long.toString(System.currentTimeMillis() + 1000L));
     }
 
     @SuppressWarnings("unused")
     protected final void clearPowerupData() {
-        getIntent().removeExtra("game_powerup_amount");
-        getIntent().removeExtra("game_powerup_expire");
+        getIntent().removeExtra(GAME_GP_AMOUNT);
+        getIntent().removeExtra(GAME_GP_EXPIRE);
     }
 }

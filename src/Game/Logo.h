@@ -1,6 +1,7 @@
 #pragma once
 
-#define FINISH_TIMER_STARTING_VALUE 6.0f
+#define GO_LS_FINISH_TIMER_STARTING_VALUE 6.0f
+#define GO_LG_INTENT_SAFE_MINIGAME "game_safeminigame"
 
 #include <vector>
 #include <memory>

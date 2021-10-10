@@ -37,7 +37,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 
 	// Check if safe minigame shall be created
 	{
-		const auto& value = CommonUtility::singleton->getValueFromIntent("game_safeminigame");
+		const auto& value = CommonUtility::singleton->getValueFromIntent(GO_LG_INTENT_SAFE_MINIGAME);
 		mSafeMinigame = value != nullptr;
 	}
 	
@@ -105,7 +105,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 
 	// Init timers
 	mBubbleTimer = 0.0f;
-	mFinishTimer = FINISH_TIMER_STARTING_VALUE;
+	mFinishTimer = GO_LS_FINISH_TIMER_STARTING_VALUE;
 
 	// Set camera parameters
 	setCameraParameters();

@@ -53,6 +53,16 @@
 
 #define GO_LS_MAX_POWERUP_COUNT 4
 
+#define GO_LS_INTENT_GP_EXPIRE "game_powerup_expire"
+#define GO_LS_INTENT_GP_AMOUNT "game_powerup_amount"
+#define GO_LS_INTENT_PLAY_AD_THRESHOLD "play_ad_threshold"
+
+#define GO_LS_METHOD_CLEAR_POWERUP_DATA "clearPowerupData"
+#define GO_LS_METHOD_WATCH_AD_POWERUP "watchAdForPowerup"
+#define GO_LS_METHOD_SHOW_INTERSTITIAL "showInterstitial"
+#define GO_LS_METHOD_GAME_VOTE_ME "gameVoteMe"
+#define GO_LS_METHOD_GAME_OTHER_APPS "gameOtherApps"
+
 #include <array>
 #include <vector>
 #include <memory>
@@ -217,7 +227,7 @@ private:
 	void createGuis();
 	void createTexts();
 
-	void callAndroidMethod(const std::string & methodName);
+	void callNativeMethod(const std::string & methodName);
 
 	Vector2 getSquareOffset(const Float size);
 

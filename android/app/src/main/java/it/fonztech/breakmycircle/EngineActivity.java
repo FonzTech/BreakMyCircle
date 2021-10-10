@@ -52,6 +52,10 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
     protected static final String INTERSTITIAL_AD_PROD = "ca-app-pub-3837498848455030/3033316978";
     protected static final String REWARDED_AD_PROD = "ca-app-pub-3837498848455030/9074630079";
 
+    protected static final String GAME_GP_AMOUNT = "game_powerup_amount";
+    protected static final String GAME_GP_EXPIRE = "game_powerup_expire";
+    protected static final String GAME_PLAY_AD_THRESHOLD = "play_ad_threshold";
+
     protected final InterstitialAdLoadCallback interstitialAdLoadCallback = new InterstitialAdLoadCallback() {
         @Override
         public final void onAdLoaded(@NonNull final InterstitialAd interstitialAd) {

@@ -281,8 +281,8 @@ void LevelSelector::update()
     // Check for powerup rewarded ad
     if (mWatchForPowerup != 0U)
     {
-		const auto& expire = CommonUtility::singleton->getValueFromIntent("game_powerup_expire");
-		const auto& amount = CommonUtility::singleton->getValueFromIntent("game_powerup_amount");
+		const auto& expire = CommonUtility::singleton->getValueFromIntent(GO_LS_INTENT_GP_EXPIRE);
+		const auto& amount = CommonUtility::singleton->getValueFromIntent(GO_LS_INTENT_GP_AMOUNT);
 		if (expire != nullptr)
 		{
 		    // Resume background music
@@ -290,7 +290,7 @@ void LevelSelector::update()
 
 #ifdef CORRADE_TARGET_ANDROID
 			// Clear powerup data
-			callAndroidMethod("clearPowerupData");
+            callNativeMethod(GO_LS_METHOD_CLEAR_POWERUP_DATA);
 #endif
 
 			// Reset watch powerup state
@@ -1896,7 +1896,7 @@ void LevelSelector::finishCurrentLevel(const bool success)
 
 	// Check how many times a level has been played
 	{
-		const auto& value = CommonUtility::singleton->getValueFromIntent("play_ad_threshold");
+		const auto& value = CommonUtility::singleton->getValueFromIntent(GO_LS_INTENT_PLAY_AD_THRESHOLD);
 		const Int playAdThreshold = value != nullptr ? std::stoi(*value) : 3;
 		if (++mLevelInfo.numberOfPlays >= playAdThreshold)
 		{
@@ -2014,7 +2014,6 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 	mLevelInfo.delayedChecks = false;
 	mLevelInfo.state = GO_LS_LEVEL_STARTING;
 	mLevelInfo.startingTime = 150.0f + Math::floor(Float(mLevelInfo.selectedLevelId % 100U) / 5.0f) * 15.0f;
-	mLevelInfo.startingTime = 20.0f;
 
 	mTimer = { mLevelInfo.startingTime, Int(mLevelInfo.startingTime) };
 
@@ -2343,14 +2342,14 @@ void LevelSelector::watchAdForPowerup(const UnsignedInt index)
 {
     RoomManager::singleton->mBgMusic->playable()->source().pause();
     mWatchForPowerup = index;
-	callAndroidMethod("watchAdForPowerup");
+	callNativeMethod(GO_LS_METHOD_WATCH_AD_POWERUP);
 }
 
 void LevelSelector::showInterstitial()
 {
     RoomManager::singleton->mBgMusic->playable()->source().pause();
     mWatchForPowerup = 1000U;
-    callAndroidMethod("showInterstitial");
+	callNativeMethod(GO_LS_METHOD_SHOW_INTERSTITIAL);
 }
 
 void LevelSelector::createGuis()
@@ -2854,7 +2853,7 @@ void LevelSelector::createTexts()
 			}
 
 			Debug{} << "You have clicked VOTE ME";
-			callAndroidMethod("gameVoteMe");
+			callNativeMethod(GO_LS_METHOD_GAME_VOTE_ME);
 			return true;
 		};
 	}
@@ -2880,7 +2879,7 @@ void LevelSelector::createTexts()
 			}
 
 			Debug{} << "You have clicked OTHER APPS";
-			callAndroidMethod("gameOtherApps");
+			callNativeMethod(GO_LS_METHOD_GAME_OTHER_APPS);
 			return true;
 		};
 	}
@@ -2938,9 +2937,10 @@ Vector2 LevelSelector::getSquareOffset(const Float size)
 	return Vector2(size / ar, 0.0f);
 }
 
-void LevelSelector::callAndroidMethod(const std::string & methodName)
+void LevelSelector::callNativeMethod(const std::string & methodName)
 {
-#ifdef CORRADE_TARGET_ANDROID
+#if defined(CORRADE_TARGET_ANDROID)
+
 	JNIEnv *env;
 	auto na = static_cast<ANativeActivity*>(CommonUtility::singleton->mConfig.nativeActivity);
     na->vm->AttachCurrentThread(&env, nullptr);
@@ -2948,7 +2948,10 @@ void LevelSelector::callAndroidMethod(const std::string & methodName)
     jmethodID methodID = env->GetMethodID(clazz, methodName.c_str(), "()V");
     env->CallVoidMethod(na->clazz, methodID);
     na->vm->DetachCurrentThread();
-#else
-    Debug{} << "Cannot call" << methodName << " because not running on Android";
+
+#elif defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
+
+    Debug{} << "Cannot call" << methodName << " because not running on Android or iOS";
+
 #endif
 }
