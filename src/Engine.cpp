@@ -6,7 +6,7 @@
 #include "RoomManager.h"
 #include "GameObject.h"
 
-#ifdef DEBUG
+#if defined(DEBUG) and defined(TARGET_MOBILE)
 #define DEBUG_OPENGL_CALLS
 #endif
 

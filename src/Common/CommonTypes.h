@@ -144,7 +144,7 @@
 #endif
 
 #if (defined(NDEBUG) or defined(_DEBUG)) and !(defined(DEBUG))
-#define DEBUG
+#define DEBUG 1
 #endif
 
 #include <Magnum/Magnum.h>

@@ -1,10 +1,10 @@
 # On-going tasks
-- Fix collision detection for projectile on its side.
+- Improve level selector scrolling.
+- Fix transparency when blackholes and explode-effect overlaps.
 
 # To be verified
+- Fix collision detection for projectile on its side.
 - Implement other level game objects, such as rocks, holes, and others...
-- Fix transparency when blackholes and explode-effect overlaps.
-- Improve level selector scrolling.
 
 # Optional tasks
 - Use `magnum-fontconverter` instead of loading `TTF` directly.
