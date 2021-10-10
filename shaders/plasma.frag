@@ -1,7 +1,9 @@
 #define PI 3.1415926538
 #define PI2 (PI * 2.0)
 
-precision mediump float;
+#ifdef GL_ES
+  precision mediump float;
+#endif
 
 uniform vec2 size;
 uniform float time;

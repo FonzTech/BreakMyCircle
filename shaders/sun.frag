@@ -1,6 +1,8 @@
 #define PI 3.1415926538
 
-precision mediump float;
+#ifdef GL_ES
+  precision mediump float;
+#endif
 
 uniform sampler2D displacementData;
 uniform sampler2D colorData;
