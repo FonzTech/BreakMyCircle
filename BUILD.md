@@ -22,7 +22,7 @@ Also, be aware of cache when working with Android Studio. You may have to delete
 
   - `Audio Video Render Events Threads Timers File Loadso Filesystem Sensor Locale`.
 
-[Here](https://gitlab.com/fonztech-personal/magnum-edited-sources) can be found the Magnum's Edited Sources, along with other dependencies, which add required capatibilies and fixes, such as:
+Here <https://gitlab.com/fonztech-personal/magnum-edited-sources> can be found the Magnum's Edited Sources, along with other dependencies, which add required capatibilies and fixes, such as:
 - fixes on `CMakeLists.txt` for Windows 10 SDK
 - pause/resume capability on AndroidApplication with correct GLES Window/Surface/Context handling.
 
@@ -122,7 +122,7 @@ cmake --build . --target install
 
 This process allows a single step to compile multiple architectures in a single shot, by specifing a value like `arm64;armv7;armv7s` for the `CMAKE_OSX_ARCHITECTURES` variable. However, from iOS 11 and beyond, only 64-bit architectures are supported. So, we are setting the value `arm64`.
 
-Toolchains must be downloaded from [https://github.com/mosra/toolchains](https://github.com/mosra/toolchains), whose contents goes into the `toolchains` folder of *Corrade* and *Magnum Graphics* library.
+Toolchains must be downloaded from <https://github.com/mosra/toolchains>, whose contents goes into the `toolchains` folder of *Corrade* and *Magnum Graphics* library.
 
 - `CORRADE_RC_EXECUTABLE` can be omitted, by installing the *last stable Corrade* build using Homebrew, with the following command: `brew install mosra/magnum/corrade`
 
@@ -141,6 +141,9 @@ Toolchains must be downloaded from [https://github.com/mosra/toolchains](https:/
   - set `CMAKE_OSX_SYSROOT` to `/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk`.
 
 - Like the Android guide, the `-fno-rtti` custom flag must be set in *Build Settings*, in *Other C++ Flags*.
+
+- You may have to referrer to this answer to disable *ARM NEON optimizations* on `arm64`:
+  - <https://stackoverflow.com/questions/19089014/iphone-device-linker-error>
 
 - The following frameworks must be added in *Build Phases*:
   - Foundation

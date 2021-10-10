@@ -61,11 +61,94 @@
 		056045A0270A0AFC0080AA3E /* CollisionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604599270A0AFC0080AA3E /* CollisionManager.cpp */; };
 		056045A1270A0AFC0080AA3E /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459A270A0AFC0080AA3E /* InputManager.cpp */; };
 		056045A2270A0AFC0080AA3E /* AssetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459B270A0AFC0080AA3E /* AssetManager.cpp */; };
-		056045AD270A22C50080AA3E /* libpng16.16.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045AC270A22C50080AA3E /* libpng16.16.dylib */; };
-		056045AF270A23410080AA3E /* libpng16.16.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 056045AC270A22C50080AA3E /* libpng16.16.dylib */; };
-		056045B2270A23A80080AA3E /* libSDL2-2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */; };
-		056045B3270A23BD0080AA3E /* libSDL2-2.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */; };
 		056045B7270A25DA0080AA3E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045B6270A25DA0080AA3E /* Foundation.framework */; };
+		05CB665027137C2700F97E29 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF92709F6E800C34B15 /* AVFoundation.framework */; };
+		05CB665227137F4100F97E29 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF62709F6BF00C34B15 /* AudioToolbox.framework */; };
+		05CB665327137F7E00F97E29 /* libopenal.1.21.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F8127137562009AD69F /* libopenal.1.21.1.dylib */; };
+		05CB665427137FCB00F97E29 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CFC2709F72700C34B15 /* GameController.framework */; };
+		05CB665B27138A9600F97E29 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F8927137617009AD69F /* CoreHaptics.framework */; };
+		05CB665D27138AA600F97E29 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB665C27138AA600F97E29 /* CoreMotion.framework */; };
+		05CB8EE8271358F8009AD69F /* Startup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* Startup.swift */; };
+		05CB8EE9271358F8009AD69F /* StreamedAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */; };
+		05CB8EEA271358F8009AD69F /* StreamedAudioPlayable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */; };
+		05CB8EEB271358F8009AD69F /* PlasmaSquareRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604548270A0A850080AA3E /* PlasmaSquareRenderer.cpp */; };
+		05CB8EEC271358F8009AD69F /* LSNumberRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604549270A0A850080AA3E /* LSNumberRenderer.cpp */; };
+		05CB8EED271358F8009AD69F /* LinePath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560454D270A0A950080AA3E /* LinePath.cpp */; };
+		05CB8EEE271358F8009AD69F /* AbstractCustomRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560454E270A0A950080AA3E /* AbstractCustomRenderer.cpp */; };
+		05CB8EEF271358F8009AD69F /* CommonUtility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560454F270A0A950080AA3E /* CommonUtility.cpp */; };
+		05CB8EF0271358F8009AD69F /* OverlayGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604554270A0AAE0080AA3E /* OverlayGui.cpp */; };
+		05CB8EF1271358F8009AD69F /* OverlayText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604555270A0AAE0080AA3E /* OverlayText.cpp */; };
+		05CB8EF2271358F8009AD69F /* Projectile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604556270A0AAE0080AA3E /* Projectile.cpp */; };
+		05CB8EF3271358F8009AD69F /* Bubble.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604557270A0AAE0080AA3E /* Bubble.cpp */; };
+		05CB8EF4271358F8009AD69F /* MapPickup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604558270A0AAE0080AA3E /* MapPickup.cpp */; };
+		05CB8EF5271358F8009AD69F /* SafeMinigame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604559270A0AAE0080AA3E /* SafeMinigame.cpp */; };
+		05CB8EF6271358F8009AD69F /* Congrats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560455A270A0AAE0080AA3E /* Congrats.cpp */; };
+		05CB8EF7271358F8009AD69F /* Dialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560455B270A0AAE0080AA3E /* Dialog.cpp */; };
+		05CB8EF8271358F8009AD69F /* LimitLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560455C270A0AAE0080AA3E /* LimitLine.cpp */; };
+		05CB8EF9271358F8009AD69F /* LevelSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560455D270A0AAE0080AA3E /* LevelSelector.cpp */; };
+		05CB8EFA271358F8009AD69F /* AbstractGuiElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560455E270A0AAE0080AA3E /* AbstractGuiElement.cpp */; };
+		05CB8EFB271358F8009AD69F /* Player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560455F270A0AAE0080AA3E /* Player.cpp */; };
+		05CB8EFC271358F8009AD69F /* LevelSelectorSidecar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604560270A0AAE0080AA3E /* LevelSelectorSidecar.cpp */; };
+		05CB8EFD271358F8009AD69F /* Logo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604561270A0AAE0080AA3E /* Logo.cpp */; };
+		05CB8EFE271358F8009AD69F /* Scenery.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604562270A0AAE0080AA3E /* Scenery.cpp */; };
+		05CB8EFF271358F8009AD69F /* Skybox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604563270A0AAE0080AA3E /* Skybox.cpp */; };
+		05CB8F00271358F8009AD69F /* OverlayGuiDetached.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604564270A0AAE0080AA3E /* OverlayGuiDetached.cpp */; };
+		05CB8F01271358F8009AD69F /* Onboarding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604565270A0AAE0080AA3E /* Onboarding.cpp */; };
+		05CB8F02271358F8009AD69F /* FallingBubble.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604566270A0AAE0080AA3E /* FallingBubble.cpp */; };
+		05CB8F03271358F8009AD69F /* ElectricBall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604567270A0AAE0080AA3E /* ElectricBall.cpp */; };
+		05CB8F04271358F8009AD69F /* BaseDrawable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560457E270A0AD50080AA3E /* BaseDrawable.cpp */; };
+		05CB8F05271358F8009AD69F /* WaterShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604583270A0AE90080AA3E /* WaterShader.cpp */; };
+		05CB8F06271358F8009AD69F /* SpriteShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604584270A0AE90080AA3E /* SpriteShader.cpp */; };
+		05CB8F07271358F8009AD69F /* PlasmaShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604585270A0AE90080AA3E /* PlasmaShader.cpp */; };
+		05CB8F08271358F8009AD69F /* CubeMapShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604586270A0AE90080AA3E /* CubeMapShader.cpp */; };
+		05CB8F09271358F8009AD69F /* ScreenQuadShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604587270A0AE90080AA3E /* ScreenQuadShader.cpp */; };
+		05CB8F0A271358F8009AD69F /* StarRoadShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604588270A0AE90080AA3E /* StarRoadShader.cpp */; };
+		05CB8F0B271358F8009AD69F /* ShootPathShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0545F0992711AD980075E566 /* ShootPathShader.cpp */; };
+		05CB8F0C271358F8009AD69F /* SunShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604589270A0AE90080AA3E /* SunShader.cpp */; };
+		05CB8F0D271358F8009AD69F /* Engine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604596270A0AFC0080AA3E /* Engine.cpp */; };
+		05CB8F0E271358F8009AD69F /* GameObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604597270A0AFC0080AA3E /* GameObject.cpp */; };
+		05CB8F0F271358F8009AD69F /* RoomManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604598270A0AFC0080AA3E /* RoomManager.cpp */; };
+		05CB8F10271358F8009AD69F /* CollisionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604599270A0AFC0080AA3E /* CollisionManager.cpp */; };
+		05CB8F11271358F8009AD69F /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459A270A0AFC0080AA3E /* InputManager.cpp */; };
+		05CB8F12271358F8009AD69F /* AssetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459B270A0AFC0080AA3E /* AssetManager.cpp */; };
+		05CB8F13271358F8009AD69F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604595270A0AFC0080AA3E /* main.cpp */; };
+		05CB8F32271358F8009AD69F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */; };
+		05CB8F33271358F8009AD69F /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0535EA61270A4DE7009462B0 /* assets.json */; };
+		05CB8F34271358F8009AD69F /* paths in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD1270A51BC009462B0 /* paths */; };
+		05CB8F35271358F8009AD69F /* rooms in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD2270A51BC009462B0 /* rooms */; };
+		05CB8F36271358F8009AD69F /* textures in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD7270A51BD009462B0 /* textures */; };
+		05CB8F37271358F8009AD69F /* audios in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD6270A51BD009462B0 /* audios */; };
+		05CB8F38271358F8009AD69F /* scenes in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD5270A51BD009462B0 /* scenes */; };
+		05CB8F39271358F8009AD69F /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD4270A51BC009462B0 /* fonts */; };
+		05CB8F3A271358F8009AD69F /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD3270A51BC009462B0 /* shaders */; };
+		05CB8F5127135B1B009AD69F /* libMagnumText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4427135B1B009AD69F /* libMagnumText.a */; };
+		05CB8F5227135B1B009AD69F /* libMagnumTrade.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4527135B1B009AD69F /* libMagnumTrade.a */; };
+		05CB8F5327135B1B009AD69F /* libMagnumGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4627135B1B009AD69F /* libMagnumGL.a */; };
+		05CB8F5427135B1B009AD69F /* libMagnumSdl2Application.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4727135B1B009AD69F /* libMagnumSdl2Application.a */; };
+		05CB8F5527135B1B009AD69F /* libCorradePluginManager.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4827135B1B009AD69F /* libCorradePluginManager.a */; };
+		05CB8F5627135B1B009AD69F /* libMagnumSceneGraph.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4927135B1B009AD69F /* libMagnumSceneGraph.a */; };
+		05CB8F5727135B1B009AD69F /* libMagnumShaders.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4A27135B1B009AD69F /* libMagnumShaders.a */; };
+		05CB8F5827135B1B009AD69F /* libMagnum.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4B27135B1B009AD69F /* libMagnum.a */; };
+		05CB8F5927135B1B009AD69F /* libMagnumMeshTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4C27135B1B009AD69F /* libMagnumMeshTools.a */; };
+		05CB8F5A27135B1B009AD69F /* libMagnumTextureTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4D27135B1B009AD69F /* libMagnumTextureTools.a */; };
+		05CB8F5B27135B1B009AD69F /* libMagnumAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4E27135B1B009AD69F /* libMagnumAudio.a */; };
+		05CB8F5C27135B1B009AD69F /* libMagnumPrimitives.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4F27135B1B009AD69F /* libMagnumPrimitives.a */; };
+		05CB8F5D27135B1B009AD69F /* libCorradeUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F5027135B1B009AD69F /* libCorradeUtility.a */; };
+		05CB8F5F27135B4D009AD69F /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F5E27135B4D009AD69F /* libSDL2.a */; };
+		05CB8F612713633E009AD69F /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F602713633E009AD69F /* libSDL2main.a */; };
+		05CB8F64271363ED009AD69F /* libStbVorbisAudioImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F63271363ED009AD69F /* libStbVorbisAudioImporter.a */; };
+		05CB8F6627136400009AD69F /* libStbTrueTypeFont.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F6527136400009AD69F /* libStbTrueTypeFont.a */; };
+		05CB8F6A27136418009AD69F /* libPngImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F6727136418009AD69F /* libPngImporter.a */; };
+		05CB8F6B27136418009AD69F /* libTinyGltfImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F6827136418009AD69F /* libTinyGltfImporter.a */; };
+		05CB8F6C27136418009AD69F /* libAnySceneImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F6927136418009AD69F /* libAnySceneImporter.a */; };
+		05CB8F6F27136457009AD69F /* libAnyImageImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F6D27136443009AD69F /* libAnyImageImporter.a */; };
+		05CB8F7227136559009AD69F /* libAnyImageImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C932709F38600C34B15 /* libAnyImageImporter.a */; };
+		05CB8F742713661A009AD69F /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F7327136619009AD69F /* libpng16.a */; };
+		05CB8F7627136D94009AD69F /* libpng16.16.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045AC270A22C50080AA3E /* libpng16.16.dylib */; };
+		05CB8F7727136D9A009AD69F /* libpng16.16.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 056045AC270A22C50080AA3E /* libpng16.16.dylib */; };
+		05CB8F7827136DC8009AD69F /* libSDL2-2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */; };
+		05CB8F7927136DD2009AD69F /* libSDL2-2.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */; };
+		05CB8F8427137595009AD69F /* libopenal.1.21.1.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 05CB8F8127137562009AD69F /* libopenal.1.21.1.dylib */; };
 		05F22C732709F0DA00C34B15 /* libMagnumTrade.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C632709F0DA00C34B15 /* libMagnumTrade.a */; };
 		05F22C742709F0DA00C34B15 /* libMagnumShaders.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C642709F0DA00C34B15 /* libMagnumShaders.a */; };
 		05F22C752709F0DA00C34B15 /* libMagnumAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C652709F0DA00C34B15 /* libMagnumAudio.a */; };
@@ -75,16 +158,13 @@
 		05F22C792709F0DA00C34B15 /* libMagnumTextureTools.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C692709F0DA00C34B15 /* libMagnumTextureTools.a */; };
 		05F22C7A2709F0DA00C34B15 /* libMagnum.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C6A2709F0DA00C34B15 /* libMagnum.a */; };
 		05F22C7D2709F0DA00C34B15 /* libMagnumSdl2Application.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C6D2709F0DA00C34B15 /* libMagnumSdl2Application.a */; };
-		05F22C7E2709F0DA00C34B15 /* libCorradeInterconnect.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C6E2709F0DA00C34B15 /* libCorradeInterconnect.a */; };
 		05F22C7F2709F0DA00C34B15 /* libCorradeUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C6F2709F0DA00C34B15 /* libCorradeUtility.a */; };
 		05F22C802709F0DA00C34B15 /* libMagnumSceneGraph.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C702709F0DA00C34B15 /* libMagnumSceneGraph.a */; };
 		05F22C812709F0DA00C34B15 /* libMagnumGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C712709F0DA00C34B15 /* libMagnumGL.a */; };
 		05F22C822709F0DA00C34B15 /* libMagnumText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C722709F0DA00C34B15 /* libMagnumText.a */; };
-		05F22C842709F11B00C34B15 /* libCorradeUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C6F2709F0DA00C34B15 /* libCorradeUtility.a */; };
 		05F22C8F2709F37200C34B15 /* libStbTrueTypeFont.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C8E2709F37200C34B15 /* libStbTrueTypeFont.a */; };
 		05F22C952709F38600C34B15 /* libTinyGltfImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C912709F38600C34B15 /* libTinyGltfImporter.a */; };
 		05F22C962709F38600C34B15 /* libPngImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C922709F38600C34B15 /* libPngImporter.a */; };
-		05F22C972709F38600C34B15 /* libAnyImageImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C932709F38600C34B15 /* libAnyImageImporter.a */; };
 		05F22C992709F3CE00C34B15 /* libStbVorbisAudioImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C8C2709F35900C34B15 /* libStbVorbisAudioImporter.a */; };
 		05F22CA72709F55F00C34B15 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CA02709F51A00C34B15 /* OpenGLES.framework */; };
 		05F22CAA2709F56F00C34B15 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CA92709F56F00C34B15 /* OpenAL.framework */; };
@@ -99,8 +179,19 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				056045B3270A23BD0080AA3E /* libSDL2-2.0.dylib in Embed Libraries */,
-				056045AF270A23410080AA3E /* libpng16.16.dylib in Embed Libraries */,
+				05CB8F7927136DD2009AD69F /* libSDL2-2.0.dylib in Embed Libraries */,
+				05CB8F7727136D9A009AD69F /* libpng16.16.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05CB8F3B271358F8009AD69F /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				05CB8F8427137595009AD69F /* libopenal.1.21.1.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -164,6 +255,41 @@
 		056045AC270A22C50080AA3E /* libpng16.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng16.16.dylib; path = "../../../../Development/ios-sim64/lib/libpng16.16.dylib"; sourceTree = "<group>"; };
 		056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2-2.0.dylib"; path = "../../../../Development/ios-sim64/lib/libSDL2-2.0.dylib"; sourceTree = "<group>"; };
 		056045B6270A25DA0080AA3E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		05CB66462713779E00F97E29 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
+		05CB664D27137AB300F97E29 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		05CB6655271384E000F97E29 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
+		05CB6656271384E000F97E29 /* GameplayKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameplayKit.framework; path = System/Library/Frameworks/GameplayKit.framework; sourceTree = SDKROOT; };
+		05CB66592713850200F97E29 /* libAppleHIDSWDFlash.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libAppleHIDSWDFlash.tbd; path = usr/lib/libAppleHIDSWDFlash.tbd; sourceTree = SDKROOT; };
+		05CB665C27138AA600F97E29 /* CoreMotion.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMotion.framework; path = System/Library/Frameworks/CoreMotion.framework; sourceTree = SDKROOT; };
+		05CB8F41271358F8009AD69F /* breakmycircle_arm.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = breakmycircle_arm.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		05CB8F432713596B009AD69F /* InfoArm.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = InfoArm.plist; sourceTree = "<group>"; };
+		05CB8F4427135B1B009AD69F /* libMagnumText.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumText.a; path = "../../../../Development/ios-arm64/lib/libMagnumText.a"; sourceTree = "<group>"; };
+		05CB8F4527135B1B009AD69F /* libMagnumTrade.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumTrade.a; path = "../../../../Development/ios-arm64/lib/libMagnumTrade.a"; sourceTree = "<group>"; };
+		05CB8F4627135B1B009AD69F /* libMagnumGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumGL.a; path = "../../../../Development/ios-arm64/lib/libMagnumGL.a"; sourceTree = "<group>"; };
+		05CB8F4727135B1B009AD69F /* libMagnumSdl2Application.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumSdl2Application.a; path = "../../../../Development/ios-arm64/lib/libMagnumSdl2Application.a"; sourceTree = "<group>"; };
+		05CB8F4827135B1B009AD69F /* libCorradePluginManager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradePluginManager.a; path = "../../../../Development/ios-arm64/lib/libCorradePluginManager.a"; sourceTree = "<group>"; };
+		05CB8F4927135B1B009AD69F /* libMagnumSceneGraph.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumSceneGraph.a; path = "../../../../Development/ios-arm64/lib/libMagnumSceneGraph.a"; sourceTree = "<group>"; };
+		05CB8F4A27135B1B009AD69F /* libMagnumShaders.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumShaders.a; path = "../../../../Development/ios-arm64/lib/libMagnumShaders.a"; sourceTree = "<group>"; };
+		05CB8F4B27135B1B009AD69F /* libMagnum.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnum.a; path = "../../../../Development/ios-arm64/lib/libMagnum.a"; sourceTree = "<group>"; };
+		05CB8F4C27135B1B009AD69F /* libMagnumMeshTools.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumMeshTools.a; path = "../../../../Development/ios-arm64/lib/libMagnumMeshTools.a"; sourceTree = "<group>"; };
+		05CB8F4D27135B1B009AD69F /* libMagnumTextureTools.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumTextureTools.a; path = "../../../../Development/ios-arm64/lib/libMagnumTextureTools.a"; sourceTree = "<group>"; };
+		05CB8F4E27135B1B009AD69F /* libMagnumAudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumAudio.a; path = "../../../../Development/ios-arm64/lib/libMagnumAudio.a"; sourceTree = "<group>"; };
+		05CB8F4F27135B1B009AD69F /* libMagnumPrimitives.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumPrimitives.a; path = "../../../../Development/ios-arm64/lib/libMagnumPrimitives.a"; sourceTree = "<group>"; };
+		05CB8F5027135B1B009AD69F /* libCorradeUtility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradeUtility.a; path = "../../../../Development/ios-arm64/lib/libCorradeUtility.a"; sourceTree = "<group>"; };
+		05CB8F5E27135B4D009AD69F /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = "../../../../Development/ios-arm64/lib/libSDL2.a"; sourceTree = "<group>"; };
+		05CB8F602713633E009AD69F /* libSDL2main.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2main.a; path = "../../../../Development/ios-arm64/lib/libSDL2main.a"; sourceTree = "<group>"; };
+		05CB8F63271363ED009AD69F /* libStbVorbisAudioImporter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libStbVorbisAudioImporter.a; path = "../../../../Development/ios-arm64/lib/magnum/audioimporters/libStbVorbisAudioImporter.a"; sourceTree = "<group>"; };
+		05CB8F6527136400009AD69F /* libStbTrueTypeFont.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libStbTrueTypeFont.a; path = "../../../../Development/ios-arm64/lib/magnum/fonts/libStbTrueTypeFont.a"; sourceTree = "<group>"; };
+		05CB8F6727136418009AD69F /* libPngImporter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libPngImporter.a; path = "../../../../Development/ios-arm64/lib/magnum/importers/libPngImporter.a"; sourceTree = "<group>"; };
+		05CB8F6827136418009AD69F /* libTinyGltfImporter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libTinyGltfImporter.a; path = "../../../../Development/ios-arm64/lib/magnum/importers/libTinyGltfImporter.a"; sourceTree = "<group>"; };
+		05CB8F6927136418009AD69F /* libAnySceneImporter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAnySceneImporter.a; path = "../../../../Development/ios-arm64/lib/magnum/importers/libAnySceneImporter.a"; sourceTree = "<group>"; };
+		05CB8F6D27136443009AD69F /* libAnyImageImporter.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAnyImageImporter.a; path = "../../../../Development/ios-arm64/lib/magnum/importers/libAnyImageImporter.a"; sourceTree = "<group>"; };
+		05CB8F7027136510009AD69F /* libCorradeInterconnect.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradeInterconnect.a; path = "../../../../Development/ios-arm64/lib/libCorradeInterconnect.a"; sourceTree = "<group>"; };
+		05CB8F7327136619009AD69F /* libpng16.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng16.a; path = "../../../../Development/ios-arm64/lib/libpng16.a"; sourceTree = "<group>"; };
+		05CB8F7A2713746D009AD69F /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		05CB8F7E271374AC009AD69F /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
+		05CB8F8127137562009AD69F /* libopenal.1.21.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopenal.1.21.1.dylib; path = "../../../../Development/ios-arm64/lib/libopenal.1.21.1.dylib"; sourceTree = "<group>"; };
+		05CB8F8927137617009AD69F /* CoreHaptics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreHaptics.framework; path = System/Library/Frameworks/CoreHaptics.framework; sourceTree = SDKROOT; };
 		05F22C632709F0DA00C34B15 /* libMagnumTrade.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumTrade.a; path = "../../../../Development/ios-sim64/lib/libMagnumTrade.a"; sourceTree = "<group>"; };
 		05F22C642709F0DA00C34B15 /* libMagnumShaders.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumShaders.a; path = "../../../../Development/ios-sim64/lib/libMagnumShaders.a"; sourceTree = "<group>"; };
 		05F22C652709F0DA00C34B15 /* libMagnumAudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumAudio.a; path = "../../../../Development/ios-sim64/lib/libMagnumAudio.a"; sourceTree = "<group>"; };
@@ -215,10 +341,45 @@
 		AFB14C392700726C005837DE /* libMagnumDebugTools.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumDebugTools.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumDebugTools.a"; sourceTree = "<group>"; };
 		AFFB4E3426FF48DC00FD2500 /* breakmycircle_sim.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = breakmycircle_sim.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		AFFB4E4026FF48DE00FD2500 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AFFB4E4026FF48DE00FD2500 /* InfoSim.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = InfoSim.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		05CB8F14271358F8009AD69F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05CB665027137C2700F97E29 /* AVFoundation.framework in Frameworks */,
+				05CB665227137F4100F97E29 /* AudioToolbox.framework in Frameworks */,
+				05CB665427137FCB00F97E29 /* GameController.framework in Frameworks */,
+				05CB665B27138A9600F97E29 /* CoreHaptics.framework in Frameworks */,
+				05CB665D27138AA600F97E29 /* CoreMotion.framework in Frameworks */,
+				05CB665327137F7E00F97E29 /* libopenal.1.21.1.dylib in Frameworks */,
+				05CB8F742713661A009AD69F /* libpng16.a in Frameworks */,
+				05CB8F5F27135B4D009AD69F /* libSDL2.a in Frameworks */,
+				05CB8F612713633E009AD69F /* libSDL2main.a in Frameworks */,
+				05CB8F5527135B1B009AD69F /* libCorradePluginManager.a in Frameworks */,
+				05CB8F5D27135B1B009AD69F /* libCorradeUtility.a in Frameworks */,
+				05CB8F5127135B1B009AD69F /* libMagnumText.a in Frameworks */,
+				05CB8F5227135B1B009AD69F /* libMagnumTrade.a in Frameworks */,
+				05CB8F5327135B1B009AD69F /* libMagnumGL.a in Frameworks */,
+				05CB8F5427135B1B009AD69F /* libMagnumSdl2Application.a in Frameworks */,
+				05CB8F5627135B1B009AD69F /* libMagnumSceneGraph.a in Frameworks */,
+				05CB8F5727135B1B009AD69F /* libMagnumShaders.a in Frameworks */,
+				05CB8F5827135B1B009AD69F /* libMagnum.a in Frameworks */,
+				05CB8F5927135B1B009AD69F /* libMagnumMeshTools.a in Frameworks */,
+				05CB8F5A27135B1B009AD69F /* libMagnumTextureTools.a in Frameworks */,
+				05CB8F5B27135B1B009AD69F /* libMagnumAudio.a in Frameworks */,
+				05CB8F5C27135B1B009AD69F /* libMagnumPrimitives.a in Frameworks */,
+				05CB8F64271363ED009AD69F /* libStbVorbisAudioImporter.a in Frameworks */,
+				05CB8F6627136400009AD69F /* libStbTrueTypeFont.a in Frameworks */,
+				05CB8F6A27136418009AD69F /* libPngImporter.a in Frameworks */,
+				05CB8F6F27136457009AD69F /* libAnyImageImporter.a in Frameworks */,
+				05CB8F6B27136418009AD69F /* libTinyGltfImporter.a in Frameworks */,
+				05CB8F6C27136418009AD69F /* libAnySceneImporter.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AFFB4E3126FF48DC00FD2500 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -227,17 +388,15 @@
 				05F22CF42709F63B00C34B15 /* UIKit.framework in Frameworks */,
 				05F22CA72709F55F00C34B15 /* OpenGLES.framework in Frameworks */,
 				05F22CAA2709F56F00C34B15 /* OpenAL.framework in Frameworks */,
-				056045AD270A22C50080AA3E /* libpng16.16.dylib in Frameworks */,
-				056045B2270A23A80080AA3E /* libSDL2-2.0.dylib in Frameworks */,
+				05CB8F7627136D94009AD69F /* libpng16.16.dylib in Frameworks */,
+				05CB8F7827136DC8009AD69F /* libSDL2-2.0.dylib in Frameworks */,
 				0535EAE1270A55B1009462B0 /* libSDL2main.a in Frameworks */,
-				05F22C7E2709F0DA00C34B15 /* libCorradeInterconnect.a in Frameworks */,
 				05F22C7F2709F0DA00C34B15 /* libCorradeUtility.a in Frameworks */,
 				05F22C762709F0DA00C34B15 /* libCorradePluginManager.a in Frameworks */,
 				05F22C732709F0DA00C34B15 /* libMagnumTrade.a in Frameworks */,
 				05F22C742709F0DA00C34B15 /* libMagnumShaders.a in Frameworks */,
 				05F22C752709F0DA00C34B15 /* libMagnumAudio.a in Frameworks */,
 				05F22C772709F0DA00C34B15 /* libMagnumPrimitives.a in Frameworks */,
-				05F22C842709F11B00C34B15 /* libCorradeUtility.a in Frameworks */,
 				05F22C782709F0DA00C34B15 /* libMagnumMeshTools.a in Frameworks */,
 				05F22C792709F0DA00C34B15 /* libMagnumTextureTools.a in Frameworks */,
 				05F22C7D2709F0DA00C34B15 /* libMagnumSdl2Application.a in Frameworks */,
@@ -248,8 +407,8 @@
 				05F22C992709F3CE00C34B15 /* libStbVorbisAudioImporter.a in Frameworks */,
 				05F22C8F2709F37200C34B15 /* libStbTrueTypeFont.a in Frameworks */,
 				05F22C952709F38600C34B15 /* libTinyGltfImporter.a in Frameworks */,
+				05CB8F7227136559009AD69F /* libAnyImageImporter.a in Frameworks */,
 				05F22C962709F38600C34B15 /* libPngImporter.a in Frameworks */,
-				05F22C972709F38600C34B15 /* libAnyImageImporter.a in Frameworks */,
 				0535EAE2270A6130009462B0 /* libAnySceneImporter.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -376,6 +535,39 @@
 		AFB14C0527007181005837DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				05CB665C27138AA600F97E29 /* CoreMotion.framework */,
+				05CB66592713850200F97E29 /* libAppleHIDSWDFlash.tbd */,
+				05CB6655271384E000F97E29 /* GameKit.framework */,
+				05CB6656271384E000F97E29 /* GameplayKit.framework */,
+				05CB664D27137AB300F97E29 /* CoreFoundation.framework */,
+				05CB66462713779E00F97E29 /* AudioUnit.framework */,
+				05CB8F8927137617009AD69F /* CoreHaptics.framework */,
+				05CB8F8127137562009AD69F /* libopenal.1.21.1.dylib */,
+				05CB8F7E271374AC009AD69F /* CoreImage.framework */,
+				05CB8F7A2713746D009AD69F /* CoreAudio.framework */,
+				05CB8F7327136619009AD69F /* libpng16.a */,
+				05CB8F7027136510009AD69F /* libCorradeInterconnect.a */,
+				05CB8F6D27136443009AD69F /* libAnyImageImporter.a */,
+				05CB8F6927136418009AD69F /* libAnySceneImporter.a */,
+				05CB8F6727136418009AD69F /* libPngImporter.a */,
+				05CB8F6827136418009AD69F /* libTinyGltfImporter.a */,
+				05CB8F6527136400009AD69F /* libStbTrueTypeFont.a */,
+				05CB8F63271363ED009AD69F /* libStbVorbisAudioImporter.a */,
+				05CB8F602713633E009AD69F /* libSDL2main.a */,
+				05CB8F5E27135B4D009AD69F /* libSDL2.a */,
+				05CB8F4827135B1B009AD69F /* libCorradePluginManager.a */,
+				05CB8F5027135B1B009AD69F /* libCorradeUtility.a */,
+				05CB8F4B27135B1B009AD69F /* libMagnum.a */,
+				05CB8F4E27135B1B009AD69F /* libMagnumAudio.a */,
+				05CB8F4627135B1B009AD69F /* libMagnumGL.a */,
+				05CB8F4C27135B1B009AD69F /* libMagnumMeshTools.a */,
+				05CB8F4F27135B1B009AD69F /* libMagnumPrimitives.a */,
+				05CB8F4927135B1B009AD69F /* libMagnumSceneGraph.a */,
+				05CB8F4727135B1B009AD69F /* libMagnumSdl2Application.a */,
+				05CB8F4A27135B1B009AD69F /* libMagnumShaders.a */,
+				05CB8F4427135B1B009AD69F /* libMagnumText.a */,
+				05CB8F4D27135B1B009AD69F /* libMagnumTextureTools.a */,
+				05CB8F4527135B1B009AD69F /* libMagnumTrade.a */,
 				056045B6270A25DA0080AA3E /* Foundation.framework */,
 				056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */,
 				056045AC270A22C50080AA3E /* libpng16.16.dylib */,
@@ -453,6 +645,7 @@
 			isa = PBXGroup;
 			children = (
 				AFFB4E3426FF48DC00FD2500 /* breakmycircle_sim.app */,
+				05CB8F41271358F8009AD69F /* breakmycircle_arm.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -462,7 +655,8 @@
 			children = (
 				0535E8F7270A4259009462B0 /* Sources */,
 				AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */,
-				AFFB4E4026FF48DE00FD2500 /* Info.plist */,
+				AFFB4E4026FF48DE00FD2500 /* InfoSim.plist */,
+				05CB8F432713596B009AD69F /* InfoArm.plist */,
 			);
 			path = BreakMyCircle;
 			sourceTree = "<group>";
@@ -470,6 +664,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		05CB8EE6271358F8009AD69F /* breakmycircle_arm */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 05CB8F3E271358F8009AD69F /* Build configuration list for PBXNativeTarget "breakmycircle_arm" */;
+			buildPhases = (
+				05CB8EE7271358F8009AD69F /* Sources */,
+				05CB8F14271358F8009AD69F /* Frameworks */,
+				05CB8F31271358F8009AD69F /* Resources */,
+				05CB8F3B271358F8009AD69F /* Embed Libraries */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = breakmycircle_arm;
+			productName = breakmycircle;
+			productReference = 05CB8F41271358F8009AD69F /* breakmycircle_arm.app */;
+			productType = "com.apple.product-type.application";
+		};
 		AFFB4E3326FF48DC00FD2500 /* breakmycircle_sim */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = AFFB4E4326FF48DE00FD2500 /* Build configuration list for PBXNativeTarget "breakmycircle_sim" */;
@@ -516,12 +728,29 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				05CB8EE6271358F8009AD69F /* breakmycircle_arm */,
 				AFFB4E3326FF48DC00FD2500 /* breakmycircle_sim */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		05CB8F31271358F8009AD69F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05CB8F32271358F8009AD69F /* Assets.xcassets in Resources */,
+				05CB8F33271358F8009AD69F /* assets.json in Resources */,
+				05CB8F34271358F8009AD69F /* paths in Resources */,
+				05CB8F35271358F8009AD69F /* rooms in Resources */,
+				05CB8F36271358F8009AD69F /* textures in Resources */,
+				05CB8F37271358F8009AD69F /* audios in Resources */,
+				05CB8F38271358F8009AD69F /* scenes in Resources */,
+				05CB8F39271358F8009AD69F /* fonts in Resources */,
+				05CB8F3A271358F8009AD69F /* shaders in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AFFB4E3226FF48DC00FD2500 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -541,6 +770,57 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		05CB8EE7271358F8009AD69F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				05CB8EE8271358F8009AD69F /* Startup.swift in Sources */,
+				05CB8EE9271358F8009AD69F /* StreamedAudioBuffer.cpp in Sources */,
+				05CB8EEA271358F8009AD69F /* StreamedAudioPlayable.cpp in Sources */,
+				05CB8EEB271358F8009AD69F /* PlasmaSquareRenderer.cpp in Sources */,
+				05CB8EEC271358F8009AD69F /* LSNumberRenderer.cpp in Sources */,
+				05CB8EED271358F8009AD69F /* LinePath.cpp in Sources */,
+				05CB8EEE271358F8009AD69F /* AbstractCustomRenderer.cpp in Sources */,
+				05CB8EEF271358F8009AD69F /* CommonUtility.cpp in Sources */,
+				05CB8EF0271358F8009AD69F /* OverlayGui.cpp in Sources */,
+				05CB8EF1271358F8009AD69F /* OverlayText.cpp in Sources */,
+				05CB8EF2271358F8009AD69F /* Projectile.cpp in Sources */,
+				05CB8EF3271358F8009AD69F /* Bubble.cpp in Sources */,
+				05CB8EF4271358F8009AD69F /* MapPickup.cpp in Sources */,
+				05CB8EF5271358F8009AD69F /* SafeMinigame.cpp in Sources */,
+				05CB8EF6271358F8009AD69F /* Congrats.cpp in Sources */,
+				05CB8EF7271358F8009AD69F /* Dialog.cpp in Sources */,
+				05CB8EF8271358F8009AD69F /* LimitLine.cpp in Sources */,
+				05CB8EF9271358F8009AD69F /* LevelSelector.cpp in Sources */,
+				05CB8EFA271358F8009AD69F /* AbstractGuiElement.cpp in Sources */,
+				05CB8EFB271358F8009AD69F /* Player.cpp in Sources */,
+				05CB8EFC271358F8009AD69F /* LevelSelectorSidecar.cpp in Sources */,
+				05CB8EFD271358F8009AD69F /* Logo.cpp in Sources */,
+				05CB8EFE271358F8009AD69F /* Scenery.cpp in Sources */,
+				05CB8EFF271358F8009AD69F /* Skybox.cpp in Sources */,
+				05CB8F00271358F8009AD69F /* OverlayGuiDetached.cpp in Sources */,
+				05CB8F01271358F8009AD69F /* Onboarding.cpp in Sources */,
+				05CB8F02271358F8009AD69F /* FallingBubble.cpp in Sources */,
+				05CB8F03271358F8009AD69F /* ElectricBall.cpp in Sources */,
+				05CB8F04271358F8009AD69F /* BaseDrawable.cpp in Sources */,
+				05CB8F05271358F8009AD69F /* WaterShader.cpp in Sources */,
+				05CB8F06271358F8009AD69F /* SpriteShader.cpp in Sources */,
+				05CB8F07271358F8009AD69F /* PlasmaShader.cpp in Sources */,
+				05CB8F08271358F8009AD69F /* CubeMapShader.cpp in Sources */,
+				05CB8F09271358F8009AD69F /* ScreenQuadShader.cpp in Sources */,
+				05CB8F0A271358F8009AD69F /* StarRoadShader.cpp in Sources */,
+				05CB8F0B271358F8009AD69F /* ShootPathShader.cpp in Sources */,
+				05CB8F0C271358F8009AD69F /* SunShader.cpp in Sources */,
+				05CB8F0D271358F8009AD69F /* Engine.cpp in Sources */,
+				05CB8F0E271358F8009AD69F /* GameObject.cpp in Sources */,
+				05CB8F0F271358F8009AD69F /* RoomManager.cpp in Sources */,
+				05CB8F10271358F8009AD69F /* CollisionManager.cpp in Sources */,
+				05CB8F11271358F8009AD69F /* InputManager.cpp in Sources */,
+				05CB8F12271358F8009AD69F /* AssetManager.cpp in Sources */,
+				05CB8F13271358F8009AD69F /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AFFB4E3026FF48DC00FD2500 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -595,10 +875,123 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		05CB8F3F271358F8009AD69F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = LWL2UC59QV;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_ENABLE_CPP_RTTI = YES;
+				HEADER_SEARCH_PATHS = (
+					"/Users/alfonso/Development/ios-arm64/include",
+					"/Users/alfonso/Development/ios-arm64/include/SDL2",
+					"/Users/alfonso/Development/ios-arm64/include/AL",
+					/Users/alfonso/Development/nlohmann/include,
+					/Users/alfonso/Development/common/include,
+				);
+				INFOPLIST_FILE = breakmycircle/InfoArm.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/alfonso/Development/ios-arm64/lib",
+					"/Users/alfonso/Development/ios-arm64/lib/magnum/audioimporters",
+					"/Users/alfonso/Development/ios-arm64/lib/magnum/fonts",
+					"/Users/alfonso/Development/ios-arm64/lib/magnum/importers",
+				);
+				MARKETING_VERSION = 0.1;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fno-rtti",
+				);
+				OTHER_LDFLAGS = (
+					"-lz",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = /Users/alfonso/Documents/Workspace/BreakMyCircle/src;
+			};
+			name = Debug;
+		};
+		05CB8F40271358F8009AD69F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = arm64;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = LWL2UC59QV;
+				ENABLE_PREVIEWS = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_ENABLE_CPP_RTTI = YES;
+				HEADER_SEARCH_PATHS = (
+					"/Users/alfonso/Development/ios-arm64/include",
+					"/Users/alfonso/Development/ios-arm64/include/SDL2",
+					"/Users/alfonso/Development/ios-arm64/include/AL",
+					/Users/alfonso/Development/nlohmann/include,
+					/Users/alfonso/Development/common/include,
+				);
+				INFOPLIST_FILE = breakmycircle/InfoArm.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"/Users/alfonso/Development/ios-arm64/lib",
+					"/Users/alfonso/Development/ios-arm64/lib/magnum/audioimporters",
+					"/Users/alfonso/Development/ios-arm64/lib/magnum/fonts",
+					"/Users/alfonso/Development/ios-arm64/lib/magnum/importers",
+				);
+				MARKETING_VERSION = 0.1;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-fno-rtti",
+				);
+				OTHER_LDFLAGS = (
+					"-lz",
+					"$(inherited)",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				USER_HEADER_SEARCH_PATHS = /Users/alfonso/Documents/Workspace/BreakMyCircle/src;
+			};
+			name = Release;
+		};
 		AFFB4E4126FF48DE00FD2500 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					x86_64,
+					arm64,
+				);
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -660,6 +1053,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					x86_64,
+					arm64,
+				);
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -704,6 +1101,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
@@ -714,6 +1112,7 @@
 		AFFB4E4426FF48DE00FD2500 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
@@ -721,6 +1120,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = LWL2UC59QV;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -731,7 +1131,7 @@
 					/Users/alfonso/Development/nlohmann/include,
 					/Users/alfonso/Development/common/include,
 				);
-				INFOPLIST_FILE = breakmycircle/Info.plist;
+				INFOPLIST_FILE = breakmycircle/InfoSim.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -744,6 +1144,7 @@
 					"/Users/alfonso/Development/ios-sim64/lib/magnum/importers",
 				);
 				MARKETING_VERSION = 0.1;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fno-rtti",
@@ -751,6 +1152,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = iphonesimulator;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -762,6 +1164,7 @@
 		AFFB4E4526FF48DE00FD2500 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
@@ -769,6 +1172,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = LWL2UC59QV;
 				ENABLE_PREVIEWS = YES;
 				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -779,7 +1183,7 @@
 					/Users/alfonso/Development/nlohmann/include,
 					/Users/alfonso/Development/common/include,
 				);
-				INFOPLIST_FILE = breakmycircle/Info.plist;
+				INFOPLIST_FILE = breakmycircle/InfoSim.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -792,6 +1196,7 @@
 					"/Users/alfonso/Development/ios-sim64/lib/magnum/importers",
 				);
 				MARKETING_VERSION = 0.1;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fno-rtti",
@@ -799,6 +1204,7 @@
 				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = iphonesimulator;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -809,6 +1215,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		05CB8F3E271358F8009AD69F /* Build configuration list for PBXNativeTarget "breakmycircle_arm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				05CB8F3F271358F8009AD69F /* Debug */,
+				05CB8F40271358F8009AD69F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		AFFB4E2F26FF48DC00FD2500 /* Build configuration list for PBXProject "breakmycircle" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
