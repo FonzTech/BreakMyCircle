@@ -188,34 +188,41 @@ void Engine::tickEvent()
 			 */
 			if (index == GOL_PERSP_FIRST)
 			{
-#ifdef TARGET_MOBILE
-				const auto& lbs = InputManager::singleton->mMouseStates[PRIMARY_BUTTON];
-				if (lbs >= IM_STATE_PRESSED)
-#endif
+				if (InputManager::singleton->mReadObjectId)
 				{
-					// Get clicked Object ID
-					mCurrentGol->frameBuffer->mapForRead(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX });
-
-					const Vector2i position(Vector2(InputManager::singleton->mMousePosition) * CommonUtility::singleton->mScaledFramebufferSize / Vector2{ windowSize() });
-					const Vector2i fbPosition{ position.x(), mCachedFramebufferSize.y() - position.y() - 1 };
-
-					const Image2D data = mCurrentGol->frameBuffer->read(
-							Range2Di::fromSize(fbPosition, { 1, 1 }),
-							{ PixelFormat::R32UI }
-					);
-
-					InputManager::singleton->mClickedObjectId = data.pixels<UnsignedInt>()[0][0];
-
-					// Clear object ID buffer
-					(*mCurrentGol->frameBuffer)
-							.clearColor(GLF_OBJECTID_ATTACHMENT_INDEX, Vector4ui{});
-				}
 #ifdef TARGET_MOBILE
-				else if (lbs == IM_STATE_NOT_PRESSED)
+					const auto& lbs = InputManager::singleton->mMouseStates[PRIMARY_BUTTON];
+					if (lbs >= IM_STATE_PRESSED)
+#endif
+					{
+						// Get clicked Object ID
+						mCurrentGol->frameBuffer->mapForRead(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX });
+
+						const Vector2i position(Vector2(InputManager::singleton->mMousePosition) * CommonUtility::singleton->mScaledFramebufferSize / Vector2{ windowSize() });
+						const Vector2i fbPosition{ position.x(), mCachedFramebufferSize.y() - position.y() - 1 };
+
+						const Image2D data = mCurrentGol->frameBuffer->read(
+								Range2Di::fromSize(fbPosition, { 1, 1 }),
+								{ PixelFormat::R32UI }
+						);
+
+						InputManager::singleton->mClickedObjectId = data.pixels<UnsignedInt>()[0][0];
+
+						// Clear object ID buffer
+						(*mCurrentGol->frameBuffer)
+								.clearColor(GLF_OBJECTID_ATTACHMENT_INDEX, Vector4ui{});
+					}
+#ifdef TARGET_MOBILE
+					else if (lbs == IM_STATE_NOT_PRESSED)
+					{
+						InputManager::singleton->mClickedObjectId = 0U;
+					}
+#endif
+				}
+				else
 				{
 					InputManager::singleton->mClickedObjectId = 0U;
 				}
-#endif
 			}
         }
 

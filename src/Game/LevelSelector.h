@@ -193,6 +193,7 @@ private:
 
 		Float touchTimer;
 		Containers::Optional<Vector3> touchVelocity;
+		bool disableObjectPicking;
 	};
 
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);

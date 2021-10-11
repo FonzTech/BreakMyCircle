@@ -12,6 +12,7 @@ InputManager::InputManager()
 	mKeyStates = {};
 #endif
 
+	mReadObjectId = true;
 	mClickedObjectId = 0U;
 }
 

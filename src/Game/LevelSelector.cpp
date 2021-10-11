@@ -94,9 +94,13 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		Containers::NullOpt,
 		Vector3(0.0f),
 		Vector3(0.0f),
-		0.0f,
+		0.0f
+#if defined(TARGET_MOBILE)
+		,
 		0.2f,
-		Containers::NullOpt
+		Containers::NullOpt,
+		false
+#endif
 	};
 	mClickIndex = -1;
 	mClickTimer = 0.0f;
@@ -218,6 +222,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 
 LevelSelector::~LevelSelector()
 {
+	// Restore object picking
+	InputManager::singleton->mReadObjectId = true;
+
 	// Destroy all of the owned game objects
 	for (auto& item : mLevelGuis)
 	{
@@ -683,8 +690,12 @@ void LevelSelector::update()
 		{
 			mScrolling.prevMousePos = InputManager::singleton->mMousePosition;
 			mScrolling.touchVelocity = Containers::NullOpt;
-			mScrolling.touchTimer = 0.2f;
 			mClickStartTime = std::chrono::system_clock::now();
+
+#if defined(TARGET_MOBILE)
+			mScrolling.touchTimer = 0.2f;
+			mScrolling.disableObjectPicking = false;
+#endif
 		}
 	}
 	else if (lbs >= IM_STATE_PRESSED)
@@ -712,7 +723,7 @@ void LevelSelector::update()
 				const Vector2 p1 = Math::floor(Vector2(InputManager::singleton->mMousePosition) / pd) * pd;
 				const Vector2 p2 = Math::floor(Vector2(*mScrolling.prevMousePos) / pd) * pd;
 				const Vector2i md = Vector2i(p1 - p2);
-				const Vector2 pa = Vector3(md.x(), 0.0f, Float(md.y())) * -0.05f;
+				const Vector3 pa = Vector3(md.x(), 0.0f, Float(md.y())) * -0.05f;
 
 				mScrolling.touchTimer = 0.2f;
 
@@ -726,6 +737,17 @@ void LevelSelector::update()
 					/// TODO: landscape scale factor
 					mScrolling.touchVelocity = pa;
 				}
+
+				if (mouseDelta.length() >= 0.5f)
+				{
+					mScrolling.disableObjectPicking = true;
+				}
+			}
+
+			// Disable object picking while scrolling
+			if (mScrolling.disableObjectPicking)
+			{
+				InputManager::singleton->mReadObjectId = false;
 			}
 #endif
 
@@ -1459,6 +1481,7 @@ void LevelSelector::manageLevelState()
 {
 	// Variables for later
 	bool animate[5] = { false, false, false, false, true };
+	bool objectPicking = false;
 
 	// Control level state
 	switch (mLevelInfo.state)
@@ -1469,7 +1492,11 @@ void LevelSelector::manageLevelState()
 		animate[4] = mLevelButtonScaleAnim > 0.0f && mOnboarding.expired();
 
 		// Animate when a level is clicked
-		if (mLevelInfo.currentViewingLevelId != 0U)
+		if (mLevelInfo.currentViewingLevelId == 0U)
+		{
+			objectPicking = !mSettingsOpened && animate[4];
+		}
+		else
 		{
 			const auto oldPosition = mPosition;
 			mPosition = mLevelInfo.currentLevelPos + (mLevelInfo.nextLevelPos - mLevelInfo.currentLevelPos) * mLevelAnim;
@@ -1773,6 +1800,9 @@ void LevelSelector::manageLevelState()
 			}
 		}
 	}
+
+	// Toggle object picking
+	InputManager::singleton->mReadObjectId = objectPicking;
 
 	// Animate level GUIs
 	manageGuiLevelAnim(0, animate[4]);

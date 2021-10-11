@@ -25,6 +25,7 @@ public:
 	std::unordered_map<ImKeyButtons, Int> mKeyStates;
 #endif
 
+	bool mReadObjectId;
 	UnsignedInt mClickedObjectId;
 
 	InputManager();

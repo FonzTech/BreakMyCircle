@@ -30,6 +30,7 @@ Puzzle Bobble-like game for PC and Mobile. Currently in development. This projec
   - `InputManager::singleton->mouseStates[ImMouseButtons::Left] > 0`: the key is down;
 
 - Use the `DEBUG` macro to check whether it's a debug build or not. Visual Studio, Android Studio and Xcode projects are already setup to be conformant to this project codebase.
+- Object picking in `GOL_PERSP_FIRST` can be toggled using the `InputManager::singleton->mReadObjectId` flag. This is useful in some situations where object picking is not required, since it *may* cause OpenGL pipeline to sync, thus losing performance and framerate.
 - Please, keep the `GameObject::mDrawables` array clean and consistent, otherwise orphans drawables will appear. Also, layers where drawables go should be the same where the `GameObject` instances goes, otherwise drawables handling becomes difficult and tricky. Just create another class to handle that drawable on your required layer.
 - The concept for **Detached Drawing** is simple: the engine follows a pipeline, to render all the object on it's layer. If something needs to be rendered outside this pipeline (like some off-screen drawing or render-to-texture operations), we are talking about **Detached Drawing**. Just implement the *IDrawDetached* interface to give an uniformity and coherence regarding drawing operations. Beware to not let drawables end up in `RoomManager`-managed `DrawableGroup` object!
 

@@ -229,10 +229,12 @@ void Logo::update()
 						{
 							mLogoZoom += mDeltaTime;
 
-							const auto& z = mLogoZoom * -0.2f * RoomManager::singleton->getWindowAspectRatio() / CommonUtility::singleton->mConfig.displayDensity;
+							const Float z = Math::lerp(0.0f, 1.0f, Animation::Easing::quadraticIn(mLogoZoom)) * RoomManager::singleton->getWindowAspectRatio() * -15.0f;
 							for (UnsignedInt k = 0; k < 3; ++k)
 							{
-								mLogoObjects[k]->translate(Vector3(0.0f, 0.0f, z));
+								(*mLogoObjects[k])
+									.resetTransformation()
+									.translate(mKeyframes[3][2].position + Vector3(0.0f, 0.0f, z));
 							}
 						}
 					}
