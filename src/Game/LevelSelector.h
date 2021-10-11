@@ -190,6 +190,9 @@ private:
 		Vector3 release;
 		Vector3 velocity;
 		Float factor;
+
+		Float touchTimer;
+		Containers::Optional<Vector3> touchVelocity;
 	};
 
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);

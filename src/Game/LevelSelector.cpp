@@ -94,7 +94,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		Containers::NullOpt,
 		Vector3(0.0f),
 		Vector3(0.0f),
-		0.0f
+		0.0f,
+		0.2f,
+		Containers::NullOpt
 	};
 	mClickIndex = -1;
 	mClickTimer = 0.0f;
@@ -680,6 +682,8 @@ void LevelSelector::update()
 		if (!isViewingLevel && !mSettingsOpened && mLevelInfo.state == GO_LS_LEVEL_INIT && !mLevelEndingAnim)
 		{
 			mScrolling.prevMousePos = InputManager::singleton->mMousePosition;
+			mScrolling.touchVelocity = Containers::NullOpt;
+			mScrolling.touchTimer = 0.2f;
 			mClickStartTime = std::chrono::system_clock::now();
 		}
 	}
@@ -688,17 +692,42 @@ void LevelSelector::update()
 		// Update mouse delta
 		if (mScrolling.prevMousePos != Containers::NullOpt)
 		{
-			const Vector2i mouseDelta = InputManager::singleton->mMousePosition - *mScrolling.prevMousePos;
+            const Vector2i mouseDelta = InputManager::singleton->mMousePosition - *mScrolling.prevMousePos;
 			if (mouseDelta.isZero())
 			{
 				mScrolling.velocity = Vector3(0.0f);
 			}
 			else
 			{
-				const auto p = mouseDelta;
-				const Vector3 scrollDelta = Vector3(p.x(), 0.0f, Float(mouseDelta.y())) * -0.05f;
+                const Vector3 scrollDelta = Vector3(mouseDelta.x(), 0.0f, Float(mouseDelta.y())) * -0.05f;
 				mScrolling.velocity = scrollDelta;
 			}
+
+#if defined(TARGET_MOBILE)
+			// Natural scrolling for touch
+			mScrolling.touchTimer -= mDeltaTime;
+			if (mScrolling.touchTimer <= 0.0f)
+			{
+				const Float pd = CommonUtility::singleton->mConfig.displayDensity;
+				const Vector2 p1 = Math::floor(Vector2(InputManager::singleton->mMousePosition) / pd) * pd;
+				const Vector2 p2 = Math::floor(Vector2(*mScrolling.prevMousePos) / pd) * pd;
+				const Vector2i md = Vector2i(p1 - p2);
+				const Vector2 pa = Vector3(md.x(), 0.0f, Float(md.y())) * -0.05f;
+
+				mScrolling.touchTimer = 0.2f;
+
+				const Vector2 pw = RoomManager::singleton->getWindowSize();
+				if (pw.x() < pw.y())
+				{
+					mScrolling.touchVelocity = pa * Vector3(pw.x() / pw.y(), 0.0f, 1.0f);
+				}
+				else
+				{
+					/// TODO: landscape scale factor
+					mScrolling.touchVelocity = pa;
+				}
+			}
+#endif
 
 			// Update previous mouse state
 			mScrolling.prevMousePos = InputManager::singleton->mMousePosition;
@@ -717,7 +746,11 @@ void LevelSelector::update()
 		if (lbs == IM_STATE_RELEASED)
 		{
             mScrolling.factor = 1.0f;
-            mScrolling.release = mScrolling.velocity / CommonUtility::singleton->mConfig.displayDensity;
+#if defined(TARGET_MOBILE)
+			mScrolling.release = (mScrolling.touchVelocity != Containers::NullOpt ? *mScrolling.touchVelocity : mScrolling.velocity) / CommonUtility::singleton->mConfig.displayDensity;
+#else
+			mScrolling.release = mScrolling.velocity / CommonUtility::singleton->mConfig.displayDensity;
+#endif
 
 			const Float limit = GO_LS_MAX_SCROLL_VELOCITY / CommonUtility::singleton->mConfig.displayDensity;
             for (UnsignedInt i = 0; i < 3; ++i)
@@ -765,7 +798,7 @@ void LevelSelector::update()
 						if (!ita->second.expired())
 						{
 							const auto& pu = ita->second.lock();
-							if (pu->isPickupable() && (pu->mPosition - (mPosition + Vector3(0.0f, 0.0f, cameraDist))).length() < 30.0f)
+							if (pu->isPickupable() && (pu->mPosition - (mPosition + Vector3(0.0f, 0.0f, cameraDist))).length() < 75.0f)
 							{
 								pu->setDestroyState(true);
 
