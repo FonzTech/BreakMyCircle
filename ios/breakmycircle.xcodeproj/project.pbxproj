@@ -62,9 +62,10 @@
 		056045A1270A0AFC0080AA3E /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459A270A0AFC0080AA3E /* InputManager.cpp */; };
 		056045A2270A0AFC0080AA3E /* AssetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459B270A0AFC0080AA3E /* AssetManager.cpp */; };
 		056045B7270A25DA0080AA3E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045B6270A25DA0080AA3E /* Foundation.framework */; };
+		05C2595727177F7700B8D75E /* libopenal.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 05C2595627177F7700B8D75E /* libopenal.1.dylib */; };
+		05C2595827177F7E00B8D75E /* libopenal.1.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 05C2595627177F7700B8D75E /* libopenal.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		05CB665027137C2700F97E29 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF92709F6E800C34B15 /* AVFoundation.framework */; };
 		05CB665227137F4100F97E29 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF62709F6BF00C34B15 /* AudioToolbox.framework */; };
-		05CB665327137F7E00F97E29 /* libopenal.1.21.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F8127137562009AD69F /* libopenal.1.21.1.dylib */; };
 		05CB665427137FCB00F97E29 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CFC2709F72700C34B15 /* GameController.framework */; };
 		05CB665B27138A9600F97E29 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F8927137617009AD69F /* CoreHaptics.framework */; };
 		05CB665D27138AA600F97E29 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB665C27138AA600F97E29 /* CoreMotion.framework */; };
@@ -148,7 +149,6 @@
 		05CB8F7727136D9A009AD69F /* libpng16.16.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 056045AC270A22C50080AA3E /* libpng16.16.dylib */; };
 		05CB8F7827136DC8009AD69F /* libSDL2-2.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */; };
 		05CB8F7927136DD2009AD69F /* libSDL2-2.0.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */; };
-		05CB8F8427137595009AD69F /* libopenal.1.21.1.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 05CB8F8127137562009AD69F /* libopenal.1.21.1.dylib */; };
 		05F22C732709F0DA00C34B15 /* libMagnumTrade.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C632709F0DA00C34B15 /* libMagnumTrade.a */; };
 		05F22C742709F0DA00C34B15 /* libMagnumShaders.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C642709F0DA00C34B15 /* libMagnumShaders.a */; };
 		05F22C752709F0DA00C34B15 /* libMagnumAudio.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C652709F0DA00C34B15 /* libMagnumAudio.a */; };
@@ -185,13 +185,13 @@
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		05CB8F3B271358F8009AD69F /* Embed Libraries */ = {
+		05C2595927177F7E00B8D75E /* Embed Libraries */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				05CB8F8427137595009AD69F /* libopenal.1.21.1.dylib in Embed Libraries */,
+				05C2595827177F7E00B8D75E /* libopenal.1.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -255,6 +255,7 @@
 		056045AC270A22C50080AA3E /* libpng16.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng16.16.dylib; path = "../../../../Development/ios-sim64/lib/libpng16.16.dylib"; sourceTree = "<group>"; };
 		056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2-2.0.dylib"; path = "../../../../Development/ios-sim64/lib/libSDL2-2.0.dylib"; sourceTree = "<group>"; };
 		056045B6270A25DA0080AA3E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		05C2595627177F7700B8D75E /* libopenal.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopenal.1.dylib; path = "../../../../Development/ios-arm64/lib/libopenal.1.dylib"; sourceTree = "<group>"; };
 		05CB66462713779E00F97E29 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		05CB664D27137AB300F97E29 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		05CB6655271384E000F97E29 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
@@ -354,7 +355,7 @@
 				05CB665427137FCB00F97E29 /* GameController.framework in Frameworks */,
 				05CB665B27138A9600F97E29 /* CoreHaptics.framework in Frameworks */,
 				05CB665D27138AA600F97E29 /* CoreMotion.framework in Frameworks */,
-				05CB665327137F7E00F97E29 /* libopenal.1.21.1.dylib in Frameworks */,
+				05C2595727177F7700B8D75E /* libopenal.1.dylib in Frameworks */,
 				05CB8F742713661A009AD69F /* libpng16.a in Frameworks */,
 				05CB8F5F27135B4D009AD69F /* libSDL2.a in Frameworks */,
 				05CB8F612713633E009AD69F /* libSDL2main.a in Frameworks */,
@@ -535,6 +536,7 @@
 		AFB14C0527007181005837DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				05C2595627177F7700B8D75E /* libopenal.1.dylib */,
 				05CB665C27138AA600F97E29 /* CoreMotion.framework */,
 				05CB66592713850200F97E29 /* libAppleHIDSWDFlash.tbd */,
 				05CB6655271384E000F97E29 /* GameKit.framework */,
@@ -671,7 +673,7 @@
 				05CB8EE7271358F8009AD69F /* Sources */,
 				05CB8F14271358F8009AD69F /* Frameworks */,
 				05CB8F31271358F8009AD69F /* Resources */,
-				05CB8F3B271358F8009AD69F /* Embed Libraries */,
+				05C2595927177F7E00B8D75E /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -911,6 +913,7 @@
 				);
 				MARKETING_VERSION = 0.1;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CODE_SIGN_FLAGS = "--generate-entitlement-der";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fno-rtti",
@@ -966,6 +969,7 @@
 				);
 				MARKETING_VERSION = 0.1;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CODE_SIGN_FLAGS = "--generate-entitlement-der";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fno-rtti",
