@@ -157,6 +157,12 @@ void Projectile::update()
 		snapToGrid(nullptr);
 	}
 
+	// Hot-fix for big delta times
+	if (mPosition.x() <= LEFT_X - 0.5f || mPosition.x() >= RIGHT_X + 0.5f || mPosition.y() > 0.5f)
+	{
+		mDestroyMe = true;
+	}
+
 	// Rotate animation
 	if (mAmbientColor == BUBBLE_BOMB)
 	{
@@ -195,6 +201,10 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 	const Color3 preColor = mAmbientColor;
 	const Int thisRowIndex = getRowIndexByBubble();
 	const bool workOnColor = mAmbientColor == BUBBLE_PLASMA || mAmbientColor == BUBBLE_ELECTRIC;
+
+	// Snap to grid
+	const Float offset = thisRowIndex % 2 ? 0.0f : 1.0f;
+	mPosition.data()[1] = getSnappedYPos();
 
 	// Get nearest bubble
 	Containers::Optional<Color3> collidedColor = Containers::NullOpt;
@@ -250,13 +260,8 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		}
 	}
 
-	// Snap to grid
-	Float offset = thisRowIndex % 2 ? 0.0f : 1.0f;
-	mPosition = {
-		Math::round((mPosition.x() - offset) / 2.0f) * 2.0f + offset,
-		getSnappedYPos(),
-		0.0f
-	};
+	// Fix X position
+	mPosition.data()[0] = Math::round((mPosition.x() - offset) / 2.0f) * 2.0f + offset;
 
 	// Mutate the color, if this projectile is a plasma or electric bubble
 	if (workOnColor)
