@@ -313,9 +313,10 @@ void RoomManager::setup()
 	mCameraObject.setParent(&mScene);
 
 	// Setup camera
+    Debug{} << "qq" << GL::defaultFramebuffer.viewport().size();
 	mCamera = std::make_shared<SceneGraph::Camera3D>(mCameraObject);
 	mCamera->setAspectRatioPolicy(SceneGraph::AspectRatioPolicy::NotPreserved);
-	mCamera->setViewport(GL::defaultFramebuffer.viewport().size());
+    mCamera->setViewport(GL::defaultFramebuffer.viewport().size());
 }
 
 void RoomManager::prepareRoom(const bool stopBgMusic)

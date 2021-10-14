@@ -94,4 +94,9 @@ private:
 	Float mDeltaTime;
 	ScreenQuadShader mScreenQuadShader;
 	RoomManager::GameObjectsLayer* mCurrentGol;
+    
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+    GLint mIosDefaultRenderbufferId;
+    Containers::Optional<GL::Framebuffer> mIosDefaultFramebuffer;
+#endif
 };

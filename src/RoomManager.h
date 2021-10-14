@@ -127,6 +127,10 @@ public:
 
 	// Collision Manager
 	std::unique_ptr<CollisionManager> mCollisionManager;
+    
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+    GL::Framebuffer* mDefaultFramebufferPtr; // This pointer is completely unmanaged, be careful
+#endif
 
 	// Game save data
 	SaveData mSaveData;

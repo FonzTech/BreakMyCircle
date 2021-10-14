@@ -30,7 +30,11 @@ void AbstractCustomRenderer::renderTexture()
 		const Int parentIndex = RoomManager::singleton->getCurrentBoundParentIndex();
 		if (parentIndex == -1)
 		{
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+            RoomManager::singleton->mDefaultFramebufferPtr->bind();
+#else
 			GL::defaultFramebuffer.bind();
+#endif
 		}
 		else
 		{

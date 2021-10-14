@@ -14,6 +14,9 @@
 #include <Magnum/GL/DebugOutput.h>
 #endif
 
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+#include <Magnum/GL/Context.h>
+#endif
 using namespace Magnum::Math::Literals;
 
 const Float Engine::mDrawFrameTime =
@@ -34,15 +37,24 @@ Engine::Engine(const Arguments& arguments) :
 #ifdef CORRADE_TARGET_ANDROID
 Platform::Application{ arguments, ENGINE_CONFIGURATION }
 #elif defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
-Platform::Application{ arguments, Configuration{}.setWindowFlags(Configuration::WindowFlag::Resizable) }
+Platform::Application{ arguments, Configuration{} }, mIosDefaultFramebuffer(Containers::NullOpt)
 #else
 Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setSize({ 432, 768 }) }
 #endif
 , mFrameTime(0.0f), mCurrentGol(nullptr)
 {
 	// Setup window
-#ifdef CORRADE_TARGET_ANDROID
+#if defined(CORRADE_TARGET_ANDROID)
+    
     isInForeground = true;
+    
+#elif defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+    
+    GLint iosDefaultFboId;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &iosDefaultFboId);
+    glGetIntegerv(GL_RENDERBUFFER_BINDING, &mIosDefaultRenderbufferId);
+    mIosDefaultFramebuffer = GL::Framebuffer::wrap(GLuint(iosDefaultFboId), GL::defaultFramebuffer.viewport());
+    
 #endif
 
 #ifdef DEBUG_OPENGL_CALLS
@@ -119,6 +131,10 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
 	RoomManager::singleton = std::make_unique<RoomManager>();
     RoomManager::singleton->setSfxGain(RoomManager::singleton->mSaveData.sfxEnabled ? 1.0f : 0.0f);
 	RoomManager::singleton->setup();
+    
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+    RoomManager::singleton->mDefaultFramebufferPtr = &(*mIosDefaultFramebuffer);
+#endif
 
 	// Setup room manager
 	RoomManager::singleton->setWindowSize(Vector2(windowSize()));
@@ -279,7 +295,15 @@ void Engine::tickEvent()
 
 	{
 		// Bind default window framebuffer
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+        
+        mIosDefaultFramebuffer->bind();
+        glBindRenderbuffer(GL_RENDERBUFFER, mIosDefaultRenderbufferId);
+        GL::Context::current().resetState(GL::Context::State::Framebuffers);
+        
+#else
         GL::defaultFramebuffer.bind();
+#endif
 
 		// Set renderer features
 		GL::Renderer::disable(GL::Renderer::Feature::Blending);
@@ -410,7 +434,13 @@ void Engine::viewportEvent(ViewportEvent& event)
 void Engine::viewportInternal(ViewportEvent* event)
 {
 	// Update viewports
-	GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, framebufferSize()));
+    
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+	mIosDefaultFramebuffer->setViewport(Range2Di({ 0, 0 }, framebufferSize()));
+#else
+    GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, framebufferSize()));
+#endif
+    
     // CommonUtility::singleton->mScaledFramebufferSize = Vector2(framebufferSize()) / CommonUtility::singleton->mConfig.displayDensity;
     CommonUtility::singleton->mScaledFramebufferSize = Vector2(framebufferSize());
 	mCachedFramebufferSize = Vector2i(CommonUtility::singleton->mScaledFramebufferSize);
