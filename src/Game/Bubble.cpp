@@ -346,7 +346,7 @@ Int Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
 		group->insert(bubble);
 		bubble->destroyNearbyBubblesImpl(group);
 	}
-	return group->size();
+    return Int(group->size());
 }
 
 Int Bubble::destroyDisjointBubbles()

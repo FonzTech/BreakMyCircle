@@ -3,8 +3,10 @@ use_frameworks! :linkage => :static
 
 target 'breakmycircle_sim' do
   pod 'Google-Mobile-Ads-SDK'
+  pod 'SwiftHTTP', '~> 3.0.1'
 end
 
 target 'breakmycircle_arm' do
   pod 'Google-Mobile-Ads-SDK'
+  pod 'SwiftHTTP', '~> 3.0.1'
 end

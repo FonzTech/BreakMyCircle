@@ -35,6 +35,27 @@
 
 using namespace Magnum;
 
+#if defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
+extern "C"
+{
+    void ios_SetupApp();
+
+    Int ios_GetPlayAdThreshold();
+    Long ios_GetGamePowerupExpire();
+    Int ios_GetGamePowerupAmount();
+
+    void ios_ClearPowerupData();
+    void ios_WatchAdPowerup();
+    void ios_ShowInterstitial();
+    void ios_GameVoteMe();
+    void ios_GameOtherApps();
+
+    const char* ios_GetAssetDir();
+    Float ios_GetDisplayDensity();
+    const char* ios_GetSaveFile();
+}
+#endif
+
 struct FontHolder
 {
 	PluginManager::Manager<Text::AbstractFont> manager;

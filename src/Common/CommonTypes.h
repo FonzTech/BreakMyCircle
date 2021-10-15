@@ -139,6 +139,16 @@
 #define GOT_SAFE_MINIGAME 17
 #define GOT_ONBOARDING 18
 
+#define INTENT_GP_EXPIRE "game_powerup_expire"
+#define INTENT_GP_AMOUNT "game_powerup_amount"
+#define INTENT_PLAY_AD_THRESHOLD "play_ad_threshold"
+
+#define METHOD_CLEAR_POWERUP_DATA "clearPowerupData"
+#define METHOD_WATCH_AD_POWERUP "watchAdForPowerup"
+#define METHOD_SHOW_INTERSTITIAL "showInterstitial"
+#define METHOD_GAME_VOTE_ME "gameVoteMe"
+#define METHOD_GAME_OTHER_APPS "gameOtherApps"
+
 #if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
 #define TARGET_MOBILE
 #endif

@@ -47,7 +47,7 @@ Vector3 LinePath::getCurrentPosition()
 
 Int LinePath::getSize()
 {
-	return mAssetResource->size();
+	return Int(mAssetResource->size());
 }
 
 void LinePath::load(const std::string & name)

@@ -284,11 +284,35 @@ std::unique_ptr<std::string> CommonUtility::getValueFromIntent(const std::string
     
 #elif defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
     
+    if (key == INTENT_GP_EXPIRE)
+    {
+        const Long value = ios_GetGamePowerupExpire();
+        if (value != 0) {
+            std::unique_ptr<std::string> str = std::make_unique<std::string>(std::to_string(value));
+            return str;
+        }
+    }
+    else if (key == INTENT_GP_AMOUNT)
+    {
+        const Int value = ios_GetGamePowerupAmount();
+        if (value != 0) {
+            std::unique_ptr<std::string> str = std::make_unique<std::string>(std::to_string(value));
+            return str;
+        }
+    }
+    else if (key == INTENT_PLAY_AD_THRESHOLD)
+    {
+        const Int value = ios_GetPlayAdThreshold();
+        std::unique_ptr<std::string> str = std::make_unique<std::string>(std::to_string(value));
+        return str;
+    }
+    return nullptr;
+    
+#else
+    
     return nullptr;
     
 #endif
-    
-    return nullptr;
 }
 
 std::string CommonUtility::getTextureNameForPowerup(const UnsignedInt index)

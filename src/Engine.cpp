@@ -17,6 +17,7 @@
 #if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
 #include <Magnum/GL/Context.h>
 #endif
+
 using namespace Magnum::Math::Literals;
 
 const Float Engine::mDrawFrameTime =
@@ -50,10 +51,16 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
     
 #elif defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
     
-    GLint iosDefaultFboId;
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &iosDefaultFboId);
-    glGetIntegerv(GL_RENDERBUFFER_BINDING, &mIosDefaultRenderbufferId);
-    mIosDefaultFramebuffer = GL::Framebuffer::wrap(GLuint(iosDefaultFboId), GL::defaultFramebuffer.viewport());
+    // Get default framebuffer and renderbuffer
+    {
+        GLint iosDefaultFboId;
+        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &iosDefaultFboId);
+        glGetIntegerv(GL_RENDERBUFFER_BINDING, &mIosDefaultRenderbufferId);
+        mIosDefaultFramebuffer = GL::Framebuffer::wrap(GLuint(iosDefaultFboId), GL::defaultFramebuffer.viewport());
+    }
+    
+    // Setup app
+    ios_SetupApp();
     
 #endif
 

@@ -290,15 +290,15 @@ void LevelSelector::update()
     // Check for powerup rewarded ad
     if (mWatchForPowerup != 0U)
     {
-		const auto& expire = CommonUtility::singleton->getValueFromIntent(GO_LS_INTENT_GP_EXPIRE);
-		const auto& amount = CommonUtility::singleton->getValueFromIntent(GO_LS_INTENT_GP_AMOUNT);
+		const auto& expire = CommonUtility::singleton->getValueFromIntent(INTENT_GP_EXPIRE);
+		const auto& amount = CommonUtility::singleton->getValueFromIntent(INTENT_GP_AMOUNT);
 		if (expire != nullptr)
 		{
 		    // Resume background music
             RoomManager::singleton->mBgMusic->playable()->source().play();
 
 			// Clear powerup data
-            callNativeMethod(GO_LS_METHOD_CLEAR_POWERUP_DATA);
+            callNativeMethod(METHOD_CLEAR_POWERUP_DATA);
 
 			// Reset watch powerup state
 			const auto powerupIndex = mWatchForPowerup;
@@ -1973,7 +1973,7 @@ void LevelSelector::finishCurrentLevel(const bool success)
 
 	// Check how many times a level has been played
 	{
-		const auto& value = CommonUtility::singleton->getValueFromIntent(GO_LS_INTENT_PLAY_AD_THRESHOLD);
+		const auto& value = CommonUtility::singleton->getValueFromIntent(INTENT_PLAY_AD_THRESHOLD);
 		const Int playAdThreshold = value != nullptr ? std::stoi(*value) : 3;
 		if (++mLevelInfo.numberOfPlays >= playAdThreshold)
 		{
@@ -2419,14 +2419,14 @@ void LevelSelector::watchAdForPowerup(const UnsignedInt index)
 {
     RoomManager::singleton->mBgMusic->playable()->source().pause();
     mWatchForPowerup = index;
-	callNativeMethod(GO_LS_METHOD_WATCH_AD_POWERUP);
+	callNativeMethod(METHOD_WATCH_AD_POWERUP);
 }
 
 void LevelSelector::showInterstitial()
 {
     RoomManager::singleton->mBgMusic->playable()->source().pause();
     mWatchForPowerup = 1000U;
-	callNativeMethod(GO_LS_METHOD_SHOW_INTERSTITIAL);
+	callNativeMethod(METHOD_SHOW_INTERSTITIAL);
 }
 
 void LevelSelector::createGuis()
@@ -2516,7 +2516,11 @@ void LevelSelector::createGuis()
 
 		{
 			const auto& ar = CommonUtility::singleton->mScaledFramebufferSize.aspectRatio();
-			Float size = 0.45f * (ar < 1.0f ? ar / 0.5625f : 1.0f);
+			const Float size = 0.45f * (ar < 1.0f ? ar / 0.5625f : 1.0f)
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+            * 0.9f
+#endif
+            ;
 			o->setSize(Vector2(size));
 		}
 
@@ -2930,7 +2934,7 @@ void LevelSelector::createTexts()
 			}
 
 			Debug{} << "You have clicked VOTE ME";
-			callNativeMethod(GO_LS_METHOD_GAME_VOTE_ME);
+			callNativeMethod(METHOD_GAME_VOTE_ME);
 			return true;
 		};
 	}
@@ -2956,7 +2960,7 @@ void LevelSelector::createTexts()
 			}
 
 			Debug{} << "You have clicked OTHER APPS";
-			callNativeMethod(GO_LS_METHOD_GAME_OTHER_APPS);
+			callNativeMethod(METHOD_GAME_OTHER_APPS);
 			return true;
 		};
 	}
@@ -3028,7 +3032,26 @@ void LevelSelector::callNativeMethod(const std::string & methodName)
 
 #elif defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
     
-    Debug{} << "call iOS method here " << methodName;
+    if (methodName == METHOD_CLEAR_POWERUP_DATA)
+    {
+        ios_ClearPowerupData();
+    }
+    else if (methodName == METHOD_WATCH_AD_POWERUP)
+    {
+        ios_WatchAdPowerup();
+    }
+    else if (methodName == METHOD_SHOW_INTERSTITIAL)
+    {
+        ios_ShowInterstitial();
+    }
+    else if (methodName == METHOD_GAME_VOTE_ME)
+    {
+        ios_GameVoteMe();
+    }
+    else if (methodName == METHOD_GAME_OTHER_APPS)
+    {
+        ios_GameOtherApps();
+    }
 
 #else
     

@@ -9,8 +9,8 @@
 /* Begin PBXBuildFile section */
 		052E591B2719C56A0064A24B /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591A2719C56A0064A24B /* Utility.swift */; };
 		052E591C2719C56A0064A24B /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591A2719C56A0064A24B /* Utility.swift */; };
-		052E591E2719D7E60064A24B /* AdSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AdSetup.swift */; };
-		052E591F2719D7E60064A24B /* AdSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AdSetup.swift */; };
+		052E591E2719D7E60064A24B /* AppSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AppSetup.swift */; };
+		052E591F2719D7E60064A24B /* AppSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AppSetup.swift */; };
 		052E59292719D9920064A24B /* GoogleMobileAds.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 052E59282719D9920064A24B /* GoogleMobileAds.xcframework */; };
 		0535E8F6270A3E41009462B0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604595270A0AFC0080AA3E /* main.cpp */; };
 		0535E8F9270A4267009462B0 /* Startup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* Startup.swift */; };
@@ -67,6 +67,17 @@
 		056045A1270A0AFC0080AA3E /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459A270A0AFC0080AA3E /* InputManager.cpp */; };
 		056045A2270A0AFC0080AA3E /* AssetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459B270A0AFC0080AA3E /* AssetManager.cpp */; };
 		056045B7270A25DA0080AA3E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045B6270A25DA0080AA3E /* Foundation.framework */; };
+		05718C70271A1F3A0090C631 /* SwiftHTTP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05718C6D271A1F270090C631 /* SwiftHTTP.framework */; };
+		05718C73271A1F400090C631 /* SwiftHTTP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05718C72271A1F400090C631 /* SwiftHTTP.framework */; };
+		05718C75271A1F4E0090C631 /* GoogleMobileAds.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 052E59282719D9920064A24B /* GoogleMobileAds.xcframework */; };
+		05718C78271A1FBE0090C631 /* BundleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C77271A1FBE0090C631 /* BundleExtension.swift */; };
+		05718C79271A1FBE0090C631 /* BundleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C77271A1FBE0090C631 /* BundleExtension.swift */; };
+		05718C7B271A287F0090C631 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05718C7A271A287F0090C631 /* SystemConfiguration.framework */; };
+		05718C7C271A28860090C631 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05718C7A271A287F0090C631 /* SystemConfiguration.framework */; };
+		05718C7E271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */; };
+		05718C7F271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */; };
+		05718C81271A32DE0090C631 /* AppAdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdDelegate.swift */; };
+		05718C82271A32DE0090C631 /* AppAdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdDelegate.swift */; };
 		05C2595727177F7700B8D75E /* libopenal.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 05C2595627177F7700B8D75E /* libopenal.1.dylib */; };
 		05C2595827177F7E00B8D75E /* libopenal.1.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 05C2595627177F7700B8D75E /* libopenal.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		05CB665027137C2700F97E29 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF92709F6E800C34B15 /* AVFoundation.framework */; };
@@ -207,7 +218,7 @@
 
 /* Begin PBXFileReference section */
 		052E591A2719C56A0064A24B /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
-		052E591D2719D7E60064A24B /* AdSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdSetup.swift; sourceTree = "<group>"; };
+		052E591D2719D7E60064A24B /* AppSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetup.swift; sourceTree = "<group>"; };
 		052E59282719D9920064A24B /* GoogleMobileAds.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleMobileAds.xcframework; path = "Pods/Google-Mobile-Ads-SDK/Frameworks/GoogleMobileAdsFramework-Current/GoogleMobileAds.xcframework"; sourceTree = "<group>"; };
 		0535E8F8270A4267009462B0 /* Startup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Startup.swift; sourceTree = "<group>"; };
 		0535EA61270A4DE7009462B0 /* assets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = assets.json; path = ../android/app/src/main/res/raw/assets.json; sourceTree = "<group>"; };
@@ -265,6 +276,12 @@
 		056045AC270A22C50080AA3E /* libpng16.16.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng16.16.dylib; path = "../../../../Development/ios-sim64/lib/libpng16.16.dylib"; sourceTree = "<group>"; };
 		056045B1270A23A80080AA3E /* libSDL2-2.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2-2.0.dylib"; path = "../../../../Development/ios-sim64/lib/libSDL2-2.0.dylib"; sourceTree = "<group>"; };
 		056045B6270A25DA0080AA3E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		05718C6D271A1F270090C631 /* SwiftHTTP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftHTTP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		05718C72271A1F400090C631 /* SwiftHTTP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftHTTP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		05718C77271A1FBE0090C631 /* BundleExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleExtension.swift; sourceTree = "<group>"; };
+		05718C7A271A287F0090C631 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertControllerExtension.swift; sourceTree = "<group>"; };
+		05718C80271A32DE0090C631 /* AppAdDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAdDelegate.swift; sourceTree = "<group>"; };
 		05C2595627177F7700B8D75E /* libopenal.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopenal.1.dylib; path = "../../../../Development/ios-arm64/lib/libopenal.1.dylib"; sourceTree = "<group>"; };
 		05CB66462713779E00F97E29 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		05CB664D27137AB300F97E29 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -364,11 +381,14 @@
 				05CB8F5227135B1B009AD69F /* libMagnumTrade.a in Frameworks */,
 				05CB8F5327135B1B009AD69F /* libMagnumGL.a in Frameworks */,
 				05CB8F5427135B1B009AD69F /* libMagnumSdl2Application.a in Frameworks */,
+				05718C73271A1F400090C631 /* SwiftHTTP.framework in Frameworks */,
 				05CB8F5627135B1B009AD69F /* libMagnumSceneGraph.a in Frameworks */,
+				05718C75271A1F4E0090C631 /* GoogleMobileAds.xcframework in Frameworks */,
 				05CB8F5727135B1B009AD69F /* libMagnumShaders.a in Frameworks */,
 				05CB8F5827135B1B009AD69F /* libMagnum.a in Frameworks */,
 				05CB8F5927135B1B009AD69F /* libMagnumMeshTools.a in Frameworks */,
 				05CB8F5A27135B1B009AD69F /* libMagnumTextureTools.a in Frameworks */,
+				05718C7C271A28860090C631 /* SystemConfiguration.framework in Frameworks */,
 				05CB8F5B27135B1B009AD69F /* libMagnumAudio.a in Frameworks */,
 				05CB8F5C27135B1B009AD69F /* libMagnumPrimitives.a in Frameworks */,
 				05CB8F64271363ED009AD69F /* libStbVorbisAudioImporter.a in Frameworks */,
@@ -394,12 +414,14 @@
 				0535EAE1270A55B1009462B0 /* libSDL2main.a in Frameworks */,
 				052E59292719D9920064A24B /* GoogleMobileAds.xcframework in Frameworks */,
 				05F22C7F2709F0DA00C34B15 /* libCorradeUtility.a in Frameworks */,
+				05718C70271A1F3A0090C631 /* SwiftHTTP.framework in Frameworks */,
 				05F22C762709F0DA00C34B15 /* libCorradePluginManager.a in Frameworks */,
 				05F22C732709F0DA00C34B15 /* libMagnumTrade.a in Frameworks */,
 				05F22C742709F0DA00C34B15 /* libMagnumShaders.a in Frameworks */,
 				05F22C752709F0DA00C34B15 /* libMagnumAudio.a in Frameworks */,
 				05F22C772709F0DA00C34B15 /* libMagnumPrimitives.a in Frameworks */,
 				05F22C782709F0DA00C34B15 /* libMagnumMeshTools.a in Frameworks */,
+				05718C7B271A287F0090C631 /* SystemConfiguration.framework in Frameworks */,
 				05F22C792709F0DA00C34B15 /* libMagnumTextureTools.a in Frameworks */,
 				05F22C7D2709F0DA00C34B15 /* libMagnumSdl2Application.a in Frameworks */,
 				05F22C802709F0DA00C34B15 /* libMagnumSceneGraph.a in Frameworks */,
@@ -422,9 +444,12 @@
 		0535E8F7270A4259009462B0 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				052E591D2719D7E60064A24B /* AppSetup.swift */,
+				05718C80271A32DE0090C631 /* AppAdDelegate.swift */,
 				0535E8F8270A4267009462B0 /* Startup.swift */,
 				052E591A2719C56A0064A24B /* Utility.swift */,
-				052E591D2719D7E60064A24B /* AdSetup.swift */,
+				05718C77271A1FBE0090C631 /* BundleExtension.swift */,
+				05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -540,6 +565,9 @@
 		AFB14C0527007181005837DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				05718C7A271A287F0090C631 /* SystemConfiguration.framework */,
+				05718C72271A1F400090C631 /* SwiftHTTP.framework */,
+				05718C6D271A1F270090C631 /* SwiftHTTP.framework */,
 				052E59282719D9920064A24B /* GoogleMobileAds.xcframework */,
 				05C2595627177F7700B8D75E /* libopenal.1.dylib */,
 				05CB665C27138AA600F97E29 /* CoreMotion.framework */,
@@ -828,6 +856,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				05CB8EE8271358F8009AD69F /* Startup.swift in Sources */,
+				052E591E2719D7E60064A24B /* AppSetup.swift in Sources */,
 				05CB8EE9271358F8009AD69F /* StreamedAudioBuffer.cpp in Sources */,
 				05CB8EEA271358F8009AD69F /* StreamedAudioPlayable.cpp in Sources */,
 				05CB8EEB271358F8009AD69F /* PlasmaSquareRenderer.cpp in Sources */,
@@ -844,6 +873,7 @@
 				05CB8EF6271358F8009AD69F /* Congrats.cpp in Sources */,
 				05CB8EF7271358F8009AD69F /* Dialog.cpp in Sources */,
 				05CB8EF8271358F8009AD69F /* LimitLine.cpp in Sources */,
+				05718C7E271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */,
 				05CB8EF9271358F8009AD69F /* LevelSelector.cpp in Sources */,
 				05CB8EFA271358F8009AD69F /* AbstractGuiElement.cpp in Sources */,
 				05CB8EFB271358F8009AD69F /* Player.cpp in Sources */,
@@ -852,6 +882,7 @@
 				05CB8EFD271358F8009AD69F /* Logo.cpp in Sources */,
 				05CB8EFE271358F8009AD69F /* Scenery.cpp in Sources */,
 				05CB8EFF271358F8009AD69F /* Skybox.cpp in Sources */,
+				05718C78271A1FBE0090C631 /* BundleExtension.swift in Sources */,
 				05CB8F00271358F8009AD69F /* OverlayGuiDetached.cpp in Sources */,
 				05CB8F01271358F8009AD69F /* Onboarding.cpp in Sources */,
 				05CB8F02271358F8009AD69F /* FallingBubble.cpp in Sources */,
@@ -859,11 +890,11 @@
 				05CB8F04271358F8009AD69F /* BaseDrawable.cpp in Sources */,
 				05CB8F05271358F8009AD69F /* WaterShader.cpp in Sources */,
 				05CB8F06271358F8009AD69F /* SpriteShader.cpp in Sources */,
-				052E591E2719D7E60064A24B /* AdSetup.swift in Sources */,
 				05CB8F07271358F8009AD69F /* PlasmaShader.cpp in Sources */,
 				05CB8F08271358F8009AD69F /* CubeMapShader.cpp in Sources */,
 				05CB8F09271358F8009AD69F /* ScreenQuadShader.cpp in Sources */,
 				05CB8F0A271358F8009AD69F /* StarRoadShader.cpp in Sources */,
+				05718C81271A32DE0090C631 /* AppAdDelegate.swift in Sources */,
 				05CB8F0B271358F8009AD69F /* ShootPathShader.cpp in Sources */,
 				05CB8F0C271358F8009AD69F /* SunShader.cpp in Sources */,
 				05CB8F0D271358F8009AD69F /* Engine.cpp in Sources */,
@@ -881,6 +912,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0535E8F9270A4267009462B0 /* Startup.swift in Sources */,
+				052E591F2719D7E60064A24B /* AppSetup.swift in Sources */,
 				05604540270A0A350080AA3E /* StreamedAudioBuffer.cpp in Sources */,
 				05604541270A0A350080AA3E /* StreamedAudioPlayable.cpp in Sources */,
 				0560454A270A0A850080AA3E /* PlasmaSquareRenderer.cpp in Sources */,
@@ -897,6 +929,7 @@
 				0560456E270A0AAF0080AA3E /* Congrats.cpp in Sources */,
 				0560456F270A0AAF0080AA3E /* Dialog.cpp in Sources */,
 				05604570270A0AAF0080AA3E /* LimitLine.cpp in Sources */,
+				05718C7F271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */,
 				05604571270A0AAF0080AA3E /* LevelSelector.cpp in Sources */,
 				05604572270A0AAF0080AA3E /* AbstractGuiElement.cpp in Sources */,
 				05604573270A0AAF0080AA3E /* Player.cpp in Sources */,
@@ -905,6 +938,7 @@
 				05604575270A0AAF0080AA3E /* Logo.cpp in Sources */,
 				05604576270A0AAF0080AA3E /* Scenery.cpp in Sources */,
 				05604577270A0AAF0080AA3E /* Skybox.cpp in Sources */,
+				05718C79271A1FBE0090C631 /* BundleExtension.swift in Sources */,
 				05604578270A0AAF0080AA3E /* OverlayGuiDetached.cpp in Sources */,
 				05604579270A0AAF0080AA3E /* Onboarding.cpp in Sources */,
 				0560457A270A0AAF0080AA3E /* FallingBubble.cpp in Sources */,
@@ -912,11 +946,11 @@
 				0560457F270A0AD50080AA3E /* BaseDrawable.cpp in Sources */,
 				0560458A270A0AE90080AA3E /* WaterShader.cpp in Sources */,
 				0560458B270A0AE90080AA3E /* SpriteShader.cpp in Sources */,
-				052E591F2719D7E60064A24B /* AdSetup.swift in Sources */,
 				0560458C270A0AE90080AA3E /* PlasmaShader.cpp in Sources */,
 				0560458D270A0AE90080AA3E /* CubeMapShader.cpp in Sources */,
 				0560458E270A0AE90080AA3E /* ScreenQuadShader.cpp in Sources */,
 				0560458F270A0AE90080AA3E /* StarRoadShader.cpp in Sources */,
+				05718C82271A32DE0090C631 /* AppAdDelegate.swift in Sources */,
 				0545F09A2711AD980075E566 /* ShootPathShader.cpp in Sources */,
 				05604590270A0AE90080AA3E /* SunShader.cpp in Sources */,
 				0560459D270A0AFC0080AA3E /* Engine.cpp in Sources */,
@@ -956,7 +990,7 @@
 					/Users/alfonso/Development/common/include,
 				);
 				INFOPLIST_FILE = breakmycircle/InfoArm.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1013,7 +1047,7 @@
 					/Users/alfonso/Development/common/include,
 				);
 				INFOPLIST_FILE = breakmycircle/InfoArm.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1055,7 +1089,7 @@
 				);
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1086,7 +1120,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1100,7 +1134,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1120,7 +1154,7 @@
 				);
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -1151,7 +1185,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -1159,7 +1193,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1194,7 +1228,7 @@
 					/Users/alfonso/Development/common/include,
 				);
 				INFOPLIST_FILE = breakmycircle/InfoSim.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1211,7 +1245,7 @@
 					"$(OTHER_CFLAGS)",
 					"-fno-rtti",
 				);
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = iphonesimulator;
@@ -1247,7 +1281,7 @@
 					/Users/alfonso/Development/common/include,
 				);
 				INFOPLIST_FILE = breakmycircle/InfoSim.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1264,7 +1298,7 @@
 					"$(OTHER_CFLAGS)",
 					"-fno-rtti",
 				);
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = iphonesimulator;

@@ -361,7 +361,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		for (auto& b : bubbles)
 		{
 			Int thisAmount = 0;
-			if (thisAmount = b->destroyNearbyBubbles(false))
+			if ((thisAmount = b->destroyNearbyBubbles(false)))
 			{
 				shootAmount += thisAmount;
 
@@ -391,7 +391,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 		}
 
 		// Destroy nearby bubbles and disjoint bubble groups
-		if (shootAmount = b->destroyNearbyBubbles(false))
+		if ((shootAmount = b->destroyNearbyBubbles(false)))
 		{
 			shootAmount += b->destroyDisjointBubbles();
 		}
