@@ -1,9 +1,5 @@
 #pragma once
 
-#define GO_LS_SCENERY_LENGTH 50.0f
-#define GO_LS_MAX_SCROLL_VELOCITY 0.5f
-#define GO_LS_CLICK_TAP_MAX_DELAY 0.3
-
 #define GO_LS_TEXT_LEVEL 0U
 #define GO_LS_TEXT_TIME 1U
 #define GO_LS_TEXT_COIN 2U
@@ -82,6 +78,15 @@
 #include "OverlayGui.h"
 #include "OverlayText.h"
 #include "Scenery.h"
+
+#define GO_LS_SCENERY_LENGTH 50.0f
+#define GO_LS_CLICK_TAP_MAX_DELAY 0.3
+
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+#define GO_LS_MAX_SCROLL_VELOCITY 2.0f
+#else
+#define GO_LS_MAX_SCROLL_VELOCITY 0.5f
+#endif
 
 using namespace Magnum;
 
@@ -190,10 +195,12 @@ private:
 		Vector3 release;
 		Vector3 velocity;
 		Float factor;
+        bool disableObjectPicking;
 
+#ifdef TARGET_MOBILE
 		Float touchTimer;
 		Containers::Optional<Vector3> touchVelocity;
-		bool disableObjectPicking;
+#endif
 	};
 
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);

@@ -94,12 +94,12 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		Containers::NullOpt,
 		Vector3(0.0f),
 		Vector3(0.0f),
-		0.0f
-#if defined(TARGET_MOBILE)
+		0.0f,
+        false
+#ifdef TARGET_MOBILE
 		,
 		0.2f,
-		Containers::NullOpt,
-		false
+		Containers::NullOpt
 #endif
 	};
 	mClickIndex = -1;
@@ -689,12 +689,12 @@ void LevelSelector::update()
 		if (!isViewingLevel && !mSettingsOpened && mLevelInfo.state == GO_LS_LEVEL_INIT && !mLevelEndingAnim)
 		{
 			mScrolling.prevMousePos = InputManager::singleton->mMousePosition;
-			mScrolling.touchVelocity = Containers::NullOpt;
 			mClickStartTime = std::chrono::system_clock::now();
+            mScrolling.disableObjectPicking = false;
 
-#if defined(TARGET_MOBILE)
+#ifdef TARGET_MOBILE
 			mScrolling.touchTimer = 0.2f;
-			mScrolling.disableObjectPicking = false;
+            mScrolling.touchVelocity = Containers::NullOpt;
 #endif
 		}
 	}
@@ -711,10 +711,10 @@ void LevelSelector::update()
 			else
 			{
                 const Vector3 scrollDelta = Vector3(mouseDelta.x(), 0.0f, Float(mouseDelta.y())) * -0.05f;
-				mScrolling.velocity = scrollDelta;
+                mScrolling.velocity = scrollDelta;
 			}
 
-#if defined(TARGET_MOBILE)
+#ifdef TARGET_MOBILE
 			// Natural scrolling for touch
 			mScrolling.touchTimer -= mDeltaTime;
 			if (mScrolling.touchTimer <= 0.0f)
@@ -737,19 +737,24 @@ void LevelSelector::update()
 					/// TODO: landscape scale factor
 					mScrolling.touchVelocity = pa;
 				}
-
-				if (mouseDelta.length() >= 0.5f)
-				{
-					mScrolling.disableObjectPicking = true;
-				}
+                
+                if (mouseDelta.length() >= 0.5f)
+                {
+                    mScrolling.disableObjectPicking = true;
+                }
 			}
-
-			// Disable object picking while scrolling
-			if (mScrolling.disableObjectPicking)
-			{
-				InputManager::singleton->mReadObjectId = false;
-			}
+#else
+            if (mouseDelta.length() >= 2.0f)
+            {
+                mScrolling.disableObjectPicking = true;
+            }
 #endif
+            
+            // Disable object picking while scrolling
+            if (mScrolling.disableObjectPicking)
+            {
+                InputManager::singleton->mReadObjectId = false;
+            }
 
 			// Update previous mouse state
 			mScrolling.prevMousePos = InputManager::singleton->mMousePosition;
@@ -769,9 +774,13 @@ void LevelSelector::update()
 		{
             mScrolling.factor = 1.0f;
 #if defined(TARGET_MOBILE)
-			mScrolling.release = (mScrolling.touchVelocity != Containers::NullOpt ? *mScrolling.touchVelocity : mScrolling.velocity) / CommonUtility::singleton->mConfig.displayDensity;
+            mScrolling.release = (mScrolling.touchVelocity != Containers::NullOpt ? *mScrolling.touchVelocity : mScrolling.velocity)
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+            ;
 #else
-			mScrolling.release = mScrolling.velocity / CommonUtility::singleton->mConfig.displayDensity;
+            / CommonUtility::singleton->mConfig.displayDensity;
+#endif
+            mScrolling.release = mScrolling.velocity / CommonUtility::singleton->mConfig.displayDensity;
 #endif
 
 			const Float limit = GO_LS_MAX_SCROLL_VELOCITY / CommonUtility::singleton->mConfig.displayDensity;
@@ -792,7 +801,14 @@ void LevelSelector::update()
 		// Handle scroll inertia
 		if (!mScrolling.velocity.isZero())
 		{
-			mScrolling.factor -= mDeltaTime * 0.5f;
+            mScrolling.factor -= mDeltaTime *
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+            0.2f
+#else
+            0.5f
+#endif
+            ;
+            
 			if (mScrolling.factor < 0.0f)
 			{
 				mScrolling.factor = 0.0f;

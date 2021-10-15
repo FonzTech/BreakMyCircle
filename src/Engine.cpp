@@ -37,7 +37,7 @@ Engine::Engine(const Arguments& arguments) :
 #ifdef CORRADE_TARGET_ANDROID
 Platform::Application{ arguments, ENGINE_CONFIGURATION }
 #elif defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
-Platform::Application{ arguments, Configuration{} }, mIosDefaultFramebuffer(Containers::NullOpt)
+Platform::Application{ arguments, Configuration{}.setWindowFlags(Configuration::WindowFlag::Fullscreen) }, mIosDefaultFramebuffer(Containers::NullOpt)
 #else
 Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setSize({ 432, 768 }) }
 #endif
