@@ -1,4 +1,5 @@
 platform :ios, '11.0'
+use_frameworks! :linkage => :static
 
 target 'breakmycircle_sim' do
   pod 'Google-Mobile-Ads-SDK'

@@ -3,12 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		052E591B2719C56A0064A24B /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591A2719C56A0064A24B /* Utility.swift */; };
 		052E591C2719C56A0064A24B /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591A2719C56A0064A24B /* Utility.swift */; };
+		052E591E2719D7E60064A24B /* AdSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AdSetup.swift */; };
+		052E591F2719D7E60064A24B /* AdSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AdSetup.swift */; };
+		052E59292719D9920064A24B /* GoogleMobileAds.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 052E59282719D9920064A24B /* GoogleMobileAds.xcframework */; };
 		0535E8F6270A3E41009462B0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604595270A0AFC0080AA3E /* main.cpp */; };
 		0535E8F9270A4267009462B0 /* Startup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* Startup.swift */; };
 		0535EA62270A4DE7009462B0 /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0535EA61270A4DE7009462B0 /* assets.json */; };
@@ -171,15 +174,15 @@
 		05F22CA72709F55F00C34B15 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CA02709F51A00C34B15 /* OpenGLES.framework */; };
 		05F22CAA2709F56F00C34B15 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CA92709F56F00C34B15 /* OpenAL.framework */; };
 		05F22CF42709F63B00C34B15 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF32709F63B00C34B15 /* UIKit.framework */; };
+		134FF9151FE80F9C80DC7843 /* Pods_breakmycircle_arm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F89ADA4C89431151F800597F /* Pods_breakmycircle_arm.framework */; };
+		9D3C9C3CB576865B8D79D85C /* Pods_breakmycircle_sim.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2CF808E414EE4A3C86BACF /* Pods_breakmycircle_sim.framework */; };
 		AFFB4E3C26FF48DE00FD2500 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */; };
-		DC8EF19127D5B1BD1B98547F /* libPods-breakmycircle_sim.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9647757648287911596857E7 /* libPods-breakmycircle_sim.a */; };
-		DCCBEFAB5CCB44CB4AEF3887 /* libPods-breakmycircle_arm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87F30D4951D30D9EE1526AF5 /* libPods-breakmycircle_arm.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		056045B0270A23410080AA3E /* Embed Libraries */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
@@ -204,6 +207,8 @@
 
 /* Begin PBXFileReference section */
 		052E591A2719C56A0064A24B /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
+		052E591D2719D7E60064A24B /* AdSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdSetup.swift; sourceTree = "<group>"; };
+		052E59282719D9920064A24B /* GoogleMobileAds.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleMobileAds.xcframework; path = "Pods/Google-Mobile-Ads-SDK/Frameworks/GoogleMobileAdsFramework-Current/GoogleMobileAds.xcframework"; sourceTree = "<group>"; };
 		0535E8F8270A4267009462B0 /* Startup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Startup.swift; sourceTree = "<group>"; };
 		0535EA61270A4DE7009462B0 /* assets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = assets.json; path = ../android/app/src/main/res/raw/assets.json; sourceTree = "<group>"; };
 		0535EAD1270A51BC009462B0 /* paths */ = {isa = PBXFileReference; lastKnownFileType = folder; name = paths; path = ../paths; sourceTree = "<group>"; };
@@ -330,30 +335,13 @@
 		05F22D002709F8AF00C34B15 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		18320DE7F7C5B1976D856AA2 /* Pods-breakmycircle_sim.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-breakmycircle_sim.debug.xcconfig"; path = "Target Support Files/Pods-breakmycircle_sim/Pods-breakmycircle_sim.debug.xcconfig"; sourceTree = "<group>"; };
 		38E3E635CD371A3DBC9308CC /* Pods-breakmycircle_sim.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-breakmycircle_sim.release.xcconfig"; path = "Target Support Files/Pods-breakmycircle_sim/Pods-breakmycircle_sim.release.xcconfig"; sourceTree = "<group>"; };
-		87F30D4951D30D9EE1526AF5 /* libPods-breakmycircle_arm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-breakmycircle_arm.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		9647757648287911596857E7 /* libPods-breakmycircle_sim.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-breakmycircle_sim.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		AFB14C0627007181005837DE /* libMagnum.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnum.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnum.a"; sourceTree = "<group>"; };
-		AFB14C0727007182005837DE /* libCorradeTestSuite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradeTestSuite.a; path = "../../../Users/etuitus/ios-libs/lib/libCorradeTestSuite.a"; sourceTree = "<group>"; };
-		AFB14C0827007182005837DE /* libMagnumAudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumAudio.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumAudio.a"; sourceTree = "<group>"; };
-		AFB14C0927007182005837DE /* libCorradeUtility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradeUtility.a; path = "../../../Users/etuitus/ios-libs/lib/libCorradeUtility.a"; sourceTree = "<group>"; };
-		AFB14C0A27007183005837DE /* libMagnumPrimitives.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumPrimitives.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumPrimitives.a"; sourceTree = "<group>"; };
-		AFB14C0B27007183005837DE /* libMagnumSdl2Application.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumSdl2Application.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumSdl2Application.a"; sourceTree = "<group>"; };
-		AFB14C0C27007184005837DE /* libMagnumGL.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumGL.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumGL.a"; sourceTree = "<group>"; };
-		AFB14C0D27007184005837DE /* libMagnumMeshTools.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumMeshTools.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumMeshTools.a"; sourceTree = "<group>"; };
-		AFB14C0E27007184005837DE /* libCorradePluginManager.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradePluginManager.a; path = "../../../Users/etuitus/ios-libs/lib/libCorradePluginManager.a"; sourceTree = "<group>"; };
-		AFB14C0F27007185005837DE /* libCorradeInterconnect.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradeInterconnect.a; path = "../../../Users/etuitus/ios-libs/lib/libCorradeInterconnect.a"; sourceTree = "<group>"; };
-		AFB14C1A270071B7005837DE /* libMagnumText.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumText.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumText.a"; sourceTree = "<group>"; };
-		AFB14C1B270071B7005837DE /* libMagnumTrade.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumTrade.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumTrade.a"; sourceTree = "<group>"; };
-		AFB14C1C270071B8005837DE /* libMagnumShaders.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumShaders.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumShaders.a"; sourceTree = "<group>"; };
-		AFB14C1D270071B8005837DE /* libMagnumTextureTools.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumTextureTools.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumTextureTools.a"; sourceTree = "<group>"; };
-		AFB14C1E270071B8005837DE /* libSDL2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libSDL2.a; path = "../../../Users/etuitus/ios-libs/lib/libSDL2.a"; sourceTree = "<group>"; };
-		AFB14C1F270071B8005837DE /* libMagnumSceneGraph.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumSceneGraph.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumSceneGraph.a"; sourceTree = "<group>"; };
-		AFB14C392700726C005837DE /* libMagnumDebugTools.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumDebugTools.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumDebugTools.a"; sourceTree = "<group>"; };
+		6D2CF808E414EE4A3C86BACF /* Pods_breakmycircle_sim.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_breakmycircle_sim.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFFB4E3426FF48DC00FD2500 /* breakmycircle_sim.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = breakmycircle_sim.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AFFB4E4026FF48DE00FD2500 /* InfoSim.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = InfoSim.plist; sourceTree = "<group>"; };
 		C8BC3ADC4E5AC3301EA8832F /* Pods-breakmycircle_arm.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-breakmycircle_arm.debug.xcconfig"; path = "Target Support Files/Pods-breakmycircle_arm/Pods-breakmycircle_arm.debug.xcconfig"; sourceTree = "<group>"; };
 		F6AC8CEA8F097BA7FE73741A /* Pods-breakmycircle_arm.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-breakmycircle_arm.release.xcconfig"; path = "Target Support Files/Pods-breakmycircle_arm/Pods-breakmycircle_arm.release.xcconfig"; sourceTree = "<group>"; };
+		F89ADA4C89431151F800597F /* Pods_breakmycircle_arm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_breakmycircle_arm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -389,7 +377,7 @@
 				05CB8F6F27136457009AD69F /* libAnyImageImporter.a in Frameworks */,
 				05CB8F6B27136418009AD69F /* libTinyGltfImporter.a in Frameworks */,
 				05CB8F6C27136418009AD69F /* libAnySceneImporter.a in Frameworks */,
-				DCCBEFAB5CCB44CB4AEF3887 /* libPods-breakmycircle_arm.a in Frameworks */,
+				134FF9151FE80F9C80DC7843 /* Pods_breakmycircle_arm.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -404,6 +392,7 @@
 				05CB8F7627136D94009AD69F /* libpng16.16.dylib in Frameworks */,
 				05CB8F7827136DC8009AD69F /* libSDL2-2.0.dylib in Frameworks */,
 				0535EAE1270A55B1009462B0 /* libSDL2main.a in Frameworks */,
+				052E59292719D9920064A24B /* GoogleMobileAds.xcframework in Frameworks */,
 				05F22C7F2709F0DA00C34B15 /* libCorradeUtility.a in Frameworks */,
 				05F22C762709F0DA00C34B15 /* libCorradePluginManager.a in Frameworks */,
 				05F22C732709F0DA00C34B15 /* libMagnumTrade.a in Frameworks */,
@@ -423,7 +412,7 @@
 				05CB8F7227136559009AD69F /* libAnyImageImporter.a in Frameworks */,
 				05F22C962709F38600C34B15 /* libPngImporter.a in Frameworks */,
 				0535EAE2270A6130009462B0 /* libAnySceneImporter.a in Frameworks */,
-				DC8EF19127D5B1BD1B98547F /* libPods-breakmycircle_sim.a in Frameworks */,
+				9D3C9C3CB576865B8D79D85C /* Pods_breakmycircle_sim.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,6 +424,7 @@
 			children = (
 				0535E8F8270A4267009462B0 /* Startup.swift */,
 				052E591A2719C56A0064A24B /* Utility.swift */,
+				052E591D2719D7E60064A24B /* AdSetup.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -550,6 +540,7 @@
 		AFB14C0527007181005837DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				052E59282719D9920064A24B /* GoogleMobileAds.xcframework */,
 				05C2595627177F7700B8D75E /* libopenal.1.dylib */,
 				05CB665C27138AA600F97E29 /* CoreMotion.framework */,
 				05CB66592713850200F97E29 /* libAppleHIDSWDFlash.tbd */,
@@ -620,25 +611,8 @@
 				05F22C632709F0DA00C34B15 /* libMagnumTrade.a */,
 				05F22C6B2709F0DA00C34B15 /* libpng16.a */,
 				05F22C6C2709F0DA00C34B15 /* libSDL2.a */,
-				AFB14C392700726C005837DE /* libMagnumDebugTools.a */,
-				AFB14C1F270071B8005837DE /* libMagnumSceneGraph.a */,
-				AFB14C1C270071B8005837DE /* libMagnumShaders.a */,
-				AFB14C1A270071B7005837DE /* libMagnumText.a */,
-				AFB14C1D270071B8005837DE /* libMagnumTextureTools.a */,
-				AFB14C1B270071B7005837DE /* libMagnumTrade.a */,
-				AFB14C1E270071B8005837DE /* libSDL2.a */,
-				AFB14C0F27007185005837DE /* libCorradeInterconnect.a */,
-				AFB14C0E27007184005837DE /* libCorradePluginManager.a */,
-				AFB14C0727007182005837DE /* libCorradeTestSuite.a */,
-				AFB14C0927007182005837DE /* libCorradeUtility.a */,
-				AFB14C0627007181005837DE /* libMagnum.a */,
-				AFB14C0827007182005837DE /* libMagnumAudio.a */,
-				AFB14C0C27007184005837DE /* libMagnumGL.a */,
-				AFB14C0D27007184005837DE /* libMagnumMeshTools.a */,
-				AFB14C0A27007183005837DE /* libMagnumPrimitives.a */,
-				AFB14C0B27007183005837DE /* libMagnumSdl2Application.a */,
-				87F30D4951D30D9EE1526AF5 /* libPods-breakmycircle_arm.a */,
-				9647757648287911596857E7 /* libPods-breakmycircle_sim.a */,
+				F89ADA4C89431151F800597F /* Pods_breakmycircle_arm.framework */,
+				6D2CF808E414EE4A3C86BACF /* Pods_breakmycircle_sim.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -885,6 +859,7 @@
 				05CB8F04271358F8009AD69F /* BaseDrawable.cpp in Sources */,
 				05CB8F05271358F8009AD69F /* WaterShader.cpp in Sources */,
 				05CB8F06271358F8009AD69F /* SpriteShader.cpp in Sources */,
+				052E591E2719D7E60064A24B /* AdSetup.swift in Sources */,
 				05CB8F07271358F8009AD69F /* PlasmaShader.cpp in Sources */,
 				05CB8F08271358F8009AD69F /* CubeMapShader.cpp in Sources */,
 				05CB8F09271358F8009AD69F /* ScreenQuadShader.cpp in Sources */,
@@ -937,6 +912,7 @@
 				0560457F270A0AD50080AA3E /* BaseDrawable.cpp in Sources */,
 				0560458A270A0AE90080AA3E /* WaterShader.cpp in Sources */,
 				0560458B270A0AE90080AA3E /* SpriteShader.cpp in Sources */,
+				052E591F2719D7E60064A24B /* AdSetup.swift in Sources */,
 				0560458C270A0AE90080AA3E /* PlasmaShader.cpp in Sources */,
 				0560458D270A0AE90080AA3E /* CubeMapShader.cpp in Sources */,
 				0560458E270A0AE90080AA3E /* ScreenQuadShader.cpp in Sources */,
