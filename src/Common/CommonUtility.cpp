@@ -253,7 +253,8 @@ Resource<GL::AbstractShaderProgram, ShootPathShader> CommonUtility::getShootPath
 
 std::unique_ptr<std::string> CommonUtility::getValueFromIntent(const std::string & key)
 {
-#ifdef CORRADE_TARGET_ANDROID
+#if defined(CORRADE_TARGET_ANDROID)
+    
 	auto* na = (ANativeActivity*)mConfig.nativeActivity;
 
 	JNIEnv *env;
@@ -280,9 +281,14 @@ std::unique_ptr<std::string> CommonUtility::getValueFromIntent(const std::string
 	}
 
 	return valueToReturn;
-#else
-	return nullptr;
+    
+#elif defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+    
+    return nullptr;
+    
 #endif
+    
+    return nullptr;
 }
 
 std::string CommonUtility::getTextureNameForPowerup(const UnsignedInt index)

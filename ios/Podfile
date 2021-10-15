@@ -1,0 +1,9 @@
+platform :ios, '11.0'
+
+target 'breakmycircle_sim' do
+  pod 'Google-Mobile-Ads-SDK'
+end
+
+target 'breakmycircle_arm' do
+  pod 'Google-Mobile-Ads-SDK'
+end

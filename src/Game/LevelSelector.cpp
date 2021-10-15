@@ -297,10 +297,8 @@ void LevelSelector::update()
 		    // Resume background music
             RoomManager::singleton->mBgMusic->playable()->source().play();
 
-#ifdef CORRADE_TARGET_ANDROID
 			// Clear powerup data
             callNativeMethod(GO_LS_METHOD_CLEAR_POWERUP_DATA);
-#endif
 
 			// Reset watch powerup state
 			const auto powerupIndex = mWatchForPowerup;
@@ -3029,8 +3027,12 @@ void LevelSelector::callNativeMethod(const std::string & methodName)
     na->vm->DetachCurrentThread();
 
 #elif defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
+    
+    Debug{} << "call iOS method here " << methodName;
 
-    Debug{} << "Cannot call" << methodName << " because not running on Android or iOS";
+#else
+    
+    Error{} << "Cannot call" << methodName << " because not running on Android or iOS";
 
 #endif
 }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		052E591B2719C56A0064A24B /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591A2719C56A0064A24B /* Utility.swift */; };
+		052E591C2719C56A0064A24B /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591A2719C56A0064A24B /* Utility.swift */; };
 		0535E8F6270A3E41009462B0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604595270A0AFC0080AA3E /* main.cpp */; };
 		0535E8F9270A4267009462B0 /* Startup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* Startup.swift */; };
 		0535EA62270A4DE7009462B0 /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0535EA61270A4DE7009462B0 /* assets.json */; };
@@ -170,6 +172,8 @@
 		05F22CAA2709F56F00C34B15 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CA92709F56F00C34B15 /* OpenAL.framework */; };
 		05F22CF42709F63B00C34B15 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF32709F63B00C34B15 /* UIKit.framework */; };
 		AFFB4E3C26FF48DE00FD2500 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */; };
+		DC8EF19127D5B1BD1B98547F /* libPods-breakmycircle_sim.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9647757648287911596857E7 /* libPods-breakmycircle_sim.a */; };
+		DCCBEFAB5CCB44CB4AEF3887 /* libPods-breakmycircle_arm.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 87F30D4951D30D9EE1526AF5 /* libPods-breakmycircle_arm.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -199,6 +203,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		052E591A2719C56A0064A24B /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		0535E8F8270A4267009462B0 /* Startup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Startup.swift; sourceTree = "<group>"; };
 		0535EA61270A4DE7009462B0 /* assets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = assets.json; path = ../android/app/src/main/res/raw/assets.json; sourceTree = "<group>"; };
 		0535EAD1270A51BC009462B0 /* paths */ = {isa = PBXFileReference; lastKnownFileType = folder; name = paths; path = ../paths; sourceTree = "<group>"; };
@@ -323,6 +328,10 @@
 		05F22CF92709F6E800C34B15 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		05F22CFC2709F72700C34B15 /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		05F22D002709F8AF00C34B15 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		18320DE7F7C5B1976D856AA2 /* Pods-breakmycircle_sim.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-breakmycircle_sim.debug.xcconfig"; path = "Target Support Files/Pods-breakmycircle_sim/Pods-breakmycircle_sim.debug.xcconfig"; sourceTree = "<group>"; };
+		38E3E635CD371A3DBC9308CC /* Pods-breakmycircle_sim.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-breakmycircle_sim.release.xcconfig"; path = "Target Support Files/Pods-breakmycircle_sim/Pods-breakmycircle_sim.release.xcconfig"; sourceTree = "<group>"; };
+		87F30D4951D30D9EE1526AF5 /* libPods-breakmycircle_arm.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-breakmycircle_arm.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9647757648287911596857E7 /* libPods-breakmycircle_sim.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-breakmycircle_sim.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFB14C0627007181005837DE /* libMagnum.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnum.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnum.a"; sourceTree = "<group>"; };
 		AFB14C0727007182005837DE /* libCorradeTestSuite.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libCorradeTestSuite.a; path = "../../../Users/etuitus/ios-libs/lib/libCorradeTestSuite.a"; sourceTree = "<group>"; };
 		AFB14C0827007182005837DE /* libMagnumAudio.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libMagnumAudio.a; path = "../../../Users/etuitus/ios-libs/lib/libMagnumAudio.a"; sourceTree = "<group>"; };
@@ -343,6 +352,8 @@
 		AFFB4E3426FF48DC00FD2500 /* breakmycircle_sim.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = breakmycircle_sim.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AFFB4E4026FF48DE00FD2500 /* InfoSim.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = InfoSim.plist; sourceTree = "<group>"; };
+		C8BC3ADC4E5AC3301EA8832F /* Pods-breakmycircle_arm.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-breakmycircle_arm.debug.xcconfig"; path = "Target Support Files/Pods-breakmycircle_arm/Pods-breakmycircle_arm.debug.xcconfig"; sourceTree = "<group>"; };
+		F6AC8CEA8F097BA7FE73741A /* Pods-breakmycircle_arm.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-breakmycircle_arm.release.xcconfig"; path = "Target Support Files/Pods-breakmycircle_arm/Pods-breakmycircle_arm.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -378,6 +389,7 @@
 				05CB8F6F27136457009AD69F /* libAnyImageImporter.a in Frameworks */,
 				05CB8F6B27136418009AD69F /* libTinyGltfImporter.a in Frameworks */,
 				05CB8F6C27136418009AD69F /* libAnySceneImporter.a in Frameworks */,
+				DCCBEFAB5CCB44CB4AEF3887 /* libPods-breakmycircle_arm.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -411,6 +423,7 @@
 				05CB8F7227136559009AD69F /* libAnyImageImporter.a in Frameworks */,
 				05F22C962709F38600C34B15 /* libPngImporter.a in Frameworks */,
 				0535EAE2270A6130009462B0 /* libAnySceneImporter.a in Frameworks */,
+				DC8EF19127D5B1BD1B98547F /* libPods-breakmycircle_sim.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -421,6 +434,7 @@
 			isa = PBXGroup;
 			children = (
 				0535E8F8270A4267009462B0 /* Startup.swift */,
+				052E591A2719C56A0064A24B /* Utility.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -623,6 +637,8 @@
 				AFB14C0D27007184005837DE /* libMagnumMeshTools.a */,
 				AFB14C0A27007183005837DE /* libMagnumPrimitives.a */,
 				AFB14C0B27007183005837DE /* libMagnumSdl2Application.a */,
+				87F30D4951D30D9EE1526AF5 /* libPods-breakmycircle_arm.a */,
+				9647757648287911596857E7 /* libPods-breakmycircle_sim.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -640,6 +656,7 @@
 				AFFB4E3626FF48DC00FD2500 /* BreakMyCircle */,
 				AFFB4E3526FF48DC00FD2500 /* Products */,
 				AFB14C0527007181005837DE /* Frameworks */,
+				DAFECD0725CB17C64BBB5052 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -663,6 +680,17 @@
 			path = BreakMyCircle;
 			sourceTree = "<group>";
 		};
+		DAFECD0725CB17C64BBB5052 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C8BC3ADC4E5AC3301EA8832F /* Pods-breakmycircle_arm.debug.xcconfig */,
+				F6AC8CEA8F097BA7FE73741A /* Pods-breakmycircle_arm.release.xcconfig */,
+				18320DE7F7C5B1976D856AA2 /* Pods-breakmycircle_sim.debug.xcconfig */,
+				38E3E635CD371A3DBC9308CC /* Pods-breakmycircle_sim.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -670,6 +698,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 05CB8F3E271358F8009AD69F /* Build configuration list for PBXNativeTarget "breakmycircle_arm" */;
 			buildPhases = (
+				E0F3482D3771C441D2204DFF /* [CP] Check Pods Manifest.lock */,
 				05CB8EE7271358F8009AD69F /* Sources */,
 				05CB8F14271358F8009AD69F /* Frameworks */,
 				05CB8F31271358F8009AD69F /* Resources */,
@@ -688,6 +717,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AFFB4E4326FF48DE00FD2500 /* Build configuration list for PBXNativeTarget "breakmycircle_sim" */;
 			buildPhases = (
+				1B425F5712F448F5AE4882B8 /* [CP] Check Pods Manifest.lock */,
 				AFFB4E3026FF48DC00FD2500 /* Sources */,
 				AFFB4E3126FF48DC00FD2500 /* Frameworks */,
 				AFFB4E3226FF48DC00FD2500 /* Resources */,
@@ -771,6 +801,53 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		1B425F5712F448F5AE4882B8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-breakmycircle_sim-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		E0F3482D3771C441D2204DFF /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-breakmycircle_arm-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		05CB8EE7271358F8009AD69F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -796,6 +873,7 @@
 				05CB8EF9271358F8009AD69F /* LevelSelector.cpp in Sources */,
 				05CB8EFA271358F8009AD69F /* AbstractGuiElement.cpp in Sources */,
 				05CB8EFB271358F8009AD69F /* Player.cpp in Sources */,
+				052E591B2719C56A0064A24B /* Utility.swift in Sources */,
 				05CB8EFC271358F8009AD69F /* LevelSelectorSidecar.cpp in Sources */,
 				05CB8EFD271358F8009AD69F /* Logo.cpp in Sources */,
 				05CB8EFE271358F8009AD69F /* Scenery.cpp in Sources */,
@@ -847,6 +925,7 @@
 				05604571270A0AAF0080AA3E /* LevelSelector.cpp in Sources */,
 				05604572270A0AAF0080AA3E /* AbstractGuiElement.cpp in Sources */,
 				05604573270A0AAF0080AA3E /* Player.cpp in Sources */,
+				052E591C2719C56A0064A24B /* Utility.swift in Sources */,
 				05604574270A0AAF0080AA3E /* LevelSelectorSidecar.cpp in Sources */,
 				05604575270A0AAF0080AA3E /* Logo.cpp in Sources */,
 				05604576270A0AAF0080AA3E /* Scenery.cpp in Sources */,
@@ -879,6 +958,7 @@
 /* Begin XCBuildConfiguration section */
 		05CB8F3F271358F8009AD69F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C8BC3ADC4E5AC3301EA8832F /* Pods-breakmycircle_arm.debug.xcconfig */;
 			buildSettings = {
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -935,6 +1015,7 @@
 		};
 		05CB8F40271358F8009AD69F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F6AC8CEA8F097BA7FE73741A /* Pods-breakmycircle_arm.release.xcconfig */;
 			buildSettings = {
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1115,6 +1196,7 @@
 		};
 		AFFB4E4426FF48DE00FD2500 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 18320DE7F7C5B1976D856AA2 /* Pods-breakmycircle_sim.debug.xcconfig */;
 			buildSettings = {
 				ARCHS = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1167,6 +1249,7 @@
 		};
 		AFFB4E4526FF48DE00FD2500 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 38E3E635CD371A3DBC9308CC /* Pods-breakmycircle_sim.release.xcconfig */;
 			buildSettings = {
 				ARCHS = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
