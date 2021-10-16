@@ -24,8 +24,8 @@
 		0535EAE1270A55B1009462B0 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C9D2709F4AE00C34B15 /* libSDL2main.a */; };
 		0535EAE2270A6130009462B0 /* libAnySceneImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C902709F38600C34B15 /* libAnySceneImporter.a */; };
 		0545F09A2711AD980075E566 /* ShootPathShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0545F0992711AD980075E566 /* ShootPathShader.cpp */; };
-		0549C207271B487500490E66 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0549C1F3271B463900490E66 /* GoogleService-Info.plist */; };
 		0549C208271B488600490E66 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0549C1F3271B463900490E66 /* GoogleService-Info.plist */; };
+		0549C209271B48F800490E66 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0549C1F3271B463900490E66 /* GoogleService-Info.plist */; };
 		05604540270A0A350080AA3E /* StreamedAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */; };
 		05604541270A0A350080AA3E /* StreamedAudioPlayable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */; };
 		0560454A270A0A850080AA3E /* PlasmaSquareRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604548270A0A850080AA3E /* PlasmaSquareRenderer.cpp */; };
@@ -801,7 +801,7 @@
 				0535EADD270A51BD009462B0 /* scenes in Resources */,
 				0535EADC270A51BD009462B0 /* fonts in Resources */,
 				0535EADB270A51BD009462B0 /* shaders in Resources */,
-				0549C207271B487500490E66 /* GoogleService-Info.plist in Resources */,
+				0549C209271B48F800490E66 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
