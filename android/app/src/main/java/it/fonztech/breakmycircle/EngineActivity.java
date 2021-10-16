@@ -17,6 +17,7 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.OnUserEarnedRewardListener;
+import com.google.android.gms.ads.RequestConfiguration;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
@@ -38,13 +39,12 @@ import java.io.InputStream;
 import java.util.Iterator;
 
 public abstract class EngineActivity extends NativeActivity implements OnInitializationCompleteListener, OnUserEarnedRewardListener, OnCompleteListener<String> {
-    protected static final String TAG = EngineActivity.class.getSimpleName();
+    private static final String TAG = EngineActivity.class.getSimpleName();
+
     protected static final String ASSET_PREFERENCES = "ASSET_PREFERENCES";
+    protected static final String CONFIG_PREFERENCES = "CONFIG_PREFERENCES";
     protected static final String SAVE_FILE = "SAVE_FILE.json";
     protected static final String ADS_NOT_AVAILABLE_TYPE = "_not_available";
-
-    protected static final String URL_VOTE_ME = "https://play.google.com/store/apps/details?id=it.fonztech.breakmycircle";
-    protected static final String URL_OTHER_APPS = "https://play.google.com/store/apps/developer?id=FonzTech";
 
     protected static final String INTERSTITIAL_AD_DEV = "ca-app-pub-3940256099942544/1033173712";
     protected static final String REWARDED_AD_DEV = "ca-app-pub-3940256099942544/5224354917";
@@ -115,7 +115,14 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(this);
 
         // Initialize AdMob
-        MobileAds.initialize(this, this);
+        {
+            final RequestConfiguration requestConfiguration = MobileAds.getRequestConfiguration()
+                    .toBuilder()
+                    .setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE)
+                    .build();
+            MobileAds.setRequestConfiguration(requestConfiguration);
+            MobileAds.initialize(this, this);
+        }
 
         // Display density
         {
@@ -211,7 +218,7 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
     }
 
     @Override
-    protected final void onDestroy() {
+    protected void onDestroy() {
         super.onDestroy();
         IS_ACTIVE = false;
     }
@@ -258,16 +265,6 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         is.close();
 
         return new String(baos.toByteArray());
-    }
-
-    @SuppressWarnings("unused")
-    protected final void gameVoteMe() {
-        openUrl(URL_VOTE_ME);
-    }
-
-    @SuppressWarnings("unused")
-    protected final void gameOtherApps() {
-        openUrl(URL_OTHER_APPS);
     }
 
     protected final void openUrl(final String url) {

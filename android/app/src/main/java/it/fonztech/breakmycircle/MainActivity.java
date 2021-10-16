@@ -1,8 +1,12 @@
 package it.fonztech.breakmycircle;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -10,17 +14,59 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends EngineActivity implements Runnable, DialogInterface.OnClickListener {
+    private static final String TAG = EngineActivity.class.getSimpleName();
+
     protected AlertDialog mDialog;
+
+    protected static final String URL_DEFAULT_VOTE_ME = "https://play.google.com/store/apps/details?id=it.fonztech.breakmycircle";
+    protected static final String URL_DEFAULT_OTHER_APPS = "https://play.google.com/store/apps/developer?id=FonzTech";
+
+    protected Handler handler;
+    protected String mStoreUrl;
+    protected String mDeveloperUrl;
+
+    protected final Runnable configGetterRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (Utility.isNetworkAvailable(MainActivity.this)) {
+                new Thread(MainActivity.this).start();
+            }
+            else if (handler != null) {
+                handler.postDelayed(configGetterRunnable, 5000L);
+            }
+        }
+    };
 
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        new Thread(this).start();
+        {
+            final SharedPreferences prefs = getSharedPreferences(CONFIG_PREFERENCES, Context.MODE_PRIVATE);
+            mPlayAdThreshold = prefs.getInt("playAdThreshold", 3);
+            mStoreUrl = prefs.getString("storeUrl", URL_DEFAULT_VOTE_ME);
+            mDeveloperUrl = prefs.getString("developerUrl", URL_DEFAULT_OTHER_APPS);
+        }
+
+        handler = new Handler();
+        configGetterRunnable.run();
+    }
+
+    @Override
+    protected final void onDestroy() {
+        super.onDestroy();
+
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+            handler = null;
+        }
     }
 
     @Override
@@ -42,16 +88,13 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
 
     @Override
     protected final void setRewardedInfo(final String type, final int amount) {
-        if ("powerup".equalsIgnoreCase(type))
-        {
+        if ("powerup".equalsIgnoreCase(type)) {
             setPowerupInfo(amount);
         }
-        else if (ADS_NOT_AVAILABLE_TYPE.equalsIgnoreCase(type))
-        {
+        else if (ADS_NOT_AVAILABLE_TYPE.equalsIgnoreCase(type)) {
             setPowerupInfo(0);
         }
-        else
-        {
+        else {
             setPowerupInfo(Utility.DEBUG ? 1 : amount);
         }
     }
@@ -62,7 +105,7 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
     }
 
     @Override
-    public void run() {
+    public final void run() {
         HttpsURLConnection c = null;
         try {
             final URL url = new URL(getBackendUrl());
@@ -73,11 +116,17 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
             c.setDoOutput(true);
 
             {
-                final JSONObject json = new JSONObject();
-                json.put("version", getPackageManager().getPackageInfo(getPackageName(), 0).versionCode);
+                final SharedPreferences prefs = getSharedPreferences(CONFIG_PREFERENCES, Context.MODE_PRIVATE);
+                final String configVersion = Integer.toString(prefs.getInt("configVersion", 0));
+
+                final StringBuilder sb = new StringBuilder();
+                sb.append("configVersion=").append(URLEncoder.encode(configVersion, StandardCharsets.UTF_8.name()));
+                sb.append("&type=").append(URLEncoder.encode("android", StandardCharsets.UTF_8.name()));
+                sb.append("&locale=").append(URLEncoder.encode(Locale.getDefault().getCountry(), StandardCharsets.UTF_8.name()));
+                sb.append("&version=").append(URLEncoder.encode(Integer.toString(getPackageManager().getPackageInfo(getPackageName(), 0).versionCode), StandardCharsets.UTF_8.name()));
 
                 final OutputStream os = c.getOutputStream();
-                os.write(json.toString().getBytes());
+                os.write(sb.toString().getBytes());
                 os.close();
             }
 
@@ -92,8 +141,32 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
             baos.close();
 
             final JSONObject json = new JSONObject(new String(baos.toByteArray()));
+
+            if (Utility.DEBUG) {
+                Log.d(TAG, "API response is: " + json);
+            }
+
             mCanShowAds = json.getBoolean("canShowAds");
             mPlayAdThreshold = json.getInt("playAdThreshold");
+
+            if (json.has("storeUrl")) {
+                mStoreUrl = json.getString("storeUrl");
+            }
+
+            if (json.has("developerUrl")) {
+                mDeveloperUrl = json.getString("developerUrl");
+            }
+
+            {
+                final SharedPreferences prefs = getSharedPreferences(CONFIG_PREFERENCES, Context.MODE_PRIVATE);
+                final SharedPreferences.Editor editor = prefs.edit();
+
+                editor.putInt("playAdThreshold", mPlayAdThreshold);
+                editor.putString("storeUrl", mStoreUrl);
+                editor.putString("developerUrl", mDeveloperUrl);
+
+                editor.commit();
+            }
 
             getIntent().putExtra(GAME_PLAY_AD_THRESHOLD, Integer.toString(mPlayAdThreshold));
         }
@@ -118,6 +191,16 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
                 onBackPressed();
                 break;
         }
+    }
+
+    @SuppressWarnings("unused")
+    protected final void gameVoteMe() {
+        openUrl(mStoreUrl != null ? mStoreUrl : URL_DEFAULT_VOTE_ME);
+    }
+
+    @SuppressWarnings("unused")
+    protected final void gameOtherApps() {
+        openUrl(mDeveloperUrl != null ? mDeveloperUrl : URL_DEFAULT_OTHER_APPS);
     }
 
     protected final void setPowerupInfo(final int rewardAmount) {
