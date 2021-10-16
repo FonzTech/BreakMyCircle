@@ -39,17 +39,20 @@ class Utility {
     }
     
     public static func createTopViewController(afterWindowCreate: ((_: UIWindow) -> Void)?) -> UIViewController? {
-        let foregroundActiveScene = UIApplication.shared.connectedScenes.filter { $0.activationState == .foregroundActive }.first
-        guard let foregroundWindowScene = foregroundActiveScene as? UIWindowScene else { return nil }
+        if #available(iOS 13.0, *) {
+            let foregroundActiveScene = UIApplication.shared.connectedScenes.filter { $0.activationState == .foregroundActive }.first
+            guard let foregroundWindowScene = foregroundActiveScene as? UIWindowScene else { return nil }
 
-        let window = UIWindow(windowScene: foregroundWindowScene)
-        if afterWindowCreate != nil {
-            afterWindowCreate!(window)
+            let window = UIWindow(windowScene: foregroundWindowScene)
+            if afterWindowCreate != nil {
+                afterWindowCreate!(window)
+            }
+
+            window.rootViewController = UIViewController()
+            window.windowLevel = .alert + 1
+            window.makeKeyAndVisible()
+            return window.rootViewController
         }
-
-        window.rootViewController = UIViewController()
-        window.windowLevel = .alert + 1
-        window.makeKeyAndVisible()
-        return window.rootViewController
+        return nil
     }
 }

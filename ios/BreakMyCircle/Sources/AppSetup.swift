@@ -13,14 +13,16 @@ var canShowAds: Bool = true
 var gpExpire: Int64 = 1
 var gpAmount: Int = 0
 
-let adRewardedDelegate = AppAdDelegate()
+var rewardedAd: GADRewardedInterstitialAd? = nil
+var interstitialAd: GADInterstitialAd? = nil
+let adDelegate = AppAdDelegate()
 
 @_cdecl("ios_SetupApp")
 public func ios_SetupApp() {
     
     // Setup ads
     setupAds()
-    adRewardedDelegate.dismissFullScreen = dismissRewardedAd
+    adDelegate.rewardedAdCallback = adCallback
     
     // Load stored config
     appStoreUrl = UserDefaults.standard.string(forKey: "appStoreUrl") ?? ""
@@ -40,7 +42,7 @@ public func ios_SetupApp() {
     }
     
     Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { timer in
-        ios_WatchAdPowerup()
+        ios_ShowInterstitial()
     }
 }
 
@@ -70,27 +72,32 @@ public func ios_WatchAdPowerup() {
     gpAmount = 0
     
     if canShowAds {
-        let unitId = Utility.DEBUG ? Utility.ADMOB_DEV_REWARDED : Utility.ADMOB_PROD_REWARDED;
+        let unitId = Utility.DEBUG ? Utility.ADMOB_DEV_REWARDED : Utility.ADMOB_PROD_REWARDED
         GADRewardedInterstitialAd.load(
             withAdUnitID: unitId, request: GADRequest()
           ) { (ad, error) in
             if let error = error {
                 print("Rewarded ad failed to load with error: \(error.localizedDescription)")
-              return
+                showAdError()
+                return
             }
             print("Loading Succeeded")
             
             // Set delegate
-            ad?.fullScreenContentDelegate = adRewardedDelegate
+            rewardedAd = ad
+            rewardedAd?.fullScreenContentDelegate = adDelegate
             
             // Try to display ad
-            let root = UIApplication.shared.windows.first?.rootViewController?.presentedViewController
+            let root = UIApplication.shared.topViewController()
             if root != nil {
                 ad?.present(fromRootViewController: root!) {
                     let reward = ad!.adReward
                     print("Reward received with type \(reward.type), amount \(reward.amount.intValue)")
                     
-                    if (reward.type.lowercased() == "powerup") {
+                    if Utility.DEBUG {
+                        gpAmount = 1
+                    }
+                    else if reward.type.lowercased() == "powerup" {
                         gpAmount = reward.amount.intValue
                     }
                 }
@@ -109,6 +116,34 @@ public func ios_WatchAdPowerup() {
 
 @_cdecl("ios_ShowInterstitial")
 public func ios_ShowInterstitial() {
+    if canShowAds {
+        let unitId = Utility.DEBUG ? Utility.ADMOB_DEV_INTERSTITIAL : Utility.ADMOB_PROD_INTERSTITIAL
+        GADInterstitialAd.load(
+            withAdUnitID: unitId, request: GADRequest()
+        ) { (ad, error) in
+            if let error = error {
+                print("Failed to load interstitial ad with error: \(error.localizedDescription)")
+                return
+            }
+            print("Loading Succeeded")
+         
+            // Set delegate
+            interstitialAd = ad
+            interstitialAd?.fullScreenContentDelegate = adDelegate
+         
+             // Try to display ad
+             let root = UIApplication.shared.topViewController()
+             if root != nil {
+                ad?.present(fromRootViewController: root!)
+             }
+             else {
+                 showAdError()
+             }
+        }
+    }
+    else {
+        print("Could not load interstitial ad")
+    }
 }
 
 @_cdecl("ios_GameVoteMe")
@@ -173,21 +208,44 @@ fileprivate func getAppInfo() {
 
 fileprivate func openUrl(url: String) {
     if url.count <= 0 {
-        let alert = UIAlertController(title: Bundle.main.displayName, message: "Could not open the requested URL. Please, try again later.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Got It", style: .cancel, handler: nil))
-        alert.presentInNewWindow(animated: true, completion: nil)
+        if #available(iOS 13.0, *) {
+            let alert = UIAlertController(title: Bundle.main.displayName, message: "Could not open the requested URL. Please, try again later.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Got It", style: .cancel, handler: nil))
+            alert.presentInNewWindow(animated: true, completion: nil)
+        }
     }
     else if let url = URL(string: url) {
         UIApplication.shared.open(url)
     }
 }
 
-fileprivate func dismissRewardedAd() {
+fileprivate func adCallback(type: Int, error: Error?) {
+    print("Rewarded Interstitial Ad dismissed")
+    
+    switch (type)
+    {
+    case AppAdDelegate.TYPE_FAILED_TO_PRESENT:
+        print("Rewarded Ad failed to present")
+        
+    case AppAdDelegate.TYPE_PRESENTED:
+        print("Rewarded Ad presented")
+        
+        
+    case AppAdDelegate.TYPE_DISMISSED:
+        print("Rewarded Ad dismissed")
+        
+    default:
+        print("No action to take for type \(type)")
+    }
+    
     gpExpire = Int64(Date().timeIntervalSince1970 * 1000)
+    interstitialAd = nil
 }
 
 fileprivate func showAdError() {
-    let alert = UIAlertController(title: Bundle.main.displayName, message: "This functionality is not available at this time. Please, try again later.", preferredStyle: .alert)
-    alert.addAction(UIAlertAction(title: "Got It", style: .cancel, handler: nil))
-    alert.presentInNewWindow(animated: true, completion: nil)
+    if #available(iOS 13.0, *) {
+        let alert = UIAlertController(title: Bundle.main.displayName, message: "This functionality is not available at this time. Please, try again later.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Got It", style: .cancel, handler: nil))
+        alert.presentInNewWindow(animated: true, completion: nil)
+    }
 }

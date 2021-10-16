@@ -80,6 +80,8 @@
 		05718C82271A32DE0090C631 /* AppAdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdDelegate.swift */; };
 		05C2595727177F7700B8D75E /* libopenal.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 05C2595627177F7700B8D75E /* libopenal.1.dylib */; };
 		05C2595827177F7E00B8D75E /* libopenal.1.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 05C2595627177F7700B8D75E /* libopenal.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		05C40145271AF483009ADA54 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C40144271AF483009ADA54 /* UIApplicationExtension.swift */; };
+		05C40146271AF483009ADA54 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C40144271AF483009ADA54 /* UIApplicationExtension.swift */; };
 		05CB665027137C2700F97E29 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF92709F6E800C34B15 /* AVFoundation.framework */; };
 		05CB665227137F4100F97E29 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF62709F6BF00C34B15 /* AudioToolbox.framework */; };
 		05CB665427137FCB00F97E29 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CFC2709F72700C34B15 /* GameController.framework */; };
@@ -283,6 +285,7 @@
 		05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertControllerExtension.swift; sourceTree = "<group>"; };
 		05718C80271A32DE0090C631 /* AppAdDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAdDelegate.swift; sourceTree = "<group>"; };
 		05C2595627177F7700B8D75E /* libopenal.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopenal.1.dylib; path = "../../../../Development/ios-arm64/lib/libopenal.1.dylib"; sourceTree = "<group>"; };
+		05C40144271AF483009ADA54 /* UIApplicationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtension.swift; sourceTree = "<group>"; };
 		05CB66462713779E00F97E29 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		05CB664D27137AB300F97E29 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		05CB6655271384E000F97E29 /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
@@ -450,6 +453,7 @@
 				052E591A2719C56A0064A24B /* Utility.swift */,
 				05718C77271A1FBE0090C631 /* BundleExtension.swift */,
 				05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */,
+				05C40144271AF483009ADA54 /* UIApplicationExtension.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -867,6 +871,7 @@
 				05CB8EF0271358F8009AD69F /* OverlayGui.cpp in Sources */,
 				05CB8EF1271358F8009AD69F /* OverlayText.cpp in Sources */,
 				05CB8EF2271358F8009AD69F /* Projectile.cpp in Sources */,
+				05C40145271AF483009ADA54 /* UIApplicationExtension.swift in Sources */,
 				05CB8EF3271358F8009AD69F /* Bubble.cpp in Sources */,
 				05CB8EF4271358F8009AD69F /* MapPickup.cpp in Sources */,
 				05CB8EF5271358F8009AD69F /* SafeMinigame.cpp in Sources */,
@@ -923,6 +928,7 @@
 				05604568270A0AAF0080AA3E /* OverlayGui.cpp in Sources */,
 				05604569270A0AAF0080AA3E /* OverlayText.cpp in Sources */,
 				0560456A270A0AAF0080AA3E /* Projectile.cpp in Sources */,
+				05C40146271AF483009ADA54 /* UIApplicationExtension.swift in Sources */,
 				0560456B270A0AAF0080AA3E /* Bubble.cpp in Sources */,
 				0560456C270A0AAF0080AA3E /* MapPickup.cpp in Sources */,
 				0560456D270A0AAF0080AA3E /* SafeMinigame.cpp in Sources */,
@@ -990,7 +996,7 @@
 					/Users/alfonso/Development/common/include,
 				);
 				INFOPLIST_FILE = breakmycircle/InfoArm.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1047,7 +1053,7 @@
 					/Users/alfonso/Development/common/include,
 				);
 				INFOPLIST_FILE = breakmycircle/InfoArm.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1134,7 +1140,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1193,7 +1199,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = NO;
@@ -1228,7 +1234,7 @@
 					/Users/alfonso/Development/common/include,
 				);
 				INFOPLIST_FILE = breakmycircle/InfoSim.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -1281,7 +1287,7 @@
 					/Users/alfonso/Development/common/include,
 				);
 				INFOPLIST_FILE = breakmycircle/InfoSim.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
