@@ -1,5 +1,6 @@
 import Foundation
 import GoogleMobileAds
+import FirebaseCore
 import SwiftHTTP
 
 var appInfoTimer: Timer? = nil
@@ -22,6 +23,7 @@ public func ios_SetupApp() {
     
     // Setup ads
     setupAds()
+    setupFirebase()
     adDelegate.rewardedAdCallback = adCallback
     
     // Load stored config
@@ -39,10 +41,6 @@ public func ios_SetupApp() {
                 getAppInfo()
             }
         }
-    }
-    
-    Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { timer in
-        ios_ShowInterstitial()
     }
 }
 
@@ -161,6 +159,10 @@ fileprivate func setupAds() {
     GADMobileAds.sharedInstance().start { (status) in
         isAdmobInitialized = true
     }
+}
+
+fileprivate func setupFirebase() {
+    FirebaseApp.configure()
 }
 
 fileprivate func getAppInfo() {

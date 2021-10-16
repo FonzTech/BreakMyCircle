@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,7 +11,6 @@
 		052E591C2719C56A0064A24B /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591A2719C56A0064A24B /* Utility.swift */; };
 		052E591E2719D7E60064A24B /* AppSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AppSetup.swift */; };
 		052E591F2719D7E60064A24B /* AppSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AppSetup.swift */; };
-		052E59292719D9920064A24B /* GoogleMobileAds.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 052E59282719D9920064A24B /* GoogleMobileAds.xcframework */; };
 		0535E8F6270A3E41009462B0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604595270A0AFC0080AA3E /* main.cpp */; };
 		0535E8F9270A4267009462B0 /* Startup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* Startup.swift */; };
 		0535EA62270A4DE7009462B0 /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0535EA61270A4DE7009462B0 /* assets.json */; };
@@ -25,6 +24,8 @@
 		0535EAE1270A55B1009462B0 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C9D2709F4AE00C34B15 /* libSDL2main.a */; };
 		0535EAE2270A6130009462B0 /* libAnySceneImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C902709F38600C34B15 /* libAnySceneImporter.a */; };
 		0545F09A2711AD980075E566 /* ShootPathShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0545F0992711AD980075E566 /* ShootPathShader.cpp */; };
+		0549C207271B487500490E66 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0549C1F3271B463900490E66 /* GoogleService-Info.plist */; };
+		0549C208271B488600490E66 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0549C1F3271B463900490E66 /* GoogleService-Info.plist */; };
 		05604540270A0A350080AA3E /* StreamedAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */; };
 		05604541270A0A350080AA3E /* StreamedAudioPlayable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */; };
 		0560454A270A0A850080AA3E /* PlasmaSquareRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604548270A0A850080AA3E /* PlasmaSquareRenderer.cpp */; };
@@ -67,9 +68,6 @@
 		056045A1270A0AFC0080AA3E /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459A270A0AFC0080AA3E /* InputManager.cpp */; };
 		056045A2270A0AFC0080AA3E /* AssetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459B270A0AFC0080AA3E /* AssetManager.cpp */; };
 		056045B7270A25DA0080AA3E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045B6270A25DA0080AA3E /* Foundation.framework */; };
-		05718C70271A1F3A0090C631 /* SwiftHTTP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05718C6D271A1F270090C631 /* SwiftHTTP.framework */; };
-		05718C73271A1F400090C631 /* SwiftHTTP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05718C72271A1F400090C631 /* SwiftHTTP.framework */; };
-		05718C75271A1F4E0090C631 /* GoogleMobileAds.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 052E59282719D9920064A24B /* GoogleMobileAds.xcframework */; };
 		05718C78271A1FBE0090C631 /* BundleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C77271A1FBE0090C631 /* BundleExtension.swift */; };
 		05718C79271A1FBE0090C631 /* BundleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C77271A1FBE0090C631 /* BundleExtension.swift */; };
 		05718C7B271A287F0090C631 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05718C7A271A287F0090C631 /* SystemConfiguration.framework */; };
@@ -232,6 +230,8 @@
 		0535EAD6270A51BD009462B0 /* audios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = audios; path = ../audios; sourceTree = "<group>"; };
 		0535EAD7270A51BD009462B0 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = textures; path = ../textures; sourceTree = "<group>"; };
 		0545F0992711AD980075E566 /* ShootPathShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShootPathShader.cpp; path = ../src/Shaders/ShootPathShader.cpp; sourceTree = "<group>"; };
+		0549C1F3271B463900490E66 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0549C204271B46D900490E66 /* FirebaseCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StreamedAudioBuffer.cpp; path = ../src/Audio/StreamedAudioBuffer.cpp; sourceTree = "<group>"; };
 		0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StreamedAudioPlayable.cpp; path = ../src/Audio/StreamedAudioPlayable.cpp; sourceTree = "<group>"; };
 		05604548270A0A850080AA3E /* PlasmaSquareRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PlasmaSquareRenderer.cpp; path = ../src/Common/CustomRenderers/PlasmaSquareRenderer.cpp; sourceTree = "<group>"; };
@@ -384,9 +384,7 @@
 				05CB8F5227135B1B009AD69F /* libMagnumTrade.a in Frameworks */,
 				05CB8F5327135B1B009AD69F /* libMagnumGL.a in Frameworks */,
 				05CB8F5427135B1B009AD69F /* libMagnumSdl2Application.a in Frameworks */,
-				05718C73271A1F400090C631 /* SwiftHTTP.framework in Frameworks */,
 				05CB8F5627135B1B009AD69F /* libMagnumSceneGraph.a in Frameworks */,
-				05718C75271A1F4E0090C631 /* GoogleMobileAds.xcframework in Frameworks */,
 				05CB8F5727135B1B009AD69F /* libMagnumShaders.a in Frameworks */,
 				05CB8F5827135B1B009AD69F /* libMagnum.a in Frameworks */,
 				05CB8F5927135B1B009AD69F /* libMagnumMeshTools.a in Frameworks */,
@@ -415,9 +413,7 @@
 				05CB8F7627136D94009AD69F /* libpng16.16.dylib in Frameworks */,
 				05CB8F7827136DC8009AD69F /* libSDL2-2.0.dylib in Frameworks */,
 				0535EAE1270A55B1009462B0 /* libSDL2main.a in Frameworks */,
-				052E59292719D9920064A24B /* GoogleMobileAds.xcframework in Frameworks */,
 				05F22C7F2709F0DA00C34B15 /* libCorradeUtility.a in Frameworks */,
-				05718C70271A1F3A0090C631 /* SwiftHTTP.framework in Frameworks */,
 				05F22C762709F0DA00C34B15 /* libCorradePluginManager.a in Frameworks */,
 				05F22C732709F0DA00C34B15 /* libMagnumTrade.a in Frameworks */,
 				05F22C742709F0DA00C34B15 /* libMagnumShaders.a in Frameworks */,
@@ -569,6 +565,7 @@
 		AFB14C0527007181005837DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0549C204271B46D900490E66 /* FirebaseCore.framework */,
 				05718C7A271A287F0090C631 /* SystemConfiguration.framework */,
 				05718C72271A1F400090C631 /* SwiftHTTP.framework */,
 				05718C6D271A1F270090C631 /* SwiftHTTP.framework */,
@@ -682,6 +679,7 @@
 				AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */,
 				AFFB4E4026FF48DE00FD2500 /* InfoSim.plist */,
 				05CB8F432713596B009AD69F /* InfoArm.plist */,
+				0549C1F3271B463900490E66 /* GoogleService-Info.plist */,
 			);
 			path = BreakMyCircle;
 			sourceTree = "<group>";
@@ -786,6 +784,7 @@
 				05CB8F38271358F8009AD69F /* scenes in Resources */,
 				05CB8F39271358F8009AD69F /* fonts in Resources */,
 				05CB8F3A271358F8009AD69F /* shaders in Resources */,
+				0549C208271B488600490E66 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -802,6 +801,7 @@
 				0535EADD270A51BD009462B0 /* scenes in Resources */,
 				0535EADC270A51BD009462B0 /* fonts in Resources */,
 				0535EADB270A51BD009462B0 /* shaders in Resources */,
+				0549C207271B487500490E66 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
