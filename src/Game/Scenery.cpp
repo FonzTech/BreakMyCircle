@@ -9,7 +9,14 @@
 #include "../Common/CommonUtility.h"
 #include "../AssetManager.h"
 #include "../RoomManager.h"
+
+#if defined(DEBUG) && !defined(CORRADE_TARGET_ANDROID)
+#define TARGET_DEBUG_KEYS
+#endif
+
+#ifdef TARGET_DEBUG_KEYS
 #include "../InputManager.h"
+#endif
 
 using namespace Magnum;
 using namespace Magnum::Math::Literals;
@@ -274,7 +281,7 @@ void Scenery::update()
 	}
 
 	// Debug camera move
-#ifdef DEBUG
+#ifdef TARGET_DEBUG_KEYS
 	{
 		Vector3 delta;
 
