@@ -38,9 +38,9 @@ Engine::Engine(const Arguments& arguments) :
 #ifdef CORRADE_TARGET_ANDROID
 Platform::Application{ arguments, ENGINE_CONFIGURATION }
 #elif defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
-Platform::Application{ arguments, Configuration{}.setWindowFlags(Configuration::WindowFlag::Fullscreen) }, mIosDefaultFramebuffer(Containers::NullOpt)
+Platform::Application{ arguments, Configuration{}.setWindowFlags(Configuration::WindowFlag::Fullscreen | Configuration::WindowFlag::Resizable) }, mIosDefaultFramebuffer(Containers::NullOpt)
 #else
-Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setSize({ 432, 768 }) }
+Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setSize({ 768, 768 }).setWindowFlags(Configuration::WindowFlag::Resizable) }
 #endif
 , mFrameTime(0.0f), mCurrentGol(nullptr)
 {
@@ -175,10 +175,6 @@ void Engine::tickEvent()
 	mFrameTime += mDeltaTime;
 	const bool canDraw = mFrameTime >= mDrawFrameTime;
 
-	// Set correct viewport
-	RoomManager::singleton->setWindowSize(Vector2(windowSize()));
-	RoomManager::singleton->mCamera->setViewport(mCachedFramebufferSize);
-
 	// Iterate through all layers
 	for (const auto& index : GO_LAYERS)
 	{
@@ -221,7 +217,7 @@ void Engine::tickEvent()
 						// Get clicked Object ID
 						mCurrentGol->frameBuffer->mapForRead(GL::Framebuffer::ColorAttachment{ GLF_OBJECTID_ATTACHMENT_INDEX });
 
-						const Vector2i position(Vector2(InputManager::singleton->mMousePosition) * CommonUtility::singleton->mScaledFramebufferSize / Vector2{ windowSize() });
+						const Vector2i position(Vector2(InputManager::singleton->mMousePosition) * CommonUtility::singleton->mFramebufferSize / Vector2{ windowSize() });
 						const Vector2i fbPosition{ position.x(), mCachedFramebufferSize.y() - position.y() - 1 };
 
 						const Image2D data = mCurrentGol->frameBuffer->read(
@@ -441,16 +437,25 @@ void Engine::viewportEvent(ViewportEvent& event)
 void Engine::viewportInternal(ViewportEvent* event)
 {
 	// Update viewports
-    
 #if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
 	mIosDefaultFramebuffer->setViewport(Range2Di({ 0, 0 }, framebufferSize()));
 #else
     GL::defaultFramebuffer.setViewport(Range2Di({ 0, 0 }, framebufferSize()));
 #endif
     
-    // CommonUtility::singleton->mScaledFramebufferSize = Vector2(framebufferSize()) / CommonUtility::singleton->mConfig.displayDensity;
-    CommonUtility::singleton->mScaledFramebufferSize = Vector2(framebufferSize());
-	mCachedFramebufferSize = Vector2i(CommonUtility::singleton->mScaledFramebufferSize);
+    CommonUtility::singleton->mFramebufferSize = Vector2(framebufferSize());
+	mCachedFramebufferSize = Vector2i(CommonUtility::singleton->mFramebufferSize);
+
+	RoomManager::singleton->setWindowSize(Vector2(windowSize()));
+	RoomManager::singleton->mCamera->setViewport(mCachedFramebufferSize);
+
+#if defined(CORRADE_TARGET_WINDOWS) || defined(CORRADE_TARGET_WINDOWS_RT) || defined(CORRADE_TARGET_APPLE)
+#if !defined(CORRADE_TARGET_IOS) && !defined(CORRADE_TARGET_IOS_SIMULATOR)
+	CommonUtility::singleton->mConfig.displayDensity = Math::max(1.0f, Math::floor(mCachedFramebufferSize.y() / 256.0f) * 0.5f - 1.0f);
+#endif
+#endif
+	
+	// Update layers
 	upsertGameObjectLayers();
 }
 

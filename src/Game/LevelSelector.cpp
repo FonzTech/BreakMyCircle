@@ -177,17 +177,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	createPowerupView();
 
 	// Set camera parameters
-	{
-		// const auto& ar = QuadraticBezier2D(Vector2(0.0f), Vector2(-0.5f, 1.0f), Vector2(1.0f)).value(RoomManager::singleton->getWindowAspectRatio())[1];
-		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
-		auto ratio = (0.5625f / ar);
-		ratio = ratio < 1.0f ? 1.0f / ratio : ratio;
-		const auto& rt = 14.5f * ratio;
-
-		auto& layer = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
-		layer.cameraEye = mPosition + Vector3(0.0f, rt, rt);
-		layer.cameraTarget = mPosition;
-	}
+	setupCameraParameters();
 
 	// Load audios
 	{
@@ -287,6 +277,15 @@ const Int LevelSelector::getType() const
 
 void LevelSelector::update()
 {
+	// Setup camera parameters
+	setupCameraParameters();
+
+	// Setup white glow size
+	{
+		const Float ar = Math::max(1.0f, RoomManager::singleton->getWindowAspectRatio());
+		mLevelGuis[GO_LS_GUI_WHITEGLOW]->setSize(Vector2(ar));
+	}
+
     // Check for powerup rewarded ad
     if (mWatchForPowerup != 0U)
     {
@@ -462,7 +461,7 @@ void LevelSelector::update()
 		}
 		else if (!(RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_ONBOARDING_A))
 		{
-			const auto& p = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, ++RoomManager::singleton->mSaveData.onboardIndex, getScaledVerticalPadding());
+			const auto& p = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, ++RoomManager::singleton->mSaveData.onboardIndex);
 			mOnboarding = p;
 			RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(p);
 			return;
@@ -474,7 +473,7 @@ void LevelSelector::update()
 			{
 				if (!(RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_ONBOARDING_B))
 				{
-					const auto& p = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, 3, getScaledVerticalPadding());
+					const auto& p = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, 3);
 					mOnboarding = p;
 					RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(p);
 
@@ -486,7 +485,7 @@ void LevelSelector::update()
 			{
 				if (!(RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_ONBOARDING_C))
 				{
-					const auto& p = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, 4, getScaledVerticalPadding());
+					const auto& p = std::make_shared<Onboarding>(GOL_ORTHO_FIRST, 4);
 					mOnboarding = p;
 					RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(p);
 
@@ -1021,6 +1020,19 @@ constexpr void LevelSelector::manageBackendAnimationVariable(Float & variable, c
 	}
 }
 
+void LevelSelector::setupCameraParameters()
+{
+	// const auto& ar = QuadraticBezier2D(Vector2(0.0f), Vector2(-0.5f, 1.0f), Vector2(1.0f)).value(RoomManager::singleton->getWindowAspectRatio())[1];
+	const auto& ar = RoomManager::singleton->getWindowAspectRatio();
+	auto ratio = (0.5625f / ar);
+	ratio = ratio < 1.0f ? 1.0f / ratio : ratio;
+	const auto& rt = 14.5f * ratio;
+
+	auto& layer = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
+	layer.cameraEye = mPosition + Vector3(0.0f, rt, rt);
+	layer.cameraTarget = mPosition;
+}
+
 void LevelSelector::createSkyPlane()
 {
 #ifdef GO_LS_SKY_PLANE_ENABLED
@@ -1221,7 +1233,7 @@ void LevelSelector::clickLevelButton(const LS_ScenerySelector * sc, const LS_Pic
 void LevelSelector::windowForCommon()
 {
 	const auto& dsl = mCbEaseInOut.value(mSettingsAnim + (mLevelInfo.isSafeMinigameDone ? 0.0f : mLevelAnim))[1];
-	const auto& p0 = Vector2(0.0f, getScaledVerticalPadding());
+	const auto& p0 = Vector2(0.0f, CommonUtility::singleton->getScaledVerticalPadding());
 	const auto& d0 = mCbEaseInOut.value(mLevelGuiAnim[0])[1];
 	// const auto& d1 = mCbEaseInOut.value(mLevelGuiAnim[1])[1];
 	const auto& ds = mCbEaseInOut.value(mLevelStartedAnim)[1];
@@ -1253,11 +1265,11 @@ void LevelSelector::windowForCommon()
 	{
 		const auto& yp = mLevelGuiAnim[5] <= 0.0f ? 0.0f : mLevelGuiAnim[5] < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::circularOut(mLevelGuiAnim[5])) * 0.5f : 0.5f;
 		mLevelGuis[GO_LS_GUI_HELP]->mPosition = Vector3(0.5f, 1.0f - yp, 0.0f);
-		mLevelGuis[GO_LS_GUI_HELP]->setSize({ 0.35f * Math::min(1.0f, wrf * CommonUtility::singleton->mConfig.displayDensity), 0.15f + getScaledVerticalPadding() * 0.5f });
+		mLevelGuis[GO_LS_GUI_HELP]->setSize({ 0.35f * Math::min(1.0f, wrf * CommonUtility::singleton->mConfig.displayDensity), 0.15f + CommonUtility::singleton->getScaledVerticalPadding() * 0.5f });
 	} 
 
 	{
-		const auto& h = 0.5f + getScaledVerticalPadding() * 0.9f;
+		const auto& h = 0.5f + CommonUtility::singleton->getScaledVerticalPadding() * 0.9f;
 		const auto& yp = mLevelGuiAnim[5] <= 0.0f ? 0.0f : mLevelGuiAnim[5] < 1.0f ? Math::lerp(0.0f, 1.0f, Animation::Easing::circularOut(mLevelGuiAnim[5])) * h : h;
 		mLevelTexts[GO_LS_TEXT_HELP]->mPosition = Vector3(0.49f, 0.99f - yp, 0.0f);
 		mLevelTexts[GO_LS_TEXT_HELP]->setSize(Vector2(0.6f));
@@ -1279,7 +1291,7 @@ void LevelSelector::windowForSettings()
 
 		// Position and Anchor
 		{
-			const auto& p0 = Vector2(0.0f, getScaledVerticalPadding());
+			const auto& p0 = Vector2(0.0f, CommonUtility::singleton->getScaledVerticalPadding());
 			const auto& p1 = Vector2(-0.75f, -0.5f) + Vector2(0.25f, p0.y()) * d2;
 			const auto& p2 = Vector2(0.5f, 0.85f - p0.y()) * dsl;
 			const auto& p3 = mLevelInfo.state >= GO_LS_LEVEL_FINISHED ? Vector2(-0.5f, -1.0f) * dl : Vector2(0.0f);
@@ -2219,7 +2231,7 @@ void LevelSelector::createPowerupView()
 				const std::shared_ptr<Dialog> o = std::make_shared<Dialog>(GOL_ORTHO_FIRST, UnsignedInt(message.length()), UnsignedInt(title.length()));
 				o->getTitleDrawable()->mColor = { 1.0f, 0.8f, 0.25f, 1.0f };
 				o->getMessageDrawable()->mSize = Vector2(Math::min(1.0f, getWidthReferenceFactor()));
-				o->setTitlePosition({ 0.0f, 0.36f - getScaledVerticalPadding(), 0.0f });
+				o->setTitlePosition({ 0.0f, 0.36f - CommonUtility::singleton->getScaledVerticalPadding(), 0.0f });
 				o->setMessagePosition({ 0.0f, 0.175f, 0.0f });
 				o->setTitle(title);
 				o->setMessage(message);
@@ -2516,7 +2528,7 @@ void LevelSelector::createGuis()
 		o->setPosition({ 2.0f, 2.0f });
 
 		{
-			const auto& ar = CommonUtility::singleton->mScaledFramebufferSize.aspectRatio();
+			const auto& ar = CommonUtility::singleton->mFramebufferSize.aspectRatio();
 			const Float size = 0.45f * (ar < 1.0f ? ar / 0.5625f : 1.0f)
 #if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
             * 0.9f
@@ -3001,11 +3013,6 @@ const std::string LevelSelector::getHelpTipText(const Int index) const
 		return "Consider downloading my\nother games and writing\na positive review.";
 	}
 	return nullptr;
-}
-
-Float LevelSelector::getScaledVerticalPadding()
-{
-	return CommonUtility::singleton->mConfig.canvasVerticalPadding / CommonUtility::singleton->mScaledFramebufferSize.y();
 }
 
 Float LevelSelector::getWidthReferenceFactor()

@@ -75,7 +75,7 @@ public:
 
 	// Members
 	MyResourceManager manager;
-	Vector2 mScaledFramebufferSize;
+	Vector2 mFramebufferSize;
 
 	// Base path for resources
 	struct EngineConfiguration
@@ -187,4 +187,5 @@ public:
 	Resource<GL::AbstractShaderProgram, SunShader> getSunShader();
 	Resource<GL::AbstractShaderProgram, ShootPathShader> getShootPathShader();
 	std::string getTextureNameForPowerup(const UnsignedInt index);
+	Float getScaledVerticalPadding();
 };

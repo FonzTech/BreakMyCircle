@@ -194,6 +194,7 @@ private:
 	};
 
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);
+	void setupCameraParameters();
 	void createSkyPlane();
 	void handleScrollableCameraPosition(const Vector3 & delta);
 	void handleScrollableScenery();
@@ -231,8 +232,6 @@ private:
 	void callNativeMethod(const std::string & methodName);
 
 	Vector2 getSquareOffset(const Float size);
-
-	Float getScaledVerticalPadding();
 	Float getWidthReferenceFactor();
 
 	std::weak_ptr<Dialog> mDialog;

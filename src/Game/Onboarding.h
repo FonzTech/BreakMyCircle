@@ -11,7 +11,7 @@ class Onboarding : public GameObject
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
 
-	Onboarding(const Int parentIndex, const Int customType, const Float verticalPadding);
+	Onboarding(const Int parentIndex, const Int customType);
 	~Onboarding();
 
 	const Int getType() const override;

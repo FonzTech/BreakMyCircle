@@ -26,7 +26,6 @@ Dialog::Dialog(const Int parentIndex, const UnsignedInt messageCapacity, const U
 		mBackground = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_WHITE);
 		mBackground->setColor({ 0.0f, 0.0f, 0.0f, 0.0f });
 		mBackground->setPosition({ 0.0f, 0.0f });
-		mBackground->setSize({ 1.0f * Math::max(1.0f, RoomManager::singleton->getWindowAspectRatio()), 1.0f });
 		mBackground->setAnchor({ 0.0f, 0.0f });
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(mBackground);
 	}
@@ -91,6 +90,9 @@ const Int Dialog::getType() const
 
 void Dialog::update()
 {
+	// Set background size
+	mBackground->setSize({ 1.0f * Math::max(1.0f, RoomManager::singleton->getWindowAspectRatio()), 1.0f });
+
 	// Control dialog life-cycle
 	mOpacity += mDeltaTime * 2.0f * mOpened;
 	if (mOpacity < 0.0f)

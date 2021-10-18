@@ -333,3 +333,9 @@ std::string CommonUtility::getTextureNameForPowerup(const UnsignedInt index)
 	}
 	return "";
 }
+
+
+Float CommonUtility::getScaledVerticalPadding()
+{
+	return mConfig.canvasVerticalPadding / mFramebufferSize.y();
+}

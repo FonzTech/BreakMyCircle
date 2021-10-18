@@ -41,6 +41,7 @@ private:
 	};
 
 	// Method
+	void computeCanvasPadding();
 	void buildAnimations();
 	void setCameraParameters();
 	void continueLogic();

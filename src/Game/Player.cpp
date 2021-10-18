@@ -184,6 +184,12 @@ void Player::update()
 	mProjPath->update(mDeltaTime * Float(-mProjPath->getSize()));
 	*/
 
+	// Setup camera distance
+	{
+		const auto& ar = RoomManager::singleton->getWindowAspectRatio() * Math::max(1.0f, RoomManager::singleton->getWindowAspectRatio() * 0.647f);
+		mCameraDist = (50.0f / (1.0f / ar) * 0.95f) + mCameraDistBase;
+	}
+
 	// Advance animations
 	mPlasmaSquareRenderer.update(mDeltaTime);
 	mAnimation[0] += mDeltaTime;

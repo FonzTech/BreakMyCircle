@@ -32,6 +32,7 @@ public:
 
 	// Class members
 	bool mCanShoot;
+	Float mCameraDistBase;
 	Float mCameraDist;
 
 	// Optionals

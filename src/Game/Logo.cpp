@@ -42,11 +42,8 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	}
 	
 	// Init members
-	{
-		mCanvasPadding = CommonUtility::singleton->mConfig.canvasVerticalPadding;
-		mCanvasPadding /= CommonUtility::singleton->mScaledFramebufferSize.y();
-		mCanvasPadding /= CommonUtility::singleton->mConfig.displayDensity;
-	}
+	computeCanvasPadding();
+
 	mLightPosition = Vector3(0.0f, -0.5f, 0.0f);
 	mLightDirection = false;
 	mIntroBubbles = true;
@@ -107,9 +104,6 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mBubbleTimer = 0.0f;
 	mFinishTimer = GO_LS_FINISH_TIMER_STARTING_VALUE;
 
-	// Set camera parameters
-	setCameraParameters();
-
 	// Create overlay texts
 	{
 		const std::string& text = "Tap here to begin";
@@ -126,7 +120,6 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	{
 		const std::string& text = "Created by\nFonzTech";
 		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
-		go->mPosition = Vector3(0.0f, -0.4f + mCanvasPadding, 0.0f);
 		go->mColor = Color4(1.0f, 0.5f, 0.5f, 0.0f);
 		go->mOutlineColor.data()[3] = 0.0f;
 		go->setText(text);
@@ -154,6 +147,13 @@ const Int Logo::getType() const
 
 void Logo::update()
 {
+	// Set camera parameters
+	setCameraParameters();
+
+	// Set positions based on canvas padding
+	computeCanvasPadding();
+	mTexts[1]->mPosition = Vector3(0.0f, -0.4f + mCanvasPadding, 0.0f);
+
 	// Advance animation
 	if (mAnimElapsed < 0.0f) // Cycle waste
 	{
@@ -309,6 +309,13 @@ void Logo::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix,
 	}
 }
 
+void Logo::computeCanvasPadding()
+{
+	mCanvasPadding = CommonUtility::singleton->mConfig.canvasVerticalPadding;
+	mCanvasPadding /= CommonUtility::singleton->mFramebufferSize.y();
+	mCanvasPadding /= CommonUtility::singleton->mConfig.displayDensity;
+}
+
 void Logo::buildAnimations()
 {
 	// Create animation player
@@ -335,8 +342,8 @@ void Logo::buildAnimations()
 		case 2:
 		{
 			const auto& xp = RoomManager::singleton->getWindowAspectRatio() * -20.0f;
-			mKeyframes[i][0] = { 0.0f, Vector3(0.0f, 0.0f, xp), 360.0_degf * 2 };
-			mKeyframes[i][1] = { 4.0f, Vector3(0.0f, 0.0f, xp), 360.0_degf * 2 };
+			mKeyframes[i][0] = { 0.0f, Vector3(0.0f, 0.0f, xp), 360.0_degf * 2.0f };
+			mKeyframes[i][1] = { 4.0f, Vector3(0.0f, 0.0f, xp), 360.0_degf * 2.0f };
 			mKeyframes[i][2] = { 6.0f, Vector3(0.0f, 0.0f, 0.0f), 0.0_degf };
 		}
 			break;

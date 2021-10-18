@@ -14,7 +14,7 @@ std::shared_ptr<GameObject> Onboarding::getInstance(const nlohmann::json & param
 	return nullptr;
 }
 
-Onboarding::Onboarding(const Int parentIndex, const Int customType, const Float verticalPadding) : GameObject(parentIndex)
+Onboarding::Onboarding(const Int parentIndex, const Int customType) : GameObject(parentIndex)
 {
 	// Assign members
 	mParentIndex = parentIndex;
@@ -88,7 +88,6 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType, const Float 
 	// Create texts
 	{
 		const auto& ot = std::make_shared<OverlayText>(mParentIndex, Text::Alignment::MiddleCenter, text.length());
-		ot->mPosition = Vector3(0.0f, 0.1125f - verticalPadding, 0.0f);
 		ot->mColor = Color4(0.95f, 0.95f, 0.95f, 1.0f);
 		ot->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
 		ot->setSize(Vector2(0.0f));
@@ -102,9 +101,8 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType, const Float 
 		text = "Tap to continue";
 
 		const auto& ot = std::make_shared<OverlayText>(mParentIndex, Text::Alignment::MiddleCenter, text.length());
-		ot->mPosition = Vector3(0.0f, 0.375f - verticalPadding, 0.0f);
-		ot->mColor = Color4(1.0f, 1.0f, 1.0f, 1.0f);
 		ot->mColor = Color4(1.0f, 0.5f, 0.5f, 0.0f);
+		ot->mOutlineColor = Color4(0.0f, 0.0f, 0.0f, 1.0f);
 		ot->setSize(Vector2(0.0f));
 		ot->setText(text);
 
@@ -133,6 +131,10 @@ const Int Onboarding::getType() const
 
 void Onboarding::update()
 {
+	// Set position for texts
+	mOverlayTexts[0]->mPosition = Vector3(0.0f, 0.1125f - CommonUtility::singleton->getScaledVerticalPadding(), 0.0f);
+	mOverlayTexts[1]->mPosition = Vector3(0.0f, 0.375f - CommonUtility::singleton->getScaledVerticalPadding(), 0.0f);
+
 	// Animation handling
 	mAngle += mDeltaTime * 2.0f;
 
