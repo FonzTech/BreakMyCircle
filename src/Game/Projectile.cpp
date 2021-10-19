@@ -180,9 +180,9 @@ void Projectile::update()
 
 void Projectile::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	((Shaders::Flat3D&)baseDrawable->getShader())
+	((Shaders::Flat3D&)*mFlatShader)
 		.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
-		// .bindTexture(mCustomTexture != nullptr ? *mCustomTexture : *baseDrawable->mTexture)
+		.bindTexture(mCustomTexture != nullptr ? *mCustomTexture : *baseDrawable->mTexture)
 		.setColor(Color4(1.0f))
 		.setAlphaMask(0.001f)
 		.draw(*baseDrawable->mMesh);

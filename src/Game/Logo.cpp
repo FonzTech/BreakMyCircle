@@ -109,6 +109,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 		const std::string& text = "Tap here to begin";
 		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
 		go->mPosition = Vector3(0.0f, -0.15f, 0.0f);
+		go->mSize = Vector2(1.0f);
 		go->mColor.data()[3] = 0.0f;
 		go->mOutlineColor.data()[3] = 0.0f;
 		go->setText(text);
@@ -120,6 +121,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	{
 		const std::string& text = "Created by\nFonzTech";
 		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
+		go->mSize = Vector2(1.0f);
 		go->mColor = Color4(1.0f, 0.5f, 0.5f, 0.0f);
 		go->mOutlineColor.data()[3] = 0.0f;
 		go->setText(text);

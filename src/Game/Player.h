@@ -45,9 +45,9 @@ protected:
 
 	// Members
 	PlasmaSquareRenderer mPlasmaSquareRenderer;
+	Containers::Optional<Resource<GL::AbstractShaderProgram, Shaders::Flat3D>> mFlatShader;
 	std::shared_ptr<ElectricBall> mElectricBall;
 
-	// std::unique_ptr<LinePath> mProjPath;
 	std::weak_ptr<GameObject> mProjectile;
 	Float mShootTimeline;
 	Rad mShootAngle;

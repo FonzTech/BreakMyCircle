@@ -41,11 +41,66 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 	mAimCos = { 0.0f, 0.0f };
 	mAimSin = { 0.0f, 0.0f };
 	mAimTimer = 0.0001f;
+	mShootTimeline = 0.0f;
+	mShootAngle = Rad(0.0f);
+	mFlatShader = Containers::NullOpt;
+
+	{
+		const auto& list = getRandomEligibleColor(2);
+		mProjColors[0] = list->at(0);
+		mProjColors[1] = list->at(1);
+
+		/*
+		mProjTextures[0] = getTextureResourceForIndex(0);
+		mProjTextures[1] = getTextureResourceForIndex(1);
+		*/
+	}
 
 	// Load asset as first drawable
 	{
 		mShooterManipulator = new Object3D{ mManipulator.get() };
 		AssetManager().loadAssets(*this, *mShooterManipulator, RESOURCE_SCENE_CANNON_1, this);
+	}
+
+	// Create game bubbles
+	for (UnsignedInt i = 0; i < 2; ++i)
+	{
+		mSphereManipulator[i] = new Object3D{ mManipulator.get() };
+		CommonUtility::singleton->createGameSphere(this, *mSphereManipulator[i], mProjColors[i]);
+
+		mSphereDrawables[i] = (*(mDrawables.end() - 1)).get();
+		mFlatDrawables.insert(mSphereDrawables[i]);
+		setupProjectile(i);
+		// mSphereDrawables[i]->mTexture = mProjTextures[i];
+	}
+
+	// Load hidden drawables (for later use)
+	{
+		// Load asset
+		mBombManipulator = new Object3D{ mManipulator.get() };
+		AssetManager().loadAssets(*this, *mBombManipulator, RESOURCE_SCENE_BOMB, this);
+
+		// Keep references
+		for (UnsignedInt i = 0; i < 3; ++i)
+		{
+			mBombDrawables[i] = (*(mDrawables.end() - i - 1)).get();
+			mFlatDrawables.insert(mBombDrawables[i]);
+		}
+
+		// Put "Spark" mesh always at the beginning
+		for (UnsignedInt i = 0; i < 3; ++i)
+		{
+			if (mBombDrawables[i]->mMesh->label() == "SparkV")
+			{
+				if (i != 0)
+				{
+					const auto& p = mBombDrawables[0];
+					mBombDrawables[0] = mBombDrawables[i];
+					mBombDrawables[i] = p;
+				}
+				break;
+			}
+		}
 	}
 
 	// Create lines
@@ -84,6 +139,11 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 			Resource<GL::AbstractShaderProgram, Shaders::Flat3D> shader = CommonUtility::singleton->getFlat3DShader();
 			Resource<GL::Texture2D> texture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SWAP);
 
+			if (mFlatShader == Containers::NullOpt)
+			{
+				mFlatShader = shader;
+			}
+
 			td = std::static_pointer_cast<GameDrawable<Shaders::Flat3D>>(std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, texture));
 		}
 
@@ -93,69 +153,6 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 		mDrawables.emplace_back(td);
 
 		(isShoot ? mShootPathDrawables : mFlatDrawables).insert(td.get());
-	}
-
-	/*
-	// Load path for new sphere animation
-	{
-		mProjPath = std::make_unique<LinePath>(RESOURCE_PATH_NEW_SPHERE);
-		mProjPath->mProgress = Float(mProjPath->getSize());
-	}
-	*/
-
-	// Set members
-	mShootAngle = Rad(0.0f);
-
-	{
-		const auto& list = getRandomEligibleColor(2);
-		mProjColors[0] = list->at(0);
-		mProjColors[1] = list->at(1);
-
-		/*
-		mProjTextures[0] = getTextureResourceForIndex(0);
-		mProjTextures[1] = getTextureResourceForIndex(1);
-		*/
-	}
-
-	// Load hidden drawables (for later use)
-	{
-		// Load asset
-		mBombManipulator = new Object3D{ mManipulator.get() };
-		AssetManager().loadAssets(*this, *mBombManipulator, RESOURCE_SCENE_BOMB, this);
-
-		// Keep references
-		for (UnsignedInt i = 0; i < 3; ++i)
-		{
-			mBombDrawables[i] = mDrawables[mDrawables.size() - i - 1].get();
-			mFlatDrawables.insert(mBombDrawables[i]);
-		}
-
-		// Put "Spark" mesh always at the beginning
-		for (UnsignedInt i = 0; i < 3; ++i)
-		{
-			if (mBombDrawables[i]->mMesh->label() == "SparkV")
-			{
-				if (i != 0)
-				{
-					const auto& p = mBombDrawables[0];
-					mBombDrawables[0] = mBombDrawables[i];
-					mBombDrawables[i] = p;
-				}
-				break;
-			}
-		}
-	}
-
-	// Create game bubbles
-	for (UnsignedInt i = 0; i < 2; ++i)
-	{
-		mSphereManipulator[i] = new Object3D{ mManipulator.get() };
-		CommonUtility::singleton->createGameSphere(this, *mSphereManipulator[i], mProjColors[i]);
-
-		mSphereDrawables[i] = mDrawables.back().get();
-		mFlatDrawables.insert(mSphereDrawables[i]);
-		setupProjectile(i);
-		// mSphereDrawables[i]->mTexture = mProjTextures[i];
 	}
 
 	// Load sound effects
@@ -181,11 +178,6 @@ const Int Player::getType() const
 
 void Player::update()
 {
-	/*
-	// Update new projectile path
-	mProjPath->update(mDeltaTime * Float(-mProjPath->getSize()));
-	*/
-
 	// Setup camera distance
 	{
 		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
@@ -308,18 +300,6 @@ void Player::update()
 					setupProjectile(0);
 					setupProjectile(1);
 
-					/*
-					mProjTextures[0] = mProjTextures[1];
-					mProjTextures[1] = getTextureResourceForIndex(1);
-
-					mSphereDrawables[0]->mTexture = mProjTextures[0];
-					*/
-
-					/*
-					// Reset animation for new projectile
-					mProjPath->mProgress = Float(mProjPath->getSize());
-					*/
-
 					// Play random sound
 					{
 						const UnsignedInt index = std::rand() % 3;
@@ -382,9 +362,6 @@ void Player::update()
 
 		// Primary projectile
 		{
-			// Apply transformations to bubbles
-			// const Vector3 pos = position + mProjPath->getCurrentPosition();
-
 			// Main - Plasma bubble
 			if (mProjColors[0] == BUBBLE_BOMB)
 			{
@@ -661,7 +638,7 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 			texture = &(*baseDrawable->mTexture);
 		}
 
-		((Shaders::Flat3D&)(*mFlatDrawables.begin())->getShader())
+		(**mFlatShader)
 			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 			.bindTexture(*texture)
 			.setColor(Color4{ 1.0f, 1.0f, 1.0f, alpha })

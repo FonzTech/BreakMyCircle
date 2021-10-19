@@ -9,7 +9,7 @@ std::shared_ptr<GameObject> AbstractGuiElement::getInstance(const nlohmann::json
 	return nullptr;
 }
 
-AbstractGuiElement::AbstractGuiElement(const Int parentIndex) : GameObject(parentIndex), mColor(1.0f, 1.0f, 1.0f, 1.0f), mSize{ 1.0f }, mCustomCanvasSize{ 0.0f }
+AbstractGuiElement::AbstractGuiElement(const Int parentIndex) : GameObject(parentIndex), mColor(1.0f, 1.0f, 1.0f, 1.0f), mSize{ 0.0f }, mCustomCanvasSize{ 0.0f }
 {
 }
 
