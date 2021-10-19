@@ -40,40 +40,12 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 	mAimAngle = { Rad(0.0f), Rad(0.0f) };
 	mAimCos = { 0.0f, 0.0f };
 	mAimSin = { 0.0f, 0.0f };
-	mAimTimer = 1.0f;
+	mAimTimer = 0.0001f;
 
 	// Load asset as first drawable
 	{
 		mShooterManipulator = new Object3D{ mManipulator.get() };
 		AssetManager().loadAssets(*this, *mShooterManipulator, RESOURCE_SCENE_CANNON_1, this);
-	}
-
-	// Load hidden drawables (for later use)
-	{
-		// Load asset
-		mBombManipulator = new Object3D{ mManipulator.get() };
-		AssetManager().loadAssets(*this, *mBombManipulator, RESOURCE_SCENE_BOMB, this);
-
-		// Keep references
-		for (UnsignedInt i = 0; i < 3; ++i)
-		{
-			mBombDrawables[i] = mDrawables[mDrawables.size() - i - 1].get();
-		}
-
-		// Put "Spark" mesh always at the beginning
-		for (UnsignedInt i = 0; i < 3; ++i)
-		{
-			if (mBombDrawables[i]->mMesh->label() == "SparkV")
-			{
-				if (i != 0)
-				{
-					const auto& p = mBombDrawables[0];
-					mBombDrawables[0] = mBombDrawables[i];
-					mBombDrawables[i] = p;
-				}
-				break;
-			}
-		}
 	}
 
 	// Create lines
@@ -145,6 +117,35 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 		*/
 	}
 
+	// Load hidden drawables (for later use)
+	{
+		// Load asset
+		mBombManipulator = new Object3D{ mManipulator.get() };
+		AssetManager().loadAssets(*this, *mBombManipulator, RESOURCE_SCENE_BOMB, this);
+
+		// Keep references
+		for (UnsignedInt i = 0; i < 3; ++i)
+		{
+			mBombDrawables[i] = mDrawables[mDrawables.size() - i - 1].get();
+			mFlatDrawables.insert(mBombDrawables[i]);
+		}
+
+		// Put "Spark" mesh always at the beginning
+		for (UnsignedInt i = 0; i < 3; ++i)
+		{
+			if (mBombDrawables[i]->mMesh->label() == "SparkV")
+			{
+				if (i != 0)
+				{
+					const auto& p = mBombDrawables[0];
+					mBombDrawables[0] = mBombDrawables[i];
+					mBombDrawables[i] = p;
+				}
+				break;
+			}
+		}
+	}
+
 	// Create game bubbles
 	for (UnsignedInt i = 0; i < 2; ++i)
 	{
@@ -152,6 +153,7 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 		CommonUtility::singleton->createGameSphere(this, *mSphereManipulator[i], mProjColors[i]);
 
 		mSphereDrawables[i] = mDrawables.back().get();
+		mFlatDrawables.insert(mSphereDrawables[i]);
 		setupProjectile(i);
 		// mSphereDrawables[i]->mTexture = mProjTextures[i];
 	}
@@ -186,10 +188,10 @@ void Player::update()
 
 	// Setup camera distance
 	{
-		const auto& ar = RoomManager::singleton->getWindowAspectRatio() * Math::max(1.0f, RoomManager::singleton->getWindowAspectRatio() * 0.647f);
-		mCameraDist = (50.0f / (1.0f / ar) * 0.95f) + mCameraDistBase;
+		const auto& ar = RoomManager::singleton->getWindowAspectRatio();
+		mCameraDist = (50.0f * (ar > 1.0f ? ar * 1.1f : ar)) + mCameraDistBase;
 	}
-
+	 
 	// Advance animations
 	mPlasmaSquareRenderer.update(mDeltaTime);
 	mAnimation[0] += mDeltaTime;
@@ -646,59 +648,40 @@ void Player::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	}
 	else if (mFlatDrawables.find(baseDrawable) != mFlatDrawables.end())
 	{
-		((Shaders::Flat3D&)baseDrawable->getShader())
+		const Float alpha = baseDrawable->mTexture.key() == ResourceKey(RESOURCE_TEXTURE_SWAP) ? Math::sin(Deg(Math::min(180.0f, mAnimation[3] * 180.0f))) : 1.0f;
+
+		GL::Texture2D* texture;
+		if (baseDrawable == mSphereDrawables[0] && mProjColors[0] == BUBBLE_PLASMA)
+		{
+			mPlasmaSquareRenderer.renderTexture();
+			texture = &mPlasmaSquareRenderer.getRenderedTexture();
+		}
+		else
+		{
+			texture = &(*baseDrawable->mTexture);
+		}
+
+		((Shaders::Flat3D&)(*mFlatDrawables.begin())->getShader())
 			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
-			.bindTexture(*baseDrawable->mTexture)
-			.setColor(Color4{ 1.0f, 1.0f, 1.0f, Math::sin(Deg(Math::min(180.0f, mAnimation[3] * 180.0f))) })
+			.bindTexture(*texture)
+			.setColor(Color4{ 1.0f, 1.0f, 1.0f, alpha })
 			.setAlphaMask(0.001f)
 			.draw(*baseDrawable->mMesh);
 	}
 	else
 	{
-		// Setup light shading
-		const auto& isBubble = baseDrawable == mSphereDrawables[0] || baseDrawable == mSphereDrawables[1];
-		const auto& isBomb = baseDrawable == mBombDrawables[0] || baseDrawable == mBombDrawables[1];
-
-		auto& shader = (Shaders::Phong&) mSphereDrawables[0]->getShader();
-		if (isBubble || isBomb)
-		{
-			shader
-				.setLightPosition(mPosition + Vector3(-1.0f, 10.0f * RoomManager::singleton->getWindowAspectRatio(), 10.0f))
-				.setLightColor(0x202020_rgbf)
-				.setSpecularColor(0xffffff00_rgbaf)
-				.setAmbientColor(0x909090_rgbf)
-				.setDiffuseColor(0x909090_rgbf);
-		}
-		else
-		{
-			shader
-				.setLightPosition(mPosition + Vector3(-4.0f, 30.0f * RoomManager::singleton->getWindowAspectRatio(), 20.0f))
-				.setLightColor(0xffffff60_rgbaf)
-				.setSpecularColor(0xffffff00_rgbaf)
-				.setAmbientColor(0xa0a0a0_rgbf)
-				.setDiffuseColor(0xffffff_rgbf);
-		}
-
-		// Setup matrixes
-		shader
+		const auto ar = RoomManager::singleton->getWindowAspectRatio();
+		((Shaders::Phong&)baseDrawable->getShader())
+			.setLightPosition(mPosition + Vector3(-8.0f * ar, 15.0f * ar, 20.0f))
+			.setLightColor(0xffffff60_rgbaf)
+			.setSpecularColor(0xffffff00_rgbaf)
+			.setAmbientColor(0xa0a0a0_rgbf)
+			.setDiffuseColor(0xffffff_rgbf)
 			.setTransformationMatrix(transformationMatrix)
 			.setNormalMatrix(transformationMatrix.normalMatrix())
-			.setProjectionMatrix(camera.projectionMatrix());
-
-		// Bind textures
-		if (baseDrawable == mSphereDrawables[0] && mProjColors[0] == BUBBLE_PLASMA)
-		{
-			mPlasmaSquareRenderer.renderTexture();
-			GL::Texture2D &texture = mPlasmaSquareRenderer.getRenderedTexture();
-			shader.bindTextures(&texture, &texture, nullptr, nullptr);
-		}
-		else
-		{
-			shader.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr);
-		}
-
-		// Draw mesh using setup shader
-		shader.draw(*baseDrawable->mMesh);
+			.setProjectionMatrix(camera.projectionMatrix())
+			.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
+			.draw(*baseDrawable->mMesh);
 	}
 }
 

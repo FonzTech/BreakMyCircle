@@ -20,7 +20,7 @@
 #include <nlohmann/json.hpp>
 #include <Magnum/Magnum.h>
 #include <Magnum/GL/Mesh.h>
-#include <Magnum/Shaders/Phong.h>
+#include <Magnum/Shaders/Flat.h>
 #include <Magnum/Math/Color.h>
 
 #include "../GameObject.h"
@@ -108,4 +108,5 @@ private:
 	Float mShakeFact;
 	Float mRotation;
 	Float mBlackholeAnim;
+	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> mFlatShader;
 };

@@ -1400,7 +1400,16 @@ void LevelSelector::windowForCurrentLevelView()
 	// Powerup buttons
 	if (canShowPowerups)
 	{
-		const Float xm = 0.06f * CommonUtility::singleton->mConfig.displayDensity;
+		Float xn = RoomManager::singleton->getWindowAspectRatio();
+		xn = xn > 1.0f ? 1.0f / xn : xn;
+		
+		Float xa = 1.0f;
+		if (xn < 0.7f)
+		{
+			xa = RoomManager::singleton->getWindowAspectRatio();
+		}
+
+		const Float xm = 0.06f * CommonUtility::singleton->mConfig.displayDensity * xn * xa;
 		const Float xf = (0.5f + xm * Math::pow(Math::max(1.0f, ar), 2.0f)) - (0.25f + xm) * ar;
 		const Float yf = 0.91f - powerupY;
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
@@ -1408,7 +1417,7 @@ void LevelSelector::windowForCurrentLevelView()
 			const Float xp = canShowPowerups ? (Float(i) * xf + mPuView.scrollX * xf) : -1000.0f;
 
 			// Clickable icon
-			const Float alpha = Math::clamp(1.2f - Math::abs(xp) * 4.0f * ar, 0.0f, 1.0f);
+			const Float alpha = Math::clamp(1.2f - Math::abs(xp) * 4.0f * Math::min(1.0f, ar), 0.0f, 1.0f);
 			{
 				auto& item = (std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_POWERUP + i]->drawable;
 				if (alpha > 0.0f)

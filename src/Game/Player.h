@@ -39,9 +39,11 @@ public:
 	std::weak_ptr<IShootCallback> mShootCallback;
 
 protected:
+	// Methods
 	std::unique_ptr<std::vector<Color3>> getRandomEligibleColor(const UnsignedInt times);
 	Resource<GL::Texture2D> getTextureResourceForIndex(const UnsignedInt index);
 
+	// Members
 	PlasmaSquareRenderer mPlasmaSquareRenderer;
 	std::shared_ptr<ElectricBall> mElectricBall;
 

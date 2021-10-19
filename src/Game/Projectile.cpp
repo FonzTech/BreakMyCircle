@@ -38,6 +38,7 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 	mAmbientColor = ambientColor;
 	mVelocity = Vector3(0.0f);
 	mSpeed = 50.0f;
+	mFlatShader = CommonUtility::singleton->getFlat3DShader();
 
 	updateBBox();
 
@@ -179,16 +180,11 @@ void Projectile::update()
 
 void Projectile::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	((Shaders::Phong&) baseDrawable->getShader())
-		.setLightPosition(mPosition + Vector3(0.0f, 0.0f, 1.0f))
-		.setLightColor(0xffffff60_rgbaf)
-		.setSpecularColor(0xffffff00_rgbaf)
-		.setAmbientColor(0x808080_rgbf)
-		.setDiffuseColor(0x808080_rgbf)
-		.setTransformationMatrix(transformationMatrix)
-		.setNormalMatrix(transformationMatrix.normalMatrix())
-		.setProjectionMatrix(camera.projectionMatrix())
-		.bindTextures(mCustomTexture != nullptr ? mCustomTexture : baseDrawable->mTexture, mCustomTexture != nullptr ? mCustomTexture : baseDrawable->mTexture, nullptr, nullptr)
+	((Shaders::Flat3D&)baseDrawable->getShader())
+		.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+		// .bindTexture(mCustomTexture != nullptr ? *mCustomTexture : *baseDrawable->mTexture)
+		.setColor(Color4(1.0f))
+		.setAlphaMask(0.001f)
 		.draw(*baseDrawable->mMesh);
 }
 

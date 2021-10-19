@@ -74,9 +74,11 @@ ElectricBall::ElectricBall(const Int parentIndex) : GameObject(parentIndex)
 	{
 		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(RESOURCE_AUDIO_ELECTRIC);
 		mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
-		mPlayables[0]->source()
-			.setBuffer(buffer)
-			.setLooping(true);
+		(*mPlayables[0])
+			.setGain(0.0f)
+			.source()
+				.setBuffer(buffer)
+				.setLooping(true);
 	}
 }
 

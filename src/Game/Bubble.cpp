@@ -94,6 +94,13 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
 		mRotation = 0.0f;
 	}
+
+
+	// Get flat shader separately
+	if (mAmbientColor != BUBBLE_BLACKHOLE)
+	{
+		mFlatShader = CommonUtility::singleton->getFlat3DShader();
+	}
 }
 
 const Int Bubble::getType() const
@@ -188,16 +195,11 @@ void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	}
 	else
 	{
-		((Shaders::Phong&) baseDrawable->getShader())
-			.setLightPosition(mPosition + Vector3(0.0f, 1.0f * RoomManager::singleton->getWindowAspectRatio(), 1.5f))
-			.setLightColor(mAmbientColor == BUBBLE_COIN ? 0xd0d0d0_rgbf : 0x808080_rgbf)
-			.setSpecularColor(0xffffff00_rgbaf)
-			.setAmbientColor(0xc0c0c0_rgbf)
-			.setDiffuseColor(0x808080_rgbf)
-			.setTransformationMatrix(transformationMatrix)
-			.setNormalMatrix(transformationMatrix.normalMatrix())
-			.setProjectionMatrix(camera.projectionMatrix())
-			.bindTextures(baseDrawable->mTexture, baseDrawable->mTexture, nullptr, nullptr)
+		((Shaders::Flat3D&)*mFlatShader)
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+			.bindTexture(*baseDrawable->mTexture)
+			.setAlphaMask(0.001f)
+			.setColor(Color4(1.0f))
 			.draw(*baseDrawable->mMesh);
 	}
 }

@@ -4,6 +4,7 @@
 
 #include <nlohmann/json.hpp>
 #include <Magnum/Math/Color.h>
+#include <Magnum/Shaders/Flat.h>
 
 #include "../GameObject.h"
 #include "../Game/Callbacks/IShootCallback.h"
@@ -50,6 +51,7 @@ protected:
 
 	Color3 mDiffuseColor;
 	GL::Texture2D* mCustomTexture;
+	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> mFlatShader;
 
 	Float mSpeed;
 	Float mAnimation;

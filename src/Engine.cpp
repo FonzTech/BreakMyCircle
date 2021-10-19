@@ -451,7 +451,7 @@ void Engine::viewportInternal(ViewportEvent* event)
 
 #if defined(CORRADE_TARGET_WINDOWS) || defined(CORRADE_TARGET_WINDOWS_RT) || defined(CORRADE_TARGET_APPLE)
 #if !defined(CORRADE_TARGET_IOS) && !defined(CORRADE_TARGET_IOS_SIMULATOR)
-	CommonUtility::singleton->mConfig.displayDensity = Math::max(1.0f, Math::floor(mCachedFramebufferSize.y() / 256.0f) * 0.5f - 1.0f);
+	CommonUtility::singleton->mConfig.displayDensity = Math::max(1.0f, Math::round(mCachedFramebufferSize.y() / 256.0f) * 0.5f - 1.0f);
 #endif
 #endif
 	
