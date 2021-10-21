@@ -1232,6 +1232,7 @@ void LevelSelector::clickLevelButton(const LS_ScenerySelector * sc, const LS_Pic
 
 void LevelSelector::windowForCommon()
 {
+	const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 	const auto& dsl = mCbEaseInOut.value(mSettingsAnim + (mLevelInfo.isSafeMinigameDone ? 0.0f : mLevelAnim))[1];
 	const auto& p0 = Vector2(0.0f, CommonUtility::singleton->getScaledVerticalPadding());
 	const auto& d0 = mCbEaseInOut.value(mLevelGuiAnim[0])[1];
@@ -1402,14 +1403,12 @@ void LevelSelector::windowForCurrentLevelView()
 	{
 		Float xn = RoomManager::singleton->getWindowAspectRatio();
 		xn = xn > 1.0f ? 1.0f / xn : xn;
-		
-		Float xa = 1.0f;
 		if (xn < 0.7f)
 		{
-			xa = RoomManager::singleton->getWindowAspectRatio();
+			xn *= RoomManager::singleton->getWindowAspectRatio();
 		}
 
-		const Float xm = 0.06f * CommonUtility::singleton->mConfig.displayDensity * xn * xa;
+		const Float xm = 0.06f * CommonUtility::singleton->mConfig.displayDensity * xn;
 		const Float xf = (0.5f + xm * Math::pow(Math::max(1.0f, ar), 2.0f)) - (0.25f + xm) * ar;
 		const Float yf = 0.91f - powerupY;
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
@@ -1484,12 +1483,21 @@ void LevelSelector::windowForCurrentLevelView()
 		const bool& isStarted = mLevelInfo.state == GO_LS_LEVEL_STARTED;
 		const auto& cd = -1.5f + d * 1.25f;
 		const auto& cs = -1.5f + s * 1.25f;
-		const auto& xd = 0.15f / ar;
+
+		Float xd = 0.15f;
+		if (ar > 1.0f)
+		{
+			xd *= 1.0f / ar;
+			if (xd < 0.0f)
+			{
+				xd *= ar;
+			}
+		}
 
 		// Animation for "Replay" button
 		{
 			const auto& p1 = isFinished ? Vector2{ -xd, cd } : Vector2{ isStarted ? 0.0f : 2.0f };
-			const auto& p2 = isStarted ? Vector2{ 0.2f, cs } : Vector2{ 0.0f };
+			const auto& p2 = isStarted ? Vector2{ -xd, cs } : Vector2{ 0.0f };
 			mScreenButtons[GO_LS_GUI_REPLAY]->drawable->setPosition(p1 + p2);
 		}
 
@@ -1507,7 +1515,7 @@ void LevelSelector::windowForCurrentLevelView()
 
 		// Animation for "Exit" button
 		{
-			const auto& p1 = mLevelInfo.state == GO_LS_LEVEL_STARTED ? Vector2{ -0.2f, cs } : Vector2{ 2.0f };
+			const auto& p1 = mLevelInfo.state == GO_LS_LEVEL_STARTED ? Vector2{ xd, cs } : Vector2{ 2.0f };
 			mScreenButtons[GO_LS_GUI_EXIT]->drawable->setPosition(p1);
 		}
 	}
@@ -2754,7 +2762,7 @@ void LevelSelector::createGuis()
 
 	// Create "BG Music" button
 	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_BGMUSIC_ON);
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RoomManager::singleton->getBgMusicGain() > 0.01f ? RESOURCE_TEXTURE_GUI_BGMUSIC_ON : RESOURCE_TEXTURE_GUI_BGMUSIC_OFF);
 		o->setPosition({ -2.0f, 0.5f });
 		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 0.0f, 0.0f });
@@ -2766,17 +2774,19 @@ void LevelSelector::createGuis()
 			Debug{} << "You have clicked BGMUSIC";
 
 			const Float level = RoomManager::singleton->getBgMusicGain() >= 0.1f ? 0.0f : 0.25f;
-			RoomManager::singleton->setBgMusicGain(level);
-			RoomManager::singleton->mSaveData.save();
+			const auto& p = RoomManager::singleton;
+			p->setBgMusicGain(level);
+			p->mSaveData.musicEnabled = level > 0.1f;
+			p->mSaveData.save();
 
-			((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_BGMUSIC]->drawable)->setTexture(RoomManager::singleton->getBgMusicGain() > 0.01f ? RESOURCE_TEXTURE_GUI_BGMUSIC_ON : RESOURCE_TEXTURE_GUI_BGMUSIC_OFF);
+			((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_BGMUSIC]->drawable)->setTexture(RoomManager::singleton->getBgMusicGain() > 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
 			return true;
 		};
 	}
 
 	// Create "SFX" button
 	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SFX_ON);
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RoomManager::singleton->getSfxGain() >= 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
 		o->setPosition({ -2.0f, 0.5f });
 		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 0.0f, 0.0f });
@@ -2787,9 +2797,13 @@ void LevelSelector::createGuis()
 		mScreenButtons[GO_LS_GUI_SFX]->callback = [this](UnsignedInt index) {
 			Debug{} << "You have clicked SFX";
 
-			const Float level = RoomManager::singleton->getSfxGain() >= 0.99f ? 0.0f : 1.0f;
-			RoomManager::singleton->setSfxGain(level);
-			RoomManager::singleton->mSaveData.save();
+			{
+				const Float level = RoomManager::singleton->getSfxGain() >= 0.99f ? 0.0f : 1.0f;
+				const auto& p = RoomManager::singleton;
+				p->setSfxGain(level);
+				p->mSaveData.sfxEnabled = level > 0.1f;
+				p->mSaveData.save();
+			}
 
 			((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_SFX]->drawable)->setTexture(RoomManager::singleton->getSfxGain() > 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
 			return true;
