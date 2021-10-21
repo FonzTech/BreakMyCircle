@@ -302,7 +302,7 @@ void Scenery::update()
 
 		if (InputManager::singleton->mKeyStates[ImKeyButtons::Down] >= IM_STATE_PRESSED)
 		{
-			delta += Vector3(0.0f, -1.0f, 0.0f);pla
+			delta += Vector3(0.0f, -1.0f, 0.0f);
 		}
 
 		if (InputManager::singleton->mKeyStates[ImKeyButtons::LeftShift] >= IM_STATE_PRESSED)
