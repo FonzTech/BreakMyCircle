@@ -4,10 +4,11 @@
 #define GOL_PERSP_SECOND 1
 #define GOL_ORTHO_FIRST 2
 
-#define GO_RM_SD_FLAG_FIRST_SAFE 1 << 0
-#define GO_RM_SD_FLAG_ONBOARDING_A 1 << 1
-#define GO_RM_SD_FLAG_ONBOARDING_B 1 << 2
-#define GO_RM_SD_FLAG_ONBOARDING_C 1 << 3
+#define GO_RM_SD_FLAG_FIRST_SAFE 1U << 0
+#define GO_RM_SD_FLAG_ONBOARDING_A 1U << 1
+#define GO_RM_SD_FLAG_ONBOARDING_B 1U << 2
+#define GO_RM_SD_FLAG_ONBOARDING_C 1U << 3
+#define GO_RM_SD_ONBOARDING_INIT_MAX 2
 
 #include <memory>
 #include <unordered_set>

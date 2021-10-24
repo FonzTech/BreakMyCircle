@@ -305,7 +305,12 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
     }
 
     protected final int statusBarHeight() {
-        return (int) (24.0f * getResources().getDisplayMetrics().density);
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 
     protected final void showError(final String message) {

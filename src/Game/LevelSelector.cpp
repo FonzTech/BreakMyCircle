@@ -453,7 +453,7 @@ void LevelSelector::update()
 	// Check if onboarding is active
 	if (mOnboarding.expired())
 	{
-		if (RoomManager::singleton->mSaveData.onboardIndex == 2)
+		if (RoomManager::singleton->mSaveData.onboardIndex >= GO_RM_SD_ONBOARDING_INIT_MAX)
 		{
 			++RoomManager::singleton->mSaveData.onboardIndex;
 			RoomManager::singleton->mSaveData.flags |= GO_RM_SD_FLAG_ONBOARDING_A;
@@ -1484,7 +1484,7 @@ void LevelSelector::windowForCurrentLevelView()
 		const auto& cd = -1.5f + d * 1.25f;
 		const auto& cs = -1.5f + s * 1.25f;
 
-		Float xd = 0.15f;
+		Float xd = isStarted ? 0.1f : 0.15f;
 		if (ar > 1.0f)
 		{
 			xd *= 1.0f / ar;
@@ -1492,6 +1492,10 @@ void LevelSelector::windowForCurrentLevelView()
 			{
 				xd *= ar;
 			}
+		}
+		else if (ar < 1.0f)
+		{
+			xd *= 1.0f / ar;
 		}
 
 		// Animation for "Replay" button
@@ -2779,7 +2783,7 @@ void LevelSelector::createGuis()
 			p->mSaveData.musicEnabled = level > 0.1f;
 			p->mSaveData.save();
 
-			((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_BGMUSIC]->drawable)->setTexture(RoomManager::singleton->getBgMusicGain() > 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
+			((std::shared_ptr<OverlayGui>&)mScreenButtons[GO_LS_GUI_BGMUSIC]->drawable)->setTexture(RoomManager::singleton->getBgMusicGain() > 0.01f ? RESOURCE_TEXTURE_GUI_BGMUSIC_ON : RESOURCE_TEXTURE_GUI_BGMUSIC_OFF);
 			return true;
 		};
 	}

@@ -64,9 +64,6 @@ bool RoomManager::SaveData::load()
 {
 	// Set default value
 	{
-		flags = 0U;
-		onboardIndex = 0;
-
 #if DEBUG
 		maxLevelId = 48U;
 		coinTotal = 50;
@@ -112,7 +109,7 @@ bool RoomManager::SaveData::load()
 	// Flags
 	{
 		const auto value = jsonData.find("flags");
-		flags = value != jsonData.end() ? (*value).get<UnsignedInt>() : 2U;
+		flags = value != jsonData.end() ? (*value).get<UnsignedInt>() : 0U;
 	}
 
 	// Max level ID
