@@ -455,9 +455,12 @@ void LevelSelector::update()
 	{
 		if (RoomManager::singleton->mSaveData.onboardIndex >= GO_RM_SD_ONBOARDING_INIT_MAX)
 		{
-			++RoomManager::singleton->mSaveData.onboardIndex;
-			RoomManager::singleton->mSaveData.flags |= GO_RM_SD_FLAG_ONBOARDING_A;
-			RoomManager::singleton->mSaveData.save();
+			if (RoomManager::singleton->mSaveData.onboardIndex == GO_RM_SD_ONBOARDING_INIT_MAX)
+			{
+				++RoomManager::singleton->mSaveData.onboardIndex;
+				RoomManager::singleton->mSaveData.flags |= GO_RM_SD_FLAG_ONBOARDING_A;
+				RoomManager::singleton->mSaveData.save();
+			}
 		}
 		else if (!(RoomManager::singleton->mSaveData.flags & GO_RM_SD_FLAG_ONBOARDING_A))
 		{

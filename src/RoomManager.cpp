@@ -74,6 +74,11 @@ bool RoomManager::SaveData::load()
 		coinCurrent = 0;
 #endif
 
+		flags = 0U;
+		onboardIndex = 0;
+		musicEnabled = false;
+		sfxEnabled = false;
+
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
 #if DEBUG
