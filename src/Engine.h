@@ -16,6 +16,7 @@
 #include <Magnum/Platform/AndroidApplication.h>
 #else
 #include <Magnum/Platform/Sdl2Application.h>
+#include <SDL2/SDL.h>
 #endif
 
 #define ENGINE_CONFIGURATION Configuration{}.setTitle("BreakMyCircle")
@@ -40,12 +41,15 @@ protected:
 
 protected:
 
-#ifdef CORRADE_TARGET_ANDROID
+#if defined(CORRADE_TARGET_ANDROID)
 	void pauseApp() override;
 	void resumeApp() override;
+#else
+    void pauseApp();
+    void resumeApp();
+#endif
 
 	bool isInForeground;
-#endif
 
 private:
 	// List of layers
@@ -62,6 +66,7 @@ private:
 	void keyPressEvent(KeyEvent& event) override;
 	void keyReleaseEvent(KeyEvent& event) override;
 	void exitEvent(ExitEvent& event) override;
+    void anyEvent(SDL_Event& event) override;
 #endif
 
 	// Class methods
