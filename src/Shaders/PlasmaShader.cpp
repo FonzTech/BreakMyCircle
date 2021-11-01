@@ -18,7 +18,7 @@ PlasmaShader::PlasmaShader()
 	GL::Shader vert{ GL::Version::GLES300, GL::Shader::Type::Vertex };
 	GL::Shader frag{ GL::Version::GLES300, GL::Shader::Type::Fragment };
 #else
-	MAGNUM_ASSERT_GL_VERSION_SUPPORTED(GL::Version::GL300);
+	MAGNUM_ASSERT_GL_VERSION_SUPPORTED(GL::Version::GL330);
 
 	GL::Shader vert{ GL::Version::GL330, GL::Shader::Type::Vertex };
 	GL::Shader frag{ GL::Version::GL330, GL::Shader::Type::Fragment };

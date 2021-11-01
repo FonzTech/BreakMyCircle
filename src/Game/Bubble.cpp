@@ -44,6 +44,7 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 	mShakePos = Vector3(0.0f);
 	mShakeFact = 0.0f;
 	mBlackholeAnim = 0.0f;
+	mTimed.enabled = false;
 
 	// Load asset for "Coin" game object, if required
 	if (mAmbientColor == BUBBLE_COIN)
@@ -91,13 +92,24 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 	}
 	else
 	{
+		if (mAmbientColor == BUBBLE_TIMED)
+		{
+			mTimed.enabled = true;
+			mTimed.factor = 1.0f;
+			mTimed.shader = CommonUtility::singleton->getTimedBubbleShader();
+			mTimed.textureMask = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_BUBBLE_TIMED);
+			mTimed.index = UnsignedInt(std::rand()) % UnsignedInt(RoomManager::sBubbleKeys.size());
+			mAmbientColor = getColorByIndex(mTimed.index);
+		}
+
 		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
 		mRotation = 0.0f;
+
 	}
 
 
 	// Get flat shader separately
-	if (mAmbientColor != BUBBLE_BLACKHOLE)
+	if (!mTimed.enabled && mAmbientColor != BUBBLE_BLACKHOLE)
 	{
 		mFlatShader = CommonUtility::singleton->getFlat3DShader();
 	}
@@ -170,6 +182,21 @@ void Bubble::update()
 			.resetTransformation();
 	}
 
+	// Check for timed behaviour
+	if (mTimed.enabled)
+	{
+		mTimed.factor -= mDeltaTime * 0.2f;
+
+		if (mTimed.factor < 0.0f)
+		{
+			mTimed.factor = 1.0f;
+			mTimed.index = UnsignedInt(++mTimed.index) % UnsignedInt(RoomManager::sBubbleKeys.size());
+
+			mAmbientColor = getColorByIndex(mTimed.index);
+			mDrawables.back()->mTexture = CommonUtility::singleton->getTextureForBubble(mAmbientColor);
+		}
+	}
+
 	// Apply shake effect
 	{
 		const Vector3 shakeVect = mShakeFact > 0.001f ? mShakePos * std::sin(mShakeFact * Constants::pi()) : Vector3(0.0f);
@@ -183,7 +210,16 @@ void Bubble::update()
 
 void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (mAmbientColor == BUBBLE_BLACKHOLE)
+	if (mTimed.enabled)
+	{
+		(*mTimed.shader)
+			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
+			.bindColorTexture(*baseDrawable->mTexture)
+			.bindMaskTexture(*mTimed.textureMask)
+			.setTimedRotation(mTimed.factor)
+			.draw(*baseDrawable->mMesh);
+	}
+	else if (mAmbientColor == BUBBLE_BLACKHOLE)
 	{
 		const Float alpha = baseDrawable == mDrawables[0].get() ? 1.0f : Math::sin(Deg(Math::clamp(mItemParams[baseDrawable->getObjectId()], 0.0f, 1.0f) * 180.0f));
 		((Shaders::Flat3D&)baseDrawable->getShader())
@@ -195,7 +231,7 @@ void Bubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatri
 	}
 	else
 	{
-		((Shaders::Flat3D&)*mFlatShader)
+		(*mFlatShader)
 			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 			.bindTexture(*baseDrawable->mTexture)
 			.setAlphaMask(0.001f)
@@ -554,4 +590,10 @@ Int Bubble::getCustomTypeForFallingBubble(const Color3 & color)
 	{
 		return GO_FB_TYPE_BUBBLE;
 	}
+}
+
+Color3 Bubble::getColorByIndex(const UnsignedInt index)
+{
+	const auto& it = std::next(RoomManager::sBubbleKeys.begin(), mTimed.index);
+	return RoomManager::sBubbleColors[*it].color;
 }

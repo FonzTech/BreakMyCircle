@@ -200,6 +200,7 @@
     <ClCompile Include="src\Shaders\SpriteShader.cpp" />
     <ClCompile Include="src\Shaders\StarRoadShader.cpp" />
     <ClCompile Include="src\Shaders\SunShader.cpp" />
+    <ClCompile Include="src\Shaders\TimedBubbleShader.cpp" />
     <ClCompile Include="src\Shaders\WaterShader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -250,6 +251,7 @@
     <ClInclude Include="src\Game\Player.h" />
     <ClInclude Include="src\Shaders\StarRoadShader.h" />
     <ClInclude Include="src\Shaders\SunShader.h" />
+    <ClInclude Include="src\Shaders\TimedBubbleShader.h" />
     <ClInclude Include="src\Shaders\WaterShader.h" />
   </ItemGroup>
   <ItemGroup>

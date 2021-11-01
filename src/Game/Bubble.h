@@ -8,6 +8,7 @@
 #define BUBBLE_ELECTRIC 0x000004_rgbf
 #define BUBBLE_STONE 0x000005_rgbf
 #define BUBBLE_BLACKHOLE 0x000006_rgbf
+#define BUBBLE_TIMED 0x000007_rgbf
 #define BUBBLE_COLOR_RED 0xff0000_rgbf
 #define BUBBLE_COLOR_GREEN 0x00ff00_rgbf
 #define BUBBLE_COLOR_BLUE 0x0000ff_rgbf
@@ -24,6 +25,7 @@
 #include <Magnum/Math/Color.h>
 
 #include "../GameObject.h"
+#include "../Shaders/TimedBubbleShader.h"
 
 class Bubble : public GameObject
 {
@@ -93,12 +95,22 @@ public:
 private:
 	Float getShakeSmooth(const Float xt);
 	Int getCustomTypeForFallingBubble(const Color3 & color);
+	Color3 getColorByIndex(const UnsignedInt index);
 
 	// Complex structures
 	struct GraphNode
 	{
 		Vector3 position;
 		Color3 color;
+	};
+
+	struct Timed
+	{
+		bool enabled;
+		float factor;
+		UnsignedInt index;
+		Resource<GL::AbstractShaderProgram, TimedBubbleShader> shader;
+		Resource<GL::Texture2D> textureMask;
 	};
 
 	// Class members
@@ -108,5 +120,6 @@ private:
 	Float mShakeFact;
 	Float mRotation;
 	Float mBlackholeAnim;
+	Timed mTimed;
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> mFlatShader;
 };

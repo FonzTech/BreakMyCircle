@@ -146,23 +146,26 @@ bool CommonUtility::isBubbleColorValid(const Color3 & color)
 	return color.r() > 0.001f || color.g() > 0.001f || color.b() > 0.04f;
 }
 
+Resource<GL::Texture2D> CommonUtility::getTextureForBubble(const Color3 & color)
+{
+	// Check for color validity
+	const auto& it = RoomManager::singleton->sBubbleColors.find(color.toSrgbInt());
+	if (it == RoomManager::singleton->sBubbleColors.end())
+	{
+		Fatal{} << "Color " + std::to_string(color.toSrgbInt()) + " for bubble was invalid";
+	}
+
+	// Load texture
+	return CommonUtility::singleton->loadTexture(it->second.textureKey);
+}
+
 void CommonUtility::createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color)
 {
 	// Create game bubble
 	AssetManager().loadAssets(*gameObject, manipulator, RESOURCE_SCENE_BUBBLE, gameObject);
 
-	// Load texture based on color
-	Debug{} << "Created bubble with color" << color.toSrgbInt();
-
-	const auto& it = RoomManager::singleton->sBubbleColors.find(color.toSrgbInt());
-	if (it == RoomManager::singleton->sBubbleColors.end())
-	{
-        CORRADE_CONSTEXPR_ASSERT(false, "Color " + std::to_string(color.toSrgbInt()) + " for bubble was invalid");
-	}
-
 	// Load texture
-	Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(it->second.textureKey);
-	gameObject->mDrawables.back()->mTexture = resTexture;
+	gameObject->mDrawables.back()->mTexture = getTextureForBubble(color);
 }
 
 std::shared_ptr<BaseDrawable> CommonUtility::createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback)
@@ -213,6 +216,13 @@ Resource<GL::AbstractShaderProgram, Shaders::Flat3D> CommonUtility::getFlat3DSha
 	return getSpecializedShader<Shaders::Flat3D>(RESOURCE_SHADER_FLAT3D, [] {
 		const auto& flags = Shaders::Flat3D::Flag::Textured | Shaders::Flat3D::Flag::AlphaMask;
 		return (std::unique_ptr<GL::AbstractShaderProgram>) std::make_unique<Shaders::Flat3D>(flags);
+	});
+}
+
+Resource<GL::AbstractShaderProgram, TimedBubbleShader> CommonUtility::getTimedBubbleShader()
+{
+	return getSpecializedShader<TimedBubbleShader>(RESOURCE_SHADER_TIMED_BUBBLE, [] {
+		return (std::unique_ptr<GL::AbstractShaderProgram>) std::make_unique<TimedBubbleShader>();
 	});
 }
 

@@ -36,7 +36,8 @@ std::unordered_map<UnsignedInt, RoomManager::BubbleData> RoomManager::sBubbleCol
 	{ BUBBLE_PLASMA.toSrgbInt(), { BUBBLE_PLASMA, RESOURCE_TEXTURE_WHITE } },
 	{ BUBBLE_ELECTRIC.toSrgbInt(), { BUBBLE_ELECTRIC, RESOURCE_TEXTURE_WHITE } },
 	{ BUBBLE_STONE.toSrgbInt(), { BUBBLE_STONE, RESOURCE_TEXTURE_WHITE } },
-	{ BUBBLE_BLACKHOLE.toSrgbInt(), { BUBBLE_BLACKHOLE, RESOURCE_TEXTURE_WHITE } }
+	{ BUBBLE_BLACKHOLE.toSrgbInt(), { BUBBLE_BLACKHOLE, RESOURCE_TEXTURE_WHITE } },
+	{ BUBBLE_TIMED.toSrgbInt(), { BUBBLE_TIMED, RESOURCE_TEXTURE_WHITE } }
 };
 
 std::array<UnsignedInt, 7U> RoomManager::sBubbleKeys = {
@@ -467,7 +468,6 @@ void RoomManager::createLevelRoom(const std::shared_ptr<IShootCallback> & shootC
 							{
 								pzBh += 0.05f;
 								pz = pzBh;
-								Debug{} << "Okok" << pz;
 							}
 							break;
 						}
@@ -550,7 +550,7 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		const auto& bd = sBubbleKeys[index];
 
 		d = std::make_unique<Instantiator>();
-		 
+
 		nlohmann::json params;
 		params["parent"] = GOL_PERSP_SECOND;
 
@@ -563,11 +563,14 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		const double bhf = double(seed % 50U) / 50.0 * 0.01;
 		const bool isBlackhole = isInRange(value, 0.10, bhf) || isInRange(value, 0.42, bhf) || isInRange(value, 0.76, bhf);
 
+		const double tif = double(seed % 30U) / 30.0 * 0.01;
+		const bool isTimed = isInRange(value, 0.06, tif) || isInRange(value, 0.3, tif) || isInRange(value, 0.82, tif);
+
 		if (isHole)
 		{
 			d->key = -1;
 		}
-		else if (isCoin || isStone || isBlackhole)
+		else if (isCoin || isStone || isBlackhole || isTimed)
 		{
 			UnsignedInt k = 0U;
 			if (isCoin)
@@ -581,6 +584,10 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 			else if (isBlackhole)
 			{
 				k = BUBBLE_BLACKHOLE.toSrgbInt();
+			}
+			else if (isTimed)
+			{
+				k = BUBBLE_TIMED.toSrgbInt();
 			}
 
 			const auto& vd = sBubbleColors[k];

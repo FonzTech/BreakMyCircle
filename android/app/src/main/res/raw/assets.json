@@ -179,6 +179,9 @@
   "shaders/shoot_path.frag": {
     "version": 1
   },
+  "shaders/timed_bubble.frag": {
+    "version": 1
+  },
   "textures/bubble_blue.png": {
     "version": 1
   },
@@ -207,6 +210,9 @@
     "version": 1
   },
   "textures/bubble_yellow.png": {
+    "version": 1
+  },
+  "textures/bubble_timed.png": {
     "version": 1
   },
   "textures/moon.png": {

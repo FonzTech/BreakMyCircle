@@ -31,6 +31,7 @@
 #include "../Shaders/StarRoadShader.h"
 #include "../Shaders/SunShader.h"
 #include "../Shaders/ShootPathShader.h"
+#include "../Shaders/TimedBubbleShader.h"
 #include "../GameObject.h"
 
 using namespace Magnum;
@@ -178,9 +179,11 @@ public:
 	std::unique_ptr<std::string> getValueFromIntent(const std::string & key);
 	bool stringEndsWith(const std::string& data, const std::string& suffix);
 	bool isBubbleColorValid(const Color3 & color);
+	Resource<GL::Texture2D> getTextureForBubble(const Color3 & color);
 	void createGameSphere(GameObject* gameObject, Object3D & manipulator, const Color3 & color);
 	std::shared_ptr<BaseDrawable> createSpriteDrawable(const Int goLayerIndex, Object3D & parent, Resource<GL::Texture2D> & texture, IDrawCallback* drawCallback);
 	Resource<GL::AbstractShaderProgram, Shaders::Flat3D> getFlat3DShader();
+	Resource<GL::AbstractShaderProgram, TimedBubbleShader> getTimedBubbleShader();
 	Resource<GL::AbstractShaderProgram, PlasmaShader> getPlasmaShader();
 	Resource<GL::AbstractShaderProgram, WaterShader> getWaterShader();
 	Resource<GL::AbstractShaderProgram, StarRoadShader> getStarRoadShader();

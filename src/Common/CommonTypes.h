@@ -37,6 +37,7 @@
 #define RESOURCE_TEXTURE_BUBBLE_PURPLE "bubble_purple"
 #define RESOURCE_TEXTURE_BUBBLE_CYAN "bubble_cyan"
 #define RESOURCE_TEXTURE_BUBBLE_TRANSLUCENT "bubble_translucent"
+#define RESOURCE_TEXTURE_BUBBLE_TIMED "bubble_timed"
 #define RESOURCE_TEXTURE_SKYBOX_1_PX "skybox_1_px"
 #define RESOURCE_TEXTURE_WATER_DISPLACEMENT "water_dm"
 #define RESOURCE_TEXTURE_WATER_TEXTURE "water_tm"
@@ -89,6 +90,7 @@
 #define RESOURCE_SHADER_PLASMA "shader_plasma"
 #define RESOURCE_SHADER_SUN "shader_sun"
 #define RESOURCE_SHADER_SHOOT_PATH "shader_shoot_path"
+#define RESOURCE_SHADER_TIMED_BUBBLE "shader_timed_bubble"
 #define RESOURCE_SHADER_DISTANCE_FIELD_VECTOR "shader_distance_field_vector"
 
 #define RESOURCE_FONT_UBUNTU_TITLE "ubuntu-title"
