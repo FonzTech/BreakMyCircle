@@ -588,7 +588,7 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 			else if (isTimed)
 			{
 				k = BUBBLE_TIMED.toSrgbInt();
-				params["timedDelay"] = Float(seed % 10U) * 0.1f;
+				params["timedDelay"] = std::fmodf(Float(seed % 10U) * 0.1f + Float(value) * 10.0f, 1.0f);
 			}
 
 			const auto& vd = sBubbleColors[k];
