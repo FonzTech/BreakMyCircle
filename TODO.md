@@ -3,7 +3,6 @@
 - Fix transparency when blackholes and explode-effect overlaps.
 
 # To be verified
-- Fix collision detection for projectile on its side.
 - Implement other level game objects, such as rocks, holes, and others...
 
 # Optional tasks
@@ -59,3 +58,4 @@
 ~~- Save settings to device.~~
 ~~- Add shooting path while player is aiming.~~
 ~~- Add countdown time sound effect when expiring.~~
+~~- Fix collision detection for projectile on its side.~~
