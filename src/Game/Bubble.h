@@ -74,7 +74,7 @@ public:
 	typedef std::unordered_set<Bubble*, Bubble::HashByColorAndPos, Bubble::EqualByColorAndPos> BubbleCollisionGroup;
 
 	// Class members
-	Bubble(const Int parentIndex, const Color3& ambientColor);
+	Bubble(const Int parentIndex, const Color3& ambientColor, const Float timedDelay = 1.0f);
 
 	const Int getType() const override;
 	void update() override;

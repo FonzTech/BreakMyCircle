@@ -31,12 +31,22 @@ std::shared_ptr<GameObject> Bubble::getInstance(const nlohmann::json & params)
 		values.at("b").get_to(color[2]);
 	}
 
+	// Get timed delay
+	Float timedDelay = 1.0f;
+	{
+		const auto& it = params.find("timedDelay");
+		if (it != params.end())
+		{
+			it->get_to(timedDelay);
+		}
+	}
+
 	// Instantiate bubble
-	std::shared_ptr<Bubble> p = std::make_shared<Bubble>(parent, color);
+	std::shared_ptr<Bubble> p = std::make_shared<Bubble>(parent, color, timedDelay);
 	return p;
 }
 
-Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(parentIndex)
+Bubble::Bubble(const Int parentIndex, const Color3& ambientColor, const Float timedDelay) : GameObject(parentIndex)
 {
 	// Assign members
 	mParentIndex = parentIndex;
@@ -95,7 +105,7 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor) : GameObject(p
 		if (mAmbientColor == BUBBLE_TIMED)
 		{
 			mTimed.enabled = true;
-			mTimed.factor = 1.0f;
+			mTimed.factor = timedDelay;
 			mTimed.shader = CommonUtility::singleton->getTimedBubbleShader();
 			mTimed.textureMask = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_BUBBLE_TIMED);
 			mTimed.index = UnsignedInt(std::rand()) % UnsignedInt(RoomManager::sBubbleKeys.size());
