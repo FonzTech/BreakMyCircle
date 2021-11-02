@@ -1889,7 +1889,8 @@ void LevelSelector::createLevelRoom()
 		const auto flid = Float(mLevelInfo.selectedLevelId);
 		const std::int32_t octaves = 4 + std::int32_t(std::fmodf(flid, 12.0f));
 		const double frequency = 8 + double(std::fmodf(flid, 56.0f));
-		RoomManager::singleton->createLevelRoom(shared_from_this(), 8, 7, mLevelInfo.selectedLevelId, octaves, frequency);
+		const Int blen = Int(Math::round(Float(Int(mLevelInfo.selectedLevelId) % 10) * 0.2f)) + 6;
+		RoomManager::singleton->createLevelRoom(shared_from_this(), blen, blen - 1, mLevelInfo.selectedLevelId, octaves, frequency);
 
 		// Set difficulty and starting time
 		mLevelInfo.difficulty = 8.0f + Float(mLevelInfo.selectedLevelId % 56U);
@@ -2793,7 +2794,7 @@ void LevelSelector::createGuis()
 
 	// Create "SFX" button
 	{
-		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RoomManager::singleton->getSfxGain() >= 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
+		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RoomManager::singleton->getSfxGain() > 0.01f ? RESOURCE_TEXTURE_GUI_SFX_ON : RESOURCE_TEXTURE_GUI_SFX_OFF);
 		o->setPosition({ -2.0f, 0.5f });
 		o->setSize({ 0.1f, 0.1f });
 		o->setAnchor({ 0.0f, 0.0f });

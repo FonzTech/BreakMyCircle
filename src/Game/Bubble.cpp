@@ -109,7 +109,18 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor, const Float ti
 			mTimed.factor = timedDelay;
 			mTimed.shader = CommonUtility::singleton->getTimedBubbleShader();
 			mTimed.textureMask = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_BUBBLE_TIMED);
-			mAmbientColor = getColorByIndex(true);
+
+			const auto color = getColorByIndex(true);
+			if (color != Containers::NullOpt)
+			{
+				mAmbientColor = *color;
+			}
+			else
+			{
+				const auto index = UnsignedInt(std::rand()) % UnsignedInt(RoomManager::singleton->sBubbleKeys.size());
+				const auto& it = std::next(RoomManager::singleton->sBubbleKeys.begin(), mTimed.index);
+				mAmbientColor = Color3::fromSrgb(*it);
+			}
 		}
 
 		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
@@ -200,8 +211,13 @@ void Bubble::update()
 		if (mTimed.factor < 0.0f)
 		{
 			mTimed.factor = 1.0f;
-			mAmbientColor = getColorByIndex(false);
-			mDrawables.back()->mTexture = CommonUtility::singleton->getTextureForBubble(mAmbientColor);
+
+			const auto color = getColorByIndex(false);
+			if (color != Containers::NullOpt)
+			{
+				mAmbientColor = *color;
+				mDrawables.back()->mTexture = CommonUtility::singleton->getTextureForBubble(mAmbientColor);
+			}
 		}
 	}
 
@@ -600,7 +616,7 @@ const Int Bubble::getCustomTypeForFallingBubble(const Color3 & color)
 	}
 }
 
-const Color3 Bubble::getColorByIndex(const bool isRandom)
+const Containers::Optional<Color3> Bubble::getColorByIndex(const bool isRandom)
 {
 	std::set<UnsignedInt> colors;
 	for (const auto& item : *RoomManager::singleton->mGoLayers[mParentIndex].list)
@@ -608,8 +624,17 @@ const Color3 Bubble::getColorByIndex(const bool isRandom)
 		if (item->getType() == GOT_BUBBLE)
 		{
 			const auto& p = (std::shared_ptr<Bubble>&)item;
-			colors.insert(p->mAmbientColor.toSrgbInt());
+			if (CommonUtility::singleton->isBubbleColorValid(p->mAmbientColor))
+			{
+				colors.insert(p->mAmbientColor.toSrgbInt());
+			}
 		}
+	}
+
+	if (colors.empty())
+	{
+		mTimed.index = 0;
+		return Containers::NullOpt;
 	}
 
 	mTimed.index = UnsignedInt(isRandom ? std::rand() : ++mTimed.index) % UnsignedInt(colors.size());

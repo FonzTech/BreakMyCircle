@@ -95,7 +95,7 @@ public:
 private:
 	const Float getShakeSmooth(const Float xt);
 	const Int getCustomTypeForFallingBubble(const Color3 & color);
-	const Color3 getColorByIndex(const bool isRandom);
+	const Containers::Optional<Color3> getColorByIndex(const bool isRandom);
 
 	// Complex structures
 	struct GraphNode

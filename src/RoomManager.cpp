@@ -66,19 +66,20 @@ bool RoomManager::SaveData::load()
 	// Set default value
 	{
 #if DEBUG
-		maxLevelId = 48U;
+		maxLevelId = 40U;
 		coinTotal = 50;
 		coinCurrent = 0;
+		musicEnabled = false;
 #else
 		maxLevelId = 2U;
 		coinTotal = 0;
 		coinCurrent = 0;
+		musicEnabled = true;
 #endif
 
 		flags = 0U;
-		onboardIndex = 0;
-		musicEnabled = false;
-		sfxEnabled = false;
+		onboardIndex = 0; 
+		sfxEnabled = true;
 
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
@@ -563,7 +564,7 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		const double bhf = double(seed % 50U) / 50.0 * 0.01;
 		const bool isBlackhole = isInRange(value, 0.10, bhf) || isInRange(value, 0.42, bhf) || isInRange(value, 0.76, bhf);
 
-		const double tif = double(seed % 30U) / 30.0 * 0.03;
+		const double tif = double(seed % 30U) / 10.0 * 0.01;
 		const bool isTimed = isInRange(value, 0.06, tif) || isInRange(value, 0.3, tif) || isInRange(value, 0.82, tif);
 
 		if (isHole)
