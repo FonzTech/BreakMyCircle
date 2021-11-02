@@ -563,7 +563,7 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 		const double bhf = double(seed % 50U) / 50.0 * 0.01;
 		const bool isBlackhole = isInRange(value, 0.10, bhf) || isInRange(value, 0.42, bhf) || isInRange(value, 0.76, bhf);
 
-		const double tif = double(seed % 30U) / 30.0 * 0.01;
+		const double tif = double(seed % 30U) / 30.0 * 0.03;
 		const bool isTimed = isInRange(value, 0.06, tif) || isInRange(value, 0.3, tif) || isInRange(value, 0.82, tif);
 
 		if (isHole)

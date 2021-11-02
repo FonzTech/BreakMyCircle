@@ -3,6 +3,7 @@
 #include <thread>
 #include <future>
 #include <queue>
+#include <set>
 
 #include <Magnum/Math/Math.h>
 #include <Magnum/Math/Bezier.h>
@@ -108,8 +109,7 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor, const Float ti
 			mTimed.factor = timedDelay;
 			mTimed.shader = CommonUtility::singleton->getTimedBubbleShader();
 			mTimed.textureMask = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_BUBBLE_TIMED);
-			mTimed.index = UnsignedInt(std::rand()) % UnsignedInt(RoomManager::sBubbleKeys.size());
-			mAmbientColor = getColorByIndex(mTimed.index);
+			mAmbientColor = getColorByIndex(true);
 		}
 
 		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
@@ -200,9 +200,7 @@ void Bubble::update()
 		if (mTimed.factor < 0.0f)
 		{
 			mTimed.factor = 1.0f;
-			mTimed.index = UnsignedInt(++mTimed.index) % UnsignedInt(RoomManager::sBubbleKeys.size());
-
-			mAmbientColor = getColorByIndex(mTimed.index);
+			mAmbientColor = getColorByIndex(false);
 			mDrawables.back()->mTexture = CommonUtility::singleton->getTextureForBubble(mAmbientColor);
 		}
 	}
@@ -577,12 +575,12 @@ std::unique_ptr<Bubble::Graph> Bubble::destroyDisjointBubblesImpl(std::unordered
 	return graph;
 }
 
-Float Bubble::getShakeSmooth(const Float xt)
+const Float Bubble::getShakeSmooth(const Float xt)
 {
 	return CubicBezier2D(Vector2(0.0f, 0.0f), Vector2(1.0f, 0.06f), Vector2(1.0f, 0.04f), Vector2(1.0f)).value(xt)[1];
 }
 
-Int Bubble::getCustomTypeForFallingBubble(const Color3 & color)
+const Int Bubble::getCustomTypeForFallingBubble(const Color3 & color)
 {
 	if (color == BUBBLE_COIN)
 	{
@@ -602,8 +600,19 @@ Int Bubble::getCustomTypeForFallingBubble(const Color3 & color)
 	}
 }
 
-Color3 Bubble::getColorByIndex(const UnsignedInt index)
+const Color3 Bubble::getColorByIndex(const bool isRandom)
 {
-	const auto& it = std::next(RoomManager::sBubbleKeys.begin(), mTimed.index);
-	return RoomManager::sBubbleColors[*it].color;
+	std::set<UnsignedInt> colors;
+	for (const auto& item : *RoomManager::singleton->mGoLayers[mParentIndex].list)
+	{
+		if (item->getType() == GOT_BUBBLE)
+		{
+			const auto& p = (std::shared_ptr<Bubble>&)item;
+			colors.insert(p->mAmbientColor.toSrgbInt());
+		}
+	}
+
+	mTimed.index = UnsignedInt(isRandom ? std::rand() : ++mTimed.index) % UnsignedInt(colors.size());
+	const auto& it = std::next(colors.begin(), mTimed.index);
+	return Color3::fromSrgb(*it);
 }

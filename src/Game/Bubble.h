@@ -93,9 +93,9 @@ public:
 	Color3 mAmbientColor;
 
 private:
-	Float getShakeSmooth(const Float xt);
-	Int getCustomTypeForFallingBubble(const Color3 & color);
-	Color3 getColorByIndex(const UnsignedInt index);
+	const Float getShakeSmooth(const Float xt);
+	const Int getCustomTypeForFallingBubble(const Color3 & color);
+	const Color3 getColorByIndex(const bool isRandom);
 
 	// Complex structures
 	struct GraphNode
