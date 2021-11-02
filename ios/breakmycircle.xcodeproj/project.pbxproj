@@ -13,7 +13,6 @@
 		052E591F2719D7E60064A24B /* AppSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AppSetup.swift */; };
 		0535E8F6270A3E41009462B0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604595270A0AFC0080AA3E /* main.cpp */; };
 		0535E8F9270A4267009462B0 /* Startup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* Startup.swift */; };
-		0535EA62270A4DE7009462B0 /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0535EA61270A4DE7009462B0 /* assets.json */; };
 		0535EAD9270A51BD009462B0 /* paths in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD1270A51BC009462B0 /* paths */; };
 		0535EADA270A51BD009462B0 /* rooms in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD2270A51BC009462B0 /* rooms */; };
 		0535EADB270A51BD009462B0 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD3270A51BC009462B0 /* shaders */; };
@@ -130,7 +129,6 @@
 		05CB8F12271358F8009AD69F /* AssetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459B270A0AFC0080AA3E /* AssetManager.cpp */; };
 		05CB8F13271358F8009AD69F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604595270A0AFC0080AA3E /* main.cpp */; };
 		05CB8F32271358F8009AD69F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */; };
-		05CB8F33271358F8009AD69F /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0535EA61270A4DE7009462B0 /* assets.json */; };
 		05CB8F34271358F8009AD69F /* paths in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD1270A51BC009462B0 /* paths */; };
 		05CB8F35271358F8009AD69F /* rooms in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD2270A51BC009462B0 /* rooms */; };
 		05CB8F36271358F8009AD69F /* textures in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD7270A51BD009462B0 /* textures */; };
@@ -776,7 +774,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				05CB8F32271358F8009AD69F /* Assets.xcassets in Resources */,
-				05CB8F33271358F8009AD69F /* assets.json in Resources */,
 				05CB8F34271358F8009AD69F /* paths in Resources */,
 				05CB8F35271358F8009AD69F /* rooms in Resources */,
 				05CB8F36271358F8009AD69F /* textures in Resources */,
@@ -793,7 +790,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				AFFB4E3C26FF48DE00FD2500 /* Assets.xcassets in Resources */,
-				0535EA62270A4DE7009462B0 /* assets.json in Resources */,
 				0535EAD9270A51BD009462B0 /* paths in Resources */,
 				0535EADA270A51BD009462B0 /* rooms in Resources */,
 				0535EADF270A51BD009462B0 /* textures in Resources */,
