@@ -5,9 +5,10 @@ PlasmaSquareRenderer::PlasmaSquareRenderer(const Vector2i & size) : AbstractCust
 {
 	// Create overlay gui
 	mOverlayGui = std::make_shared<OverlayGuiDetached>(-1, RESOURCE_TEXTURE_WHITE, GO_OGD_PLASMA);
-	mOverlayGui->setPosition({ -0.0f, 0.0f });
-	mOverlayGui->setSize({ 1.0f, 1.0f });
-	mOverlayGui->setAnchor({ 0.0f, 0.0f });
+	mOverlayGui->setCustomCanvasSize(Vector2(-1.0f));
+	mOverlayGui->setPosition(Vector2(0.0f));
+	mOverlayGui->setSize(Vector2(2.0f));
+	mOverlayGui->setAnchor(Vector2(0.0f));
 
 	(*(PlasmaShader*)mOverlayGui->getShader())
 		.setSize(Vector2(4.0f));
@@ -25,6 +26,8 @@ void PlasmaSquareRenderer::renderInternal()
 
 void PlasmaSquareRenderer::update(const Float deltaTime)
 {
+	mOverlayGui->update();
+
 	mTime += deltaTime;
 	while (mTime > 1.0f)
 	{
