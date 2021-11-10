@@ -1659,7 +1659,7 @@ void LevelSelector::manageLevelState()
 				checkForLevelEnd();
 			}
 		}
-		else if (!mSettingsOpened)
+		else if (!mSettingsOpened && mSettingsAnim <= 0.01f)
 		{
 			// Decrement only when "Start Level" animation has finished
 			if (mLevelStartedAnim >= 1.0f && mTimer.value >= -1500.0f)
