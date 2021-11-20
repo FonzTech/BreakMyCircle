@@ -6,7 +6,9 @@ import SystemConfiguration
 class Utility {
     public static var DEBUG = true;
     
-    public static let API_URL = "https://breakmycircle.alfonsopauciello.com/api.php";
+    public static let API_BASE = "https://breakmycircle.alfonsopauciello.com/";
+    public static let API_MAIN = "api.php";
+    public static let API_FIREBASE = "firebase.php";
     
     public static let ADMOB_DEV_INTERSTITIAL = "ca-app-pub-3940256099942544/8691691433";
     public static let ADMOB_PROD_INTERSTITIAL = "ca-app-pub-3837498848455030/9483010950";
@@ -54,5 +56,14 @@ class Utility {
             return window.rootViewController
         }
         return nil
+    }
+    
+    public static func getBasicApiPayload() -> [String:Any] {
+        return [
+            "type": "ios",
+            "system": ProcessInfo.processInfo.operatingSystemVersionString,
+            "version": Bundle.main.appBuild,
+            "locale": Locale.current.regionCode ?? ""
+        ]
     }
 }

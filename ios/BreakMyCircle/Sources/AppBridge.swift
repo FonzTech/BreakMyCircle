@@ -7,6 +7,7 @@ import SwiftHTTP
 var appInfoTimer: Timer? = nil
 var appStoreUrl: String = ""
 var appDeveloperUrl: String = ""
+var appNotifSettings: String = ""
 
 var isAdmobInitialized: Bool = false
 var playAdThreshold: Int = 3
@@ -19,6 +20,8 @@ var rewardedAd: GADRewardedInterstitialAd? = nil
 var interstitialAd: GADInterstitialAd? = nil
 let admobDelegate = AppAdmobDelegate()
 let appNotificationHandler = AppNotificationHandler()
+
+let DENIED_NOTIFICATIONS_MESSAGE = "You denied to receive notifications. You will not be able to obtain powerups through push notifications. To fix this, go to Settings and enable notifications."
 
 @_cdecl("ios_SetupApp")
 public func ios_SetupApp() {
@@ -164,6 +167,9 @@ fileprivate func setupAds() {
 }
 
 fileprivate func setupFirebase() {
+    // Get notification intent URL
+    appNotifSettings = UserDefaults.standard.string(forKey: "appNotifSettings") ?? ""
+    
     // Setup firebase
     FirebaseApp.configure()
     
@@ -173,21 +179,56 @@ fileprivate func setupFirebase() {
     
     // Request authorization
     let userNotificationCenter = UNUserNotificationCenter.current()
-    userNotificationCenter.getNotificationSettings { (notificationSettings) in
+    userNotificationCenter.getNotificationSettings {
+        notificationSettings in
+        
+        var message: String? = nil
+        
         switch notificationSettings.authorizationStatus {
         case .authorized,
              .ephemeral,
              .provisional:
+            
+            #if DEBUG
+            print("Notifications are going to be setup:", notificationSettings.authorizationStatus.rawValue)
+            #endif
+            
             notificationSetup()
             
         case .denied:
-            print("The app isn't authorized to schedule or receive notifications.")
+            #if DEBUG
+            print("User has denied notifications")
+            #endif
+            message = DENIED_NOTIFICATIONS_MESSAGE
             
         case .notDetermined:
-            print("The user hasn't yet made a choice about whether the app is allowed to schedule notifications.")
+            #if DEBUG
+            print("User has NOT made a choice regarding notifications yet")
+            #endif
+            notificationAuthorizeRequest()
             
         default:
-            print("Unknown case for notification status: ", notificationSettings.authorizationStatus.rawValue)
+            #if DEBUG
+            print("Unknown case for notification status:", notificationSettings.authorizationStatus.rawValue)
+            #endif
+        }
+        
+        if #available(iOS 13.0, *) {
+            if message != nil && appNotifSettings.count > 0 {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: Bundle.main.displayName, message: message, preferredStyle: .alert)
+                    
+                    if UserDefaults.standard.bool(forKey: "appNotifSettings") {
+                        alert.addAction(UIAlertAction(title: "Go To Settings", style: .default) {
+                            _ in
+                            openUrl(url: appNotifSettings)
+                        })
+                    }
+                    
+                    alert.addAction(UIAlertAction(title: "I Don't Care", style: .cancel, handler: nil))
+                    alert.presentInNewWindow(animated: true, completion: nil)
+                }
+            }
         }
     }
 }
@@ -202,6 +243,24 @@ fileprivate func notificationAuthorizeRequest() {
             print("Notification - Granted: \(granted)")
             print("Notification - Error:", error ?? "<No error>")
             #endif
+            
+            if !granted && appNotifSettings.count > 0 {
+                if #available(iOS 13.0, *) {
+                    DispatchQueue.main.async {
+                        let alert = UIAlertController(title: Bundle.main.displayName, message: DENIED_NOTIFICATIONS_MESSAGE, preferredStyle: .alert)
+                        
+                        if UserDefaults.standard.bool(forKey: "appNotifSettings") {
+                            alert.addAction(UIAlertAction(title: "Go To Settings", style: .default) {
+                                _ in
+                                openUrl(url: appNotifSettings)
+                            })
+                        }
+                        
+                        alert.addAction(UIAlertAction(title: "I Understand", style: .cancel, handler: nil))
+                        alert.presentInNewWindow(animated: true, completion: nil)
+                    }
+                }
+            }
         }
     )
 }
@@ -211,13 +270,9 @@ fileprivate func notificationSetup() {
 }
 
 fileprivate func getAppInfo() {
-    let body = [
-        "type": "ios",
-        "version": Bundle.main.appBuild,
-        "locale": Locale.current.regionCode
-    ]
+    let body = Utility.getBasicApiPayload()
     
-    HTTP.POST(Utility.API_URL, parameters: body) { response in
+    HTTP.POST(Utility.API_BASE + Utility.API_MAIN, parameters: body) { response in
         if let err = response.error {
             print("Error: \(err.localizedDescription)")
             return
@@ -243,6 +298,13 @@ fileprivate func getAppInfo() {
                     appDeveloperUrl = developerUrl as! String
                     UserDefaults.standard.set(appStoreUrl, forKey: "appDeveloperUrl")
                 }
+                
+                // Notification settings
+                let notifButton = jsonData["notifButton"]
+                if notifButton != nil {
+                    appNotifSettings = notifButton as! String
+                    UserDefaults.standard.set(notifButton, forKey: "appNotifSettings")
+                }
             }
             else {
                 print("Error while getting response from API")
@@ -256,9 +318,11 @@ fileprivate func getAppInfo() {
 fileprivate func openUrl(url: String) {
     if url.count <= 0 {
         if #available(iOS 13.0, *) {
-            let alert = UIAlertController(title: Bundle.main.displayName, message: "Could not open the requested URL. Please, try again later.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Got It", style: .cancel, handler: nil))
-            alert.presentInNewWindow(animated: true, completion: nil)
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: Bundle.main.displayName, message: "Could not open the requested URL. Please, try again later.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Got It", style: .cancel, handler: nil))
+                alert.presentInNewWindow(animated: true, completion: nil)
+            }
         }
     }
     else if let url = URL(string: url) {
@@ -291,8 +355,10 @@ fileprivate func adCallback(type: Int, error: Error?) {
 
 fileprivate func showAdError() {
     if #available(iOS 13.0, *) {
-        let alert = UIAlertController(title: Bundle.main.displayName, message: "This functionality is not available at this time. Please, try again later.", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Got It", style: .cancel, handler: nil))
-        alert.presentInNewWindow(animated: true, completion: nil)
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: Bundle.main.displayName, message: "This functionality is not available at this time. Please, try again later.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Got It", style: .cancel, handler: nil))
+            alert.presentInNewWindow(animated: true, completion: nil)
+        }
     }
 }
