@@ -101,7 +101,7 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
 
     @Override
     protected final String getBackendUrl() {
-        return Utility.BACKEND_URL + "api.php";
+        return Utility.BACKEND_URL + Utility.BACKEND_API;
     }
 
     @Override
@@ -119,11 +119,8 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
                 final SharedPreferences prefs = getSharedPreferences(CONFIG_PREFERENCES, Context.MODE_PRIVATE);
                 final String configVersion = Integer.toString(prefs.getInt("configVersion", 0));
 
-                final StringBuilder sb = new StringBuilder();
-                sb.append("configVersion=").append(URLEncoder.encode(configVersion, StandardCharsets.UTF_8.name()));
-                sb.append("&type=").append(URLEncoder.encode("android", StandardCharsets.UTF_8.name()));
-                sb.append("&locale=").append(URLEncoder.encode(Locale.getDefault().getCountry(), StandardCharsets.UTF_8.name()));
-                sb.append("&version=").append(URLEncoder.encode(Integer.toString(getPackageManager().getPackageInfo(getPackageName(), 0).versionCode), StandardCharsets.UTF_8.name()));
+                final StringBuilder sb = Utility.getBasicApiPayload(this);
+                sb.append("&configVersion=").append(URLEncoder.encode(configVersion, StandardCharsets.UTF_8.name()));
 
                 final OutputStream os = c.getOutputStream();
                 os.write(sb.toString().getBytes());

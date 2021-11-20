@@ -1,6 +1,7 @@
 # On-going tasks
 - Improve level selector scrolling.
 - Fix transparency when blackholes and explode-effect overlaps.
+- Protect game's API
 
 # To be verified
 - Implement other level game objects, such as rocks, holes, and others...

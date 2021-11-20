@@ -1,5 +1,6 @@
 package it.fonztech.breakmycircle;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONObject;
@@ -7,6 +8,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -17,9 +19,11 @@ public final class TokenSender extends Thread {
     protected static final String TAG = TokenSender.class.getSimpleName();
 
     protected final String mToken;
+    protected final WeakReference<Context> contextRef;
 
-    public TokenSender(final String token) {
+    public TokenSender(final Context context, final String token) {
         super(TAG);
+        contextRef = new WeakReference<>(context);
         mToken = token;
     }
 
@@ -27,7 +31,7 @@ public final class TokenSender extends Thread {
     public final void run() {
         HttpsURLConnection c = null;
         try {
-            final URL url = new URL(Utility.BACKEND_URL + "firebase.php");
+            final URL url = new URL(Utility.BACKEND_URL + Utility.BACKEND_FIREBASE);
             c = (HttpsURLConnection) url.openConnection();
             c.setReadTimeout(15000);
             c.setConnectTimeout(30000);
@@ -36,8 +40,11 @@ public final class TokenSender extends Thread {
             c.setDoOutput(true);
 
             {
+                final StringBuilder sb = Utility.getBasicApiPayload(contextRef != null ? contextRef.get() : null);
+                sb.append("&token=").append(URLEncoder.encode(mToken, StandardCharsets.UTF_8.name()));
+
                 final OutputStream os = c.getOutputStream();
-                os.write(("token=" + URLEncoder.encode(mToken, StandardCharsets.UTF_8.name())).getBytes());
+                os.write(sb.toString().getBytes());
                 os.close();
             }
 
