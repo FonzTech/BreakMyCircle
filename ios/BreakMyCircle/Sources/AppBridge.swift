@@ -1,6 +1,7 @@
 import Foundation
 import GoogleMobileAds
 import FirebaseCore
+import FirebaseMessaging
 import SwiftHTTP
 
 var appInfoTimer: Timer? = nil
@@ -16,7 +17,8 @@ var gpAmount: Int = 0
 
 var rewardedAd: GADRewardedInterstitialAd? = nil
 var interstitialAd: GADInterstitialAd? = nil
-let adDelegate = AppAdDelegate()
+let admobDelegate = AppAdmobDelegate()
+let appNotificationHandler = AppNotificationHandler()
 
 @_cdecl("ios_SetupApp")
 public func ios_SetupApp() {
@@ -24,7 +26,7 @@ public func ios_SetupApp() {
     // Setup ads
     setupAds()
     setupFirebase()
-    adDelegate.rewardedAdCallback = adCallback
+    admobDelegate.rewardedAdCallback = adCallback
     
     // Load stored config
     appStoreUrl = UserDefaults.standard.string(forKey: "appStoreUrl") ?? ""
@@ -83,7 +85,7 @@ public func ios_WatchAdPowerup() {
             
             // Set delegate
             rewardedAd = ad
-            rewardedAd?.fullScreenContentDelegate = adDelegate
+            rewardedAd?.fullScreenContentDelegate = admobDelegate
             
             // Try to display ad
             let root = UIApplication.shared.topViewController()
@@ -127,7 +129,7 @@ public func ios_ShowInterstitial() {
          
             // Set delegate
             interstitialAd = ad
-            interstitialAd?.fullScreenContentDelegate = adDelegate
+            interstitialAd?.fullScreenContentDelegate = admobDelegate
          
              // Try to display ad
              let root = UIApplication.shared.topViewController()
@@ -162,7 +164,50 @@ fileprivate func setupAds() {
 }
 
 fileprivate func setupFirebase() {
+    // Setup firebase
     FirebaseApp.configure()
+    
+    // Setup delegates
+    UNUserNotificationCenter.current().delegate = appNotificationHandler
+    Messaging.messaging().delegate = appNotificationHandler
+    
+    // Request authorization
+    let userNotificationCenter = UNUserNotificationCenter.current()
+    userNotificationCenter.getNotificationSettings { (notificationSettings) in
+        switch notificationSettings.authorizationStatus {
+        case .authorized,
+             .ephemeral,
+             .provisional:
+            notificationSetup()
+            
+        case .denied:
+            print("The app isn't authorized to schedule or receive notifications.")
+            
+        case .notDetermined:
+            print("The user hasn't yet made a choice about whether the app is allowed to schedule notifications.")
+            
+        default:
+            print("Unknown case for notification status: ", notificationSettings.authorizationStatus.rawValue)
+        }
+    }
+}
+
+fileprivate func notificationAuthorizeRequest() {
+    let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+    UNUserNotificationCenter.current().requestAuthorization(
+        options: authOptions,
+        completionHandler: {
+            granted, error in
+            #if DEBUG
+            print("Notification - Granted: \(granted)")
+            print("Notification - Error:", error ?? "<No error>")
+            #endif
+        }
+    )
+}
+    
+fileprivate func notificationSetup() {
+    UIApplication.shared.registerForRemoteNotifications()
 }
 
 fileprivate func getAppInfo() {
@@ -226,14 +271,14 @@ fileprivate func adCallback(type: Int, error: Error?) {
     
     switch (type)
     {
-    case AppAdDelegate.TYPE_FAILED_TO_PRESENT:
+    case AppAdmobDelegate.TYPE_FAILED_TO_PRESENT:
         print("Rewarded Ad failed to present")
         
-    case AppAdDelegate.TYPE_PRESENTED:
+    case AppAdmobDelegate.TYPE_PRESENTED:
         print("Rewarded Ad presented")
         
         
-    case AppAdDelegate.TYPE_DISMISSED:
+    case AppAdmobDelegate.TYPE_DISMISSED:
         print("Rewarded Ad dismissed")
         
     default:

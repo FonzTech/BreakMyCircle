@@ -1,7 +1,7 @@
 import Foundation
 import GoogleMobileAds
 
-class AppAdDelegate : NSObject, GADFullScreenContentDelegate {
+class AppAdmobDelegate : NSObject, GADFullScreenContentDelegate {
     public static let TYPE_FAILED_TO_PRESENT = 1
     public static let TYPE_PRESENTED = 2
     public static let TYPE_DISMISSED = 3
@@ -10,7 +10,7 @@ class AppAdDelegate : NSObject, GADFullScreenContentDelegate {
     
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
         if rewardedAdCallback != nil {
-            rewardedAdCallback!(AppAdDelegate.TYPE_FAILED_TO_PRESENT, error)
+            rewardedAdCallback!(AppAdmobDelegate.TYPE_FAILED_TO_PRESENT, error)
         }
         else {
             print("Failed to present ad: \(error)")
@@ -19,7 +19,7 @@ class AppAdDelegate : NSObject, GADFullScreenContentDelegate {
     
     func adDidPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         if rewardedAdCallback != nil {
-            rewardedAdCallback!(AppAdDelegate.TYPE_PRESENTED, nil)
+            rewardedAdCallback!(AppAdmobDelegate.TYPE_PRESENTED, nil)
         }
         else {
             print("Ad presented successfully")
@@ -28,7 +28,7 @@ class AppAdDelegate : NSObject, GADFullScreenContentDelegate {
     
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
         if rewardedAdCallback != nil {
-            rewardedAdCallback!(AppAdDelegate.TYPE_DISMISSED, nil)
+            rewardedAdCallback!(AppAdmobDelegate.TYPE_DISMISSED, nil)
         }
         else {
             print("Ad dismissed")

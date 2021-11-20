@@ -9,10 +9,10 @@
 /* Begin PBXBuildFile section */
 		052E591B2719C56A0064A24B /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591A2719C56A0064A24B /* Utility.swift */; };
 		052E591C2719C56A0064A24B /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591A2719C56A0064A24B /* Utility.swift */; };
-		052E591E2719D7E60064A24B /* AppSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AppSetup.swift */; };
-		052E591F2719D7E60064A24B /* AppSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AppSetup.swift */; };
+		052E591E2719D7E60064A24B /* AppBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AppBridge.swift */; };
+		052E591F2719D7E60064A24B /* AppBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AppBridge.swift */; };
 		0535E8F6270A3E41009462B0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604595270A0AFC0080AA3E /* main.cpp */; };
-		0535E8F9270A4267009462B0 /* Startup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* Startup.swift */; };
+		0535E8F9270A4267009462B0 /* AppEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* AppEngine.swift */; };
 		0535EAD9270A51BD009462B0 /* paths in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD1270A51BC009462B0 /* paths */; };
 		0535EADA270A51BD009462B0 /* rooms in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD2270A51BC009462B0 /* rooms */; };
 		0535EADB270A51BD009462B0 /* shaders in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD3270A51BC009462B0 /* shaders */; };
@@ -73,8 +73,12 @@
 		05718C7C271A28860090C631 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05718C7A271A287F0090C631 /* SystemConfiguration.framework */; };
 		05718C7E271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */; };
 		05718C7F271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */; };
-		05718C81271A32DE0090C631 /* AppAdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdDelegate.swift */; };
-		05718C82271A32DE0090C631 /* AppAdDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdDelegate.swift */; };
+		05718C81271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */; };
+		05718C82271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */; };
+		05ADBCCD2749665200D3EC44 /* AppNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */; };
+		05ADBCCE2749665200D3EC44 /* AppNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */; };
+		05ADBCD32749716E00D3EC44 /* TimedBubbleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */; };
+		05ADBCD42749716E00D3EC44 /* TimedBubbleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */; };
 		05C2595727177F7700B8D75E /* libopenal.1.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 05C2595627177F7700B8D75E /* libopenal.1.dylib */; };
 		05C2595827177F7E00B8D75E /* libopenal.1.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 05C2595627177F7700B8D75E /* libopenal.1.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		05C40145271AF483009ADA54 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C40144271AF483009ADA54 /* UIApplicationExtension.swift */; };
@@ -84,7 +88,7 @@
 		05CB665427137FCB00F97E29 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CFC2709F72700C34B15 /* GameController.framework */; };
 		05CB665B27138A9600F97E29 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F8927137617009AD69F /* CoreHaptics.framework */; };
 		05CB665D27138AA600F97E29 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB665C27138AA600F97E29 /* CoreMotion.framework */; };
-		05CB8EE8271358F8009AD69F /* Startup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* Startup.swift */; };
+		05CB8EE8271358F8009AD69F /* AppEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* AppEngine.swift */; };
 		05CB8EE9271358F8009AD69F /* StreamedAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */; };
 		05CB8EEA271358F8009AD69F /* StreamedAudioPlayable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */; };
 		05CB8EEB271358F8009AD69F /* PlasmaSquareRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604548270A0A850080AA3E /* PlasmaSquareRenderer.cpp */; };
@@ -216,9 +220,9 @@
 
 /* Begin PBXFileReference section */
 		052E591A2719C56A0064A24B /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
-		052E591D2719D7E60064A24B /* AppSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSetup.swift; sourceTree = "<group>"; };
+		052E591D2719D7E60064A24B /* AppBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppBridge.swift; sourceTree = "<group>"; };
 		052E59282719D9920064A24B /* GoogleMobileAds.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = GoogleMobileAds.xcframework; path = "Pods/Google-Mobile-Ads-SDK/Frameworks/GoogleMobileAdsFramework-Current/GoogleMobileAds.xcframework"; sourceTree = "<group>"; };
-		0535E8F8270A4267009462B0 /* Startup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Startup.swift; sourceTree = "<group>"; };
+		0535E8F8270A4267009462B0 /* AppEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEngine.swift; sourceTree = "<group>"; };
 		0535EA61270A4DE7009462B0 /* assets.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = assets.json; path = ../android/app/src/main/res/raw/assets.json; sourceTree = "<group>"; };
 		0535EAD1270A51BC009462B0 /* paths */ = {isa = PBXFileReference; lastKnownFileType = folder; name = paths; path = ../paths; sourceTree = "<group>"; };
 		0535EAD2270A51BC009462B0 /* rooms */ = {isa = PBXFileReference; lastKnownFileType = folder; name = rooms; path = ../rooms; sourceTree = "<group>"; };
@@ -281,7 +285,11 @@
 		05718C77271A1FBE0090C631 /* BundleExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleExtension.swift; sourceTree = "<group>"; };
 		05718C7A271A287F0090C631 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertControllerExtension.swift; sourceTree = "<group>"; };
-		05718C80271A32DE0090C631 /* AppAdDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAdDelegate.swift; sourceTree = "<group>"; };
+		05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAdmobDelegate.swift; sourceTree = "<group>"; };
+		05ADBCC7274941B600D3EC44 /* breakmycircle_sim.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = breakmycircle_sim.entitlements; sourceTree = "<group>"; };
+		05ADBCC8274941C000D3EC44 /* breakmycircle_arm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = breakmycircle_arm.entitlements; sourceTree = "<group>"; };
+		05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNotificationHandler.swift; sourceTree = "<group>"; };
+		05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TimedBubbleShader.cpp; path = ../src/Shaders/TimedBubbleShader.cpp; sourceTree = "<group>"; };
 		05C2595627177F7700B8D75E /* libopenal.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopenal.1.dylib; path = "../../../../Development/ios-arm64/lib/libopenal.1.dylib"; sourceTree = "<group>"; };
 		05C40144271AF483009ADA54 /* UIApplicationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtension.swift; sourceTree = "<group>"; };
 		05CB66462713779E00F97E29 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
@@ -441,13 +449,14 @@
 		0535E8F7270A4259009462B0 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				052E591D2719D7E60064A24B /* AppSetup.swift */,
-				05718C80271A32DE0090C631 /* AppAdDelegate.swift */,
-				0535E8F8270A4267009462B0 /* Startup.swift */,
-				052E591A2719C56A0064A24B /* Utility.swift */,
-				05718C77271A1FBE0090C631 /* BundleExtension.swift */,
-				05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */,
+				0535E8F8270A4267009462B0 /* AppEngine.swift */,
+				052E591D2719D7E60064A24B /* AppBridge.swift */,
+				05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */,
 				05C40144271AF483009ADA54 /* UIApplicationExtension.swift */,
+				05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */,
+				05718C77271A1FBE0090C631 /* BundleExtension.swift */,
+				052E591A2719C56A0064A24B /* Utility.swift */,
+				05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -541,6 +550,7 @@
 				0545F0992711AD980075E566 /* ShootPathShader.cpp */,
 				05604588270A0AE90080AA3E /* StarRoadShader.cpp */,
 				05604589270A0AE90080AA3E /* SunShader.cpp */,
+				05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */,
 				05604583270A0AE90080AA3E /* WaterShader.cpp */,
 			);
 			name = Shaders;
@@ -647,6 +657,8 @@
 		AFFB4E2B26FF48DC00FD2500 = {
 			isa = PBXGroup;
 			children = (
+				05ADBCC8274941C000D3EC44 /* breakmycircle_arm.entitlements */,
+				05ADBCC7274941B600D3EC44 /* breakmycircle_sim.entitlements */,
 				0535E90F270A4D01009462B0 /* Assets */,
 				05604594270A0AF20080AA3E /* Base */,
 				0560453D270A0A200080AA3E /* Audio */,
@@ -855,8 +867,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05CB8EE8271358F8009AD69F /* Startup.swift in Sources */,
-				052E591E2719D7E60064A24B /* AppSetup.swift in Sources */,
+				05CB8EE8271358F8009AD69F /* AppEngine.swift in Sources */,
+				052E591E2719D7E60064A24B /* AppBridge.swift in Sources */,
+				05718C81271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */,
+				05C40145271AF483009ADA54 /* UIApplicationExtension.swift in Sources */,
+				05718C7E271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */,
+				05718C78271A1FBE0090C631 /* BundleExtension.swift in Sources */,
+				052E591B2719C56A0064A24B /* Utility.swift in Sources */,
 				05CB8EE9271358F8009AD69F /* StreamedAudioBuffer.cpp in Sources */,
 				05CB8EEA271358F8009AD69F /* StreamedAudioPlayable.cpp in Sources */,
 				05CB8EEB271358F8009AD69F /* PlasmaSquareRenderer.cpp in Sources */,
@@ -867,23 +884,20 @@
 				05CB8EF0271358F8009AD69F /* OverlayGui.cpp in Sources */,
 				05CB8EF1271358F8009AD69F /* OverlayText.cpp in Sources */,
 				05CB8EF2271358F8009AD69F /* Projectile.cpp in Sources */,
-				05C40145271AF483009ADA54 /* UIApplicationExtension.swift in Sources */,
 				05CB8EF3271358F8009AD69F /* Bubble.cpp in Sources */,
 				05CB8EF4271358F8009AD69F /* MapPickup.cpp in Sources */,
 				05CB8EF5271358F8009AD69F /* SafeMinigame.cpp in Sources */,
 				05CB8EF6271358F8009AD69F /* Congrats.cpp in Sources */,
 				05CB8EF7271358F8009AD69F /* Dialog.cpp in Sources */,
 				05CB8EF8271358F8009AD69F /* LimitLine.cpp in Sources */,
-				05718C7E271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */,
 				05CB8EF9271358F8009AD69F /* LevelSelector.cpp in Sources */,
+				05ADBCD32749716E00D3EC44 /* TimedBubbleShader.cpp in Sources */,
 				05CB8EFA271358F8009AD69F /* AbstractGuiElement.cpp in Sources */,
 				05CB8EFB271358F8009AD69F /* Player.cpp in Sources */,
-				052E591B2719C56A0064A24B /* Utility.swift in Sources */,
 				05CB8EFC271358F8009AD69F /* LevelSelectorSidecar.cpp in Sources */,
 				05CB8EFD271358F8009AD69F /* Logo.cpp in Sources */,
 				05CB8EFE271358F8009AD69F /* Scenery.cpp in Sources */,
 				05CB8EFF271358F8009AD69F /* Skybox.cpp in Sources */,
-				05718C78271A1FBE0090C631 /* BundleExtension.swift in Sources */,
 				05CB8F00271358F8009AD69F /* OverlayGuiDetached.cpp in Sources */,
 				05CB8F01271358F8009AD69F /* Onboarding.cpp in Sources */,
 				05CB8F02271358F8009AD69F /* FallingBubble.cpp in Sources */,
@@ -895,8 +909,8 @@
 				05CB8F08271358F8009AD69F /* CubeMapShader.cpp in Sources */,
 				05CB8F09271358F8009AD69F /* ScreenQuadShader.cpp in Sources */,
 				05CB8F0A271358F8009AD69F /* StarRoadShader.cpp in Sources */,
-				05718C81271A32DE0090C631 /* AppAdDelegate.swift in Sources */,
 				05CB8F0B271358F8009AD69F /* ShootPathShader.cpp in Sources */,
+				05ADBCCD2749665200D3EC44 /* AppNotificationHandler.swift in Sources */,
 				05CB8F0C271358F8009AD69F /* SunShader.cpp in Sources */,
 				05CB8F0D271358F8009AD69F /* Engine.cpp in Sources */,
 				05CB8F0E271358F8009AD69F /* GameObject.cpp in Sources */,
@@ -912,8 +926,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0535E8F9270A4267009462B0 /* Startup.swift in Sources */,
-				052E591F2719D7E60064A24B /* AppSetup.swift in Sources */,
+				0535E8F9270A4267009462B0 /* AppEngine.swift in Sources */,
+				052E591F2719D7E60064A24B /* AppBridge.swift in Sources */,
+				05718C82271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */,
+				05C40146271AF483009ADA54 /* UIApplicationExtension.swift in Sources */,
+				05718C7F271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */,
+				05718C79271A1FBE0090C631 /* BundleExtension.swift in Sources */,
+				052E591C2719C56A0064A24B /* Utility.swift in Sources */,
 				05604540270A0A350080AA3E /* StreamedAudioBuffer.cpp in Sources */,
 				05604541270A0A350080AA3E /* StreamedAudioPlayable.cpp in Sources */,
 				0560454A270A0A850080AA3E /* PlasmaSquareRenderer.cpp in Sources */,
@@ -924,23 +943,20 @@
 				05604568270A0AAF0080AA3E /* OverlayGui.cpp in Sources */,
 				05604569270A0AAF0080AA3E /* OverlayText.cpp in Sources */,
 				0560456A270A0AAF0080AA3E /* Projectile.cpp in Sources */,
-				05C40146271AF483009ADA54 /* UIApplicationExtension.swift in Sources */,
 				0560456B270A0AAF0080AA3E /* Bubble.cpp in Sources */,
 				0560456C270A0AAF0080AA3E /* MapPickup.cpp in Sources */,
 				0560456D270A0AAF0080AA3E /* SafeMinigame.cpp in Sources */,
 				0560456E270A0AAF0080AA3E /* Congrats.cpp in Sources */,
 				0560456F270A0AAF0080AA3E /* Dialog.cpp in Sources */,
 				05604570270A0AAF0080AA3E /* LimitLine.cpp in Sources */,
-				05718C7F271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */,
 				05604571270A0AAF0080AA3E /* LevelSelector.cpp in Sources */,
+				05ADBCD42749716E00D3EC44 /* TimedBubbleShader.cpp in Sources */,
 				05604572270A0AAF0080AA3E /* AbstractGuiElement.cpp in Sources */,
 				05604573270A0AAF0080AA3E /* Player.cpp in Sources */,
-				052E591C2719C56A0064A24B /* Utility.swift in Sources */,
 				05604574270A0AAF0080AA3E /* LevelSelectorSidecar.cpp in Sources */,
 				05604575270A0AAF0080AA3E /* Logo.cpp in Sources */,
 				05604576270A0AAF0080AA3E /* Scenery.cpp in Sources */,
 				05604577270A0AAF0080AA3E /* Skybox.cpp in Sources */,
-				05718C79271A1FBE0090C631 /* BundleExtension.swift in Sources */,
 				05604578270A0AAF0080AA3E /* OverlayGuiDetached.cpp in Sources */,
 				05604579270A0AAF0080AA3E /* Onboarding.cpp in Sources */,
 				0560457A270A0AAF0080AA3E /* FallingBubble.cpp in Sources */,
@@ -952,8 +968,8 @@
 				0560458D270A0AE90080AA3E /* CubeMapShader.cpp in Sources */,
 				0560458E270A0AE90080AA3E /* ScreenQuadShader.cpp in Sources */,
 				0560458F270A0AE90080AA3E /* StarRoadShader.cpp in Sources */,
-				05718C82271A32DE0090C631 /* AppAdDelegate.swift in Sources */,
 				0545F09A2711AD980075E566 /* ShootPathShader.cpp in Sources */,
+				05ADBCCE2749665200D3EC44 /* AppNotificationHandler.swift in Sources */,
 				05604590270A0AE90080AA3E /* SunShader.cpp in Sources */,
 				0560459D270A0AFC0080AA3E /* Engine.cpp in Sources */,
 				0560459E270A0AFC0080AA3E /* GameObject.cpp in Sources */,
@@ -978,6 +994,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = breakmycircle_arm.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
@@ -1035,6 +1052,7 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = breakmycircle_arm.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
@@ -1216,6 +1234,8 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = breakmycircle_sim.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
@@ -1250,6 +1270,7 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = iphonesimulator;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -1269,6 +1290,8 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = breakmycircle_sim.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
@@ -1303,6 +1326,7 @@
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = iphonesimulator;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
