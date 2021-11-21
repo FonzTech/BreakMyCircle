@@ -14,11 +14,15 @@ Puzzle Bobble-like game for PC and Mobile. Currently in development. This projec
 ## Technical Notes
 
 - The variable `mParentIndex` is NOT available for use in any of class hierarchy for `GameObject`, unless the index is explicitly passed, if the object is instantiated outside of the in-game room loader. For example, take a look at the `Player` class: it needs the `parentIndex` argument for its constructor (which introduces some redundancy), because it needs to look for other game objects on the same layer where it lies.
-- To get status for a mouse button:
+- To get status for a single input:
 
-  `InputManager::singleton->mouseStates[ImMouseButtons::Left]`
+  `InputManager::singleton->mouseStates[PRIMARY_BUTTON]`
 
-  which can contain one of the following values:
+  where on `PRIMARY_BUTTON` equals to:
+  - `ImMouseButtons::None` on mobile;
+  - `ImMouseButtons::Left` desktop.
+
+  The value can be one of following:
   
   - `IM_STATE_NOT_PRESSED = 0`: the key is not pressed at all;
   - `IM_STATE_PRESSED = 1`: the key has been just pressed for this tick;
@@ -27,17 +31,16 @@ Puzzle Bobble-like game for PC and Mobile. Currently in development. This projec
 
   To check if key is down or not, do one of the following:
 
-  - `InputManager::singleton->mouseStates[ImMouseButtons::Left] <= 0`: the key is up;
-  - `InputManager::singleton->mouseStates[ImMouseButtons::Left] > 0`: the key is down;
+  - `InputManager::singleton->mouseStates[PRIMARY_BUTTON] <= 0`: the key is up;
+  - `InputManager::singleton->mouseStates[PRIMARY_BUTTON] > 0`: the key is down;
 
+- On Android, when a notification is tapped, the `NotificationActivity` is opened. All of the intent extras, which starts with `game_`, are then passed intact to the `EngineActivity` if it has been already started. Otherwise, a new instance of it is started with the above mentioned data.
+- On iOS, the launching options are parsed to get the `game_startup_mask` parameter and set it accordingly as the target platform requires.
 - Use the `DEBUG` macro to check whether it's a debug build or not. Visual Studio, Android Studio and Xcode projects are already setup to be conformant to this project codebase.
 - Object picking in `GOL_PERSP_FIRST` can be toggled using the `InputManager::singleton->mReadObjectId` flag. This is useful in some situations where object picking is not required, since it *may* cause OpenGL pipeline to sync, thus losing performance and framerate.
 - Please, keep the `GameObject::mDrawables` array clean and consistent, otherwise orphans drawables will appear. Also, layers where drawables go should be the same where the `GameObject` instances goes, otherwise drawables handling becomes difficult and tricky. Just create another class to handle that drawable on your required layer.
 - The concept for **Detached Drawing** is simple: the engine follows a pipeline, to render all the object on it's layer. If something needs to be rendered outside this pipeline (like some off-screen drawing or render-to-texture operations), we are talking about **Detached Drawing**. Just implement the *IDrawDetached* interface to give an uniformity and coherence regarding drawing operations. Beware to not let drawables end up in `RoomManager`-managed `DrawableGroup` object!
-
-~~The `OverlayText` is *ALWAYS detached*.~~
-
-The `OverlayText` is *NOT ALWAYS* detached anymore. A dummy drawable is added to be processed by the engine pipeline, so draw order is preserved!
+- The `OverlayText` is *NOT ALWAYS* detached anymore. A dummy drawable is added to be processed by the engine pipeline, so draw order is preserved!
 - The concept for **Cycle Waste** is basically wasting a cycle where the `GameObject::update` method, for a specific instance, gets called by the engine, without doing anything useful for the instance's logic itself. This is useful after a loading, like a scene, audio, etc... to avoid big *delta times*, like animation jumps, or sometimes even state jumps!
 - As of now, ~~all~~ almost materials use Phong shader.
 - The GOL_PERSP_FIRST is the only layer which has the object ID buffer, used for mouse picking.

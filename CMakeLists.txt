@@ -163,6 +163,7 @@ if(CORRADE_TARGET_ANDROID)
         src/Shaders/StarRoadShader.cpp
         src/Shaders/SunShader.cpp
         src/Shaders/ShootPathShader.cpp
+        src/Shaders/TimedBubbleShader.cpp
         src/Shaders/WaterShader.cpp
     )
 
@@ -212,6 +213,7 @@ else()
         src/Shaders/StarRoadShader.cpp
         src/Shaders/SunShader.cpp
         src/Shaders/ShootPathShader.cpp
+        src/Shaders/TimedBubbleShader.cpp
         src/Shaders/WaterShader.cpp
     )
 endif()

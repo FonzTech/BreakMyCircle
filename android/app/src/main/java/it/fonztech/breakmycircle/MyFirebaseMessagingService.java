@@ -23,7 +23,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public final void onNewToken(@SuppressWarnings("NullableProblems") final String token) {
         Log.d(TAG, "Refreshed token: " + token);
-        new TokenSender(token).start();
+        new TokenSender(this, token).start();
     }
 
     @Override

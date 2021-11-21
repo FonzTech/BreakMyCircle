@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -36,6 +37,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.Iterator;
 
 public abstract class EngineActivity extends NativeActivity implements OnInitializationCompleteListener, OnUserEarnedRewardListener, OnCompleteListener<String> {
@@ -65,7 +67,7 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
 
         @Override
         public final void onAdFailedToLoad(@NonNull final LoadAdError loadAdError) {
-            // showError(loadAdError.getMessage());
+            showError(loadAdError.getMessage());
         }
     };
 
@@ -73,7 +75,7 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         @Override
         public void onAdFailedToLoad(@NonNull final LoadAdError loadAdError) {
             setRewardedInfo(null, 0);
-            showError(loadAdError.getMessage());
+            showError(Utility.DEBUG ? loadAdError.getMessage() : null);
         }
 
         @Override
@@ -94,7 +96,7 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         @Override
         public final void onAdFailedToShowFullScreenContent(@SuppressWarnings("NullableProblems") final AdError adError) {
             setRewardedInfo(null, 0);
-            // showError(adError.getMessage());
+            showError(Utility.DEBUG ? adError.getMessage() : null);
         }
 
         @Override
@@ -102,12 +104,12 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         }
     };
 
-    public static boolean IS_ACTIVE = false;
+    public static WeakReference<EngineActivity> CURRENT_INSTANCE = new WeakReference<>(null);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        IS_ACTIVE = true;
+        CURRENT_INSTANCE = new WeakReference<>(this);
 
         mCanShowAds = true;
 
@@ -220,7 +222,7 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        IS_ACTIVE = false;
+        CURRENT_INSTANCE = new WeakReference<>(null);
     }
 
     @Override
@@ -245,13 +247,33 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
 
         // Get new FCM registration token
         final String token = task.getResult();
-        new TokenSender(token).start();
+        new TokenSender(this, token).start();
     }
 
+    /**
+     * Abstract method to implement in the child activity, who runs the game library.
+     * This method is used to pass rewards to your game.
+     *
+     * @param type string representing the type, passed from Ads settings (or a mock).
+     * @param amount how much rewards to give to the player, passed from Ads settings (or a mock).
+     */
     protected abstract void setRewardedInfo(final String type, final int amount);
 
+    /**
+     * Abstract method to implement in the child activity.
+     *
+     * @return backend API URL for the game (to sync settings, stats, etc...).
+     */
     protected abstract String getBackendUrl();
 
+    /**
+     * Get entire JSON string, from the "assets" file containing all the assets
+     * and their version number, directly from the app bundle.
+     *
+     * @return entire JSON string representing the "assets" file content.
+     *
+     * @throws IOException any IO exception thrown during file read.
+     */
     protected final String getAssetsJson() throws IOException {
         final InputStream is = getResources().openRawResource(R.raw.assets);
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -267,12 +289,24 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         return new String(baos.toByteArray());
     }
 
+    /**
+     * Open any supported URI in Android, using the default user/system intent catcher.
+     *
+     * @param url string representing the URI/URL to open. Intent catcher is chosen by
+     *            the provided URI/URL scheme.
+     */
     protected final void openUrl(final String url) {
         final Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(Uri.parse(url));
         startActivity(i);
     }
 
+    /**
+     * This method is used to show an Interstitial Ad. It can be called from the Java
+     * part or even directly from the C++ part (hence the "unused" warning suppression).
+     * If it was NOT possible to show the ad (due to mis-configuration, no network, etc...)
+     * no dialog is shown. Instead, all the rewards to the user is cleared.
+     */
     @SuppressWarnings("unused")
     protected final void showInterstitial() {
         runOnUiThread(() -> {
@@ -286,6 +320,12 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         });
     }
 
+    /**
+     * This method is used to show a Rewarded Interstitial Ad. It can be called from the
+     * Java part or even directly from the C++ part (hence the "unused" warning suppression).
+     * If it was NOT possible to show the ad (due to mis-configuration, no network, etc...)
+     * then a dialog with an error is shown.
+     */
     @SuppressWarnings("unused")
     protected final void watchAdForPowerup() {
         runOnUiThread(() -> {
@@ -304,6 +344,12 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         });
     }
 
+    /**
+     * Get status bar height. Useful to be used in the engine to avoid putting GUI under the
+     * status/notification bar in Android.
+     *
+     * @return number of pixels occupied by the system status/notification bar.
+     */
     protected final int statusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
@@ -313,10 +359,16 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
         return result;
     }
 
-    protected final void showError(final String message) {
+    /**
+     * Show error dialog, with a given message or a default one (if null), with a single "OK"
+     * button.
+     *
+     * @param message nullable message. If null, then a default message is shown.
+     */
+    protected final void showError(@Nullable final String message) {
         new AlertDialog.Builder(EngineActivity.this)
                 .setTitle(R.string.app_name)
-                .setMessage(R.string.ad_error)
+                .setMessage(message != null ? message : getString(R.string.ad_error))
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
     }

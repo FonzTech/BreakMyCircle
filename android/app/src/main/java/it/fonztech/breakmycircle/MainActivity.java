@@ -16,7 +16,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -27,6 +26,8 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
 
     protected static final String URL_DEFAULT_VOTE_ME = "https://play.google.com/store/apps/details?id=it.fonztech.breakmycircle";
     protected static final String URL_DEFAULT_OTHER_APPS = "https://play.google.com/store/apps/developer?id=FonzTech";
+
+    protected static final String REWARD_TYPE_POWERUP = "powerup";
 
     protected Handler handler;
     protected String mStoreUrl;
@@ -48,6 +49,7 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Load settings
         {
             final SharedPreferences prefs = getSharedPreferences(CONFIG_PREFERENCES, Context.MODE_PRIVATE);
             mPlayAdThreshold = prefs.getInt("playAdThreshold", 3);
@@ -55,6 +57,7 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
             mDeveloperUrl = prefs.getString("developerUrl", URL_DEFAULT_OTHER_APPS);
         }
 
+        // Fetch configuration from API
         handler = new Handler();
         configGetterRunnable.run();
     }
@@ -88,15 +91,7 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
 
     @Override
     protected final void setRewardedInfo(final String type, final int amount) {
-        if ("powerup".equalsIgnoreCase(type)) {
-            setPowerupInfo(amount);
-        }
-        else if (ADS_NOT_AVAILABLE_TYPE.equalsIgnoreCase(type)) {
-            setPowerupInfo(0);
-        }
-        else {
-            setPowerupInfo(Utility.DEBUG ? 1 : amount);
-        }
+        setRewardedInfoWithTimeout(type, amount, 1000L);
     }
 
     @Override
@@ -162,7 +157,7 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
                 editor.putString("storeUrl", mStoreUrl);
                 editor.putString("developerUrl", mDeveloperUrl);
 
-                editor.commit();
+                editor.apply();
             }
 
             getIntent().putExtra(GAME_PLAY_AD_THRESHOLD, Integer.toString(mPlayAdThreshold));
@@ -190,21 +185,63 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
         }
     }
 
+    /**
+     * This method is used to open the "Vote Me" intent. As of time of writing, this method is
+     * called directly in-game (so on the C++ side), after a tap on a button by the user.
+     */
     @SuppressWarnings("unused")
     protected final void gameVoteMe() {
         openUrl(mStoreUrl != null ? mStoreUrl : URL_DEFAULT_VOTE_ME);
     }
 
+    /**
+     * This method is used to open the "Other Apps" page in the Google Play Store app. As of time
+     * of writing, this method is called directly in-game (so on the C++ side), after a tap on a
+     * button by the user.
+     */
     @SuppressWarnings("unused")
     protected final void gameOtherApps() {
         openUrl(mDeveloperUrl != null ? mDeveloperUrl : URL_DEFAULT_OTHER_APPS);
     }
 
-    protected final void setPowerupInfo(final int rewardAmount) {
-        getIntent().putExtra(GAME_GP_AMOUNT, Integer.toString(rewardAmount));
-        getIntent().putExtra(GAME_GP_EXPIRE, Long.toString(System.currentTimeMillis() + 1000L));
+    /**
+     * Set reward to be passed/fetched by your game code. This method performs some checks regarding
+     * the reward type, debug state and other game logic.
+     *
+     * @param type string representing the reward type (it can be any string, which makes sense in
+     *             your game).
+     * @param amount how much reward to give to the player (it can be any number).
+     * @param timeout timeout after which the reward is no more valid. The timeout system is ONLY
+     *                managed by the game logic and nothing more.
+     */
+    protected final void setRewardedInfoWithTimeout(final String type, final int amount, final long timeout) {
+        if (REWARD_TYPE_POWERUP.equalsIgnoreCase(type)) {
+            setPowerupInfo(amount, timeout);
+        }
+        else if (ADS_NOT_AVAILABLE_TYPE.equalsIgnoreCase(type)) {
+            setPowerupInfo(0, timeout);
+        }
+        else {
+            setPowerupInfo(Utility.DEBUG ? 1 : amount, timeout);
+        }
     }
 
+    /**
+     * Set powerup info parameters in this activity's intent. Then, those parameters will be fetched
+     * directly by the game logic. So, it only acts as a "data store".
+     *
+     * @param rewardAmount reward amount for the given reward.
+     * @param timeout for how much time the reward is valid.
+     */
+    protected final void setPowerupInfo(final int rewardAmount, final long timeout) {
+        getIntent().putExtra(GAME_GP_AMOUNT, Integer.toString(rewardAmount));
+        getIntent().putExtra(GAME_GP_EXPIRE, Long.toString(System.currentTimeMillis() + timeout));
+    }
+
+    /**
+     * Clear any game reward-related data. As of time of writing, this method is only called by the
+     * game logic (C++ side), hence the "unused" warning suppression.
+     */
     @SuppressWarnings("unused")
     protected final void clearPowerupData() {
         getIntent().removeExtra(GAME_GP_AMOUNT);
