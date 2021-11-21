@@ -21,6 +21,8 @@ var interstitialAd: GADInterstitialAd? = nil
 let admobDelegate = AppAdmobDelegate()
 let appNotificationHandler = AppNotificationHandler()
 
+let NOTIFICATION_CHECK_INTERVAL = Int64(Utility.DEBUG ? 15 : 86400)
+let PREFS_LAST_NOTIFICATION_CHECK = "lastNotificationCheck"
 let PREFS_CONFIG_VERSION = "appConfigVersion"
 let DENIED_NOTIFICATIONS_MESSAGE = "You denied to receive notifications. You will not be able to obtain powerups through push notifications. To fix this, go to Settings and enable notifications."
 
@@ -216,18 +218,28 @@ fileprivate func setupFirebase() {
         
         if #available(iOS 13.0, *) {
             if message != nil && appNotifSettings.count > 0 {
-                DispatchQueue.main.async {
-                    let alert = UIAlertController(title: Bundle.main.displayName, message: message, preferredStyle: .alert)
+                
+                // Check if interval has passed since last dialog alert for denied notifications
+                let curTime = Int64(Date().timeIntervalSince1970)
+                let lastCheck = Int64(UserDefaults.standard.integer(forKey: PREFS_LAST_NOTIFICATION_CHECK))
+                if lastCheck == 0 || curTime > lastCheck + NOTIFICATION_CHECK_INTERVAL {
+                    // Save last check to prefs
+                    UserDefaults.standard.set(curTime, forKey: PREFS_LAST_NOTIFICATION_CHECK)
                     
-                    if UserDefaults.standard.bool(forKey: "appNotifSettings") {
-                        alert.addAction(UIAlertAction(title: "Go To Settings", style: .default) {
-                            _ in
-                            openUrl(url: appNotifSettings)
-                        })
+                    // Show alert dialog
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
+                        let alert = UIAlertController(title: Bundle.main.displayName, message: message, preferredStyle: .alert)
+                        
+                        if appNotifSettings.count > 0 {
+                            alert.addAction(UIAlertAction(title: "Go To Settings", style: .default) {
+                                _ in
+                                openUrl(url: appNotifSettings)
+                            })
+                        }
+                        
+                        alert.addAction(UIAlertAction(title: "I Don't Care", style: .cancel, handler: nil))
+                        alert.presentInNewWindow(animated: true, completion: nil)
                     }
-                    
-                    alert.addAction(UIAlertAction(title: "I Don't Care", style: .cancel, handler: nil))
-                    alert.presentInNewWindow(animated: true, completion: nil)
                 }
             }
         }
@@ -250,7 +262,7 @@ fileprivate func notificationAuthorizeRequest() {
                     DispatchQueue.main.async {
                         let alert = UIAlertController(title: Bundle.main.displayName, message: DENIED_NOTIFICATIONS_MESSAGE, preferredStyle: .alert)
                         
-                        if UserDefaults.standard.bool(forKey: "appNotifSettings") {
+                        if appNotifSettings.count > 0 {
                             alert.addAction(UIAlertAction(title: "Go To Settings", style: .default) {
                                 _ in
                                 openUrl(url: appNotifSettings)

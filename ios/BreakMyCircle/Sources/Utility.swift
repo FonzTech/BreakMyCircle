@@ -16,6 +16,15 @@ class Utility {
     public static let ADMOB_DEV_REWARDED = "ca-app-pub-3940256099942544/5354046379"
     public static let ADMOB_PROD_REWARDED = "ca-app-pub-3837498848455030/2119526254"
     
+    public static func makeCString(from str: String) -> UnsafeMutablePointer<Int8> {
+        let count = str.utf8.count + 1
+        let result = UnsafeMutablePointer<Int8>.allocate(capacity: count)
+        str.withCString { (baseAddress) in
+            result.initialize(from: baseAddress, count: count)
+        }
+        return result
+    }
+    
     public static func isConnectedToNetwork() -> Bool {
         var zeroAddress = sockaddr_in()
         zeroAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)

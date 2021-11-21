@@ -22,6 +22,8 @@
 		0535EADF270A51BD009462B0 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD7270A51BD009462B0 /* textures */; };
 		0535EAE1270A55B1009462B0 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C9D2709F4AE00C34B15 /* libSDL2main.a */; };
 		0535EAE2270A6130009462B0 /* libAnySceneImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C902709F38600C34B15 /* libAnySceneImporter.a */; };
+		0545583D274AA32B0014D325 /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0545583C274AA32B0014D325 /* assets.json */; };
+		0545583F274AA34B0014D325 /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0545583E274AA34B0014D325 /* assets.json */; };
 		0545F09A2711AD980075E566 /* ShootPathShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0545F0992711AD980075E566 /* ShootPathShader.cpp */; };
 		0549C208271B488600490E66 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0549C1F3271B463900490E66 /* GoogleService-Info.plist */; };
 		0549C209271B48F800490E66 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0549C1F3271B463900490E66 /* GoogleService-Info.plist */; };
@@ -231,6 +233,8 @@
 		0535EAD5270A51BD009462B0 /* scenes */ = {isa = PBXFileReference; lastKnownFileType = folder; name = scenes; path = ../scenes; sourceTree = "<group>"; };
 		0535EAD6270A51BD009462B0 /* audios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = audios; path = ../audios; sourceTree = "<group>"; };
 		0535EAD7270A51BD009462B0 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = textures; path = ../textures; sourceTree = "<group>"; };
+		0545583C274AA32B0014D325 /* assets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = assets.json; path = ../android/app/src/main/res/raw/assets.json; sourceTree = "<group>"; };
+		0545583E274AA34B0014D325 /* assets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = assets.json; path = ../android/app/src/main/res/raw/assets.json; sourceTree = "<group>"; };
 		0545F0992711AD980075E566 /* ShootPathShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShootPathShader.cpp; path = ../src/Shaders/ShootPathShader.cpp; sourceTree = "<group>"; };
 		0549C1F3271B463900490E66 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0549C204271B46D900490E66 /* FirebaseCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -657,6 +661,8 @@
 		AFFB4E2B26FF48DC00FD2500 = {
 			isa = PBXGroup;
 			children = (
+				0545583C274AA32B0014D325 /* assets.json */,
+				0545583E274AA34B0014D325 /* assets.json */,
 				05ADBCC8274941C000D3EC44 /* breakmycircle_arm.entitlements */,
 				05ADBCC7274941B600D3EC44 /* breakmycircle_sim.entitlements */,
 				0535E90F270A4D01009462B0 /* Assets */,
@@ -794,6 +800,7 @@
 				05CB8F39271358F8009AD69F /* fonts in Resources */,
 				05CB8F3A271358F8009AD69F /* shaders in Resources */,
 				0549C208271B488600490E66 /* GoogleService-Info.plist in Resources */,
+				0545583D274AA32B0014D325 /* assets.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -810,6 +817,7 @@
 				0535EADC270A51BD009462B0 /* fonts in Resources */,
 				0535EADB270A51BD009462B0 /* shaders in Resources */,
 				0549C209271B48F800490E66 /* GoogleService-Info.plist in Resources */,
+				0545583F274AA34B0014D325 /* assets.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

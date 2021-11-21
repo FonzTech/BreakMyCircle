@@ -84,7 +84,7 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
 
 #if defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
     
-    CommonUtility::singleton->mConfig.assetDir = std::string(ios_GetAssetDir());
+    CommonUtility::singleton->mConfig.assetDir = ios_GetAssetDir();
     CommonUtility::singleton->mConfig.displayDensity = ios_GetDisplayDensity();
     CommonUtility::singleton->mConfig.saveFile = ios_GetSaveFile();
     

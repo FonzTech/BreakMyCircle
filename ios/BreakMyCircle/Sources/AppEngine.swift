@@ -1,14 +1,21 @@
 import Foundation
 import UIKit
 
+let C_STRING_EMPTY = Utility.makeCString(from: "")
+var C_STRING_ASSET_DIR: UnsafeMutablePointer<Int8>? = nil
+var C_STRING_SAVE_FILE: UnsafeMutablePointer<Int8>? = nil
+
 @_cdecl("ios_GetAssetDir")
-public func ios_GetAssetDir() -> UnsafePointer<CChar>? {
-    if let path = Bundle.main.path(forResource: "assets", ofType: "json") {
-        let fileUrl = URL(fileURLWithPath: path)
-        let folderUrl = fileUrl.deletingLastPathComponent()
-        return UnsafePointer<CChar>(getFixedPath(path: folderUrl.path))
+public func ios_GetAssetDir() -> UnsafeMutablePointer<Int8> {
+    if C_STRING_ASSET_DIR == nil {
+        C_STRING_ASSET_DIR = C_STRING_EMPTY
+        if let path = Bundle.main.path(forResource: "assets", ofType: "json") {
+            let fileUrl = URL(fileURLWithPath: path)
+            let folderUrl = fileUrl.deletingLastPathComponent()
+            C_STRING_ASSET_DIR = Utility.makeCString(from: getFixedPath(path: folderUrl.path))
+        }
     }
-    return UnsafePointer<CChar>("")
+    return C_STRING_ASSET_DIR!
 }
 
 @_cdecl("ios_GetDisplayDensity")
@@ -17,18 +24,21 @@ public func ios_GetDisplayDensity() -> Float {
 }
 
 @_cdecl("ios_GetSaveFile")
-public func ios_GetSaveFile() -> UnsafePointer<CChar>? {
-    do {
-        let fileUrl = try FileManager.default
-            .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            .appendingPathComponent("save.json")
-        createSaveFile(filename: fileUrl)
-        return UnsafePointer<CChar>(fileUrl.path)
+public func ios_GetSaveFile() -> UnsafeMutablePointer<Int8> {
+    if C_STRING_SAVE_FILE == nil {
+        C_STRING_SAVE_FILE = C_STRING_EMPTY
+        do {
+            let fileUrl = try FileManager.default
+                .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                .appendingPathComponent("save.json")
+            let _ = createSaveFile(filename: fileUrl)
+            C_STRING_SAVE_FILE = Utility.makeCString(from: fileUrl.path)
+        }
+        catch {
+            print("Error on ios_GetRWSaveFile: \(error)")
+        }
     }
-    catch {
-        print("Error on ios_GetRWSaveFile: \(error)")
-    }
-    return UnsafePointer<CChar>("")
+    return C_STRING_SAVE_FILE!
 }
 
 private func getFixedPath(path: String) -> String {

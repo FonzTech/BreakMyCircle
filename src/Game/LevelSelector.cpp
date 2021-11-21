@@ -719,7 +719,6 @@ void LevelSelector::update()
 			mScrolling.touchTimer -= mDeltaTime;
 			if (mScrolling.touchTimer <= 0.0f)
 			{
-				Debug{} << "klokokkkok";
 				const Float pd = CommonUtility::singleton->mConfig.displayDensity;
 				const Vector2 p1 = Math::floor(Vector2(InputManager::singleton->mMousePosition) / pd) * pd;
 				const Vector2 p2 = Math::floor(Vector2(*mScrolling.prevMousePos) / pd) * pd;

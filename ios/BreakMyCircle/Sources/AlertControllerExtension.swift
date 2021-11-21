@@ -9,7 +9,13 @@ extension UIAlertController {
     }
 
     func presentInNewWindow(animated: Bool, completion: (() -> Void)?) {
-        Utility.createTopViewController(afterWindowCreate: afterWindowCreate)!.present(self, animated: animated, completion: completion)
+        let v = Utility.createTopViewController(afterWindowCreate: afterWindowCreate)
+        if v != nil {
+            v!.present(self, animated: animated, completion: completion)
+        }
+        else {
+            print("Could not create TopViewController to present an AlertController")
+        }
     }
 
     open override func viewDidDisappear(_ animated: Bool) {
