@@ -21,6 +21,7 @@ var interstitialAd: GADInterstitialAd? = nil
 let admobDelegate = AppAdmobDelegate()
 let appNotificationHandler = AppNotificationHandler()
 
+let PREFS_CONFIG_VERSION = "appConfigVersion"
 let DENIED_NOTIFICATIONS_MESSAGE = "You denied to receive notifications. You will not be able to obtain powerups through push notifications. To fix this, go to Settings and enable notifications."
 
 @_cdecl("ios_SetupApp")
@@ -234,7 +235,7 @@ fileprivate func setupFirebase() {
 }
 
 fileprivate func notificationAuthorizeRequest() {
-    let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+    let authOptions: UNAuthorizationOptions = [.alert, .sound]
     UNUserNotificationCenter.current().requestAuthorization(
         options: authOptions,
         completionHandler: {
@@ -270,7 +271,8 @@ fileprivate func notificationSetup() {
 }
 
 fileprivate func getAppInfo() {
-    let body = Utility.getBasicApiPayload()
+    var body = Utility.getBasicApiPayload()
+    body["configVersion"] = UserDefaults.standard.integer(forKey: PREFS_CONFIG_VERSION)
     
     HTTP.POST(Utility.API_BASE + Utility.API_MAIN, parameters: body) { response in
         if let err = response.error {
@@ -281,6 +283,10 @@ fileprivate func getAppInfo() {
         do {
             let rawDict = try JSONSerialization.jsonObject(with: response.data, options: [.allowFragments]) as? [String:Any]
             if let jsonData = rawDict {
+                // Config version
+                let configVersion = jsonData["configVersion"] as! Int
+                UserDefaults.standard.set(configVersion, forKey: PREFS_CONFIG_VERSION)
+                
                 // Mandatory data
                 playAdThreshold = jsonData["playAdThreshold"] as! Int
                 canShowAds = jsonData["canShowAds"] as! Bool

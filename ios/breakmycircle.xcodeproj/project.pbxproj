@@ -452,11 +452,11 @@
 				0535E8F8270A4267009462B0 /* AppEngine.swift */,
 				052E591D2719D7E60064A24B /* AppBridge.swift */,
 				05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */,
+				05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */,
 				05C40144271AF483009ADA54 /* UIApplicationExtension.swift */,
 				05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */,
 				05718C77271A1FBE0090C631 /* BundleExtension.swift */,
 				052E591A2719C56A0064A24B /* Utility.swift */,
-				05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
