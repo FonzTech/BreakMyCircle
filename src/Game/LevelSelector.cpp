@@ -213,7 +213,10 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 LevelSelector::~LevelSelector()
 {
 	// Restore object picking
-	InputManager::singleton->mReadObjectId = true;
+    if (InputManager::singleton != nullptr)
+    {
+        InputManager::singleton->mReadObjectId = true;
+    }
 
 	// Destroy all of the owned game objects
 	for (auto& item : mLevelGuis)

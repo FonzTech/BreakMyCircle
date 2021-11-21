@@ -196,7 +196,9 @@ fileprivate func setupFirebase() {
             print("Notifications are going to be setup:", notificationSettings.authorizationStatus.rawValue)
             #endif
             
-            notificationSetup()
+            DispatchQueue.main.async {
+                notificationSetup()
+            }
             
         case .denied:
             #if DEBUG

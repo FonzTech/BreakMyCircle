@@ -11,7 +11,6 @@
 		052E591C2719C56A0064A24B /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591A2719C56A0064A24B /* Utility.swift */; };
 		052E591E2719D7E60064A24B /* AppBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AppBridge.swift */; };
 		052E591F2719D7E60064A24B /* AppBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 052E591D2719D7E60064A24B /* AppBridge.swift */; };
-		0535E8F6270A3E41009462B0 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604595270A0AFC0080AA3E /* main.cpp */; };
 		0535E8F9270A4267009462B0 /* AppEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* AppEngine.swift */; };
 		0535EAD9270A51BD009462B0 /* paths in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD1270A51BC009462B0 /* paths */; };
 		0535EADA270A51BD009462B0 /* rooms in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD2270A51BC009462B0 /* rooms */; };
@@ -20,7 +19,6 @@
 		0535EADD270A51BD009462B0 /* scenes in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD5270A51BD009462B0 /* scenes */; };
 		0535EADE270A51BD009462B0 /* audios in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD6270A51BD009462B0 /* audios */; };
 		0535EADF270A51BD009462B0 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD7270A51BD009462B0 /* textures */; };
-		0535EAE1270A55B1009462B0 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C9D2709F4AE00C34B15 /* libSDL2main.a */; };
 		0535EAE2270A6130009462B0 /* libAnySceneImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C902709F38600C34B15 /* libAnySceneImporter.a */; };
 		0545583D274AA32B0014D325 /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0545583C274AA32B0014D325 /* assets.json */; };
 		0545583F274AA34B0014D325 /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0545583E274AA34B0014D325 /* assets.json */; };
@@ -77,6 +75,14 @@
 		05718C7F271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */; };
 		05718C81271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */; };
 		05718C82271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */; };
+		0571A76C274AC8B800AC6272 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0571A76B274AC8B800AC6272 /* AppDelegate.swift */; };
+		0571A76D274AC8B800AC6272 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0571A76B274AC8B800AC6272 /* AppDelegate.swift */; };
+		0571A770274AEA0F00AC6272 /* BridgingRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0571A76F274AEA0F00AC6272 /* BridgingRoutines.mm */; };
+		0571A771274AEA0F00AC6272 /* BridgingRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0571A76F274AEA0F00AC6272 /* BridgingRoutines.mm */; };
+		0571A782274AF00700AC6272 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F602713633E009AD69F /* libSDL2main.a */; };
+		0571A783274AF01800AC6272 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C9D2709F4AE00C34B15 /* libSDL2main.a */; };
+		0571A785274AF05B00AC6272 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0571A784274AF05B00AC6272 /* main.cpp */; };
+		0571A786274AF05B00AC6272 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0571A784274AF05B00AC6272 /* main.cpp */; };
 		05ADBCCD2749665200D3EC44 /* AppNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */; };
 		05ADBCCE2749665200D3EC44 /* AppNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */; };
 		05ADBCD32749716E00D3EC44 /* TimedBubbleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */; };
@@ -133,7 +139,6 @@
 		05CB8F10271358F8009AD69F /* CollisionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604599270A0AFC0080AA3E /* CollisionManager.cpp */; };
 		05CB8F11271358F8009AD69F /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459A270A0AFC0080AA3E /* InputManager.cpp */; };
 		05CB8F12271358F8009AD69F /* AssetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459B270A0AFC0080AA3E /* AssetManager.cpp */; };
-		05CB8F13271358F8009AD69F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604595270A0AFC0080AA3E /* main.cpp */; };
 		05CB8F32271358F8009AD69F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */; };
 		05CB8F34271358F8009AD69F /* paths in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD1270A51BC009462B0 /* paths */; };
 		05CB8F35271358F8009AD69F /* rooms in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD2270A51BC009462B0 /* rooms */; };
@@ -156,7 +161,6 @@
 		05CB8F5C27135B1B009AD69F /* libMagnumPrimitives.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F4F27135B1B009AD69F /* libMagnumPrimitives.a */; };
 		05CB8F5D27135B1B009AD69F /* libCorradeUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F5027135B1B009AD69F /* libCorradeUtility.a */; };
 		05CB8F5F27135B4D009AD69F /* libSDL2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F5E27135B4D009AD69F /* libSDL2.a */; };
-		05CB8F612713633E009AD69F /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F602713633E009AD69F /* libSDL2main.a */; };
 		05CB8F64271363ED009AD69F /* libStbVorbisAudioImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F63271363ED009AD69F /* libStbVorbisAudioImporter.a */; };
 		05CB8F6627136400009AD69F /* libStbTrueTypeFont.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F6527136400009AD69F /* libStbTrueTypeFont.a */; };
 		05CB8F6A27136418009AD69F /* libPngImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F6727136418009AD69F /* libPngImporter.a */; };
@@ -273,7 +277,6 @@
 		05604587270A0AE90080AA3E /* ScreenQuadShader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenQuadShader.cpp; path = ../src/Shaders/ScreenQuadShader.cpp; sourceTree = "<group>"; };
 		05604588270A0AE90080AA3E /* StarRoadShader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StarRoadShader.cpp; path = ../src/Shaders/StarRoadShader.cpp; sourceTree = "<group>"; };
 		05604589270A0AE90080AA3E /* SunShader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SunShader.cpp; path = ../src/Shaders/SunShader.cpp; sourceTree = "<group>"; };
-		05604595270A0AFC0080AA3E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../src/main.cpp; sourceTree = "<group>"; };
 		05604596270A0AFC0080AA3E /* Engine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Engine.cpp; path = ../src/Engine.cpp; sourceTree = "<group>"; };
 		05604597270A0AFC0080AA3E /* GameObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = GameObject.cpp; path = ../src/GameObject.cpp; sourceTree = "<group>"; };
 		05604598270A0AFC0080AA3E /* RoomManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RoomManager.cpp; path = ../src/RoomManager.cpp; sourceTree = "<group>"; };
@@ -290,6 +293,10 @@
 		05718C7A271A287F0090C631 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertControllerExtension.swift; sourceTree = "<group>"; };
 		05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAdmobDelegate.swift; sourceTree = "<group>"; };
+		0571A76B274AC8B800AC6272 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		0571A76E274AE9D000AC6272 /* BridgingRoutines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingRoutines.h; sourceTree = "<group>"; };
+		0571A76F274AEA0F00AC6272 /* BridgingRoutines.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BridgingRoutines.mm; sourceTree = "<group>"; };
+		0571A784274AF05B00AC6272 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../src/main.cpp; sourceTree = "<group>"; };
 		05ADBCC7274941B600D3EC44 /* breakmycircle_sim.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = breakmycircle_sim.entitlements; sourceTree = "<group>"; };
 		05ADBCC8274941C000D3EC44 /* breakmycircle_arm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = breakmycircle_arm.entitlements; sourceTree = "<group>"; };
 		05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNotificationHandler.swift; sourceTree = "<group>"; };
@@ -384,10 +391,11 @@
 				05CB665427137FCB00F97E29 /* GameController.framework in Frameworks */,
 				05CB665B27138A9600F97E29 /* CoreHaptics.framework in Frameworks */,
 				05CB665D27138AA600F97E29 /* CoreMotion.framework in Frameworks */,
+				05718C7C271A28860090C631 /* SystemConfiguration.framework in Frameworks */,
 				05C2595727177F7700B8D75E /* libopenal.1.dylib in Frameworks */,
 				05CB8F742713661A009AD69F /* libpng16.a in Frameworks */,
 				05CB8F5F27135B4D009AD69F /* libSDL2.a in Frameworks */,
-				05CB8F612713633E009AD69F /* libSDL2main.a in Frameworks */,
+				0571A782274AF00700AC6272 /* libSDL2main.a in Frameworks */,
 				05CB8F5527135B1B009AD69F /* libCorradePluginManager.a in Frameworks */,
 				05CB8F5D27135B1B009AD69F /* libCorradeUtility.a in Frameworks */,
 				05CB8F5127135B1B009AD69F /* libMagnumText.a in Frameworks */,
@@ -399,7 +407,6 @@
 				05CB8F5827135B1B009AD69F /* libMagnum.a in Frameworks */,
 				05CB8F5927135B1B009AD69F /* libMagnumMeshTools.a in Frameworks */,
 				05CB8F5A27135B1B009AD69F /* libMagnumTextureTools.a in Frameworks */,
-				05718C7C271A28860090C631 /* SystemConfiguration.framework in Frameworks */,
 				05CB8F5B27135B1B009AD69F /* libMagnumAudio.a in Frameworks */,
 				05CB8F5C27135B1B009AD69F /* libMagnumPrimitives.a in Frameworks */,
 				05CB8F64271363ED009AD69F /* libStbVorbisAudioImporter.a in Frameworks */,
@@ -420,9 +427,10 @@
 				05F22CF42709F63B00C34B15 /* UIKit.framework in Frameworks */,
 				05F22CA72709F55F00C34B15 /* OpenGLES.framework in Frameworks */,
 				05F22CAA2709F56F00C34B15 /* OpenAL.framework in Frameworks */,
+				05718C7B271A287F0090C631 /* SystemConfiguration.framework in Frameworks */,
 				05CB8F7627136D94009AD69F /* libpng16.16.dylib in Frameworks */,
 				05CB8F7827136DC8009AD69F /* libSDL2-2.0.dylib in Frameworks */,
-				0535EAE1270A55B1009462B0 /* libSDL2main.a in Frameworks */,
+				0571A783274AF01800AC6272 /* libSDL2main.a in Frameworks */,
 				05F22C7F2709F0DA00C34B15 /* libCorradeUtility.a in Frameworks */,
 				05F22C762709F0DA00C34B15 /* libCorradePluginManager.a in Frameworks */,
 				05F22C732709F0DA00C34B15 /* libMagnumTrade.a in Frameworks */,
@@ -430,7 +438,6 @@
 				05F22C752709F0DA00C34B15 /* libMagnumAudio.a in Frameworks */,
 				05F22C772709F0DA00C34B15 /* libMagnumPrimitives.a in Frameworks */,
 				05F22C782709F0DA00C34B15 /* libMagnumMeshTools.a in Frameworks */,
-				05718C7B271A287F0090C631 /* SystemConfiguration.framework in Frameworks */,
 				05F22C792709F0DA00C34B15 /* libMagnumTextureTools.a in Frameworks */,
 				05F22C7D2709F0DA00C34B15 /* libMagnumSdl2Application.a in Frameworks */,
 				05F22C802709F0DA00C34B15 /* libMagnumSceneGraph.a in Frameworks */,
@@ -455,12 +462,15 @@
 			children = (
 				0535E8F8270A4267009462B0 /* AppEngine.swift */,
 				052E591D2719D7E60064A24B /* AppBridge.swift */,
+				0571A76B274AC8B800AC6272 /* AppDelegate.swift */,
 				05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */,
 				05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */,
 				05C40144271AF483009ADA54 /* UIApplicationExtension.swift */,
 				05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */,
 				05718C77271A1FBE0090C631 /* BundleExtension.swift */,
 				052E591A2719C56A0064A24B /* Utility.swift */,
+				0571A76E274AE9D000AC6272 /* BridgingRoutines.h */,
+				0571A76F274AEA0F00AC6272 /* BridgingRoutines.mm */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -569,7 +579,7 @@
 				05604597270A0AFC0080AA3E /* GameObject.cpp */,
 				0560459A270A0AFC0080AA3E /* InputManager.cpp */,
 				05604598270A0AFC0080AA3E /* RoomManager.cpp */,
-				05604595270A0AFC0080AA3E /* main.cpp */,
+				0571A784274AF05B00AC6272 /* main.cpp */,
 			);
 			name = Base;
 			sourceTree = "<group>";
@@ -877,11 +887,13 @@
 			files = (
 				05CB8EE8271358F8009AD69F /* AppEngine.swift in Sources */,
 				052E591E2719D7E60064A24B /* AppBridge.swift in Sources */,
+				0571A76C274AC8B800AC6272 /* AppDelegate.swift in Sources */,
 				05718C81271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */,
 				05C40145271AF483009ADA54 /* UIApplicationExtension.swift in Sources */,
 				05718C7E271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */,
 				05718C78271A1FBE0090C631 /* BundleExtension.swift in Sources */,
 				052E591B2719C56A0064A24B /* Utility.swift in Sources */,
+				0571A770274AEA0F00AC6272 /* BridgingRoutines.mm in Sources */,
 				05CB8EE9271358F8009AD69F /* StreamedAudioBuffer.cpp in Sources */,
 				05CB8EEA271358F8009AD69F /* StreamedAudioPlayable.cpp in Sources */,
 				05CB8EEB271358F8009AD69F /* PlasmaSquareRenderer.cpp in Sources */,
@@ -926,7 +938,7 @@
 				05CB8F10271358F8009AD69F /* CollisionManager.cpp in Sources */,
 				05CB8F11271358F8009AD69F /* InputManager.cpp in Sources */,
 				05CB8F12271358F8009AD69F /* AssetManager.cpp in Sources */,
-				05CB8F13271358F8009AD69F /* main.cpp in Sources */,
+				0571A785274AF05B00AC6272 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -936,11 +948,13 @@
 			files = (
 				0535E8F9270A4267009462B0 /* AppEngine.swift in Sources */,
 				052E591F2719D7E60064A24B /* AppBridge.swift in Sources */,
+				0571A76D274AC8B800AC6272 /* AppDelegate.swift in Sources */,
 				05718C82271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */,
 				05C40146271AF483009ADA54 /* UIApplicationExtension.swift in Sources */,
 				05718C7F271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */,
 				05718C79271A1FBE0090C631 /* BundleExtension.swift in Sources */,
 				052E591C2719C56A0064A24B /* Utility.swift in Sources */,
+				0571A771274AEA0F00AC6272 /* BridgingRoutines.mm in Sources */,
 				05604540270A0A350080AA3E /* StreamedAudioBuffer.cpp in Sources */,
 				05604541270A0A350080AA3E /* StreamedAudioPlayable.cpp in Sources */,
 				0560454A270A0A850080AA3E /* PlasmaSquareRenderer.cpp in Sources */,
@@ -985,7 +999,7 @@
 				056045A0270A0AFC0080AA3E /* CollisionManager.cpp in Sources */,
 				056045A1270A0AFC0080AA3E /* InputManager.cpp in Sources */,
 				056045A2270A0AFC0080AA3E /* AssetManager.cpp in Sources */,
-				0535E8F6270A3E41009462B0 /* main.cpp in Sources */,
+				0571A786274AF05B00AC6272 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1042,7 +1056,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = iphoneos;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/BreakMyCircle/Sources/BridgingRoutines.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1100,7 +1114,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = it.fonztech.breakmycircle;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = iphoneos;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/BreakMyCircle/Sources/BridgingRoutines.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = /Users/alfonso/Documents/Workspace/BreakMyCircle/src;
@@ -1280,7 +1294,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = iphonesimulator;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/BreakMyCircle/Sources/BridgingRoutines.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1336,7 +1350,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = iphonesimulator;
-				SWIFT_OBJC_BRIDGING_HEADER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/BreakMyCircle/Sources/BridgingRoutines.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				USER_HEADER_SEARCH_PATHS = /Users/alfonso/Documents/Workspace/BreakMyCircle/src;

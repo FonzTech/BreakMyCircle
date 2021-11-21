@@ -6,10 +6,18 @@ import SwiftHTTP
 class AppNotificationHandler : NSObject, UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler(.alert)
+        
+        #if DEBUG
+        print("Notification WillPresent:", notification)
+        #endif
     }
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         completionHandler()
+        
+        #if DEBUG
+        print("Notification DidResponse:", response)
+        #endif
     }
 }
 
