@@ -86,7 +86,8 @@ SafeMinigame::SafeMinigame(const Int parentIndex, const Float startingScale) : G
 	{
 		const std::string& text = "Tap to discover\nyour powerup!";
 		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, 30U);
-		go->mPosition = Vector3(0.0f, 0.39f, 0.0f);
+		go->setPosition(Vector2(0.0f, 0.39f));
+		go->setSize(Vector2(1.0f));
 		go->mColor.data()[3] = 0.0f;
 		go->mOutlineColor.data()[3] = 0.0f;
 		go->setText(text);
