@@ -139,6 +139,7 @@
 #define GOT_SAFE_MINIGAME 17
 #define GOT_ONBOARDING 18
 
+#define INTENT_SAFEMINIGAME "game_safeminigame"
 #define INTENT_GP_EXPIRE "game_powerup_expire"
 #define INTENT_GP_AMOUNT "game_powerup_amount"
 #define INTENT_PLAY_AD_THRESHOLD "play_ad_threshold"

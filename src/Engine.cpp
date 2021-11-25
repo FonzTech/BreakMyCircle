@@ -513,7 +513,7 @@ void Engine::anyEvent(SDL_Event& event)
         pauseApp();
         break;
             
-    case SDL_APP_WILLENTERFOREGROUND:
+    case SDL_APP_DIDENTERFOREGROUND:
         resumeApp();
         break;
     }

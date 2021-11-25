@@ -21,10 +21,16 @@
 		0535EADF270A51BD009462B0 /* textures in Resources */ = {isa = PBXBuildFile; fileRef = 0535EAD7270A51BD009462B0 /* textures */; };
 		0535EAE2270A6130009462B0 /* libAnySceneImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C902709F38600C34B15 /* libAnySceneImporter.a */; };
 		0545583D274AA32B0014D325 /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0545583C274AA32B0014D325 /* assets.json */; };
-		0545583F274AA34B0014D325 /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0545583E274AA34B0014D325 /* assets.json */; };
 		0545F09A2711AD980075E566 /* ShootPathShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0545F0992711AD980075E566 /* ShootPathShader.cpp */; };
 		0549C208271B488600490E66 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0549C1F3271B463900490E66 /* GoogleService-Info.plist */; };
 		0549C209271B48F800490E66 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0549C1F3271B463900490E66 /* GoogleService-Info.plist */; };
+		05532C34274E773B00F8691A /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F602713633E009AD69F /* libSDL2main.a */; };
+		05532C35274E775000F8691A /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C9D2709F4AE00C34B15 /* libSDL2main.a */; };
+		05532C47274E7B8300F8691A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05532C46274E7B8300F8691A /* main.cpp */; };
+		05532C48274E7B8300F8691A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05532C46274E7B8300F8691A /* main.cpp */; };
+		05532C49274E7E0000F8691A /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0545583C274AA32B0014D325 /* assets.json */; };
+		05532C6A274EA4D600F8691A /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F8927137617009AD69F /* CoreHaptics.framework */; };
+		05532C6B274EA4E200F8691A /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CFC2709F72700C34B15 /* GameController.framework */; };
 		05604540270A0A350080AA3E /* StreamedAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */; };
 		05604541270A0A350080AA3E /* StreamedAudioPlayable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */; };
 		0560454A270A0A850080AA3E /* PlasmaSquareRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604548270A0A850080AA3E /* PlasmaSquareRenderer.cpp */; };
@@ -71,18 +77,12 @@
 		05718C79271A1FBE0090C631 /* BundleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C77271A1FBE0090C631 /* BundleExtension.swift */; };
 		05718C7B271A287F0090C631 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05718C7A271A287F0090C631 /* SystemConfiguration.framework */; };
 		05718C7C271A28860090C631 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05718C7A271A287F0090C631 /* SystemConfiguration.framework */; };
-		05718C7E271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */; };
-		05718C7F271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */; };
+		05718C7E271A2B0A0090C631 /* UIAlertControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C7D271A2B0A0090C631 /* UIAlertControllerExtension.swift */; };
+		05718C7F271A2B0A0090C631 /* UIAlertControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C7D271A2B0A0090C631 /* UIAlertControllerExtension.swift */; };
 		05718C81271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */; };
 		05718C82271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */; };
-		0571A76C274AC8B800AC6272 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0571A76B274AC8B800AC6272 /* AppDelegate.swift */; };
-		0571A76D274AC8B800AC6272 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0571A76B274AC8B800AC6272 /* AppDelegate.swift */; };
 		0571A770274AEA0F00AC6272 /* BridgingRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0571A76F274AEA0F00AC6272 /* BridgingRoutines.mm */; };
 		0571A771274AEA0F00AC6272 /* BridgingRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0571A76F274AEA0F00AC6272 /* BridgingRoutines.mm */; };
-		0571A782274AF00700AC6272 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F602713633E009AD69F /* libSDL2main.a */; };
-		0571A783274AF01800AC6272 /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C9D2709F4AE00C34B15 /* libSDL2main.a */; };
-		0571A785274AF05B00AC6272 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0571A784274AF05B00AC6272 /* main.cpp */; };
-		0571A786274AF05B00AC6272 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0571A784274AF05B00AC6272 /* main.cpp */; };
 		05ADBCCD2749665200D3EC44 /* AppNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */; };
 		05ADBCCE2749665200D3EC44 /* AppNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */; };
 		05ADBCD32749716E00D3EC44 /* TimedBubbleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */; };
@@ -93,9 +93,6 @@
 		05C40146271AF483009ADA54 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C40144271AF483009ADA54 /* UIApplicationExtension.swift */; };
 		05CB665027137C2700F97E29 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF92709F6E800C34B15 /* AVFoundation.framework */; };
 		05CB665227137F4100F97E29 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF62709F6BF00C34B15 /* AudioToolbox.framework */; };
-		05CB665427137FCB00F97E29 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CFC2709F72700C34B15 /* GameController.framework */; };
-		05CB665B27138A9600F97E29 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F8927137617009AD69F /* CoreHaptics.framework */; };
-		05CB665D27138AA600F97E29 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB665C27138AA600F97E29 /* CoreMotion.framework */; };
 		05CB8EE8271358F8009AD69F /* AppEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* AppEngine.swift */; };
 		05CB8EE9271358F8009AD69F /* StreamedAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */; };
 		05CB8EEA271358F8009AD69F /* StreamedAudioPlayable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */; };
@@ -238,10 +235,10 @@
 		0535EAD6270A51BD009462B0 /* audios */ = {isa = PBXFileReference; lastKnownFileType = folder; name = audios; path = ../audios; sourceTree = "<group>"; };
 		0535EAD7270A51BD009462B0 /* textures */ = {isa = PBXFileReference; lastKnownFileType = folder; name = textures; path = ../textures; sourceTree = "<group>"; };
 		0545583C274AA32B0014D325 /* assets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = assets.json; path = ../android/app/src/main/res/raw/assets.json; sourceTree = "<group>"; };
-		0545583E274AA34B0014D325 /* assets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = assets.json; path = ../android/app/src/main/res/raw/assets.json; sourceTree = "<group>"; };
 		0545F0992711AD980075E566 /* ShootPathShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShootPathShader.cpp; path = ../src/Shaders/ShootPathShader.cpp; sourceTree = "<group>"; };
 		0549C1F3271B463900490E66 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0549C204271B46D900490E66 /* FirebaseCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		05532C46274E7B8300F8691A /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../src/main.cpp; sourceTree = "<group>"; };
 		0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StreamedAudioBuffer.cpp; path = ../src/Audio/StreamedAudioBuffer.cpp; sourceTree = "<group>"; };
 		0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = StreamedAudioPlayable.cpp; path = ../src/Audio/StreamedAudioPlayable.cpp; sourceTree = "<group>"; };
 		05604548270A0A850080AA3E /* PlasmaSquareRenderer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PlasmaSquareRenderer.cpp; path = ../src/Common/CustomRenderers/PlasmaSquareRenderer.cpp; sourceTree = "<group>"; };
@@ -291,12 +288,10 @@
 		05718C72271A1F400090C631 /* SwiftHTTP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwiftHTTP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		05718C77271A1FBE0090C631 /* BundleExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleExtension.swift; sourceTree = "<group>"; };
 		05718C7A271A287F0090C631 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertControllerExtension.swift; sourceTree = "<group>"; };
+		05718C7D271A2B0A0090C631 /* UIAlertControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIAlertControllerExtension.swift; sourceTree = "<group>"; };
 		05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAdmobDelegate.swift; sourceTree = "<group>"; };
-		0571A76B274AC8B800AC6272 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0571A76E274AE9D000AC6272 /* BridgingRoutines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingRoutines.h; sourceTree = "<group>"; };
 		0571A76F274AEA0F00AC6272 /* BridgingRoutines.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BridgingRoutines.mm; sourceTree = "<group>"; };
-		0571A784274AF05B00AC6272 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../src/main.cpp; sourceTree = "<group>"; };
 		05ADBCC7274941B600D3EC44 /* breakmycircle_sim.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = breakmycircle_sim.entitlements; sourceTree = "<group>"; };
 		05ADBCC8274941C000D3EC44 /* breakmycircle_arm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = breakmycircle_arm.entitlements; sourceTree = "<group>"; };
 		05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNotificationHandler.swift; sourceTree = "<group>"; };
@@ -388,14 +383,13 @@
 			files = (
 				05CB665027137C2700F97E29 /* AVFoundation.framework in Frameworks */,
 				05CB665227137F4100F97E29 /* AudioToolbox.framework in Frameworks */,
-				05CB665427137FCB00F97E29 /* GameController.framework in Frameworks */,
-				05CB665B27138A9600F97E29 /* CoreHaptics.framework in Frameworks */,
-				05CB665D27138AA600F97E29 /* CoreMotion.framework in Frameworks */,
+				05532C6B274EA4E200F8691A /* GameController.framework in Frameworks */,
+				05532C6A274EA4D600F8691A /* CoreHaptics.framework in Frameworks */,
 				05718C7C271A28860090C631 /* SystemConfiguration.framework in Frameworks */,
 				05C2595727177F7700B8D75E /* libopenal.1.dylib in Frameworks */,
 				05CB8F742713661A009AD69F /* libpng16.a in Frameworks */,
 				05CB8F5F27135B4D009AD69F /* libSDL2.a in Frameworks */,
-				0571A782274AF00700AC6272 /* libSDL2main.a in Frameworks */,
+				05532C34274E773B00F8691A /* libSDL2main.a in Frameworks */,
 				05CB8F5527135B1B009AD69F /* libCorradePluginManager.a in Frameworks */,
 				05CB8F5D27135B1B009AD69F /* libCorradeUtility.a in Frameworks */,
 				05CB8F5127135B1B009AD69F /* libMagnumText.a in Frameworks */,
@@ -430,7 +424,7 @@
 				05718C7B271A287F0090C631 /* SystemConfiguration.framework in Frameworks */,
 				05CB8F7627136D94009AD69F /* libpng16.16.dylib in Frameworks */,
 				05CB8F7827136DC8009AD69F /* libSDL2-2.0.dylib in Frameworks */,
-				0571A783274AF01800AC6272 /* libSDL2main.a in Frameworks */,
+				05532C35274E775000F8691A /* libSDL2main.a in Frameworks */,
 				05F22C7F2709F0DA00C34B15 /* libCorradeUtility.a in Frameworks */,
 				05F22C762709F0DA00C34B15 /* libCorradePluginManager.a in Frameworks */,
 				05F22C732709F0DA00C34B15 /* libMagnumTrade.a in Frameworks */,
@@ -462,11 +456,10 @@
 			children = (
 				0535E8F8270A4267009462B0 /* AppEngine.swift */,
 				052E591D2719D7E60064A24B /* AppBridge.swift */,
-				0571A76B274AC8B800AC6272 /* AppDelegate.swift */,
 				05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */,
 				05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */,
 				05C40144271AF483009ADA54 /* UIApplicationExtension.swift */,
-				05718C7D271A2B0A0090C631 /* AlertControllerExtension.swift */,
+				05718C7D271A2B0A0090C631 /* UIAlertControllerExtension.swift */,
 				05718C77271A1FBE0090C631 /* BundleExtension.swift */,
 				052E591A2719C56A0064A24B /* Utility.swift */,
 				0571A76E274AE9D000AC6272 /* BridgingRoutines.h */,
@@ -579,7 +572,7 @@
 				05604597270A0AFC0080AA3E /* GameObject.cpp */,
 				0560459A270A0AFC0080AA3E /* InputManager.cpp */,
 				05604598270A0AFC0080AA3E /* RoomManager.cpp */,
-				0571A784274AF05B00AC6272 /* main.cpp */,
+				05532C46274E7B8300F8691A /* main.cpp */,
 			);
 			name = Base;
 			sourceTree = "<group>";
@@ -672,7 +665,6 @@
 			isa = PBXGroup;
 			children = (
 				0545583C274AA32B0014D325 /* assets.json */,
-				0545583E274AA34B0014D325 /* assets.json */,
 				05ADBCC8274941C000D3EC44 /* breakmycircle_arm.entitlements */,
 				05ADBCC7274941B600D3EC44 /* breakmycircle_sim.entitlements */,
 				0535E90F270A4D01009462B0 /* Assets */,
@@ -827,7 +819,7 @@
 				0535EADC270A51BD009462B0 /* fonts in Resources */,
 				0535EADB270A51BD009462B0 /* shaders in Resources */,
 				0549C209271B48F800490E66 /* GoogleService-Info.plist in Resources */,
-				0545583F274AA34B0014D325 /* assets.json in Resources */,
+				05532C49274E7E0000F8691A /* assets.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -887,10 +879,10 @@
 			files = (
 				05CB8EE8271358F8009AD69F /* AppEngine.swift in Sources */,
 				052E591E2719D7E60064A24B /* AppBridge.swift in Sources */,
-				0571A76C274AC8B800AC6272 /* AppDelegate.swift in Sources */,
 				05718C81271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */,
 				05C40145271AF483009ADA54 /* UIApplicationExtension.swift in Sources */,
-				05718C7E271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */,
+				05718C7E271A2B0A0090C631 /* UIAlertControllerExtension.swift in Sources */,
+				05ADBCCD2749665200D3EC44 /* AppNotificationHandler.swift in Sources */,
 				05718C78271A1FBE0090C631 /* BundleExtension.swift in Sources */,
 				052E591B2719C56A0064A24B /* Utility.swift in Sources */,
 				0571A770274AEA0F00AC6272 /* BridgingRoutines.mm in Sources */,
@@ -918,6 +910,7 @@
 				05CB8EFD271358F8009AD69F /* Logo.cpp in Sources */,
 				05CB8EFE271358F8009AD69F /* Scenery.cpp in Sources */,
 				05CB8EFF271358F8009AD69F /* Skybox.cpp in Sources */,
+				05532C47274E7B8300F8691A /* main.cpp in Sources */,
 				05CB8F00271358F8009AD69F /* OverlayGuiDetached.cpp in Sources */,
 				05CB8F01271358F8009AD69F /* Onboarding.cpp in Sources */,
 				05CB8F02271358F8009AD69F /* FallingBubble.cpp in Sources */,
@@ -930,7 +923,6 @@
 				05CB8F09271358F8009AD69F /* ScreenQuadShader.cpp in Sources */,
 				05CB8F0A271358F8009AD69F /* StarRoadShader.cpp in Sources */,
 				05CB8F0B271358F8009AD69F /* ShootPathShader.cpp in Sources */,
-				05ADBCCD2749665200D3EC44 /* AppNotificationHandler.swift in Sources */,
 				05CB8F0C271358F8009AD69F /* SunShader.cpp in Sources */,
 				05CB8F0D271358F8009AD69F /* Engine.cpp in Sources */,
 				05CB8F0E271358F8009AD69F /* GameObject.cpp in Sources */,
@@ -938,7 +930,6 @@
 				05CB8F10271358F8009AD69F /* CollisionManager.cpp in Sources */,
 				05CB8F11271358F8009AD69F /* InputManager.cpp in Sources */,
 				05CB8F12271358F8009AD69F /* AssetManager.cpp in Sources */,
-				0571A785274AF05B00AC6272 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -948,10 +939,10 @@
 			files = (
 				0535E8F9270A4267009462B0 /* AppEngine.swift in Sources */,
 				052E591F2719D7E60064A24B /* AppBridge.swift in Sources */,
-				0571A76D274AC8B800AC6272 /* AppDelegate.swift in Sources */,
 				05718C82271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */,
 				05C40146271AF483009ADA54 /* UIApplicationExtension.swift in Sources */,
-				05718C7F271A2B0A0090C631 /* AlertControllerExtension.swift in Sources */,
+				05718C7F271A2B0A0090C631 /* UIAlertControllerExtension.swift in Sources */,
+				05ADBCCE2749665200D3EC44 /* AppNotificationHandler.swift in Sources */,
 				05718C79271A1FBE0090C631 /* BundleExtension.swift in Sources */,
 				052E591C2719C56A0064A24B /* Utility.swift in Sources */,
 				0571A771274AEA0F00AC6272 /* BridgingRoutines.mm in Sources */,
@@ -979,6 +970,7 @@
 				05604575270A0AAF0080AA3E /* Logo.cpp in Sources */,
 				05604576270A0AAF0080AA3E /* Scenery.cpp in Sources */,
 				05604577270A0AAF0080AA3E /* Skybox.cpp in Sources */,
+				05532C48274E7B8300F8691A /* main.cpp in Sources */,
 				05604578270A0AAF0080AA3E /* OverlayGuiDetached.cpp in Sources */,
 				05604579270A0AAF0080AA3E /* Onboarding.cpp in Sources */,
 				0560457A270A0AAF0080AA3E /* FallingBubble.cpp in Sources */,
@@ -991,7 +983,6 @@
 				0560458E270A0AE90080AA3E /* ScreenQuadShader.cpp in Sources */,
 				0560458F270A0AE90080AA3E /* StarRoadShader.cpp in Sources */,
 				0545F09A2711AD980075E566 /* ShootPathShader.cpp in Sources */,
-				05ADBCCE2749665200D3EC44 /* AppNotificationHandler.swift in Sources */,
 				05604590270A0AE90080AA3E /* SunShader.cpp in Sources */,
 				0560459D270A0AFC0080AA3E /* Engine.cpp in Sources */,
 				0560459E270A0AFC0080AA3E /* GameObject.cpp in Sources */,
@@ -999,7 +990,6 @@
 				056045A0270A0AFC0080AA3E /* CollisionManager.cpp in Sources */,
 				056045A1270A0AFC0080AA3E /* InputManager.cpp in Sources */,
 				056045A2270A0AFC0080AA3E /* AssetManager.cpp in Sources */,
-				0571A786274AF05B00AC6272 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1029,6 +1019,7 @@
 					"/Users/alfonso/Development/ios-arm64/include/AL",
 					/Users/alfonso/Development/nlohmann/include,
 					/Users/alfonso/Development/common/include,
+					"/Users/alfonso/Development/magnum-edited-sources/SDL-release-2.0.16/SDL2source/src/video/uikit",
 				);
 				INFOPLIST_FILE = breakmycircle/InfoArm.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -1087,6 +1078,7 @@
 					"/Users/alfonso/Development/ios-arm64/include/AL",
 					/Users/alfonso/Development/nlohmann/include,
 					/Users/alfonso/Development/common/include,
+					"/Users/alfonso/Development/magnum-edited-sources/SDL-release-2.0.16/SDL2source/src/video/uikit",
 				);
 				INFOPLIST_FILE = breakmycircle/InfoArm.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -1270,6 +1262,7 @@
 					"/Users/alfonso/Development/ios-sim64/include/AL",
 					/Users/alfonso/Development/nlohmann/include,
 					/Users/alfonso/Development/common/include,
+					"/Users/alfonso/Development/magnum-edited-sources/SDL-release-2.0.16/SDL2source/src/video/uikit",
 				);
 				INFOPLIST_FILE = breakmycircle/InfoSim.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -1326,6 +1319,7 @@
 					"/Users/alfonso/Development/ios-sim64/include/AL",
 					/Users/alfonso/Development/nlohmann/include,
 					/Users/alfonso/Development/common/include,
+					"/Users/alfonso/Development/magnum-edited-sources/SDL-release-2.0.16/SDL2source/src/video/uikit",
 				);
 				INFOPLIST_FILE = breakmycircle/InfoSim.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

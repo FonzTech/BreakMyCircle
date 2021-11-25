@@ -18,7 +18,9 @@ Also, be aware of cache when working with Android Studio. You may have to delete
 
 - Don't build all `SDL_SUBSYSTEMS` for *SDL2*, otherwise iOS will have to be linked against `CoreBluetooth` and other potentially undesired frameworks, unless you are planning to add game-pad support to your application. This means you'll have to add Bluetooth permission if you use SDL2 library with the game-pad support, which is useless (if you don't really require it), expecially if you use Magnum integration.
 
-  To exclude "problematic subsystems" from the build (`Joystick` and `Haptic`), set the `SDL_SUBSYSTEMS` to:
+  This is **NOT** necessary, since **2.0.16**. Disabling the `hidapi` and `Haptic` subsystem in the `CMakeLists.txt` is enough. Check the modified one in the `magnum-edited-sources` repository.
+  
+  Anyway, to exclude "problematic subsystems" from the build (`Joystick` and `Haptic`), set the `SDL_SUBSYSTEMS` to:
 
   - `Audio Video Render Events Threads Timers File Loadso Filesystem Sensor Locale`.
 
@@ -188,3 +190,12 @@ cmake .. \
 cmake --build .
 cmake --build . --target install
 ```
+
+### Application Entrypoint
+
+The following sources from *SDL 2.0.16* are modified:
+
+- `src/video/uikit/SDL_uikitappdelegate.h` (added the `getLaunchOption` instance method and `_launchOption` instance property).
+- `src/video/uikit/SDL_uikitappdelegate.m` (implemented the above instance method; "original" launch option are saved into the above-mentioned `_launchOption` property).
+
+A slight modification to `SDL_uikitappdelegate` interface is applied, as described above. Specifically, the method `(NSDictionary*)SDL_uikitappdelegate::getLaunchOption` can be used in project, which uses this modified version of SDL2, to obtain launch options for the application, such as detecting if it was launched by a notification tap. The rest of the source is the same that can be found in the *SDL 2.0.16* release.

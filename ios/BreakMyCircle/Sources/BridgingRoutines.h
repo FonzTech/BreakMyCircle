@@ -4,7 +4,9 @@
 #import <Foundation/Foundation.h>
 
 @interface BridgingRoutines : NSObject
-- (void) engineEntrypoint : (NSString*)executablePath;
+
+- (NSDictionary*)getLaunchOption;
+
 @end
 
 #endif /* BridgingHeader_h */

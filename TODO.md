@@ -1,4 +1,5 @@
 # On-going tasks
+- Fix audio crackling (use queues for audio).
 - Improve level selector scrolling.
 - Fix transparency when blackholes and explode-effect overlaps.
 - Protect game's API

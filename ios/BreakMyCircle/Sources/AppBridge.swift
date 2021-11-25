@@ -13,6 +13,7 @@ var isAdmobInitialized: Bool = false
 var playAdThreshold: Int = 3
 var canShowAds: Bool = true
 
+var gpSafeMinigame: Int = 0
 var gpExpire: Int64 = 1
 var gpAmount: Int = 0
 
@@ -28,6 +29,9 @@ let DENIED_NOTIFICATIONS_MESSAGE = "You denied to receive notifications. You wil
 
 @_cdecl("ios_SetupApp")
 public func ios_SetupApp() {
+    // Process launch option
+    let launchOption: [AnyHashable: Any]? = BridgingRoutines().getLaunchOption()
+    processLaunchOption(launchOption)
     
     // Setup ads
     setupAds()
@@ -71,6 +75,19 @@ public func ios_GetGamePowerupAmount() -> Int {
 public func ios_ClearPowerupData() {
     gpExpire = 0
     gpAmount = 0
+}
+
+@_cdecl("ios_GetLaunchOptionValue")
+public func ios_GetLaunchOptionValue(key: UnsafePointer<CChar>?) -> Int {
+    if key == nil {
+        return 0
+    }
+    
+    let str = String(cString: key!)
+    if str == "game_safeminigame" {
+        return gpSafeMinigame
+    }
+    return 0
 }
 
 @_cdecl("ios_WatchAdPowerup")
@@ -166,6 +183,24 @@ fileprivate func setupAds() {
     GADMobileAds.sharedInstance().requestConfiguration.tag(forChildDirectedTreatment: true)
     GADMobileAds.sharedInstance().start { (status) in
         isAdmobInitialized = true
+    }
+}
+
+fileprivate func processLaunchOption(_ launchOption: [AnyHashable: Any]?) {
+    // Check if launch options are provided
+    if launchOption == nil {
+        return
+    }
+    
+    // Check for payload type
+    if let payload = launchOption![UIApplication.LaunchOptionsKey.remoteNotification] as? [NSObject : AnyObject] {
+        // Check for Safe Minigame
+        if let safeMinigame = payload[NSString(string: "game_safeminigame")] {
+            // Check for provided value
+            if let value = (safeMinigame as? NSString)?.intValue {
+                gpSafeMinigame = Int(value)
+            }
+        }
     }
 }
 

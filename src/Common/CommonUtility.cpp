@@ -316,6 +316,14 @@ std::unique_ptr<std::string> CommonUtility::getValueFromIntent(const std::string
         std::unique_ptr<std::string> str = std::make_unique<std::string>(std::to_string(value));
         return str;
     }
+    else if (key.rfind("game_", 0) == 0)
+    {
+        const Int value = ios_GetLaunchOptionValue(key.c_str());
+        if (value != 0) {
+            std::unique_ptr<std::string> str = std::make_unique<std::string>(std::to_string(value));
+            return str;
+        }
+    }
     return nullptr;
     
 #else
