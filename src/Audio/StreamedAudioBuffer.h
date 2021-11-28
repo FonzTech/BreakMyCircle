@@ -2,7 +2,8 @@
 
 #define AS_BUFFER_SIZE 44100
 
-#include <memory>
+#include <unordered_map>
+#include <Corrade/Containers/Optional.h>
 #include <Magnum/Magnum.h>
 #include <Magnum/Audio/Buffer.h>
 #include <Magnum/Audio/BufferFormat.h>
@@ -22,9 +23,8 @@ public:
 	~StreamedAudioBuffer();
 
 	void openAudio(const std::string & basePath, const std::string & filename);
-	void feed();
+	Containers::Optional<Audio::Buffer> feed();
 
-	Audio::Buffer& getFrontBuffer();
 	const Audio::BufferFormat getBufferFormat() const;
 	const Int getNumberOfChannels() const;
 	const UnsignedInt getSampleRate() const;
@@ -35,9 +35,6 @@ protected:
 	short mRawBuffer[AS_BUFFER_SIZE];
 	void* mStream;
 	void* mInfo;
-
-	// Magnum audio
-	Audio::Buffer mBuffer;
 
 	Audio::BufferFormat mCachedBufferFormat;
 	Int mCachedNumberOfChannels;

@@ -31,7 +31,7 @@ void StreamedAudioBuffer::clear()
 	}
 }
 
-void StreamedAudioBuffer::feed()
+Containers::Optional<Audio::Buffer> StreamedAudioBuffer::feed()
 {
 	// Check for stream validity
 	if (mStream == nullptr)
@@ -44,25 +44,21 @@ void StreamedAudioBuffer::feed()
 	stb_vorbis_fix_info* vi = (stb_vorbis_fix_info*)mInfo;
 
 	// Work on back buffer
-	for (UnsignedInt i = 0; i < 2; ++i)
+	const int amount = stb_vorbis_fix_get_samples_short_interleaved(vs, vi->channels, mRawBuffer, AS_BUFFER_SIZE);
+	if (amount > 0)
 	{
-		const int amount = stb_vorbis_fix_get_samples_short_interleaved(vs, vi->channels, mRawBuffer, AS_BUFFER_SIZE);
-		if (amount > 0)
-		{
-			const Containers::ArrayView<const short> av{ mRawBuffer, std::size_t(amount * vi->channels) };
-			mBuffer.setData(mCachedBufferFormat, av, mCachedSampleRate);
+		Containers::Optional<Audio::Buffer> buffer = Audio::Buffer();
 
-			break;
-		}
-		else if (i)
-		{
-            Error{} << "Could not read further for streamed audio buffer.";
-		}
-		else
-		{
-			stb_vorbis_fix_seek(vs, 0);
-		}
+		const Containers::ArrayView<const short> av{ mRawBuffer, std::size_t(amount * vi->channels) };
+		buffer->setData(mCachedBufferFormat, av, mCachedSampleRate);
+		return buffer;
 	}
+	else
+	{
+		stb_vorbis_fix_seek(vs, 0);
+	}
+
+	return Containers::NullOpt;
 }
 
 void StreamedAudioBuffer::openAudio(const std::string & basePath, const std::string & filename)
@@ -75,7 +71,7 @@ void StreamedAudioBuffer::openAudio(const std::string & basePath, const std::str
 
 	if (mStream == nullptr)
 	{
-        Error{} << "Could not open file" << filename << "for streaming.";
+		Error{} << "Could not open file" << filename << "for streaming.";
 		return;
 	}
 
@@ -87,7 +83,7 @@ void StreamedAudioBuffer::openAudio(const std::string & basePath, const std::str
 	mInfo = std::malloc(sizeof(stb_vorbis_fix_info));
 	if (mInfo == nullptr)
 	{
-        Error{} << "Could not malloc a struct of size stb_vorbis_info.";
+		Error{} << "Could not malloc a struct of size stb_vorbis_info.";
 		clear();
 		return;
 	}
@@ -97,22 +93,14 @@ void StreamedAudioBuffer::openAudio(const std::string & basePath, const std::str
 	// Work on stream
 	auto samples = stb_vorbis_fix_stream_length_in_samples(vs) * vi.channels;
 
-    Debug{} << "Channels:" << vi.channels;
-    Debug{} << "Sample rate:" << vi.sample_rate;
-    Debug{} << "Samples:" << samples;
-    Debug{} << "Duration:" << stb_vorbis_fix_stream_length_in_seconds(vs) << "seconds.";
+	Debug{} << "Channels:" << vi.channels;
+	Debug{} << "Sample rate:" << vi.sample_rate;
+	Debug{} << "Samples:" << samples;
+	Debug{} << "Duration:" << stb_vorbis_fix_stream_length_in_seconds(vs) << "seconds.";
 
 	mCachedNumberOfChannels = vi.channels;
 	mCachedBufferFormat = computeBufferFormat();
 	mCachedSampleRate = vi.sample_rate;
-
-	// Feed back buffer
-	feed();
-}
-
-Audio::Buffer& StreamedAudioBuffer::getFrontBuffer()
-{
-	return mBuffer;
 }
 
 const Audio::BufferFormat StreamedAudioBuffer::getBufferFormat() const

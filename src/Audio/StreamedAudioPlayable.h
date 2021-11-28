@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <memory>
+#include <Corrade/Containers/Reference.h>
 #include <Magnum/Magnum.h>
 
 #include "../Common/CommonTypes.h"
@@ -14,6 +15,11 @@ class StreamedAudioPlayable
 public:
 
 	StreamedAudioPlayable(Object3D* object);
+
+	/**
+		The `clear` instance method must be called first, otherwise null
+		pointer exception will occur inside the other thread.
+	*/
 	~StreamedAudioPlayable();
 
 	void clear();
@@ -24,6 +30,10 @@ protected:
 
 	bool mLive;
 	Object3D* mObject;
+
+	Int mBufferIndex;
+	Audio::Buffer mRawBuffers[2];
+	Containers::Reference<Audio::Buffer> mBuffers[2][1];
 
 	std::unique_ptr<std::thread> mThread;
 	std::unique_ptr<StreamedAudioBuffer> mStream;
