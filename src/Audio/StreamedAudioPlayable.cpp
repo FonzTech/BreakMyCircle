@@ -8,8 +8,13 @@
 
 using namespace std::chrono_literals;
 
-StreamedAudioPlayable::StreamedAudioPlayable(Object3D* object) : mObject(object), mBufferIndex(-1), mBuffers{ mRawBuffers[0], mRawBuffers[1] }, mLive(true)
+StreamedAudioPlayable::StreamedAudioPlayable(Object3D* object) : mObject(object), mBufferIndex(0U), mLive(true)
 {
+	mLive = true;
+	mThreadSleepDuration = 200ms;
+
+	mState = Audio::Source::State::Initial;
+	mGainLevel = 1.0f;
 }
 
 StreamedAudioPlayable::~StreamedAudioPlayable()
@@ -30,9 +35,19 @@ void StreamedAudioPlayable::clear()
 	// Remove references to buffer and playable object
 	if (mPlayable != nullptr)
 	{
-		mPlayable->source()
-			.stop();
+		// Stop source
+		auto* source = &mPlayable->source();
 
+		// Unqueue buffers
+		{
+			Containers::Reference<Audio::Buffer> av[2] = {
+				std::ref(mBuffers[0]),
+				std::ref(mBuffers[1])
+			};
+			source->unqueueBuffers({ av });
+		}
+		
+		// De-reference playable
 		mPlayable = nullptr;
 	}
 }
@@ -41,7 +56,19 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 {
 	// Create and load stream
 	mStream = std::make_unique<StreamedAudioBuffer>();
-	mStream->openAudio(CommonUtility::singleton->mConfig.assetDir, filename);
+	if (!mStream->openAudio(CommonUtility::singleton->mConfig.assetDir, filename))
+	{
+		Error{} << "Could not open audio for streaming" << filename;
+		return;
+	}
+
+	// Compute sleep time for audio thread
+	{
+		const double bufSize = double(AS_BUFFER_SIZE);
+		double factor = bufSize / double(mStream->getNumberOfChannels());
+		factor *= 0.25;
+		mThreadSleepDuration = std::chrono::milliseconds(Int(Math::ceil(factor / bufSize * 1000.0)));
+	}
 
 	// Create playable resource
 	mPlayable = std::make_unique<Audio::Playable3D>(*mObject, &RoomManager::singleton->mAudioPlayables);
@@ -49,65 +76,158 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 	// Create and detach thread
 	mThread = std::make_unique<std::thread>([&]()
 	{
-		const Int limit = AS_BUFFER_SIZE / mStream->getNumberOfChannels() - 256;
 		while (mLive)
 		{
+			// Check for playable
 			if (mPlayable == nullptr)
 			{
+				std::this_thread::sleep_for(mThreadSleepDuration);
 				continue;
 			}
 
-			auto& source = mPlayable->source();
-			const bool b1 = source.state() == Audio::Source::State::Initial;
-			// const bool b2 = source.state() == Audio::Source::State::Playing && source.offsetInSamples() >= limit;
-			const bool b2 = false;
-			const bool b3 = source.state() == Audio::Source::State::Stopped;
-			if (b1 || b2 || b3)
+			// Check for source
+			auto* source = getAvailableSource();
+			if (source != nullptr)
 			{
+				// Set gain level
+				source->setGain(mGainLevel);
+
+				// Manage internal buffer queue
 				if (mPlayable != nullptr)
 				{
 					// Check if another buffer is available
-					Containers::Optional<Audio::Buffer> buffer = mStream->feed();
-					if (buffer != Containers::NullOpt)
+					Int tryToFeed = 0;
+					if (mState == Audio::Source::State::Playing)
 					{
-						// Dequeue old buffer
-						if (mBufferIndex == -1)
+						const auto internalState = source->state();
+						if (internalState == Audio::Source::State::Playing)
 						{
-							mBufferIndex = 0;
+							tryToFeed = source->offsetInBytes() >= mBuffers[mBufferIndex].size() ? 1 : 0;
 						}
-						else
+						else if (internalState == Audio::Source::State::Stopped)
 						{
-							// Unqueue old buffer
-							source.unqueueBuffers({ mBuffers[mBufferIndex] });
-
-							// Switch to the other buffer index
-							mBufferIndex = 1 - mBufferIndex;
+							tryToFeed = 1;
 						}
-
-						// Fill "back" buffer
-						mRawBuffers[mBufferIndex] = std::move(*buffer);
-						mBuffers[mBufferIndex][0] = std::ref(mRawBuffers[mBufferIndex]);
-
-						// Enqueue into source
-						source.queueBuffers({ mBuffers[mBufferIndex] });
-
-						// Play if necessary
-						if (b1 || b3)
+						else if (internalState == Audio::Source::State::Initial)
 						{
-							source.play();
+							tryToFeed = 2;
+						}
+					}
+
+					for (Int i = 0; i < tryToFeed; ++i)
+					{
+						const int amount = mStream->feed();
+						if (amount)
+						{
+							// Unqueue buffer to modify it
+							{
+								Containers::Reference<Audio::Buffer> av[1] = {
+									std::ref(mBuffers[mBufferIndex])
+								};
+								source->unqueueBuffers({ av });
+							}
+
+							// Fill buffers as required
+							{
+								const short* rawBuffer = mStream->getRawBuffer();
+								const Containers::ArrayView<const short> data{ rawBuffer, std::size_t(amount * mStream->getNumberOfChannels()) };
+								mBuffers[mBufferIndex].setData(mStream->getBufferFormat(), data, mStream->getSampleRate());
+							}
+
+							// Re-enqueue buffer
+							{
+								Containers::Reference<Audio::Buffer> av[1] = {
+									std::ref(mBuffers[mBufferIndex])
+								};
+								source->queueBuffers({ av });
+							}
+
+							// Play, if necessary
+							if (source->state() != Audio::Source::State::Playing && mState == Audio::Source::State::Playing)
+							{
+								source->play();
+							}
+							// Pause, if necessary
+							else if (source->state() != Audio::Source::State::Paused && mState == Audio::Source::State::Paused)
+							{
+								source->pause();
+							}
+							// Stop, if necessary
+							else if (source->state() != Audio::Source::State::Stopped && mState == Audio::Source::State::Stopped)
+							{
+								source->pause();
+							}
+
+							// Switch buffer
+							mBufferIndex = 1U - mBufferIndex;
 						}
 					}
 				}
 			}
-			std::this_thread::sleep_for(200ms);
+			std::this_thread::sleep_for(mThreadSleepDuration);
 		}
+
+		// De-reference this thread
 		mThread = nullptr;
 	});
 	mThread->detach();
-
 }
 
-std::unique_ptr<Audio::Playable3D>& StreamedAudioPlayable::playable()
+const Audio::Source::State StreamedAudioPlayable::state() const
 {
-	return mPlayable;
+	return mState;
+}
+
+void StreamedAudioPlayable::play()
+{
+	mState = Audio::Source::State::Playing;
+
+	auto* source = getAvailableSource();
+	if (source != nullptr)
+	{
+		source->play();
+	}
+}
+
+void StreamedAudioPlayable::pause()
+{
+	mState = Audio::Source::State::Paused;
+
+	auto* source = getAvailableSource();
+	if (source != nullptr)
+	{
+		source->pause();
+	}
+}
+
+void StreamedAudioPlayable::stop()
+{
+	mState = Audio::Source::State::Stopped;
+
+	auto* source = getAvailableSource();
+	if (source != nullptr)
+	{
+		source->stop();
+	}
+}
+
+const Float StreamedAudioPlayable::gain() const
+{
+	return mGainLevel;
+}
+
+void StreamedAudioPlayable::setGain(const Float level)
+{
+	mGainLevel = level;
+
+	auto* source = getAvailableSource();
+	if (source != nullptr)
+	{
+		source->setGain(mGainLevel);
+	}
+}
+
+Audio::Source* StreamedAudioPlayable::getAvailableSource() const
+{
+	return mPlayable != nullptr ? &mPlayable->source() : nullptr;
 }

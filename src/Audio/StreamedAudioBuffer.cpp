@@ -31,7 +31,7 @@ void StreamedAudioBuffer::clear()
 	}
 }
 
-Containers::Optional<Audio::Buffer> StreamedAudioBuffer::feed()
+const int StreamedAudioBuffer::feed()
 {
 	// Check for stream validity
 	if (mStream == nullptr)
@@ -44,24 +44,27 @@ Containers::Optional<Audio::Buffer> StreamedAudioBuffer::feed()
 	stb_vorbis_fix_info* vi = (stb_vorbis_fix_info*)mInfo;
 
 	// Work on back buffer
-	const int amount = stb_vorbis_fix_get_samples_short_interleaved(vs, vi->channels, mRawBuffer, AS_BUFFER_SIZE);
-	if (amount > 0)
+	for (UnsignedInt i = 0; i < 2; ++i)
 	{
-		Containers::Optional<Audio::Buffer> buffer = Audio::Buffer();
-
-		const Containers::ArrayView<const short> av{ mRawBuffer, std::size_t(amount * vi->channels) };
-		buffer->setData(mCachedBufferFormat, av, mCachedSampleRate);
-		return buffer;
+		const int amount = stb_vorbis_fix_get_samples_short_interleaved(vs, vi->channels, mRawBuffer, AS_BUFFER_SIZE);
+		if (amount > 0)
+		{
+			return amount;
+		}
+		else if (i)
+		{
+			Error{} << "Buffer appear to be empty. Seek to the beginning was useless.";
+		}
+		else
+		{
+			stb_vorbis_fix_seek(vs, 0);
+		}
 	}
-	else
-	{
-		stb_vorbis_fix_seek(vs, 0);
-	}
 
-	return Containers::NullOpt;
+	return 0;
 }
 
-void StreamedAudioBuffer::openAudio(const std::string & basePath, const std::string & filename)
+bool StreamedAudioBuffer::openAudio(const std::string & basePath, const std::string & filename)
 {
 	// Open stream
 	{
@@ -72,7 +75,7 @@ void StreamedAudioBuffer::openAudio(const std::string & basePath, const std::str
 	if (mStream == nullptr)
 	{
 		Error{} << "Could not open file" << filename << "for streaming.";
-		return;
+		return false;
 	}
 
 	// Cast to specialized type
@@ -85,7 +88,7 @@ void StreamedAudioBuffer::openAudio(const std::string & basePath, const std::str
 	{
 		Error{} << "Could not malloc a struct of size stb_vorbis_info.";
 		clear();
-		return;
+		return false;
 	}
 
 	std::memcpy(mInfo, &vi, sizeof(stb_vorbis_fix_info));
@@ -101,6 +104,8 @@ void StreamedAudioBuffer::openAudio(const std::string & basePath, const std::str
 	mCachedNumberOfChannels = vi.channels;
 	mCachedBufferFormat = computeBufferFormat();
 	mCachedSampleRate = vi.sample_rate;
+
+	return true;
 }
 
 const Audio::BufferFormat StreamedAudioBuffer::getBufferFormat() const
@@ -116,6 +121,11 @@ const Int StreamedAudioBuffer::getNumberOfChannels() const
 const UnsignedInt StreamedAudioBuffer::getSampleRate() const
 {
 	return mCachedSampleRate;
+}
+
+const short* StreamedAudioBuffer::getRawBuffer() const
+{
+	return mRawBuffer;
 }
 
 const Audio::BufferFormat StreamedAudioBuffer::computeBufferFormat() const

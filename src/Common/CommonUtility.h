@@ -92,6 +92,7 @@ public:
 
 	// Constructor
 	CommonUtility();
+	~CommonUtility();
 
 	// Clear method
 	void clear();

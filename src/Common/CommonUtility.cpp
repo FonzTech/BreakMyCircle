@@ -35,6 +35,11 @@ CommonUtility::CommonUtility() : mConfig{ nullptr, "", 0.0f, 1.0f, "" }
 {
 }
 
+CommonUtility::~CommonUtility()
+{
+	clear();
+}
+
 void CommonUtility::clear()
 {
 	manager.clear();

@@ -1,6 +1,6 @@
 #pragma once
 
-#define AS_BUFFER_SIZE 44100
+#define AS_BUFFER_SIZE 22050
 
 #include <unordered_map>
 #include <Corrade/Containers/Optional.h>
@@ -22,12 +22,13 @@ public:
 	StreamedAudioBuffer();
 	~StreamedAudioBuffer();
 
-	void openAudio(const std::string & basePath, const std::string & filename);
-	Containers::Optional<Audio::Buffer> feed();
+	bool openAudio(const std::string & basePath, const std::string & filename);
+	const int feed();
 
 	const Audio::BufferFormat getBufferFormat() const;
 	const Int getNumberOfChannels() const;
 	const UnsignedInt getSampleRate() const;
+	const short* getRawBuffer() const;
 
 protected:
 

@@ -297,7 +297,7 @@ void LevelSelector::update()
 		if (expire != nullptr)
 		{
 		    // Resume background music
-            RoomManager::singleton->mBgMusic->playable()->source().play();
+            RoomManager::singleton->mBgMusic->play();
 
 			// Clear powerup data
             callNativeMethod(METHOD_CLEAR_POWERUP_DATA);
@@ -2457,14 +2457,14 @@ void LevelSelector::usePowerup(const UnsignedInt index)
 
 void LevelSelector::watchAdForPowerup(const UnsignedInt index)
 {
-    RoomManager::singleton->mBgMusic->playable()->source().pause();
+    RoomManager::singleton->mBgMusic->pause();
     mWatchForPowerup = index;
 	callNativeMethod(METHOD_WATCH_AD_POWERUP);
 }
 
 void LevelSelector::showInterstitial()
 {
-    RoomManager::singleton->mBgMusic->playable()->source().pause();
+    RoomManager::singleton->mBgMusic->pause();
     mWatchForPowerup = 1000U;
 	callNativeMethod(METHOD_SHOW_INTERSTITIAL);
 }

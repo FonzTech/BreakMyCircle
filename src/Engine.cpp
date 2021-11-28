@@ -528,10 +528,6 @@ void Engine::exitInternal(void* arg)
         object holds data about game objects, and so they holds
         references about meshes, textures, shaders, etc...
     */
-    if (RoomManager::singleton != nullptr)
-    {
-        RoomManager::singleton->clear();
-    }
     RoomManager::singleton = nullptr;
 
     /*
@@ -540,10 +536,6 @@ void Engine::exitInternal(void* arg)
         and only now, because no more references are present
         for contained resources.
     */
-    if (CommonUtility::singleton != nullptr)
-    {
-        CommonUtility::singleton->clear();
-    }
     CommonUtility::singleton = nullptr;
 
     // Clear input manager

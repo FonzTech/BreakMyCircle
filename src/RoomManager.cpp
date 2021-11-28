@@ -277,12 +277,7 @@ const Float RoomManager::getBgMusicGain() const
 {
 	if (mBgMusic != nullptr)
 	{
-		const auto& p = mBgMusic->playable();
-		if (p != nullptr)
-		{
-			return p->gain();
-		}
-		return -2.0f;
+		return mBgMusic->gain();
 	}
 	return -1.0f;
 }
@@ -291,12 +286,8 @@ const bool RoomManager::setBgMusicGain(const Float level)
 {
 	if (mBgMusic != nullptr)
 	{
-		const auto& p = mBgMusic->playable();
-		if (p != nullptr)
-		{
-			mBgMusic->playable()->setGain(level);
-			return true;
-		}
+		mBgMusic->setGain(level);
+		return true;
 	}
 	return false;
 }
@@ -370,6 +361,7 @@ void RoomManager::loadRoom(const std::string & name)
 
 			mBgMusic = std::make_unique<StreamedAudioPlayable>(&mCameraObject);
 			mBgMusic->loadAudio(bgmusic);
+			mBgMusic->play();
 			setBgMusicGain(mSaveData.musicEnabled ? 0.25f : 0.0f);
 		}
 	}
