@@ -1,5 +1,4 @@
 # On-going tasks
-- Fix audio crackling (use queues for audio).
 - Improve level selector scrolling.
 - Fix transparency when blackholes and explode-effect overlaps.
 - Protect game's API
@@ -61,3 +60,4 @@
 ~~- Add shooting path while player is aiming.~~
 ~~- Add countdown time sound effect when expiring.~~
 ~~- Fix collision detection for projectile on its side.~~
+~~- Fix audio crackling (use queues for audio).~~
