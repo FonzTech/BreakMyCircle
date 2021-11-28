@@ -149,7 +149,7 @@ public:
 	const void setCurrentBoundParentIndex(const Int parentIndex);
 
 	const Float getBgMusicGain() const;
-	const void setBgMusicGain(const Float level);
+	const bool setBgMusicGain(const Float level);
 
 	const Float getSfxGain() const;
 	const void setSfxGain(const Float level);

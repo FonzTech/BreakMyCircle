@@ -69,17 +69,16 @@ bool RoomManager::SaveData::load()
 		maxLevelId = 40U;
 		coinTotal = 50;
 		coinCurrent = 0;
-		musicEnabled = false;
 #else
 		maxLevelId = 2U;
 		coinTotal = 0;
 		coinCurrent = 0;
-		musicEnabled = true;
 #endif
 
 		flags = 0U;
 		onboardIndex = 0; 
 		sfxEnabled = true;
+		musicEnabled = true;
 
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
 		{
@@ -276,12 +275,30 @@ const void RoomManager::setCurrentBoundParentIndex(const Int parentIndex)
 
 const Float RoomManager::getBgMusicGain() const
 {
-	return mBgMusic->playable()->gain();
+	if (mBgMusic != nullptr)
+	{
+		const auto& p = mBgMusic->playable();
+		if (p != nullptr)
+		{
+			return p->gain();
+		}
+		return -2.0f;
+	}
+	return -1.0f;
 }
 
-const void RoomManager::setBgMusicGain(const Float level)
+const bool RoomManager::setBgMusicGain(const Float level)
 {
-	mBgMusic->playable()->setGain(level);
+	if (mBgMusic != nullptr)
+	{
+		const auto& p = mBgMusic->playable();
+		if (p != nullptr)
+		{
+			mBgMusic->playable()->setGain(level);
+			return true;
+		}
+	}
+	return false;
 }
 
 const Float RoomManager::getSfxGain() const
