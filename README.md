@@ -54,3 +54,4 @@ Puzzle Bobble-like game for PC and Mobile. Currently in development. This projec
 - The `screen_quad.frag` shader program has an hard-coded effect to resemble a fog, which is very tighted to this specific game appearance.
 - [This](https://github.com/mosra/magnum/blob/3d136503d8a959b4c260b9b60ca925566cc9d095/src/Magnum/GL/Shader.cpp#L722) makes shader compilation fail on some drivers, expecially on Samsung phones. A manually-compiled release of Magnum, without that `#line 1`, is required.
 - Float precision for fragment shaders should be always `mediump`. This is important, since some Android OpenGL ES implementations throws an error about missing precision. Higher precision is almost useless.
+- As for now, audio played through `StreamedAudioPlayable` is always looped.
