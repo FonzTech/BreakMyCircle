@@ -93,14 +93,9 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mScrolling = {
 		Containers::NullOpt,
 		Vector3(0.0f),
+        false,
 		Vector3(0.0f),
-		0.0f,
-        false
-#ifdef TARGET_MOBILE
-		,
-		0.2f,
-		Containers::NullOpt
-#endif
+        Timeline()
 	};
 	mClickIndex = -1;
 	mClickTimer = 0.0f;
@@ -694,11 +689,7 @@ void LevelSelector::update()
 			mScrolling.prevMousePos = InputManager::singleton->mMousePosition;
 			mClickStartTime = std::chrono::system_clock::now();
             mScrolling.disableObjectPicking = false;
-
-#ifdef TARGET_MOBILE
-			mScrolling.touchTimer = 0.0001f;
-            mScrolling.touchVelocity = Containers::NullOpt;
-#endif
+			mScrolling.touchInertia = Vector3(0.0f);
 		}
 	}
 	else if (lbs >= IM_STATE_PRESSED)
@@ -714,44 +705,20 @@ void LevelSelector::update()
 			else
 			{
                 const Vector3 scrollDelta = Vector3(mouseDelta.x(), 0.0f, Float(mouseDelta.y())) * -0.05f;
-                mScrolling.velocity = scrollDelta;
+				mScrolling.velocity = scrollDelta;
 			}
 
+			mScrolling.touchInertia += (mScrolling.velocity - mScrolling.touchInertia);
 #ifdef TARGET_MOBILE
-			// Natural scrolling for touch
-			mScrolling.touchTimer -= mDeltaTime;
-			if (mScrolling.touchTimer <= 0.0f)
-			{
-				const Float pd = CommonUtility::singleton->mConfig.displayDensity;
-				const Vector2 p1 = Math::floor(Vector2(InputManager::singleton->mMousePosition) / pd) * pd;
-				const Vector2 p2 = Math::floor(Vector2(*mScrolling.prevMousePos) / pd) * pd;
-				const Vector2i md = Vector2i(p1 - p2);
-				const Vector3 pa = Vector3(md.x(), 0.0f, Float(md.y())) * -0.05f;
-
-				mScrolling.touchTimer = 0.2f;
-
-				const Vector2 pw = RoomManager::singleton->getWindowSize();
-				if (pw.x() < pw.y())
-				{
-					mScrolling.touchVelocity = pa * Vector3(pw.x() / pw.y(), 0.0f, 1.0f);
-				}
-				else
-				{
-					/// TODO: landscape scale factor
-					mScrolling.touchVelocity = pa;
-				}
-                
-                if (mouseDelta.length() >= 0.5f)
-                {
-                    mScrolling.disableObjectPicking = true;
-                }
-			}
+			* mDeltaTime;
 #else
+			;
+#endif
+
             if (mouseDelta.length() >= 2.0f)
             {
                 mScrolling.disableObjectPicking = true;
             }
-#endif
             
             // Disable object picking while scrolling
             if (mScrolling.disableObjectPicking)
@@ -772,52 +739,29 @@ void LevelSelector::update()
 		// Reset click index
 		mClickIndex = -1;
 
-		// Kinetic scrolling
+		// Check for touch release time
 		if (lbs == IM_STATE_RELEASED)
 		{
-            mScrolling.factor = 1.0f;
-#if defined(TARGET_MOBILE)
-            mScrolling.release = (mScrolling.touchVelocity != Containers::NullOpt ? *mScrolling.touchVelocity : mScrolling.velocity)
-#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
-            ;
-#else
-            / CommonUtility::singleton->mConfig.displayDensity;
-#endif
-            mScrolling.release = mScrolling.velocity / CommonUtility::singleton->mConfig.displayDensity;
-#endif
-
-			const Float limit = GO_LS_MAX_SCROLL_VELOCITY / CommonUtility::singleton->mConfig.displayDensity;
-            for (UnsignedInt i = 0; i < 3; ++i)
-            {
-                auto* p = &mScrolling.release.data()[i];
-				if (*p < -limit)
-				{
-					*p = -limit;
-				}
-				else if (*p > limit)
-				{
-					*p = limit;
-				}
-            }
+            mScrolling.touchTimeline.stop();
+            mScrolling.touchTimeline.start();
 		}
 
 		// Handle scroll inertia
-		if (!mScrolling.velocity.isZero())
 		{
-            mScrolling.factor -= mDeltaTime *
-#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
-            0.2f
-#else
-            0.5f
-#endif
-            ;
-            
-			if (mScrolling.factor < 0.0f)
+			for (UnsignedInt i = 0; i < 3; ++i)
 			{
-				mScrolling.factor = 0.0f;
+				if (mScrolling.touchInertia.data()[i] < -GO_LS_MAX_SCROLL_SPEED)
+				{
+					mScrolling.touchInertia.data()[i] = -GO_LS_MAX_SCROLL_SPEED;
+				}
+				else if (mScrolling.touchInertia.data()[i] > GO_LS_MAX_SCROLL_SPEED)
+				{
+					mScrolling.touchInertia.data()[i] = GO_LS_MAX_SCROLL_SPEED;
+				}
 			}
 
-			mScrolling.velocity = Math::lerp(Vector3(0.0f), mScrolling.release, Animation::Easing::exponentialIn(mScrolling.factor));
+            mScrolling.touchTimeline.nextFrame();
+			mScrolling.velocity = Math::lerp(mScrolling.touchInertia, Vector3(0.0f), Math::min(mScrolling.touchTimeline.previousFrameTime(), 1.0f));
 		}
 
 		// Check for click release
@@ -879,7 +823,6 @@ void LevelSelector::update()
                                         {
                                             // Stop scrolling
 											mScrolling.velocity = Vector3(0.0f);
-											mScrolling.release = Vector3(0.0f);
 
                                             // Open level window
                                             clickLevelButton(&it2->second, spo);
@@ -2518,7 +2461,6 @@ void LevelSelector::createGuis()
 				{
 					// Stop scrolling
 					mScrolling.velocity = Vector3(0.0f);
-					mScrolling.release = Vector3(0.0f);
 
 					// Game logic
 					audioIndex = GO_LS_AUDIO_PAUSE_IN;

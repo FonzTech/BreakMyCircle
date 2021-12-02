@@ -71,12 +71,7 @@
 
 #define GO_LS_SCENERY_LENGTH 50.0f
 #define GO_LS_CLICK_TAP_MAX_DELAY 0.3
-
-#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
-#define GO_LS_MAX_SCROLL_VELOCITY 2.0f
-#else
-#define GO_LS_MAX_SCROLL_VELOCITY 0.5f
-#endif
+#define GO_LS_MAX_SCROLL_SPEED 5.0f
 
 using namespace Magnum;
 
@@ -130,11 +125,6 @@ private:
 		std::function<bool(UnsignedInt)> callback;
 	};
 
-	struct LS_PickableObjectRef
-	{
-		Int sceneryIndex;
-	};
-
 	struct LS_LevelInfo
 	{
 		UnsignedInt currentViewingLevelId;
@@ -182,15 +172,10 @@ private:
 	struct LS_Scroll
 	{
 		Containers::Optional<Vector2i> prevMousePos;
-		Vector3 release;
 		Vector3 velocity;
-		Float factor;
         bool disableObjectPicking;
-
-#ifdef TARGET_MOBILE
-		Float touchTimer;
-		Containers::Optional<Vector3> touchVelocity;
-#endif
+		Vector3 touchInertia;
+        Timeline touchTimeline;
 	};
 
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);
