@@ -219,6 +219,7 @@ RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
 		.setFrequency(44100)
 	);
 	mAudioListener = std::make_unique<Audio::Listener3D>(mScene);
+	mBgMusicState = Audio::Source::State::Initial;
 
 	// Map every game object to this map
 	gameObjectCreators[GOT_PLAYER] = Player::getInstance;
@@ -300,6 +301,29 @@ const Float RoomManager::getSfxGain() const
 const void RoomManager::setSfxGain(const Float level)
 {
 	mSfxLevel = level;
+}
+
+void RoomManager::pauseApp()
+{
+	if (mBgMusic != nullptr)
+	{
+		mBgMusicState = mBgMusic->state();
+		if (mBgMusicState == Audio::Source::State::Playing)
+		{
+			mBgMusic->pause();
+		}
+	}
+}
+
+void RoomManager::resumeApp()
+{
+	if (mBgMusic != nullptr)
+	{
+		if (mBgMusicState == Audio::Source::State::Playing)
+		{
+			mBgMusic->play();
+		}
+	}
 }
 
 void RoomManager::clear()

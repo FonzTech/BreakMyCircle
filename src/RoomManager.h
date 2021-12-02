@@ -32,6 +32,7 @@
 #include <Magnum/GL/Framebuffer.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
 #include <Magnum/GL/TextureFormat.h>
+#include <Magnum/Audio/Source.h>
 
 #include "GameObject.h"
 #include "CollisionManager.h"
@@ -154,6 +155,9 @@ public:
 	const Float getSfxGain() const;
 	const void setSfxGain(const Float level);
 
+	void pauseApp();
+	void resumeApp();
+
 	void clear();
 	void setup();
 	void prepareRoom(const bool stopBgMusic);
@@ -178,6 +182,7 @@ protected:
 	Float mAspectRatio;
 
 	// Audio parameters
+	Audio::Source::State mBgMusicState;
 	Float mSfxLevel;
 
 	// Methods

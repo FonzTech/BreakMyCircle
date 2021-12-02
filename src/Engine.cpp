@@ -346,7 +346,7 @@ void Engine::pauseApp()
     
 #ifdef TARGET_MOBILE
     isInForeground = false;
-    RoomManager::singleton->mBgMusic->playable()->source().pause();
+    RoomManager::singleton->pauseApp();
 #endif
 }
 
@@ -358,7 +358,7 @@ void Engine::resumeApp()
     
 #ifdef TARGET_MOBILE
     isInForeground = true;
-    RoomManager::singleton->mBgMusic->playable()->source().play();
+    RoomManager::singleton->resumeApp();
 #endif
 }
 
