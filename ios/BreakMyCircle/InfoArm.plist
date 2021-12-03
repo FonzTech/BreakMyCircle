@@ -191,6 +191,10 @@
 		<string>opengles-3</string>
 		<string>arm64</string>
 	</array>
+    <key>UIRequiresFullScreen</key>
+    <false/>
+    <key>UIRequiresFullScreen~ipad</key>
+    <true/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
