@@ -94,7 +94,7 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 			{
 				if (i != 0)
 				{
-					const auto& p = mBombDrawables[0];
+					auto* p = mBombDrawables[0];
 					mBombDrawables[0] = mBombDrawables[i];
 					mBombDrawables[i] = p;
 				}
@@ -685,6 +685,10 @@ void Player::setPrimaryProjectile(const Color3 & color)
 	if (color == BUBBLE_ELECTRIC)
 	{
 		mElectricBall->pushToFront();
+	}
+	else if (color == BUBBLE_BOMB)
+	{
+		mBombDrawables[0]->pushToFront();
 	}
 }
 
