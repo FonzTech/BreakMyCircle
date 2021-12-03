@@ -191,6 +191,7 @@ private:
 	void windowForCurrentLevelView();
 
 	void manageLevelState();
+	void managePickupState(const bool decrease);
 	void createLevelRoom();
 	void finishCurrentLevel(const bool success);
 	void prepareForReplay();

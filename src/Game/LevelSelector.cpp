@@ -1531,57 +1531,15 @@ void LevelSelector::manageLevelState()
 		// Manage pickups on map screen
 		if (mLevelButtonScaleAnim >= 0.99f && !mSettingsOpened && mLevelInfo.currentViewingLevelId == 0U)
 		{
-			if (mPickupHandler.timer < 0.0f)
-			{
-				if (mPickupHandler.timer > -900.0f)
-				{
-					if (mPickupHandler.pickups.size() >= 10 || std::rand() % 10 < 7)
-					{
-						if (!mPickupHandler.pickups.empty())
-						{
-							const auto& it = std::next(std::begin(mPickupHandler.pickups), std::rand() % mPickupHandler.pickups.size());
-							if (!it->second.expired())
-							{
-								const auto& ptr = it->second.lock();
-								ptr->mAmbientColor = 0xff8080_rgbf;
-								ptr->setDestroyState(true);
-							}
-						}
-					}
-					else
-					{
-						const auto& pk = 50 + Int(mPickupHandler.pickups.size());
-						const auto& it = mPickupHandler.pickups.find(pk);
-						if (it == mPickupHandler.pickups.end())
-						{
-							const auto& go = std::make_shared<MapPickup>(GOL_PERSP_FIRST, GO_MP_TYPE_COIN);
-							go->setObjectId(pk);
-
-							{
-								const Float xp = 5.0f + Float(std::rand() % 150) * (std::rand() % 2 ? 0.1f : -0.1f);
-								const Float zp = mPosition.z() - 50.0f + Float(std::rand() % 1000) * 0.1f;
-								go->mPosition = Vector3(xp, 2.0f, zp);
-							}
-
-							Debug{} << "New COIN map pickup created at position (" << go->mPosition.x() << ", " << go->mPosition.z() << ")";
-							mPickupHandler.pickups[pk] = go;
-							RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(go);
-						}
-					}
-				}
-
-				mPickupHandler.timer = 2.5f + Float(std::rand() % 25) * 0.1f;
-				Debug{} << "Map pickup timer has expired. Reset to" << mPickupHandler.timer;
-			}
-			else
-			{
-				mPickupHandler.timer -= mDeltaTime;
-			}
+			managePickupState(true);
 		}
 
 		break;
 
 	case GO_LS_LEVEL_STARTING:
+
+		// Manage pickup state
+		managePickupState(false);
 
 		// Create level room on animation end
 		if (mLevelButtonScaleAnim <= 0.0f)
@@ -1824,6 +1782,56 @@ void LevelSelector::manageLevelState()
 	}
 }
 
+void LevelSelector::managePickupState(const bool decrease)
+{
+	if (mPickupHandler.timer < 0.0f)
+	{
+		if (mPickupHandler.timer > -900.0f)
+		{
+			if (mPickupHandler.pickups.size() >= 10 || std::rand() % 10 < 7)
+			{
+				if (!mPickupHandler.pickups.empty())
+				{
+					const auto& it = std::next(std::begin(mPickupHandler.pickups), std::rand() % mPickupHandler.pickups.size());
+					if (!it->second.expired())
+					{
+						const auto& ptr = it->second.lock();
+						ptr->mAmbientColor = 0xff8080_rgbf;
+						ptr->setDestroyState(true);
+					}
+				}
+			}
+			else
+			{
+				const auto& pk = 50 + Int(mPickupHandler.pickups.size());
+				const auto& it = mPickupHandler.pickups.find(pk);
+				if (it == mPickupHandler.pickups.end())
+				{
+					const auto& go = std::make_shared<MapPickup>(GOL_PERSP_FIRST, GO_MP_TYPE_COIN);
+					go->setObjectId(pk);
+
+					{
+						const Float xp = 5.0f + Float(std::rand() % 150) * (std::rand() % 2 ? 0.1f : -0.1f);
+						const Float zp = mPosition.z() - 50.0f + Float(std::rand() % 1000) * 0.1f;
+						go->mPosition = Vector3(xp, 2.0f, zp);
+					}
+
+					Debug{} << "New COIN map pickup created at position (" << go->mPosition.x() << ", " << go->mPosition.z() << ")";
+					mPickupHandler.pickups[pk] = go;
+					RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].push_back(go);
+				}
+			}
+		}
+
+		mPickupHandler.timer = 2.5f + Float(std::rand() % 25) * 0.1f;
+		Debug{} << "Map pickup timer has expired. Reset to" << mPickupHandler.timer;
+	}
+	else if (decrease)
+	{
+		mPickupHandler.timer -= mDeltaTime;
+	}
+}
+
 void LevelSelector::createLevelRoom()
 {
 	// Debug print
@@ -2062,20 +2070,24 @@ void LevelSelector::startLevel(const UnsignedInt levelId)
 	// Start the selected level
 	Debug{} << "User wants to play level" << levelId;
 
+	// Remove all pickups from map
+	mPickupHandler.timer = -0.1f;
+
 	// Play sound
 	playSfxAudio(GO_LS_AUDIO_PAUSE_OUT);
 
 	// Set state for level
+	{
+		mLevelEndingAnim = false;
 
-	mLevelEndingAnim = false;
+		mLevelInfo.currentViewingLevelId = 0U;
+		mLevelInfo.repeatLevelId = 0U;
+		mLevelInfo.delayedChecks = false;
+		mLevelInfo.state = GO_LS_LEVEL_STARTING;
+		mLevelInfo.startingTime = 150.0f + Math::floor(Float(mLevelInfo.selectedLevelId % 100U) / 5.0f) * 15.0f;
 
-	mLevelInfo.currentViewingLevelId = 0U;
-	mLevelInfo.repeatLevelId = 0U;
-	mLevelInfo.delayedChecks = false;
-	mLevelInfo.state = GO_LS_LEVEL_STARTING;
-	mLevelInfo.startingTime = 150.0f + Math::floor(Float(mLevelInfo.selectedLevelId % 100U) / 5.0f) * 15.0f;
-
-	mTimer = { mLevelInfo.startingTime, Int(mLevelInfo.startingTime) };
+		mTimer = { mLevelInfo.startingTime, Int(mLevelInfo.startingTime) };
+	}
 
 	// mCoins = { -0.001f, -1 };
 	RoomManager::singleton->mSaveData.coinCurrent = 0;
