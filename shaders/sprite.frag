@@ -11,6 +11,7 @@ uniform float columns;
 uniform float rowspan;
 uniform float columnspan;
 uniform float index;
+uniform float alphaMask;
 
 in vec2 interpolatedTextureCoordinates;
 
@@ -27,4 +28,9 @@ void main()
 	
 	fragmentColor = texture(textureData, tc);
 	fragmentColor.rgb *= color.rgb;
+  
+  if (fragmentColor.a < alphaMask)
+  {
+    discard;
+  }
 }

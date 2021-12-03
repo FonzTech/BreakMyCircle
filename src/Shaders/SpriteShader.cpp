@@ -38,6 +38,7 @@ SpriteShader::SpriteShader()
 	mIndexUniform = uniformLocation("index");
 	mRowsUniform = uniformLocation("rows");
 	mColumnsUniform = uniformLocation("columns");
+	mAlphaMaskUniform = uniformLocation("alphaMask");
 
 	setUniform(uniformLocation("textureData"), TextureUnit);
 }
@@ -75,5 +76,11 @@ SpriteShader& SpriteShader::setRows(const Float rows)
 SpriteShader& SpriteShader::setColumns(const Float columns)
 {
 	setUniform(mColumnsUniform, columns);
+	return *this;
+}
+
+SpriteShader& SpriteShader::setAlphaMask(const Float alphaMask)
+{
+	setUniform(mAlphaMaskUniform, alphaMask);
 	return *this;
 }

@@ -28,6 +28,7 @@ public:
 	SpriteShader& setIndex(const Float index);
 	SpriteShader& setRows(const Float rows);
 	SpriteShader& setColumns(const Float columns);
+	SpriteShader& setAlphaMask(const Float alphaMask);
 
 private:
 	enum : Int
@@ -42,4 +43,5 @@ private:
 	Float mIndexUniform, mTotalUniform;
 	Float mTexWidthUniform, mTexHeightUniform;
 	Float mRowsUniform, mColumnsUniform;
+	Float mAlphaMaskUniform;
 };

@@ -163,6 +163,7 @@ void ElectricBall::draw(BaseDrawable* baseDrawable, const Matrix4& transformatio
 			.setIndex(mWrapper.parameters.index)
 			.setRows(mWrapper.parameters.rows)
 			.setColumns(mWrapper.parameters.columns)
+			.setAlphaMask(0.001f)
 			.draw(*baseDrawable->mMesh);
 	}
 }

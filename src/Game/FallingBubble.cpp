@@ -224,6 +224,7 @@ void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformati
 			.setIndex(mWrapper.parameters.index)
 			.setRows(mWrapper.parameters.rows)
 			.setColumns(mWrapper.parameters.columns)
+			.setAlphaMask(0.5f)
 			.draw(*baseDrawable->mMesh);
 	}
 	else
