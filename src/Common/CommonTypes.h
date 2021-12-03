@@ -46,7 +46,6 @@
 #define RESOURCE_TEXTURE_CUBEMAP_SKYBOX_1 "cubemap_skybox_1"
 #define RESOURCE_TEXTURE_STARROAD_ALPHAMAP "starroad_am"
 #define RESOURCE_TEXTURE_MOON "moon"
-#define RESOURCE_TEXTURE_FIRE "fire"
 #define RESOURCE_TEXTURE_SWAP "swap"
 #define RESOURCE_TEXTURE_SHOOT_PATH "shoot_path"
 #define RESOURCE_TEXTURE_GUI_SETTINGS "gui_settings"
