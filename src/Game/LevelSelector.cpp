@@ -708,9 +708,21 @@ void LevelSelector::update()
 				mScrolling.velocity = scrollDelta;
 			}
 
-			mScrolling.touchInertia += (mScrolling.velocity - mScrolling.touchInertia);
+			mScrolling.touchInertia += (mScrolling.velocity - mScrolling.touchInertia)
 #ifdef TARGET_MOBILE
-			* mDeltaTime;
+			* mDeltaTime * (mScrolling.velocity.isZero() ? 10.0f : 1.0f);
+
+			for (UnsignedInt i = 0; i < 3; ++i)
+			{
+				if (mScrolling.touchInertia.data()[i] < -GO_LS_MAX_SCROLL_SPEED)
+				{
+					mScrolling.touchInertia.data()[i] = -GO_LS_MAX_SCROLL_SPEED;
+				}
+				else if (mScrolling.touchInertia.data()[i] > GO_LS_MAX_SCROLL_SPEED)
+				{
+					mScrolling.touchInertia.data()[i] = GO_LS_MAX_SCROLL_SPEED;
+				}
+			}
 #else
 			;
 #endif
@@ -747,22 +759,8 @@ void LevelSelector::update()
 		}
 
 		// Handle scroll inertia
-		{
-			for (UnsignedInt i = 0; i < 3; ++i)
-			{
-				if (mScrolling.touchInertia.data()[i] < -GO_LS_MAX_SCROLL_SPEED)
-				{
-					mScrolling.touchInertia.data()[i] = -GO_LS_MAX_SCROLL_SPEED;
-				}
-				else if (mScrolling.touchInertia.data()[i] > GO_LS_MAX_SCROLL_SPEED)
-				{
-					mScrolling.touchInertia.data()[i] = GO_LS_MAX_SCROLL_SPEED;
-				}
-			}
-
-            mScrolling.touchTimeline.nextFrame();
-			mScrolling.velocity = Math::lerp(mScrolling.touchInertia, Vector3(0.0f), Math::min(mScrolling.touchTimeline.previousFrameTime(), 1.0f));
-		}
+		mScrolling.touchTimeline.nextFrame();
+		mScrolling.velocity = Math::lerp(mScrolling.touchInertia, Vector3(0.0f), Math::min(mScrolling.touchTimeline.previousFrameTime(), 1.0f));
 
 		// Check for click release
 		if (lbs == IM_STATE_RELEASED)

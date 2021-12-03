@@ -71,7 +71,7 @@
 
 #define GO_LS_SCENERY_LENGTH 50.0f
 #define GO_LS_CLICK_TAP_MAX_DELAY 0.3
-#define GO_LS_MAX_SCROLL_SPEED 5.0f
+#define GO_LS_MAX_SCROLL_SPEED 0.5f
 
 using namespace Magnum;
 
