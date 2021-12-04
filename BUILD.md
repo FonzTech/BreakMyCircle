@@ -202,4 +202,5 @@ A slight modification to `SDL_uikitappdelegate` interface is applied, as describ
 
 ### AppStore Upload
 
-To avoid the error **ITMS-90429**, uncheck the *Strip Siwft Symbols* option to avoid the error *ITMS-90429: Invalid Swift Support*.
+- Disable *Bitcode support*, since third-party dependencies shall be compiled with bitcode support as well.
+- Error **ITMS-90429** is due to this <https://developer.apple.com/library/archive/technotes/tn2435/_index.html#//apple_ref/doc/uid/DTS40017543-CH1-TROUBLESHOOTING-BUNDLE_ERRORS>. For every `dylib`, wrap it in a `framework` file like the one included in this repo, in the `ios` folder.
