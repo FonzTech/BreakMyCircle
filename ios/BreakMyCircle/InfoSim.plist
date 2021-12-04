@@ -190,15 +190,15 @@
 	<array>
 		<string>opengles-3</string>
 	</array>
-    <key>UIRequiresFullScreen</key>
-    <false/>
-    <key>UIRequiresFullScreen~ipad</key>
+	<key>UIRequiresFullScreen</key>
     <true/>
-    <key>UISupportedInterfaceOrientations</key>
-    <array>
-        <string>UIInterfaceOrientationPortrait</string>
-        <string>UIInterfaceOrientationPortraitUpsideDown</string>
-    </array>
+    <key>UIRequiresFullScreen~iphone</key>
+    <false/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

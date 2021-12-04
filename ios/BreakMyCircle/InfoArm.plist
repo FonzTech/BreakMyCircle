@@ -192,9 +192,9 @@
 		<string>arm64</string>
 	</array>
     <key>UIRequiresFullScreen</key>
-    <false/>
-    <key>UIRequiresFullScreen~ipad</key>
     <true/>
+    <key>UIRequiresFullScreen~iphone</key>
+    <false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
