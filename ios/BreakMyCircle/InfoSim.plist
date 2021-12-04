@@ -19,7 +19,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3837498848455030~4558999091</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -191,9 +191,9 @@
 		<string>opengles-3</string>
 	</array>
 	<key>UIRequiresFullScreen</key>
-    <true/>
-    <key>UIRequiresFullScreen~iphone</key>
-    <false/>
+	<true/>
+	<key>UIRequiresFullScreen~iphone</key>
+	<false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

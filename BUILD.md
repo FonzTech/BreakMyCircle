@@ -199,3 +199,7 @@ The following sources from *SDL 2.0.16* are modified:
 - `src/video/uikit/SDL_uikitappdelegate.m` (implemented the above instance method; "original" launch option are saved into the above-mentioned `_launchOption` property).
 
 A slight modification to `SDL_uikitappdelegate` interface is applied, as described above. Specifically, the method `(NSDictionary*)SDL_uikitappdelegate::getLaunchOption` can be used in project, which uses this modified version of SDL2, to obtain launch options for the application, such as detecting if it was launched by a notification tap. The rest of the source is the same that can be found in the *SDL 2.0.16* release.
+
+### AppStore Upload
+
+To avoid the error **ITMS-90429**, uncheck the *Strip Siwft Symbols* option to avoid the error *ITMS-90429: Invalid Swift Support*.
