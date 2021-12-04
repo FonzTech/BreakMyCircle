@@ -1178,7 +1178,6 @@ void LevelSelector::clickLevelButton(const LS_ScenerySelector * sc, const LS_Pic
 
 void LevelSelector::windowForCommon()
 {
-	const auto& ar = RoomManager::singleton->getWindowAspectRatio();
 	const auto& dsl = mCbEaseInOut.value(mSettingsAnim + (mLevelInfo.isSafeMinigameDone ? 0.0f : mLevelAnim))[1];
 	const auto& p0 = Vector2(0.0f, CommonUtility::singleton->getScaledVerticalPadding());
 	const auto& d0 = mCbEaseInOut.value(mLevelGuiAnim[0])[1];

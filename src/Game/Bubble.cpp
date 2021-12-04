@@ -117,7 +117,6 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor, const Float ti
 			}
 			else
 			{
-				const auto index = UnsignedInt(std::rand()) % UnsignedInt(RoomManager::singleton->sBubbleKeys.size());
 				const auto& it = std::next(RoomManager::singleton->sBubbleKeys.begin(), mTimed.index);
 				mAmbientColor = Color3::fromSrgb(*it);
 			}
