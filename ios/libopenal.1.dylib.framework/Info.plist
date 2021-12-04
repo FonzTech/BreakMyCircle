@@ -2,27 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>AvailableLibraries</key>
-	<array>
-		<dict>
-			<key>LibraryIdentifier</key>
-			<string>ios-arm64-libopenal</string>
-			<key>LibraryPath</key>
-			<string>libopenal.1.dylib</string>
-			<key>SupportedArchitectures</key>
-			<array>
-				<string>arm64</string>
-			</array>
-			<key>SupportedPlatform</key>
-			<string>ios</string>
-		</dict>
-	</array>
     <key>CFBundleIdentifier</key>
     <string>org.openal-soft.openal</string>
 	<key>CFBundlePackageType</key>
 	<string>XFWK</string>
 	<key>CFBundleExecutable</key>
-	<string>${EXECUTABLE_NAME}</string>
+	<string>libopenal.1.dylib</string>
 	<key>XCFrameworkFormatVersion</key>
 	<string>1.0</string>
     <key>NSHumanReadableCopyright</key>

@@ -87,8 +87,8 @@
 		05ADBCCE2749665200D3EC44 /* AppNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */; };
 		05ADBCD32749716E00D3EC44 /* TimedBubbleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */; };
 		05ADBCD42749716E00D3EC44 /* TimedBubbleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */; };
-		05B98D65275B982200AF9A5E /* libopenal.1.dylib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05B98D59275B949900AF9A5E /* libopenal.1.dylib.framework */; };
-		05B98D66275B982200AF9A5E /* libopenal.1.dylib.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05B98D59275B949900AF9A5E /* libopenal.1.dylib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		05B98D71275B9D3F00AF9A5E /* libopenal.1.dylib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05B98D59275B949900AF9A5E /* libopenal.1.dylib.framework */; };
+		05B98D72275B9D3F00AF9A5E /* libopenal.1.dylib.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05B98D59275B949900AF9A5E /* libopenal.1.dylib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		05C40145271AF483009ADA54 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C40144271AF483009ADA54 /* UIApplicationExtension.swift */; };
 		05C40146271AF483009ADA54 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C40144271AF483009ADA54 /* UIApplicationExtension.swift */; };
 		05CB665027137C2700F97E29 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF92709F6E800C34B15 /* AVFoundation.framework */; };
@@ -208,13 +208,13 @@
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		05B98D67275B982200AF9A5E /* Embed Frameworks */ = {
+		05B98D73275B9D3F00AF9A5E /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				05B98D66275B982200AF9A5E /* libopenal.1.dylib.framework in Embed Frameworks */,
+				05B98D72275B9D3F00AF9A5E /* libopenal.1.dylib.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -298,6 +298,7 @@
 		05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TimedBubbleShader.cpp; path = ../src/Shaders/TimedBubbleShader.cpp; sourceTree = "<group>"; };
 		05B98CF8275B8AA400AF9A5E /* libopenal.1.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libopenal.1.framework; path = "../../../../Development/ios-arm64/frameworks/libopenal.1.framework"; sourceTree = "<group>"; };
 		05B98D59275B949900AF9A5E /* libopenal.1.dylib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = libopenal.1.dylib.framework; sourceTree = "<group>"; };
+		05B98D68275B9B7500AF9A5E /* libopenal.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopenal.1.dylib; path = libopenal.1.dylib.framework/libopenal.1.dylib; sourceTree = "<group>"; };
 		05C2595627177F7700B8D75E /* libopenal.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopenal.1.dylib; path = "../../../../Development/ios-arm64/lib/libopenal.1.dylib"; sourceTree = "<group>"; };
 		05C40144271AF483009ADA54 /* UIApplicationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtension.swift; sourceTree = "<group>"; };
 		05CB66462713779E00F97E29 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
@@ -392,7 +393,7 @@
 				05CB8F742713661A009AD69F /* libpng16.a in Frameworks */,
 				05CB8F5F27135B4D009AD69F /* libSDL2.a in Frameworks */,
 				05532C34274E773B00F8691A /* libSDL2main.a in Frameworks */,
-				05B98D65275B982200AF9A5E /* libopenal.1.dylib.framework in Frameworks */,
+				05B98D71275B9D3F00AF9A5E /* libopenal.1.dylib.framework in Frameworks */,
 				05CB8F5527135B1B009AD69F /* libCorradePluginManager.a in Frameworks */,
 				05CB8F5D27135B1B009AD69F /* libCorradeUtility.a in Frameworks */,
 				05CB8F5127135B1B009AD69F /* libMagnumText.a in Frameworks */,
@@ -667,6 +668,7 @@
 		AFFB4E2B26FF48DC00FD2500 = {
 			isa = PBXGroup;
 			children = (
+				05B98D68275B9B7500AF9A5E /* libopenal.1.dylib */,
 				0545583C274AA32B0014D325 /* assets.json */,
 				05ADBCC8274941C000D3EC44 /* breakmycircle_arm.entitlements */,
 				05ADBCC7274941B600D3EC44 /* breakmycircle_sim.entitlements */,
@@ -728,7 +730,7 @@
 				05CB8EE7271358F8009AD69F /* Sources */,
 				05CB8F14271358F8009AD69F /* Frameworks */,
 				05CB8F31271358F8009AD69F /* Resources */,
-				05B98D67275B982200AF9A5E /* Embed Frameworks */,
+				05B98D73275B9D3F00AF9A5E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1011,8 +1013,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = breakmycircle_arm.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
 				ENABLE_BITCODE = NO;
@@ -1076,8 +1079,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = breakmycircle_arm.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
 				ENABLE_BITCODE = NO;
@@ -1268,7 +1272,7 @@
 				CODE_SIGN_ENTITLEMENTS = breakmycircle_sim.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
 				ENABLE_PREVIEWS = YES;
@@ -1327,7 +1331,7 @@
 				CODE_SIGN_ENTITLEMENTS = breakmycircle_sim.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
 				ENABLE_PREVIEWS = YES;
