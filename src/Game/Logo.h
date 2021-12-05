@@ -74,5 +74,5 @@ private:
 	bool mIntroBubbles;
 
 	// Texts
-	std::shared_ptr<OverlayText> mTexts[2];
+	std::shared_ptr<OverlayText> mTexts[3];
 };

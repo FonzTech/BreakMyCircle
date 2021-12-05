@@ -130,6 +130,18 @@ Logo::Logo(const Int parentIndex) : GameObject()
 		RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go);
 	}
 
+	{
+		const std::string& text = "Copyright 2021";
+		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
+		go->mSize = Vector2(0.75f);
+		go->mColor = Color4(1.0f, 0.9f, 0.0f, 0.0f);
+		go->mOutlineColor.data()[3] = 0.0f;
+		go->setText(text);
+
+		mTexts[2] = go;
+		RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go);
+	}
+
 	// Build animations
 	buildAnimations();
 }
@@ -154,7 +166,8 @@ void Logo::update()
 
 	// Set positions based on canvas padding
 	computeCanvasPadding();
-	mTexts[1]->mPosition = Vector3(0.0f, -0.4f + mCanvasPadding, 0.0f);
+	mTexts[1]->mPosition = Vector3(0.0f, -0.3f + mCanvasPadding, 0.0f);
+	mTexts[2]->mPosition = Vector3(0.0f, -0.46f + mCanvasPadding, 0.0f);
 
 	// Advance animation
 	if (mAnimElapsed < 0.0f) // Cycle waste
@@ -213,7 +226,7 @@ void Logo::update()
 			}
 
 			// Handle its text
-			for (UnsignedInt i = 0; i < 2; ++i)
+			for (UnsignedInt i = 0; i < 3; ++i)
 			{
 				for (UnsignedInt j = 0; j < 2; ++j)
 				{
