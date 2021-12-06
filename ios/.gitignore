@@ -93,3 +93,5 @@ iOSInjectionProject/
 # Cocoapods
 Pods/
 
+# DO NOT IGNORE framework directories with i"gnorable names"
+!Frameworks/[Aa][Rr][Mm]64/
