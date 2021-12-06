@@ -131,9 +131,15 @@ const Int Onboarding::getType() const
 
 void Onboarding::update()
 {
+    // Get vertical padding
+    const auto padding = CommonUtility::singleton->getScaledVerticalPadding();
+    
 	// Set position for texts
-	mOverlayTexts[0]->mPosition = Vector3(0.0f, 0.1125f - CommonUtility::singleton->getScaledVerticalPadding(), 0.0f);
-	mOverlayTexts[1]->mPosition = Vector3(0.0f, 0.375f - CommonUtility::singleton->getScaledVerticalPadding(), 0.0f);
+	mOverlayTexts[0]->mPosition = Vector3(0.0f, 0.1125f, 0.0f);
+    
+    {
+        mOverlayTexts[1]->mPosition = Vector3(0.0f, 0.45f - padding, 0.0f);
+    }
 
 	// Animation handling
 	mAngle += mDeltaTime * 2.0f;
@@ -157,13 +163,13 @@ void Onboarding::update()
 		mFactor = 1.0f;
 	}
 
-	const auto& iv = Math::lerp(0.0f, 1.0f, Animation::Easing::smootherstep(mFactor));
-	const auto& nv = 1.0f - iv;
+	const auto iv = Math::lerp(0.0f, 1.0f, Animation::Easing::smootherstep(mFactor));
+	const auto nv = 1.0f - iv;
 
-	mOverlayGuis[0]->setPosition({ 0.0f, -0.2f - nv });
+	mOverlayGuis[0]->setPosition({ 0.0f, -0.2f - nv - padding });
 	mOverlayGuis[0]->setSize({ 0.45f, 0.45f });
 
-	mOverlayGuis[1]->setPosition({ 0.0f, -0.5f - nv });
+	mOverlayGuis[1]->setPosition({ 0.0f, -0.5f - nv - padding });
 	mOverlayGuis[1]->setSize({ 0.3f, 0.3f });
 
 	for (auto& text : mOverlayTexts)
@@ -176,7 +182,7 @@ void Onboarding::update()
 	mOverlayTexts[1]->mSize = Vector2(iv);
 
 	{
-		const auto& av = 0.5f + Math::sin(Rad(mAngle)) * 0.2f;
+		const auto av = 0.5f + Math::sin(Rad(mAngle)) * 0.2f;
 		mOverlayTexts[1]->mColor = Color4(1.0f, av, av, 1.0f);
 	}
 

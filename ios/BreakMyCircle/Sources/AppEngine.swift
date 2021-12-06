@@ -18,6 +18,19 @@ public func ios_GetAssetDir() -> UnsafeMutablePointer<Int8> {
     return C_STRING_ASSET_DIR!
 }
 
+@_cdecl("ios_GetCanvasVerticalPadding")
+public func ios_GetCanvasVerticalPadding() -> Float {
+    var statusBarHeight: CGFloat = 0
+    if #available(iOS 13.0, *) {
+        let window = UIApplication.shared.windows.filter {$0.isKeyWindow}.first
+        statusBarHeight = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
+    }
+    else {
+        statusBarHeight = UIApplication.shared.statusBarFrame.height
+    }
+    return Float(statusBarHeight * UIScreen.main.scale) // Get in native pixels, not scaled ones
+}
+
 @_cdecl("ios_GetDisplayDensity")
 public func ios_GetDisplayDensity() -> Float {
     return Float(UIScreen.main.scale)

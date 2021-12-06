@@ -326,9 +326,13 @@ void Logo::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix,
 
 void Logo::computeCanvasPadding()
 {
-	mCanvasPadding = CommonUtility::singleton->mConfig.canvasVerticalPadding;
-	mCanvasPadding /= CommonUtility::singleton->mFramebufferSize.y();
-	mCanvasPadding /= CommonUtility::singleton->mConfig.displayDensity;
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+    mCanvasPadding = 0.0f;
+#else
+    mCanvasPadding = CommonUtility::singleton->mConfig.canvasVerticalPadding;
+    mCanvasPadding /= CommonUtility::singleton->mFramebufferSize.y();
+    mCanvasPadding /= CommonUtility::singleton->mConfig.displayDensity;
+#endif
 }
 
 void Logo::buildAnimations()

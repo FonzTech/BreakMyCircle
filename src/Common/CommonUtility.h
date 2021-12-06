@@ -54,6 +54,7 @@ extern "C"
     void ios_GameOtherApps();
 
     const char* ios_GetAssetDir();
+    Float ios_GetCanvasVerticalPadding();
     Float ios_GetDisplayDensity();
     const char* ios_GetSaveFile();
 }
@@ -99,7 +100,7 @@ public:
 
 	// Read vector from JSON
 	template <std::size_t S, class T>
-	const Math::Vector<S, T>& getVectorFromJson(const nlohmann::json & params)
+	const Math::Vector<S, T> getVectorFromJson(const nlohmann::json & params)
 	{
 		Math::Vector<S, T> vector;
 		const auto& it = params.find("position");
@@ -110,7 +111,7 @@ public:
 				(*it).at(VECTOR_COMPONENTS[i]).get_to(vector[i]);
 			}
 		}
-		return vector;
+        return vector;
 	}
 
 	// Audio loader
