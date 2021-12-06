@@ -196,8 +196,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				05CB8F7927136DD2009AD69F /* libSDL2-2.0.dylib in Embed Libraries */,
 				05B74E0C275E5D9F00DA2B74 /* libopenal.1.dylib.framework in Embed Libraries */,
+				05CB8F7927136DD2009AD69F /* libSDL2-2.0.dylib in Embed Libraries */,
 				05CB8F7727136D9A009AD69F /* libpng16.16.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
@@ -1009,7 +1009,7 @@
 				CODE_SIGN_ENTITLEMENTS = breakmycircle_arm.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
 				ENABLE_BITCODE = NO;
@@ -1076,7 +1076,7 @@
 				CODE_SIGN_ENTITLEMENTS = breakmycircle_arm.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
 				ENABLE_BITCODE = NO;
@@ -1267,7 +1267,7 @@
 				CODE_SIGN_ENTITLEMENTS = breakmycircle_sim.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
 				ENABLE_PREVIEWS = YES;
@@ -1329,7 +1329,7 @@
 				CODE_SIGN_ENTITLEMENTS = breakmycircle_sim.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 11;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
 				ENABLE_PREVIEWS = YES;
