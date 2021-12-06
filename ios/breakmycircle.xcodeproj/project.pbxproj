@@ -24,14 +24,11 @@
 		0545F09A2711AD980075E566 /* ShootPathShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0545F0992711AD980075E566 /* ShootPathShader.cpp */; };
 		0549C208271B488600490E66 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0549C1F3271B463900490E66 /* GoogleService-Info.plist */; };
 		0549C209271B48F800490E66 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0549C1F3271B463900490E66 /* GoogleService-Info.plist */; };
-		05521D26275D86790099691F /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CA92709F56F00C34B15 /* OpenAL.framework */; };
 		05532C34274E773B00F8691A /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F602713633E009AD69F /* libSDL2main.a */; };
 		05532C35274E775000F8691A /* libSDL2main.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C9D2709F4AE00C34B15 /* libSDL2main.a */; };
 		05532C47274E7B8300F8691A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05532C46274E7B8300F8691A /* main.cpp */; };
 		05532C48274E7B8300F8691A /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05532C46274E7B8300F8691A /* main.cpp */; };
 		05532C49274E7E0000F8691A /* assets.json in Resources */ = {isa = PBXBuildFile; fileRef = 0545583C274AA32B0014D325 /* assets.json */; };
-		05532C6A274EA4D600F8691A /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F8927137617009AD69F /* CoreHaptics.framework */; };
-		05532C6B274EA4E200F8691A /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CFC2709F72700C34B15 /* GameController.framework */; };
 		05604540270A0A350080AA3E /* StreamedAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */; };
 		05604541270A0A350080AA3E /* StreamedAudioPlayable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */; };
 		0560454A270A0A850080AA3E /* PlasmaSquareRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604548270A0A850080AA3E /* PlasmaSquareRenderer.cpp */; };
@@ -73,11 +70,8 @@
 		056045A0270A0AFC0080AA3E /* CollisionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05604599270A0AFC0080AA3E /* CollisionManager.cpp */; };
 		056045A1270A0AFC0080AA3E /* InputManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459A270A0AFC0080AA3E /* InputManager.cpp */; };
 		056045A2270A0AFC0080AA3E /* AssetManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560459B270A0AFC0080AA3E /* AssetManager.cpp */; };
-		056045B7270A25DA0080AA3E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 056045B6270A25DA0080AA3E /* Foundation.framework */; };
 		05718C78271A1FBE0090C631 /* BundleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C77271A1FBE0090C631 /* BundleExtension.swift */; };
 		05718C79271A1FBE0090C631 /* BundleExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C77271A1FBE0090C631 /* BundleExtension.swift */; };
-		05718C7B271A287F0090C631 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05718C7A271A287F0090C631 /* SystemConfiguration.framework */; };
-		05718C7C271A28860090C631 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05718C7A271A287F0090C631 /* SystemConfiguration.framework */; };
 		05718C7E271A2B0A0090C631 /* UIAlertControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C7D271A2B0A0090C631 /* UIAlertControllerExtension.swift */; };
 		05718C7F271A2B0A0090C631 /* UIAlertControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C7D271A2B0A0090C631 /* UIAlertControllerExtension.swift */; };
 		05718C81271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */; };
@@ -88,10 +82,14 @@
 		05ADBCCE2749665200D3EC44 /* AppNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */; };
 		05ADBCD32749716E00D3EC44 /* TimedBubbleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */; };
 		05ADBCD42749716E00D3EC44 /* TimedBubbleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */; };
+		05B74E0B275E5D9F00DA2B74 /* libopenal.1.dylib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05B74E0A275E5D9F00DA2B74 /* libopenal.1.dylib.framework */; };
+		05B74E0C275E5D9F00DA2B74 /* libopenal.1.dylib.framework in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 05B74E0A275E5D9F00DA2B74 /* libopenal.1.dylib.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		05B74E10275E5E0900DA2B74 /* libopenal.1.dylib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05B74E0F275E5E0900DA2B74 /* libopenal.1.dylib.framework */; };
+		05B74E11275E5E0900DA2B74 /* libopenal.1.dylib.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 05B74E0F275E5E0900DA2B74 /* libopenal.1.dylib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		05B74E13275E5ECC00DA2B74 /* CoreHaptics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05CB8F8927137617009AD69F /* CoreHaptics.framework */; };
+		05B74E14275E5EE600DA2B74 /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CFC2709F72700C34B15 /* GameController.framework */; };
 		05C40145271AF483009ADA54 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C40144271AF483009ADA54 /* UIApplicationExtension.swift */; };
 		05C40146271AF483009ADA54 /* UIApplicationExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05C40144271AF483009ADA54 /* UIApplicationExtension.swift */; };
-		05CB665027137C2700F97E29 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF92709F6E800C34B15 /* AVFoundation.framework */; };
-		05CB665227137F4100F97E29 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF62709F6BF00C34B15 /* AudioToolbox.framework */; };
 		05CB8EE8271358F8009AD69F /* AppEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0535E8F8270A4267009462B0 /* AppEngine.swift */; };
 		05CB8EE9271358F8009AD69F /* StreamedAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453E270A0A350080AA3E /* StreamedAudioBuffer.cpp */; };
 		05CB8EEA271358F8009AD69F /* StreamedAudioPlayable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0560453F270A0A350080AA3E /* StreamedAudioPlayable.cpp */; };
@@ -186,9 +184,6 @@
 		05F22C952709F38600C34B15 /* libTinyGltfImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C912709F38600C34B15 /* libTinyGltfImporter.a */; };
 		05F22C962709F38600C34B15 /* libPngImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C922709F38600C34B15 /* libPngImporter.a */; };
 		05F22C992709F3CE00C34B15 /* libStbVorbisAudioImporter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22C8C2709F35900C34B15 /* libStbVorbisAudioImporter.a */; };
-		05F22CA72709F55F00C34B15 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CA02709F51A00C34B15 /* OpenGLES.framework */; };
-		05F22CAA2709F56F00C34B15 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CA92709F56F00C34B15 /* OpenAL.framework */; };
-		05F22CF42709F63B00C34B15 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05F22CF32709F63B00C34B15 /* UIKit.framework */; };
 		134FF9151FE80F9C80DC7843 /* Pods_breakmycircle_arm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F89ADA4C89431151F800597F /* Pods_breakmycircle_arm.framework */; };
 		9D3C9C3CB576865B8D79D85C /* Pods_breakmycircle_sim.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D2CF808E414EE4A3C86BACF /* Pods_breakmycircle_sim.framework */; };
 		AFFB4E3C26FF48DE00FD2500 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AFFB4E3B26FF48DE00FD2500 /* Assets.xcassets */; };
@@ -202,9 +197,21 @@
 			dstSubfolderSpec = 10;
 			files = (
 				05CB8F7927136DD2009AD69F /* libSDL2-2.0.dylib in Embed Libraries */,
+				05B74E0C275E5D9F00DA2B74 /* libopenal.1.dylib.framework in Embed Libraries */,
 				05CB8F7727136D9A009AD69F /* libpng16.16.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		05B74E12275E5E0900DA2B74 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				05B74E11275E5E0900DA2B74 /* libopenal.1.dylib.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -284,6 +291,11 @@
 		05ADBCC8274941C000D3EC44 /* breakmycircle_arm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = breakmycircle_arm.entitlements; sourceTree = "<group>"; };
 		05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNotificationHandler.swift; sourceTree = "<group>"; };
 		05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TimedBubbleShader.cpp; path = ../src/Shaders/TimedBubbleShader.cpp; sourceTree = "<group>"; };
+		05B74DF9275E5B4B00DA2B74 /* libopenal.1.21.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopenal.1.21.1.dylib; path = "../../../../Development/ios-sim64/lib/libopenal.1.21.1.dylib"; sourceTree = "<group>"; };
+		05B74E02275E5BBC00DA2B74 /* libopenal.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopenal.1.dylib; path = "../../../../Development/ios-sim64/lib/libopenal.1.dylib"; sourceTree = "<group>"; };
+		05B74E09275E5D7000DA2B74 /* Frameworks */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Frameworks; sourceTree = "<group>"; };
+		05B74E0A275E5D9F00DA2B74 /* libopenal.1.dylib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libopenal.1.dylib.framework; path = Frameworks/x86_64/libopenal.1.dylib.framework; sourceTree = "<group>"; };
+		05B74E0F275E5E0900DA2B74 /* libopenal.1.dylib.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libopenal.1.dylib.framework; path = Frameworks/arm64/libopenal.1.dylib.framework; sourceTree = "<group>"; };
 		05B98CF8275B8AA400AF9A5E /* libopenal.1.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libopenal.1.framework; path = "../../../../Development/ios-arm64/frameworks/libopenal.1.framework"; sourceTree = "<group>"; };
 		05C2595627177F7700B8D75E /* libopenal.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libopenal.1.dylib; path = "../../../../Development/ios-arm64/lib/libopenal.1.dylib"; sourceTree = "<group>"; };
 		05C40144271AF483009ADA54 /* UIApplicationExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIApplicationExtension.swift; sourceTree = "<group>"; };
@@ -370,12 +382,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				05CB665027137C2700F97E29 /* AVFoundation.framework in Frameworks */,
-				05CB665227137F4100F97E29 /* AudioToolbox.framework in Frameworks */,
-				05521D26275D86790099691F /* OpenAL.framework in Frameworks */,
-				05532C6B274EA4E200F8691A /* GameController.framework in Frameworks */,
-				05532C6A274EA4D600F8691A /* CoreHaptics.framework in Frameworks */,
-				05718C7C271A28860090C631 /* SystemConfiguration.framework in Frameworks */,
+				05B74E14275E5EE600DA2B74 /* GameController.framework in Frameworks */,
+				05B74E13275E5ECC00DA2B74 /* CoreHaptics.framework in Frameworks */,
+				05B74E10275E5E0900DA2B74 /* libopenal.1.dylib.framework in Frameworks */,
 				134FF9151FE80F9C80DC7843 /* Pods_breakmycircle_arm.framework in Frameworks */,
 				05CB8F742713661A009AD69F /* libpng16.a in Frameworks */,
 				05CB8F5F27135B4D009AD69F /* libSDL2.a in Frameworks */,
@@ -406,11 +415,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				056045B7270A25DA0080AA3E /* Foundation.framework in Frameworks */,
-				05F22CF42709F63B00C34B15 /* UIKit.framework in Frameworks */,
-				05F22CA72709F55F00C34B15 /* OpenGLES.framework in Frameworks */,
-				05F22CAA2709F56F00C34B15 /* OpenAL.framework in Frameworks */,
-				05718C7B271A287F0090C631 /* SystemConfiguration.framework in Frameworks */,
+				05B74E0B275E5D9F00DA2B74 /* libopenal.1.dylib.framework in Frameworks */,
 				9D3C9C3CB576865B8D79D85C /* Pods_breakmycircle_sim.framework in Frameworks */,
 				05CB8F7627136D94009AD69F /* libpng16.16.dylib in Frameworks */,
 				05CB8F7827136DC8009AD69F /* libSDL2-2.0.dylib in Frameworks */,
@@ -569,6 +574,10 @@
 		AFB14C0527007181005837DE /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				05B74E0A275E5D9F00DA2B74 /* libopenal.1.dylib.framework */,
+				05B74E0F275E5E0900DA2B74 /* libopenal.1.dylib.framework */,
+				05B74E02275E5BBC00DA2B74 /* libopenal.1.dylib */,
+				05B74DF9275E5B4B00DA2B74 /* libopenal.1.21.1.dylib */,
 				05B98CF8275B8AA400AF9A5E /* libopenal.1.framework */,
 				0549C204271B46D900490E66 /* FirebaseCore.framework */,
 				05718C7A271A287F0090C631 /* SystemConfiguration.framework */,
@@ -657,6 +666,7 @@
 				0545583C274AA32B0014D325 /* assets.json */,
 				05ADBCC8274941C000D3EC44 /* breakmycircle_arm.entitlements */,
 				05ADBCC7274941B600D3EC44 /* breakmycircle_sim.entitlements */,
+				05B74E09275E5D7000DA2B74 /* Frameworks */,
 				0535E90F270A4D01009462B0 /* Assets */,
 				05604594270A0AF20080AA3E /* Base */,
 				0560453D270A0A200080AA3E /* Audio */,
@@ -714,6 +724,7 @@
 				05CB8EE7271358F8009AD69F /* Sources */,
 				05CB8F14271358F8009AD69F /* Frameworks */,
 				05CB8F31271358F8009AD69F /* Resources */,
+				05B74E12275E5E0900DA2B74 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1006,6 +1017,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks/arm64",
 				);
 				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -1072,6 +1084,7 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks/arm64",
 				);
 				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_ENABLE_CPP_RTTI = YES;
@@ -1245,7 +1258,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 18320DE7F7C5B1976D856AA2 /* Pods-breakmycircle_sim.debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ARCHS = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1259,6 +1271,10 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks/x86_64",
+				);
 				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_ENABLE_CPP_RTTI = YES;
 				HEADER_SEARCH_PATHS = (
@@ -1304,7 +1320,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 38E3E635CD371A3DBC9308CC /* Pods-breakmycircle_sim.release.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ARCHS = x86_64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1318,6 +1333,10 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = LWL2UC59QV;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks/x86_64",
+				);
 				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_ENABLE_CPP_RTTI = YES;
 				HEADER_SEARCH_PATHS = (

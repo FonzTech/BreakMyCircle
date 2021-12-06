@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleIdentifier</key>
+    <string>org.openal-soft.openal</string>
+	<key>CFBundlePackageType</key>
+	<string>XFWK</string>
+	<key>CFBundleExecutable</key>
+	<string>libopenal.1.dylib</string>
+	<key>XCFrameworkFormatVersion</key>
+	<string>1.0</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>Copyright © 2020 openal-soft.org. All rights reserved.</string>
+</dict>
+</plist>

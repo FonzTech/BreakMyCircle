@@ -202,7 +202,5 @@ A slight modification to `SDL_uikitappdelegate` interface is applied, as describ
 
 ### AppStore Upload
 
-Following points are **NOT** valid anymore, since they have been fixed.
-
 - Disable *Bitcode support*, since third-party dependencies shall be compiled with bitcode support as well.
-- Error **ITMS-90429** is due to this <https://developer.apple.com/library/archive/technotes/tn2435/_index.html#//apple_ref/doc/uid/DTS40017543-CH1-TROUBLESHOOTING-BUNDLE_ERRORS>. For every `dylib`, wrap it in a `framework` file like the one included in this repo, in the `ios` folder. Then, build a `Info.plist` accordingly to the bundled dynamic library file.
+- Error **ITMS-90429** is due to this <https://developer.apple.com/library/archive/technotes/tn2435/_index.html#//apple_ref/doc/uid/DTS40017543-CH1-TROUBLESHOOTING-BUNDLE_ERRORS>. For every `dylib`, wrap it in a `framework` file like the one included in this repo, in the `ios` folder. Then, build a `Info.plist` accordingly to the bundled dynamic library file. Also, changing the `@rpath` inside the `dylib` could be necessary. Check for `install_name_tool`. This step is required for `libopenal.1.dylib`, since the Xcode's provided OpenAL framework does NOT behave exactly as the version of the above specified library.

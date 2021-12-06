@@ -90,7 +90,10 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 			if (source != nullptr)
 			{
 				// Set gain level
-				source->setGain(mGainLevel);
+                if (source->gain() != mGainLevel)
+                {
+                    source->setGain(mGainLevel);
+                }
 
 				// Manage internal buffer queue
 				if (mPlayable != nullptr)
