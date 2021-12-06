@@ -1796,6 +1796,7 @@ void LevelSelector::managePickupState(const bool decrease)
 					}
 					else
 					{
+						it->second.lock()->pushToFront();
 						++it;
 					}
 				}
