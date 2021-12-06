@@ -75,12 +75,14 @@ void MapPickup::update()
 
 void MapPickup::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
+	const auto alpha = Math::min(1.0f, mAnimation) - mPickupDestroy;
+
 	((Shaders::Phong&) baseDrawable->getShader())
 		.setLightPosition(Vector3(0.5f, 0.5f, 0.5f))
-		.setLightColor(0xffffff_rgbf)
-		.setSpecularColor(0xffffff_rgbf)
-		.setAmbientColor(mAmbientColor)
-		.setDiffuseColor(0xffffff_rgbf)
+		.setLightColor(0xffffff00_rgbaf)
+		.setSpecularColor(0xffffff00_rgbaf)
+		.setAmbientColor(Color4{ mAmbientColor.r() , mAmbientColor.g(), mAmbientColor.b(), alpha })
+		.setDiffuseColor(0xffffff00_rgbaf)
 		.setTransformationMatrix(transformationMatrix)
 		.setNormalMatrix(transformationMatrix.normalMatrix())
 		.setProjectionMatrix(camera.projectionMatrix())

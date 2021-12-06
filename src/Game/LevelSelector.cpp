@@ -1785,7 +1785,24 @@ void LevelSelector::managePickupState(const bool decrease)
 	{
 		if (mPickupHandler.timer > -900.0f)
 		{
-			if (mPickupHandler.pickups.size() >= 10 || std::rand() % 10 < 7)
+			// Check for dangling weak pointers
+			{
+				auto it = mPickupHandler.pickups.begin();
+				while (it != mPickupHandler.pickups.end())
+				{
+					if (it->second.expired())
+					{
+						it = mPickupHandler.pickups.erase(it);
+					}
+					else
+					{
+						++it;
+					}
+				}
+			}
+
+			// Check for available pickup slots
+			if (mPickupHandler.pickups.size() >= 10 || std::rand() % 10 < 5)
 			{
 				if (!mPickupHandler.pickups.empty())
 				{
