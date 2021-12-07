@@ -478,11 +478,7 @@ void Player::update()
 		if (mAimTimer < 0.0f)
 		{
 			// Reset timer
-#ifdef TARGET_MOBILE
-			mAimTimer = 0.035f;
-#else
 			mAimTimer = 0.02f;
-#endif
 
 			// Compute two-path aim
 			Vector3 fp = mPosition;

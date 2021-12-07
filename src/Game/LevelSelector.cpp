@@ -542,7 +542,7 @@ void LevelSelector::update()
 		{
 			if (mPuView.startX != Containers::NullOpt)
 			{
-				mPuView.scrollX += Float(InputManager::singleton->mMousePosition.x() - *mPuView.startX) * (0.005f / CommonUtility::singleton->mConfig.displayDensity);
+				mPuView.scrollX += Float(InputManager::singleton->mMousePosition.x() - *mPuView.startX) * 0.005f;
 				mPuView.startX = InputManager::singleton->mMousePosition.x();
 			}
 		}
