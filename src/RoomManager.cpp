@@ -662,13 +662,20 @@ void RoomManager::fixLevelTransparency()
 {
 	for (auto& item : *RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list)
 	{
-		if (item->getType() == GOT_BUBBLE)
+		switch (item->getType())
 		{
+		case GOT_PLAYER: {
+			item->pushToFront();
+			break;
+		}
+		case GOT_BUBBLE: {
 			auto& p = (std::shared_ptr<Bubble>&)item;
 			if (p->mAmbientColor == BUBBLE_BLACKHOLE)
 			{
 				p->pushToFront();
 			}
+			break;
+		}
 		}
 	}
 }

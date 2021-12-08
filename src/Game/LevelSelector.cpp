@@ -1646,24 +1646,33 @@ void LevelSelector::manageLevelState()
 			{
 				if (mLevelInfo.playedScore == 2)
 				{
-					playSfxAudio(GO_LS_AUDIO_STAR + 2);
 					++mLevelInfo.playedScore;
+					if (mLevelInfo.playedScore <= mLevelInfo.score)
+					{
+						playSfxAudio(GO_LS_AUDIO_STAR + 2);
+					}
 				}
 			}
 			else if (mLevelGuiAnim[3] >= 0.625f)
 			{
 				if (mLevelInfo.playedScore == 1)
 				{
-					playSfxAudio(GO_LS_AUDIO_STAR + 1);
 					++mLevelInfo.playedScore;
+					if (mLevelInfo.playedScore <= mLevelInfo.score)
+					{
+						playSfxAudio(GO_LS_AUDIO_STAR + 1);
+					}
 				}
 			}
 			else if (mLevelGuiAnim[3] >= 0.375f)
 			{
 				if (mLevelInfo.playedScore == 0)
 				{
-					playSfxAudio(GO_LS_AUDIO_STAR);
 					++mLevelInfo.playedScore;
+					if (mLevelInfo.playedScore <= mLevelInfo.score)
+					{
+						playSfxAudio(GO_LS_AUDIO_STAR);
+					}
 				}
 			}
 		}

@@ -36,7 +36,8 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 		mVelocity = Vector3(0.0f);
 		mDelay = Float(std::rand() % 250) * 0.001f;
 
-		// Create bubble
+		// Load assets
+		mFlatShader = CommonUtility::singleton->getFlat3DShader();
 		CommonUtility::singleton->createGameSphere(this, *mManipulator, mAmbientColor);
 	}
 	else if (mCustomType == GO_FB_TYPE_SPARK)
@@ -45,8 +46,18 @@ FallingBubble::FallingBubble(const Int parentIndex, const Color3& ambientColor, 
 		mDelay = 0.0f;
 
 		// Load assets
-		AssetManager().loadAssets(*this, *mManipulator, RESOURCE_SCENE_SPARKLE, this);
-		mFlatShader = CommonUtility::singleton->getFlat3DShader();
+		{
+			Resource<GL::Mesh> resMesh = CommonUtility::singleton->getPlaneMeshForSpecializedShader<Shaders::Flat3D::Position, Shaders::Flat3D::TextureCoordinates>(RESOURCE_MESH_PLANE_FLAT);
+			Resource<GL::Texture2D> resTexture = CommonUtility::singleton->loadTexture(RESOURCE_TEXTURE_SPARKLE);
+			mFlatShader = CommonUtility::singleton->getFlat3DShader();
+
+			// Create drawable
+			auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
+			std::shared_ptr<GameDrawable<Shaders::Flat3D>> d = std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, mFlatShader, resMesh, resTexture);
+			d->setParent(&*mManipulator);
+			d->setDrawCallback(this);
+			mDrawables.emplace_back(d);
+		}
 	}
 	else if (mCustomType == GO_FB_TYPE_COIN)
 	{
@@ -125,7 +136,7 @@ void FallingBubble::update()
 		}
 
 		// Check for off-screen position
-		if (mPosition.y() < -100.0f)
+		if (mPosition.y() < -10.0f)
 		{
 			mDestroyMe = true;
 			return;
@@ -206,13 +217,14 @@ void FallingBubble::update()
 
 void FallingBubble::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (mCustomType == GO_FB_TYPE_SPARK)
+	const bool isWhite = mCustomType == GO_FB_TYPE_BUBBLE || mCustomType == GO_FB_TYPE_BLACKHOLE;
+	if (isWhite || mCustomType == GO_FB_TYPE_SPARK)
 	{
 		((Shaders::Flat3D&)*mFlatShader)
 			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
 			.bindTexture(*baseDrawable->mTexture)
-			.setColor(mAmbientColor)
-			.setAlphaMask(0.001f)
+			.setColor(isWhite ? 0xffffffff_rgbaf : mAmbientColor)
+			.setAlphaMask(0.5f)
 			.draw(*baseDrawable->mMesh);
 	}
 	else if (mCustomType == GO_FB_TYPE_BOMB)
@@ -271,7 +283,7 @@ std::shared_ptr<Audio::Playable3D>& FallingBubble::buildSound()
 	}
 
 	Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(filename);
-	mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+	mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator, &RoomManager::singleton->mAudioPlayables);
 	mPlayables[0]->source()
 		.setBuffer(buffer)
 		.setLooping(false);

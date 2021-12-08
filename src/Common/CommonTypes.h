@@ -15,7 +15,6 @@
 #define RESOURCE_SCENE_WORLD_WALL "scenes/world_wall.glb"
 #define RESOURCE_SCENE_SAFE "scenes/safe.glb"
 #define RESOURCE_SCENE_POWERUP "scenes/powerup.glb"
-#define RESOURCE_SCENE_SPARKLE "scenes/sparkle.glb"
 
 #define RESOURCE_MESH_PLANE_SPRITE "mesh_plane_sprite"
 #define RESOURCE_MESH_PLANE_WATER "mesh_plane_water"
@@ -43,6 +42,7 @@
 #define RESOURCE_TEXTURE_WATER_TEXTURE "water_tm"
 #define RESOURCE_TEXTURE_WORLD_1_WEM "world_1_wem"
 #define RESOURCE_TEXTURE_GLOW "glow"
+#define RESOURCE_TEXTURE_SPARKLE "sparkle"
 #define RESOURCE_TEXTURE_CUBEMAP_SKYBOX_1 "cubemap_skybox_1"
 #define RESOURCE_TEXTURE_STARROAD_ALPHAMAP "starroad_am"
 #define RESOURCE_TEXTURE_MOON "moon"
