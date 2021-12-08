@@ -58,14 +58,14 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 
 	// Load asset as first drawable
 	{
-		mShooterManipulator = new Object3D{ mManipulator.get() };
+		mShooterManipulator = new Object3D{ mManipulator };
 		AssetManager().loadAssets(*this, *mShooterManipulator, RESOURCE_SCENE_CANNON_1, this);
 	}
 
 	// Create game bubbles
 	for (UnsignedInt i = 0; i < 2; ++i)
 	{
-		mSphereManipulator[i] = new Object3D{ mManipulator.get() };
+		mSphereManipulator[i] = new Object3D{ mManipulator };
 		CommonUtility::singleton->createGameSphere(this, *mSphereManipulator[i], mProjColors[i]);
 
 		mSphereDrawables[i] = (*(mDrawables.end() - 1)).get();
@@ -77,7 +77,7 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 	// Load hidden drawables (for later use)
 	{
 		// Load asset
-		mBombManipulator = new Object3D{ mManipulator.get() };
+		mBombManipulator = new Object3D{ mManipulator };
 		AssetManager().loadAssets(*this, *mBombManipulator, RESOURCE_SCENE_BOMB, this);
 
 		// Keep references
@@ -112,12 +112,12 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 		const bool isShoot = i < 2;
 		if (isShoot)
 		{
-			mShootPathManipulator[i] = new Object3D{ mManipulator.get() };
+			mShootPathManipulator[i] = new Object3D{ mManipulator };
 			m = mShootPathManipulator[i];
 		}
 		else
 		{
-			mSwapManipulator = new Object3D{ mManipulator.get() };
+			mSwapManipulator = new Object3D{ mManipulator };
 			m = mSwapManipulator;
 		}
 
@@ -159,7 +159,7 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 	for (UnsignedInt i = 0; i < 4; ++i)
 	{
 		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(i < 3 ? RESOURCE_AUDIO_SHOT_PREFIX + std::to_string(i + 1) : RESOURCE_AUDIO_SWAP);
-		mPlayables[i] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+		mPlayables[i] = std::make_shared<Audio::Playable3D>(*mManipulator, &RoomManager::singleton->mAudioPlayables);
 		mPlayables[i]->source()
 			.setBuffer(buffer)
 			.setLooping(false);

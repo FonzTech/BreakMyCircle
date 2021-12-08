@@ -194,7 +194,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		for (const auto& it : tmpMap)
 		{
 			Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(it.second);
-			mPlayables[it.first] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+			mPlayables[it.first] = std::make_shared<Audio::Playable3D>(*mManipulator, &RoomManager::singleton->mAudioPlayables);
 			mPlayables[it.first]->source()
 				.setBuffer(buffer)
 				.setLooping(false);

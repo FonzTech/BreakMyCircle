@@ -32,7 +32,7 @@ public:
 	Float mDeltaTime;
 	Int mParentIndex = std::numeric_limits<Int>::min();
 
-	std::unique_ptr<Object3D> mManipulator;
+	Object3D* mManipulator;
 	std::vector<std::shared_ptr<BaseDrawable>> mDrawables;
 	std::unordered_map<Int, std::shared_ptr<Audio::Playable3D>> mPlayables;
 

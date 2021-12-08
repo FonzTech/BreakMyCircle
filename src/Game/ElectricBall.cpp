@@ -36,7 +36,7 @@ ElectricBall::ElectricBall(const Int parentIndex) : GameObject(parentIndex)
 
 		for (UnsignedInt i = 0; i < 4; ++i)
 		{
-			mPieces[i].manipulator = new Object3D{ mManipulator.get() };
+			mPieces[i].manipulator = new Object3D{ mManipulator };
 			mPieces[i].angleCurrent = Deg(2.0f);
 			mPieces[i].angleLimit = Deg(1.0f);
 
@@ -53,7 +53,7 @@ ElectricBall::ElectricBall(const Int parentIndex) : GameObject(parentIndex)
 		Resource<GL::AbstractShaderProgram, Shaders::Flat3D> resShader = CommonUtility::singleton->getFlat3DShader();
 
 		// Create child manipulator
-		mOrbManipulator = new Object3D{ mManipulator.get() };
+		mOrbManipulator = new Object3D{ mManipulator };
 
 		// Create drawable
 		auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
@@ -73,7 +73,7 @@ ElectricBall::ElectricBall(const Int parentIndex) : GameObject(parentIndex)
 	// Load audio
 	{
 		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(RESOURCE_AUDIO_ELECTRIC);
-		mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+		mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator, &RoomManager::singleton->mAudioPlayables);
 		(*mPlayables[0])
 			.setGain(0.0f)
 			.source()

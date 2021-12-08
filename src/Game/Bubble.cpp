@@ -60,7 +60,7 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor, const Float ti
 	// Load asset for "Coin" game object, if required
 	if (mAmbientColor == BUBBLE_COIN)
 	{
-		mItemManipulator.push_back(std::move(new Object3D{ mManipulator.get() }));
+		mItemManipulator.push_back(std::move(new Object3D{ mManipulator }));
 
 		AssetManager().loadAssets(*this, *mItemManipulator.at(0), RESOURCE_SCENE_COIN, this);
 		mRotation = Float(Rad(Deg(std::rand() % 360)));
@@ -80,7 +80,7 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor, const Float ti
 			const bool first = i == 0U;
 			if (!first)
 			{
-				mItemManipulator.push_back(std::move(new Object3D{ mManipulator.get() }));
+				mItemManipulator.push_back(std::move(new Object3D{ mManipulator }));
 				mItemParams.push_back(1.0f + 0.5f * Float(i));
 			}
 
@@ -92,7 +92,7 @@ Bubble::Bubble(const Int parentIndex, const Color3& ambientColor, const Float ti
 			// Create drawable
 			auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
 			std::shared_ptr<GameDrawable<Shaders::Flat3D>> d = std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, resShader, resMesh, resTexture);
-			d->setParent(first ? mManipulator.get() : mItemManipulator.at(i - 1U));
+			d->setParent(first ? mManipulator : mItemManipulator.at(i - 1U));
 			d->setDrawCallback(this);
 			d->setObjectId(i - 1);
 			mDrawables.emplace_back(d);
@@ -283,7 +283,7 @@ void Bubble::applyRippleEffect(const Vector3& center)
 void Bubble::playStompSound()
 {
 	Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(RESOURCE_AUDIO_BUBBLE_STOMP);
-	mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+	mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator, &RoomManager::singleton->mAudioPlayables);
 	mPlayables[0]->source()
 		.setBuffer(buffer)
 		.setLooping(false);

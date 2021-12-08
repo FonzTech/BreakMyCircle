@@ -34,11 +34,11 @@ SafeMinigame::SafeMinigame(const Int parentIndex, const Float startingScale) : G
 	mPowerupIndex = UnsignedInt(std::rand() % GO_LS_MAX_POWERUP_COUNT);
 
 	// Get assets
-	mSafeManipulator = new Object3D{ mManipulator.get() };
+	mSafeManipulator = new Object3D{ mManipulator };
 	AssetManager().loadAssets(*this, *mSafeManipulator, RESOURCE_SCENE_SAFE, this);
 
 	// Get assets
-	mPowerupManipulator = new Object3D{ mManipulator.get() };
+	mPowerupManipulator = new Object3D{ mManipulator };
 	AssetManager().loadAssets(*this, *mPowerupManipulator, RESOURCE_SCENE_POWERUP, this);
 
 	// Create plane for glow effect
@@ -49,7 +49,7 @@ SafeMinigame::SafeMinigame(const Int parentIndex, const Float startingScale) : G
 		Resource<GL::AbstractShaderProgram, Shaders::Flat3D> resShader = CommonUtility::singleton->getFlat3DShader();
 
 		// Create child manipulator
-		mGlowManipulator = new Object3D{ mManipulator.get() };
+		mGlowManipulator = new Object3D{ mManipulator };
 
 		// Create drawable
 		auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
@@ -116,7 +116,7 @@ SafeMinigame::SafeMinigame(const Int parentIndex, const Float startingScale) : G
 		}
 
 		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(an);
-		mPlayables[i] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+		mPlayables[i] = std::make_shared<Audio::Playable3D>(*mManipulator, &RoomManager::singleton->mAudioPlayables);
 		mPlayables[i]->source()
 			.setBuffer(buffer)
 			.setLooping(false);

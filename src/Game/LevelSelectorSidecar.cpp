@@ -107,7 +107,7 @@ void LevelSelectorSidecar::setGlow(const bool enabled)
 		else
 		{
 			mFlat3DShader = CommonUtility::singleton->getFlat3DShader();
-			mGlowManipulator = new Object3D{ mManipulator.get() };
+			mGlowManipulator = new Object3D{ mManipulator };
 
 			AssetManager().loadAssets(*this, *mGlowManipulator, RESOURCE_SCENE_LEVEL_GLOW, this);
 			mGlowDrawable = *(mDrawables.end() - 1);

@@ -36,7 +36,7 @@ OverlayText::OverlayText(const Int parentIndex, const Text::Alignment & textAlig
 	// Create dummy drawable
 	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
 	std::shared_ptr<GameDrawable<Shaders::DistanceFieldVector2D>> td = std::make_shared<GameDrawable<Shaders::DistanceFieldVector2D>>(*drawables, getShader());
-	td->setParent(mManipulator.get());
+	td->setParent(mManipulator);
 	td->setDrawCallback(this);
 	mDrawables.emplace_back(td);
 }

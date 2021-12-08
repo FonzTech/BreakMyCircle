@@ -57,7 +57,7 @@ Congrats::Congrats(const Int parentIndex, const Int customType) : GameObject(par
 	// Load audio
 	{
 		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(RESOURCE_AUDIO_CONGRATS_PREFIX + std::to_string(customType + 1));
-		mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+		mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator, &RoomManager::singleton->mAudioPlayables);
 		mPlayables[0]->source()
 			.setBuffer(buffer)
 			.setLooping(false);

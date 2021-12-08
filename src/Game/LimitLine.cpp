@@ -28,7 +28,7 @@ LimitLine::LimitLine(const Int parentIndex, const Color4 & color, const Int cust
 
 	const std::shared_ptr<GameDrawable<Shaders::Flat3D>> td = std::make_shared<GameDrawable<Shaders::Flat3D>>(*drawables, shader, mesh, mColor);
 	td->mTexture = texture;
-	td->setParent(mManipulator.get());
+	td->setParent(mManipulator);
 	td->setDrawCallback(this);
 	mDrawables.emplace_back(td);
 }

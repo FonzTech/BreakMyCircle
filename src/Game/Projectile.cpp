@@ -65,7 +65,7 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 	// Load stomp sound
 	{
 		Resource<Audio::Buffer> buffer = CommonUtility::singleton->loadAudioData(RESOURCE_AUDIO_BUBBLE_STOMP);
-		mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator.get(), &RoomManager::singleton->mAudioPlayables);
+		mPlayables[0] = std::make_shared<Audio::Playable3D>(*mManipulator, &RoomManager::singleton->mAudioPlayables);
 		mPlayables[0]->source()
 			.setBuffer(buffer)
 			.setLooping(false);

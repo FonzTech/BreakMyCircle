@@ -55,7 +55,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	mPosition = Vector3(0.0f, 10.0f, 0.0f);
 	mManipulator->setTransformation(Matrix4::translation(mPosition));
 
-	mLogoManipulator = new Object3D(mManipulator.get());
+	mLogoManipulator = new Object3D(mManipulator);
 	AssetManager().loadAssets(*this, *mLogoManipulator, RESOURCE_SCENE_LOGO, this);
 
 	// Create black plane
@@ -65,7 +65,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 		Resource<GL::AbstractShaderProgram, Shaders::Flat3D> resShader = CommonUtility::singleton->getFlat3DShader();
 
 		// Create child manipulator
-		mPlaneManipulator = new Object3D{ mManipulator.get() };
+		mPlaneManipulator = new Object3D{ mManipulator };
 
 		(*mPlaneManipulator)
 			.resetTransformation()
@@ -189,30 +189,27 @@ void Logo::update()
 	}
 	else if (mIntroBubbles)
 	{
-		// Create bubble of random color
-		const auto& bc = RoomManager::singleton->sBubbleColors;
-		while (true)
+		if (mPlaneAlpha < 0.001f)
 		{
-			// Get random color (no special objects, like coins)
-			const auto& it = std::next(std::begin(bc), std::rand() % bc.size());
-			if (it->second.color == BUBBLE_COIN)
-			{
-				continue;
-			}
+			// Create bubble of random color
+			const auto& index = std::rand() % RoomManager::singleton->sBubbleKeys.size();
+			const auto& ckey = RoomManager::singleton->sBubbleKeys[index];
+			const auto& color = RoomManager::singleton->sBubbleColors[ckey].color;
 
 			// Create random bubble
-			std::shared_ptr<FallingBubble> fb = std::make_shared<FallingBubble>(mParentIndex, it->second.color, false, -25.0f);
+			std::shared_ptr<FallingBubble> fb = std::make_shared<FallingBubble>(mParentIndex, color, GO_FB_TYPE_BUBBLE, -25.0f);
 			fb->mPosition = mPosition;
 			fb->mPosition -= RoomManager::singleton->mGoLayers[mParentIndex].cameraEye;
 			fb->mPosition += Vector3(-6.0f + 12.0f * (std::rand() % 12) / 12.0f, 20.0, 0.0f);
 			RoomManager::singleton->mGoLayers[mParentIndex].push_back(fb);
 
-			// Break from cycle
-			break;
+			// Reset timer
+			mBubbleTimer = Float(std::rand() % 100) * 0.001f + 0.25f;
 		}
-
-		// Reset timer
-		mBubbleTimer = Float(std::rand() % 100) * 0.001f + 0.25f;
+		else
+		{
+			mBubbleTimer = 0.1f;
+		}
 	}
 
 	// Check for finish timer

@@ -142,7 +142,7 @@ void Skybox::createDrawable(const std::string & name)
 	// Create textured drawable
 	auto& drawables = RoomManager::singleton->mGoLayers[mParentIndex].drawables;
 	std::shared_ptr<GameDrawable<CubeMapShader>> td = std::make_shared<GameDrawable<CubeMapShader>>(*drawables, resShader, resMesh, resTexture);
-	td->setParent(mManipulator.get());
+	td->setParent(mManipulator);
 	td->setDrawCallback(this);
 	mDrawables.emplace_back(td);
 
