@@ -344,6 +344,9 @@
   "textures/glow.png": {
     "version": 1
   },
+  "textures/sparkle.png": {
+    "version": 1
+  },
   "textures/fire.png": {
     "version": 1
   },
