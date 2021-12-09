@@ -67,6 +67,7 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
 
         @Override
         public final void onAdFailedToLoad(@NonNull final LoadAdError loadAdError) {
+            setRewardedInfo(null, 0);
             showError(loadAdError.getMessage());
         }
     };
