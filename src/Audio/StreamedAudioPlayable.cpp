@@ -98,7 +98,7 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 				// Manage internal buffer queue
 				if (mPlayable != nullptr)
 				{
-					// Check if another buffer is available
+					// Check if audio buffer shall be feeded with another stream
 					Int tryToFeed = 0;
 					if (mState == Audio::Source::State::Playing)
 					{
@@ -117,6 +117,7 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 						}
 					}
 
+					// Feed N times (depending on desired state and internal state)
 					for (Int i = 0; i < tryToFeed; ++i)
 					{
 						const int amount = mStream->feed();
@@ -145,25 +146,25 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 								source->queueBuffers({ av });
 							}
 
-							// Play, if necessary
-							if (source->state() != Audio::Source::State::Playing && mState == Audio::Source::State::Playing)
-							{
-								source->play();
-							}
-							// Pause, if necessary
-							else if (source->state() != Audio::Source::State::Paused && mState == Audio::Source::State::Paused)
-							{
-								source->pause();
-							}
-							// Stop, if necessary
-							else if (source->state() != Audio::Source::State::Stopped && mState == Audio::Source::State::Stopped)
-							{
-								source->pause();
-							}
-
 							// Switch buffer
 							mBufferIndex = 1U - mBufferIndex;
 						}
+					}
+
+					// Play, if necessary
+					if (source->state() != Audio::Source::State::Playing && mState == Audio::Source::State::Playing)
+					{
+						source->play();
+					}
+					// Pause, if necessary
+					else if (source->state() != Audio::Source::State::Paused && mState == Audio::Source::State::Paused)
+					{
+						source->pause();
+					}
+					// Stop, if necessary
+					else if (source->state() != Audio::Source::State::Stopped && mState == Audio::Source::State::Stopped)
+					{
+						source->stop();
 					}
 				}
 			}
