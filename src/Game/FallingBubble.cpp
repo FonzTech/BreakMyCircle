@@ -136,10 +136,9 @@ void FallingBubble::update()
 		}
 
 		// Check for off-screen position
-		if (mPosition.y() < -10.0f)
+		if (mPosition.y() < -100.0f)
 		{
 			mDestroyMe = true;
-			return;
 		}
 
 		// Apply transformations
