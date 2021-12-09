@@ -100,8 +100,9 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 				{
 					// Check if audio buffer shall be feeded with another stream
 					Int tryToFeed = 0;
-					if (mState == Audio::Source::State::Playing)
+					switch (mState)
 					{
+					case Audio::Source::State::Playing: {
 						const auto internalState = source->state();
 						if (internalState == Audio::Source::State::Playing)
 						{
@@ -115,6 +116,22 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 						{
 							tryToFeed = 2;
 						}
+						break;
+					};
+					case Audio::Source::State::Paused: {
+						if (source->state() != Audio::Source::State::Paused)
+						{
+							source->pause();
+						}
+						break;
+					}
+					case Audio::Source::State::Stopped: {
+						if (source->state() != Audio::Source::State::Stopped)
+						{
+							source->stop();
+						}
+						break;
+					}
 					}
 
 					// Feed N times (depending on desired state and internal state)
@@ -149,22 +166,12 @@ void StreamedAudioPlayable::loadAudio(const std::string & filename)
 							// Switch buffer
 							mBufferIndex = 1U - mBufferIndex;
 						}
-					}
 
-					// Play, if necessary
-					if (source->state() != Audio::Source::State::Playing && mState == Audio::Source::State::Playing)
-					{
-						source->play();
-					}
-					// Pause, if necessary
-					else if (source->state() != Audio::Source::State::Paused && mState == Audio::Source::State::Paused)
-					{
-						source->pause();
-					}
-					// Stop, if necessary
-					else if (source->state() != Audio::Source::State::Stopped && mState == Audio::Source::State::Stopped)
-					{
-						source->stop();
+						// Play, if necessary
+						if (source->state() != Audio::Source::State::Playing && mState == Audio::Source::State::Playing)
+						{
+							source->play();
+						}
 					}
 				}
 			}
