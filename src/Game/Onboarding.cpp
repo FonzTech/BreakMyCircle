@@ -28,7 +28,7 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType) : GameObject
 		const auto& p = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_GUI_TEXTCLOUD);
 		p->setPosition({ 1000.0f, 1000.0f });
 		p->setSize({ 0.0f, 0.0f });
-		p->setAnchor({ 0.0f, 1.0f });
+		p->setAnchor({ 0.0f, 0.0f });
 
 		mOverlayGuis.push_back(p);
 		RoomManager::singleton->mGoLayers[mParentIndex].push_back(p);
@@ -62,7 +62,7 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType) : GameObject
 		text += "selector screen. Here you\n";
 		text += "can scroll and explore\n";
 		text += "the map. To play a level,\n";
-		text += "tap on it!\n";
+		text += "tap on it!";
 		break;
 
 	case 3:
@@ -71,7 +71,7 @@ Onboarding::Onboarding(const Int parentIndex, const Int customType) : GameObject
 		text += "Everytime you complete a\n";
 		text += "level, you gain coins,\n";
 		text += "which you can use to\n";
-		text += "buy powerups.\n";
+		text += "buy powerups.";
 		break;
 
 	case 4:
@@ -135,11 +135,8 @@ void Onboarding::update()
     const auto padding = CommonUtility::singleton->getScaledVerticalPadding();
     
 	// Set position for texts
-	mOverlayTexts[0]->mPosition = Vector3(0.0f, 0.1125f, 0.0f);
-    
-    {
-        mOverlayTexts[1]->mPosition = Vector3(0.0f, 0.45f - padding, 0.0f);
-    }
+	mOverlayTexts[0]->mPosition = Vector3(0.0f, 0.1f, 0.0f);
+	mOverlayTexts[1]->mPosition = Vector3(0.0f, 0.45f - padding, 0.0f);
 
 	// Animation handling
 	mAngle += mDeltaTime * 2.0f;
@@ -166,10 +163,10 @@ void Onboarding::update()
 	const auto iv = Math::lerp(0.0f, 1.0f, Animation::Easing::smootherstep(mFactor));
 	const auto nv = 1.0f - iv;
 
-	mOverlayGuis[0]->setPosition({ 0.0f, -0.2f - nv - padding });
-	mOverlayGuis[0]->setSize({ 0.45f, 0.45f });
+	mOverlayGuis[0]->setPosition({ 0.0f, 0.1f - nv });
+	mOverlayGuis[0]->setSize({ 0.6f, 0.6f });
 
-	mOverlayGuis[1]->setPosition({ 0.0f, -0.5f - nv - padding });
+	mOverlayGuis[1]->setPosition({ 0.0f, -0.5f - nv });
 	mOverlayGuis[1]->setSize({ 0.3f, 0.3f });
 
 	for (auto& text : mOverlayTexts)
@@ -178,7 +175,7 @@ void Onboarding::update()
 		text->mOutlineColor.data()[3] = iv;
 	}
 
-	mOverlayTexts[0]->mSize = Vector2(iv * 0.7f);
+	mOverlayTexts[0]->mSize = Vector2(iv * 0.675f);
 	mOverlayTexts[1]->mSize = Vector2(iv);
 
 	{
