@@ -1535,8 +1535,9 @@ void LevelSelector::manageLevelState()
 
 	case GO_LS_LEVEL_STARTING:
 
-		// Manage pickup state
+		// Manage state
 		managePickupState(false);
+		mScrolling.velocity = Vector3(0.0f);
 
 		// Create level room on animation end
 		if (mLevelButtonScaleAnim <= 0.0f)
@@ -1547,6 +1548,9 @@ void LevelSelector::manageLevelState()
 		break;
 
 	case GO_LS_LEVEL_STARTED:
+
+		// Manage state
+		mScrolling.velocity = Vector3(0.0f);
 
 		// Animate camera
 		animate[1] = true;
