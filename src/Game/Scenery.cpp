@@ -50,9 +50,9 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex, const Int subType)
 	mAnim = { 1.0f, 0.0f, 0.0f, 0.0f };
 
 	// Fill manipulator list
-	mManipulatorList.push_back(std::move(new Object3D{ mManipulator }));
-	mManipulatorList.push_back(std::move(new Object3D{ mManipulator }));
-	mManipulatorList.push_back(std::move(new Object3D{ mManipulator }));
+	mManipulatorList.emplace_back(new Object3D{ mManipulator });
+	mManipulatorList.emplace_back(new Object3D{ mManipulator });
+	mManipulatorList.emplace_back(new Object3D{ mManipulator });
 
 	// Apply transformations
 	(*mManipulatorList[0])

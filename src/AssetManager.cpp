@@ -321,12 +321,12 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 			cd->setDrawCallback(drawCallback);
 			gameObject.mDrawables.emplace_back(cd);
 		}
-		#if DEBUG
+#if DEBUG
 		else
 		{
 			Debug{} << "Found mesh" << objectData->instance() << "(" << &(assets.meshes[objectData->instance()]) << ") without setCount being called on";
 		}
-		#endif
+#endif
 	}
 
 	// Recursively add children

@@ -22,6 +22,9 @@ std::shared_ptr<GameObject> OverlayGui::getInstance(const nlohmann::json & param
 
 OverlayGui::OverlayGui(const Int parentIndex) : AbstractGuiElement(parentIndex), mRotation(Deg(0.0f))
 {
+	(*mManipulator)
+		.resetTransformation()
+		.scale(Vector3(0.0f));
 }
 
 OverlayGui::OverlayGui(const Int parentIndex, const std::string & textureName) : OverlayGui(parentIndex)

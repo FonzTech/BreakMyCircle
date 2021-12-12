@@ -37,7 +37,7 @@ Projectile::Projectile(const Int parentIndex, const Color3& ambientColor) : Game
 	mParentIndex = parentIndex;
 	mAmbientColor = ambientColor;
 	mVelocity = Vector3(0.0f);
-	mSpeed = 50.0f;
+	mSpeed = 30.0f;
 	mFlatShader = CommonUtility::singleton->getFlat3DShader();
 
 	updateBBox();
@@ -195,68 +195,42 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 
 	// Get row index
 	const Color3 preColor = mAmbientColor;
-	const Int thisRowIndex = getRowIndexByBubble();
 	const bool workOnColor = mAmbientColor == BUBBLE_PLASMA || mAmbientColor == BUBBLE_ELECTRIC;
-
-	// Snap to grid
-	const Float offset = thisRowIndex % 2 ? 0.0f : 1.0f;
-	mPosition.data()[1] = getSnappedYPos();
 
 	// Get nearest bubble
 	Containers::Optional<Color3> collidedColor = Containers::NullOpt;
 	{
-		Bubble* nearestBubble = nullptr;
-		Bubble* leftBubble = nullptr;
-		Bubble* rightBubble = nullptr;
-		Float nearestDistance = 0.0f;
-
 		if (gameObjects != nullptr && !gameObjects->empty())
 		{
 			// const Float sy = getSnappedYPos();
+			Float nearestDistance = 1000.0f;
 			for (const auto& item : *gameObjects)
 			{
 				if (item->getType() == GOT_BUBBLE)
 				{
 					const Float distance = (mPosition - item->mPosition).length();
-					if (nearestBubble == nullptr || distance < nearestDistance)
-					{
-						Bubble* b = (Bubble*)item;
-
+					if (distance < nearestDistance)
+                    {
+					    // Set new distance
 						nearestDistance = (mPosition - item->mPosition).length();
-						nearestBubble = b;
 
-						if (distance <= 0.6f)
-						{
-							(item->mPosition.x() < mPosition.x() ? leftBubble : rightBubble)= b;
-						}
-
+						// Check for collided color
+                        Bubble* b = (Bubble*)item;
 						if (workOnColor && CommonUtility::singleton->isBubbleColorValid(b->mAmbientColor))
 						{
-							collidedColor = b->mAmbientColor;
+                            collidedColor = b->mAmbientColor;
 						}
 					}
 				}
 			}
 		}
-
-		if (nearestBubble != nullptr)
-		{
-			if (leftBubble != nullptr && rightBubble == nullptr)
-			{
-				mPosition = leftBubble->mPosition + Vector3(1.0f, 0.0f, 0.0f);
-			}
-			else if (leftBubble == nullptr && rightBubble != nullptr)
-			{
-				mPosition = rightBubble->mPosition + Vector3(-1.0f, 0.0f, 0.0f);
-			}
-			else if (leftBubble != nullptr && rightBubble != nullptr)
-			{
-				mPosition = nearestBubble->mPosition + Vector3(0.0f, -1.0f, 0.0f);
-			}
-		}
 	}
 
-	// Fix X position
+    // Snap to grid
+    const Int thisRowIndex = getRowIndexByBubble();
+    const Float offset = thisRowIndex % 2 ? 0.0f : 1.0f;
+
+    mPosition.data()[1] = getSnappedYPos();
 	mPosition.data()[0] = Math::round((mPosition.x() - offset) / 2.0f) * 2.0f + offset;
 
 	// Mutate the color, if this projectile is a plasma or electric bubble
@@ -426,7 +400,7 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 void Projectile::updateBBox()
 {
 	// Update bounding box
-	mBbox = Range3D{ mPosition - Vector3(0.9f, 0.975f + mDeltaTime, 0.9f), mPosition + Vector3(0.9f) };
+	mBbox = Range3D{ mPosition - Vector3(0.9f), mPosition + Vector3(0.9f) };
 }
 
 void Projectile::collidedWith(const std::unique_ptr<std::unordered_set<GameObject*>> & gameObjects)
