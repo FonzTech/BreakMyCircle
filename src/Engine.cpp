@@ -517,6 +517,10 @@ void Engine::anyEvent(SDL_Event& event)
     case SDL_APP_DIDENTERFOREGROUND:
         resumeApp();
         break;
+            
+    case SDL_APP_TERMINATING:
+        exitInternal(nullptr);
+        break;
     }
 #endif
 }
