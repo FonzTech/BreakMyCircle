@@ -36,7 +36,7 @@ public func ios_SetupApp() {
     // Setup ads
     setupAds()
     setupFirebase()
-    admobDelegate.rewardedAdCallback = adCallback
+    admobDelegate.adCallback = adCallback
     
     // Load stored config
     appStoreUrl = UserDefaults.standard.string(forKey: "appStoreUrl") ?? ""
@@ -92,8 +92,11 @@ public func ios_GetLaunchOptionValue(key: UnsafePointer<CChar>?) -> Int {
 
 @_cdecl("ios_WatchAdPowerup")
 public func ios_WatchAdPowerup() {
+    // Reset state
     gpAmount = 0
+    gpExpire = 0
     
+    // Check if ads are enabled
     if canShowAds {
         let unitId = Utility.DEBUG ? Utility.ADMOB_DEV_REWARDED : Utility.ADMOB_PROD_REWARDED
         GADRewardedInterstitialAd.load(
@@ -101,6 +104,7 @@ public func ios_WatchAdPowerup() {
           ) { (ad, error) in
             if let error = error {
                 print("Rewarded ad failed to load with error: \(error.localizedDescription)")
+                cancelAdFlow()
                 showAdError()
                 return
             }
@@ -126,19 +130,23 @@ public func ios_WatchAdPowerup() {
                 }
             }
             else {
-                gpExpire = 1
+                cancelAdFlow()
                 showAdError()
             }
           }
     }
     else {
-        gpExpire = 1
+        cancelAdFlow()
         showAdError()
     }
 }
 
 @_cdecl("ios_ShowInterstitial")
 public func ios_ShowInterstitial() {
+    // Reset state
+    gpExpire = 0
+    
+    // Check if ads are enabled
     if canShowAds {
         let unitId = Utility.DEBUG ? Utility.ADMOB_DEV_INTERSTITIAL : Utility.ADMOB_PROD_INTERSTITIAL
         GADInterstitialAd.load(
@@ -146,6 +154,8 @@ public func ios_ShowInterstitial() {
         ) { (ad, error) in
             if let error = error {
                 print("Failed to load interstitial ad with error: \(error.localizedDescription)")
+                cancelAdFlow()
+                showAdError()
                 return
             }
             print("Loading Succeeded")
@@ -160,12 +170,15 @@ public func ios_ShowInterstitial() {
                 ad?.present(fromRootViewController: root!)
              }
              else {
-                 showAdError()
+                cancelAdFlow()
+                showAdError()
              }
         }
     }
     else {
         print("Could not load interstitial ad")
+        cancelAdFlow()
+        showAdError()
     }
 }
 
@@ -179,6 +192,9 @@ public func ios_GameOtherApps() {
     openUrl(url: appDeveloperUrl)
 }
 
+/*
+ Setup Google AdMob
+ */
 fileprivate func setupAds() {
     GADMobileAds.sharedInstance().requestConfiguration.tag(forChildDirectedTreatment: true)
     GADMobileAds.sharedInstance().start { (status) in
@@ -186,6 +202,9 @@ fileprivate func setupAds() {
     }
 }
 
+/*
+ Process launch options, such as data provided by notification tap.
+ */
 fileprivate func processLaunchOption(_ launchOption: [AnyHashable: Any]?) {
     // Check if launch options are provided
     if launchOption == nil {
@@ -204,6 +223,10 @@ fileprivate func processLaunchOption(_ launchOption: [AnyHashable: Any]?) {
     }
 }
 
+/*
+ Firebase setup and notification permission request (it's done here because its dependant
+ on Firebase, since notification are implemented using that framework).
+ */
 fileprivate func setupFirebase() {
     // Get notification intent URL
     appNotifSettings = UserDefaults.standard.string(forKey: "appNotifSettings") ?? ""
@@ -283,6 +306,9 @@ fileprivate func setupFirebase() {
     }
 }
 
+/*
+ Request authorization for notifications
+ */
 fileprivate func notificationAuthorizeRequest() {
     let authOptions: UNAuthorizationOptions = [.alert, .sound]
     UNUserNotificationCenter.current().requestAuthorization(
@@ -315,10 +341,16 @@ fileprivate func notificationAuthorizeRequest() {
     )
 }
     
+/*
+ Notification setup
+ */
 fileprivate func notificationSetup() {
     UIApplication.shared.registerForRemoteNotifications()
 }
 
+/*
+ Get app info and apply to this game behaviour.
+ */
 fileprivate func getAppInfo() {
     var body = Utility.getBasicApiPayload()
     body["configVersion"] = UserDefaults.standard.integer(forKey: PREFS_CONFIG_VERSION)
@@ -370,6 +402,9 @@ fileprivate func getAppInfo() {
     }
 }
 
+/*
+ Open URL in browser. Show error to the user if the provided URL is not valid.
+ */
 fileprivate func openUrl(url: String) {
     if url.count <= 0 {
         if #available(iOS 13.0, *) {
@@ -385,29 +420,45 @@ fileprivate func openUrl(url: String) {
     }
 }
 
+/*
+ Wrapper callback to execute designated behaviour, based on ad load status, such as
+ success, error, special use-cases, etc...
+ */
 fileprivate func adCallback(type: Int, error: Error?) {
-    print("Rewarded Interstitial Ad dismissed")
-    
     switch (type)
     {
     case AppAdmobDelegate.TYPE_FAILED_TO_PRESENT:
-        print("Rewarded Ad failed to present")
+        print("Fullscreen Ad failed to present")
+        cancelAdFlow()
         
     case AppAdmobDelegate.TYPE_PRESENTED:
-        print("Rewarded Ad presented")
-        
+        print("Fullscreen Ad presented")
         
     case AppAdmobDelegate.TYPE_DISMISSED:
-        print("Rewarded Ad dismissed")
+        print("Fullscreen Ad dismissed")
+        gpExpire = Int64(Date().timeIntervalSince1970 * 1000)
+        interstitialAd = nil
+        rewardedAd = nil
         
     default:
         print("No action to take for type \(type)")
     }
-    
-    gpExpire = Int64(Date().timeIntervalSince1970 * 1000)
-    interstitialAd = nil
 }
 
+/*
+ Cancel the entire ad flow, for both interstitial and rewarded ones,
+ by setting a special value to an intent variable, so the designated
+ game object will fetch it and behave accordingly.
+ */
+fileprivate func cancelAdFlow() {
+    gpExpire = 1
+    interstitialAd = nil
+    rewardedAd = nil
+}
+
+/*
+ Show generic alert to the user, regarding the availability of the ad functionality.
+ */
 fileprivate func showAdError() {
     if #available(iOS 13.0, *) {
         DispatchQueue.main.async {

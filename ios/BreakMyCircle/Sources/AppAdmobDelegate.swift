@@ -6,11 +6,11 @@ class AppAdmobDelegate : NSObject, GADFullScreenContentDelegate {
     public static let TYPE_PRESENTED = 2
     public static let TYPE_DISMISSED = 3
     
-    var rewardedAdCallback: ((_: Int, _: Error?) -> Void)? = nil
+    var adCallback: ((_: Int, _: Error?) -> Void)? = nil
     
     func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-        if rewardedAdCallback != nil {
-            rewardedAdCallback!(AppAdmobDelegate.TYPE_FAILED_TO_PRESENT, error)
+        if adCallback != nil {
+            adCallback!(AppAdmobDelegate.TYPE_FAILED_TO_PRESENT, error)
         }
         else {
             print("Failed to present ad: \(error)")
@@ -18,8 +18,8 @@ class AppAdmobDelegate : NSObject, GADFullScreenContentDelegate {
     }
     
     func adDidPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-        if rewardedAdCallback != nil {
-            rewardedAdCallback!(AppAdmobDelegate.TYPE_PRESENTED, nil)
+        if adCallback != nil {
+            adCallback!(AppAdmobDelegate.TYPE_PRESENTED, nil)
         }
         else {
             print("Ad presented successfully")
@@ -27,8 +27,8 @@ class AppAdmobDelegate : NSObject, GADFullScreenContentDelegate {
     }
     
     func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-        if rewardedAdCallback != nil {
-            rewardedAdCallback!(AppAdmobDelegate.TYPE_DISMISSED, nil)
+        if adCallback != nil {
+            adCallback!(AppAdmobDelegate.TYPE_DISMISSED, nil)
         }
         else {
             print("Ad dismissed")
