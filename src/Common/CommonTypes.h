@@ -152,7 +152,7 @@
 #define TARGET_MOBILE
 #endif
 
-#if (defined(NDEBUG) or defined(_DEBUG)) and !(defined(DEBUG))
+#if defined(_DEBUG) and !(defined(DEBUG))
 #define DEBUG 1
 #endif
 
