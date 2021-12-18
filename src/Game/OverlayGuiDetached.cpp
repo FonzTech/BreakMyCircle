@@ -67,20 +67,25 @@ void OverlayGuiDetached::drawDetached()
 {
 	switch (mCustomType)
 	{
-	case GO_OGD_FLAT:
-		(*((Shaders::Flat3D*)mShader))
-			.setTransformationProjectionMatrix(mProjectionMatrix * mManipulator->transformation())
-			.bindTexture(*mTexture)
-			.setColor(mColor)
-			.setAlphaMask(0.001f)
-			.draw(*mMesh);
+	case GO_OGD_FLAT: {
+		if (mColor.a() > 0.001f && Math::abs(mSize.length()) >= 0.0001f)
+		{
+			(*((Shaders::Flat3D*)mShader))
+				.setTransformationProjectionMatrix(mProjectionMatrix * mManipulator->transformation())
+				.bindTexture(*mTexture)
+				.setColor(mColor)
+				.setAlphaMask(0.001f)
+				.draw(*mMesh);
+		}
 		break;
+	}
 
-	case GO_OGD_PLASMA:
+	case GO_OGD_PLASMA: {
 		(*((PlasmaShader*)mShader))
 			.setTransformationProjectionMatrix(mProjectionMatrix * mManipulator->transformation())
 			.draw(*mMesh);
 		break;
+	}
 	}
 }
 

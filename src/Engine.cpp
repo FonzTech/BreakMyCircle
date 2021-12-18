@@ -78,6 +78,7 @@ Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setS
 
     // Set clear color
     GL::Renderer::setClearColor(Color4(0.0f, 0.0f, 0.0f, 0.0f));
+	GL::Renderer::setColorMask(true, true, true, true);
 
     // Init common utility
     CommonUtility::singleton = std::make_unique<CommonUtility>();
@@ -180,6 +181,13 @@ void Engine::tickEvent()
     // Compute delta time
     mDeltaTime = mTimeline.previousFrameDuration();
 
+#if DEBUG
+	if (InputManager::singleton->mKeyStates[ImKeyButtons::RightCtrl] >= IM_STATE_PRESSED)
+	{
+		mDeltaTime *= 0.25f;
+	}
+#endif
+
     // Advance frame time
     mFrameTime += mDeltaTime;
     const bool canDraw = mFrameTime >= mDrawFrameTime;
@@ -205,15 +213,13 @@ void Engine::tickEvent()
             // Multi-layer color attachment clearing
             {
                 mCurrentGol->frameBuffer->bind();
-                GL::Renderer::setColorMask(false, false, false, true);
                 mCurrentGol->frameBuffer->clearColor(GLF_COLOR_ATTACHMENT_INDEX, Color4(0.0f, 0.0f, 0.0f, 0.0f));
-                GL::Renderer::setColorMask(true, true, true, true);
             }
 
             /*
-             * Read after binding, since OpenGL buffer *may* be
-             * flushed, and `glReadPixels` causes another flush.
-             */
+				Read after binding, since OpenGL buffer *may* be
+				flushed, and `glReadPixels` causes another flush.
+			*/
             if (index == GOL_PERSP_FIRST)
             {
                 if (InputManager::singleton->mReadObjectId)

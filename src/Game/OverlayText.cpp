@@ -54,9 +54,9 @@ void OverlayText::update()
 
 void OverlayText::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (mColor.a() > 0.0f || mOutlineColor.a() > 0.0f || mSize.length() != 0.0f)
+	if (mColor.a() > 0.001f || mOutlineColor.a() > 0.001f)
 	{
-		if (Math::intersects(mBbox, outerFrame))
+		if (Math::intersects(mBbox, outerFrame) && Math::abs(mSize.length()) > 0.0001f)
 		{
 			((Shaders::DistanceFieldVector2D&)baseDrawable->getShader())
 				.bindVectorTexture(mFontHolder->cache->texture())

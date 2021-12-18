@@ -2180,12 +2180,11 @@ void LevelSelector::closeDialog()
 {
 	if (mDialog.expired())
 	{
-		Debug{} << "Dialog pointer has already expired";
+		Error{} << "Dialog pointer has already expired";
 	}
 	else
 	{
 		mDialog.lock()->closeDialog();
-		mDialog.reset();
 	}
 }
 

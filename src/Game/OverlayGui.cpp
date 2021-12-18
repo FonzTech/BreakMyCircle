@@ -59,7 +59,7 @@ void OverlayGui::update()
 
 void OverlayGui::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (Math::intersects(mBbox, outerFrame))
+	if (Math::intersects(mBbox, outerFrame) && mColor.a() > 0.001f && Math::abs(mSize.length()) >= 0.0001f)
 	{
 		((Shaders::Flat3D&) baseDrawable->getShader())
 			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)

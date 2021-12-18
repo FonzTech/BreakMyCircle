@@ -115,16 +115,18 @@ void Dialog::update()
 	mBackground->color()[3] = mOpacity * 0.8f;
 
 	// Set title and message color
+	const auto& commonAlpha = Math::clamp((mOpacity - 0.3f) * 1.43f, 0.0f, 1.0f);
+
 	if (mTitle != nullptr)
 	{
-		mTitle->mColor.data()[3] = mOpacity;
-		mTitle->mOutlineColor.data()[3] = mOpacity;
+		mTitle->mColor.data()[3] = commonAlpha;
+		mTitle->mOutlineColor.data()[3] = commonAlpha;
 	}
 
 	if (mMessage != nullptr)
 	{
-		mMessage->mColor.data()[3] = mOpacity;
-		mMessage->mOutlineColor.data()[3] = mOpacity;
+		mMessage->mColor.data()[3] = commonAlpha;
+		mMessage->mOutlineColor.data()[3] = commonAlpha;
 	}
 
 	// Set parameters for all actions
@@ -156,8 +158,8 @@ void Dialog::update()
 			}
 
 			// Set text opacity for
-			ct->mColor.data()[3] = mOpacity;
-			ct->mOutlineColor.data()[3] = mOpacity;
+			ct->mColor.data()[3] = commonAlpha;
+			ct->mOutlineColor.data()[3] = commonAlpha;
 
 			// Set GUI opacity color
 			cg->setColor(mActions[i].buttonText->mColor);
@@ -282,14 +284,12 @@ void Dialog::setMode(const Int mode)
 		}
 		break;
 
-	case GO_DG_MODE_LOADING:
-		{
-			mLoading = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_GUI_LOADING);
-			mLoading->setPosition({ 0.0f, -0.25f });
-			mLoading->setSize(Vector2(0.25f));
-			mLoading->setAnchor(Vector2(0.0f));
-			RoomManager::singleton->mGoLayers[mParentIndex].push_back(mLoading);
-		}
+	case GO_DG_MODE_LOADING: {
+		mLoading = std::make_shared<OverlayGui>(mParentIndex, RESOURCE_TEXTURE_GUI_LOADING);
+		mLoading->setPosition({ 0.0f, -0.25f });
+		mLoading->setSize(Vector2(0.25f));
+		mLoading->setAnchor(Vector2(0.0f));
+		RoomManager::singleton->mGoLayers[mParentIndex].push_back(mLoading);
 
 		for (auto& action : mActions)
 		{
@@ -297,6 +297,7 @@ void Dialog::setMode(const Int mode)
 			action.buttonText->setAnchor(Vector2(100.0f));
 		}
 		break;
+	}
 
 	default:
 		Error{} << "Unknown mode" << mode << "for Dialog";
