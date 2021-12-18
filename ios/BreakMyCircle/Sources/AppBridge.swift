@@ -10,7 +10,7 @@ var appDeveloperUrl: String = ""
 var appNotifSettings: String = ""
 
 var isAdmobInitialized: Bool = false
-var playAdThreshold: Int = 3
+var playAdThreshold: Int = 1
 var canShowAds: Bool = true
 
 var gpSafeMinigame: Int = 0
