@@ -88,7 +88,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 	mParentIndex = parentIndex;
 
 	// Init members
-	mPosition = getLastLevelPos() - Vector3(0.0f, 0.0f, 5.0f);
+	mPosition = getLastLevelPos();
 
 	mScrolling = {
 		Containers::NullOpt,
@@ -2148,8 +2148,9 @@ Int LevelSelector::getModelIndex(const Int yp)
 Vector3 LevelSelector::getLastLevelPos()
 {
 	const auto& zp = Math::floor(Float(RoomManager::singleton->mSaveData.maxLevelId - 2) / 6.0f) * -GO_LS_SCENERY_LENGTH;
-	const auto& zf = (RoomManager::singleton->mSaveData.maxLevelId - 2) % 6U;
-	return Vector3(0.0f, 0.0f, zp) + sLevelButtonPositions[getModelIndex(Int(zp))][zf];
+	const auto& zoneIndex = Math::min(1, getModelIndex(Int(zp)));
+	const auto& offsetIndex = (RoomManager::singleton->mSaveData.maxLevelId - 2) % 6U;
+	return Vector3(0.0f, 0.0f, zp) + sLevelButtonPositions[zoneIndex][offsetIndex];
 }
 
 bool LevelSelector::isTimeExpiring(const Float time)
@@ -2836,7 +2837,7 @@ void LevelSelector::createGuis()
 		RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(o);
 	}
 
-	// Scroll Back text
+	// Scroll Back
 	{
 		const std::shared_ptr<OverlayGui> o = std::make_shared<OverlayGui>(GOL_ORTHO_FIRST, RESOURCE_TEXTURE_GUI_SCROLL_BACK);
 		o->setPosition({ 2.0f, 2.0f });
@@ -2854,7 +2855,6 @@ void LevelSelector::createGuis()
 			}
 
 			Debug{} << "You have clicked SCROLL BACK";
-
 			mLevelGuis[GO_LS_GUI_WHITEGLOW]->color()[3] = 100.0f;
 
 			return true;
