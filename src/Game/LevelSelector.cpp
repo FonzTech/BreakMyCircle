@@ -2247,7 +2247,6 @@ void LevelSelector::createPowerupView()
 			mScreenButtons[GO_LS_GUI_POWERUP + i] = std::make_unique<LS_ScreenButton>();
 			mScreenButtons[GO_LS_GUI_POWERUP + i]->drawable = o;
 			mScreenButtons[GO_LS_GUI_POWERUP + i]->callback = [&](UnsignedInt index) {
-				Debug{} << "okoko" << mPuView.delta;
 				if ((mLevelAnim < 0.95f && mSettingsAnim < 0.95f) ||
 					((std::shared_ptr<OverlayGui>&)mScreenButtons[index]->drawable)->color()[3] < 0.95f ||
 					!mDialog.expired() ||
