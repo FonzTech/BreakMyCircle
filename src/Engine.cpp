@@ -38,9 +38,9 @@ Engine::Engine(const Arguments& arguments) :
 #ifdef CORRADE_TARGET_ANDROID
 Platform::Application{ arguments, ENGINE_CONFIGURATION }
 #elif defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
-Platform::Application{ arguments, Configuration{}.setWindowFlags(Configuration::WindowFlag::Fullscreen | Configuration::WindowFlag::Resizable) }, mIosDefaultFramebuffer(Containers::NullOpt)
+Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").setWindowFlags(Configuration::WindowFlag::Fullscreen | Configuration::WindowFlag::Resizable) }, mIosDefaultFramebuffer(Containers::NullOpt)
 #else
-Platform::Application{ arguments, Configuration{}.setTitle("BreakMyCircle").setSize({ 768, 768 }).setWindowFlags(Configuration::WindowFlag::Resizable) }
+Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").setSize({ 768, 768 }).setWindowFlags(Configuration::WindowFlag::Resizable) }
 #endif
 , mFrameTime(0.0f), mCurrentGol(nullptr)
 {

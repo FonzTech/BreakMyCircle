@@ -165,6 +165,7 @@ private:
 	{
 		Containers::Optional<Int> startX;
 		Float scrollX;
+		Float delta;
 		std::unordered_map<UnsignedInt, LS_CachedVariable<Int, Int>> counts;
 		std::unordered_map<UnsignedInt, Int> prices;
 	};
@@ -176,6 +177,12 @@ private:
         bool disableObjectPicking;
 		Vector3 touchInertia;
         Timeline touchTimeline;
+	};
+
+	struct LS_ViewportChange
+	{
+		Vector2 size;
+		Int count;
 	};
 
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);
@@ -205,7 +212,7 @@ private:
 
 	void manageGuiLevelAnim(const UnsignedInt index, const bool increment, const Float factor = 1.0f);
 	void updateTimeCounter(const Int value);
-	void closeDialog();
+	void closeDialog(const bool resetNow);
 
 	void createPowerupView();
 	void usePowerup(const UnsignedInt index);
@@ -227,6 +234,8 @@ private:
 	std::shared_ptr<GameDrawable<Shaders::Flat3D>> mSkyPlane;
 	Object3D* mSkyManipulator;
 #endif
+
+	LS_ViewportChange mViewportChange;
 
 	LS_Scroll mScrolling;
 	Float mLevelButtonScaleAnim;

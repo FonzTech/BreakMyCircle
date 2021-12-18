@@ -147,6 +147,12 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut
 		}
 	}
 
+	// Viewport change
+	{
+		mViewportChange.size = RoomManager::singleton->getWindowSize();
+		mViewportChange.count = -1;
+	}
+
 	// Powerup handler
 	mPickupHandler.timer = -1000.0f;
 
@@ -554,8 +560,8 @@ void LevelSelector::update()
 		{
 			const Float xi = Math::round(mPuView.scrollX);
 			const Float xt = Math::clamp(xi, Float(-GO_LS_MAX_POWERUP_COUNT + 1), 0.0f);
-			const Float d = xt - mPuView.scrollX;
-            mPuView.scrollX += d * mDeltaTime * 5.0f;
+			mPuView.delta = xt - mPuView.scrollX;
+			mPuView.scrollX += mPuView.delta * mDeltaTime * 5.0f;
 		}
 	}
 	else
@@ -1346,14 +1352,16 @@ void LevelSelector::windowForCurrentLevelView()
 	// Powerup buttons
 	if (canShowPowerups)
 	{
-		Float xn = RoomManager::singleton->getWindowAspectRatio();
+		const auto& was = RoomManager::singleton->getWindowAspectRatio();
+		Float xn = was;
 		xn = xn > 1.0f ? 1.0f / xn : xn;
 		if (xn < 0.7f)
 		{
-			xn *= RoomManager::singleton->getWindowAspectRatio();
+			xn *= was;
 		}
 
-		const Float xm = 0.06f * CommonUtility::singleton->mConfig.displayDensity * xn;
+		// const Float xm = 0.06f * CommonUtility::singleton->mConfig.displayDensity * xn;
+		const Float xm = 0.06f * xn;
 		const Float xf = (0.5f + xm * Math::pow(Math::max(1.0f, ar), 2.0f)) - (0.25f + xm) * ar;
 		const Float yf = 0.91f - powerupY;
 		for (UnsignedInt i = 0; i < GO_LS_MAX_POWERUP_COUNT; ++i)
@@ -1790,6 +1798,33 @@ void LevelSelector::manageLevelState()
 			gol.cameraEye.data()[2] = 1.0f + zd * d;
 		}
 	}
+
+	// Redraw first perspective layer (avoid black background on viewport change)
+	auto& golf = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
+	if (!golf.drawEnabled)
+	{
+		const auto& ws = RoomManager::singleton->getWindowSize();
+		if (ws != mViewportChange.size)
+		{
+			mViewportChange.size = ws;
+			mViewportChange.count = 2;
+		}
+	}
+
+	if (mViewportChange.count > -1)
+	{
+		switch (--mViewportChange.count)
+		{
+		case 1: {
+			golf.drawEnabled = true;
+			break;
+		}
+		case 0: {
+			golf.drawEnabled = false;
+			break;
+		}
+		}
+	}
 }
 
 void LevelSelector::managePickupState(const bool decrease)
@@ -1982,6 +2017,7 @@ void LevelSelector::finishCurrentLevel(const bool success)
 		auto& gol = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
 		gol.updateEnabled = true;
 		gol.drawEnabled = true;
+		mViewportChange.count = -1;
 	}
 
 	// Set level state as "Finished"
@@ -2176,7 +2212,7 @@ void LevelSelector::updateTimeCounter(const Int value)
 	mLevelTexts[GO_LS_TEXT_TIME]->setText(str);
 }
 
-void LevelSelector::closeDialog()
+void LevelSelector::closeDialog(const bool resetNow)
 {
 	if (mDialog.expired())
 	{
@@ -2185,6 +2221,11 @@ void LevelSelector::closeDialog()
 	else
 	{
 		mDialog.lock()->closeDialog();
+
+		if (resetNow)
+		{
+			mDialog.reset();
+		}
 	}
 }
 
@@ -2206,11 +2247,15 @@ void LevelSelector::createPowerupView()
 			mScreenButtons[GO_LS_GUI_POWERUP + i] = std::make_unique<LS_ScreenButton>();
 			mScreenButtons[GO_LS_GUI_POWERUP + i]->drawable = o;
 			mScreenButtons[GO_LS_GUI_POWERUP + i]->callback = [&](UnsignedInt index) {
-				if ((mLevelAnim < 0.95f && mSettingsAnim < 0.95f) || ((std::shared_ptr<OverlayGui>&)mScreenButtons[index]->drawable)->color()[3] < 0.95f || !mDialog.expired() || mClickTimer <= 0.0f)
+				Debug{} << "okoko" << mPuView.delta;
+				if ((mLevelAnim < 0.95f && mSettingsAnim < 0.95f) ||
+					((std::shared_ptr<OverlayGui>&)mScreenButtons[index]->drawable)->color()[3] < 0.95f ||
+					!mDialog.expired() ||
+					mClickTimer <= 0.0f ||
+					Math::abs(mPuView.delta) > 0.003f * CommonUtility::singleton->mConfig.displayDensity)
 				{
 					return false;
 				}
-
 				Debug{} << "You have clicked POWERUP" << index;
 
 				// Build dialog
@@ -2274,11 +2319,11 @@ void LevelSelector::createPowerupView()
 
                          // Edit first button text
                          const std::string& text = "Use (" + std::to_string(RoomManager::singleton->mSaveData.powerupAmounts[index]) + ")";
-                         mDialog.lock()->setActionText(0U, text);
+						 mDialog.lock()->setActionText(0U, text);
 
-						// Close dialog and settings window
-						closeDialog();
-						mScreenButtons[GO_LS_GUI_SETTINGS]->callback(GO_LS_GUI_SETTINGS);
+						 // Close dialog and settings window
+						 closeDialog(true);
+						 mScreenButtons[GO_LS_GUI_SETTINGS]->callback(GO_LS_GUI_SETTINGS);
 					},
 						false,
 						offsetButton,
@@ -2346,7 +2391,7 @@ void LevelSelector::createPowerupView()
 					const std::string & text = isNo ? "Back" : "OK";
 					o->addAction(text, [this](UnsignedInt buttonIndex) {
 						Debug{} << "You have clicked NO POWERUP";
-						closeDialog();
+						closeDialog(false);
 					},
 						false,
 						offsetButton
@@ -2574,13 +2619,13 @@ void LevelSelector::createGuis()
 				Debug{} << "You have clicked YES to REPLAY";
 				if (mLevelInfo.state == GO_LS_LEVEL_STARTED || mLevelInfo.state == GO_LS_LEVEL_FINISHED)
 				{
-					closeDialog();
+					closeDialog(true);
 					replayCurrentLevel();
 				}
 			});
 			o->addAction("No", [this](UnsignedInt buttonIndex) {
 				Debug{} << "You have clicked NO to REPLAY";
-				closeDialog();
+				closeDialog(true);
 			});
 
 			mDialog = o;
@@ -2737,13 +2782,13 @@ void LevelSelector::createGuis()
 				// Set variable flag for level ending
 				if (mLevelInfo.state == GO_LS_LEVEL_STARTED)
 				{
-					closeDialog();
+					closeDialog(true);
 					mLevelEndingAnim = true;
 				}
 			});
 			o->addAction("No", [this](UnsignedInt buttonIndex) {
 				Debug{} << "You have clicked NO to EXIT";
-				closeDialog();
+				closeDialog(true);
 			});
 
 			mDialog = o;

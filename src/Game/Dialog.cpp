@@ -91,7 +91,7 @@ const Int Dialog::getType() const
 void Dialog::update()
 {
 	// Set background size
-	mBackground->setSize({ 1.0f * Math::max(1.0f, RoomManager::singleton->getWindowAspectRatio()), 1.0f });
+	mBackground->setSize({ 2.0f * Math::max(1.0f, RoomManager::singleton->getWindowAspectRatio()), 2.0f });
 
 	// Control dialog life-cycle
 	mOpacity += mDeltaTime * 2.0f * mOpened;
