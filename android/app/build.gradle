@@ -11,8 +11,8 @@ android {
         applicationId "it.fonztech.breakmycircle"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 18
-        versionName "0.1"
+        versionCode 20
+        versionName "0.1.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
