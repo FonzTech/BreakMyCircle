@@ -310,15 +310,22 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
      */
     @SuppressWarnings("unused")
     protected final void showInterstitial() {
-        runOnUiThread(() -> {
-            if (mCanShowAds) {
-                final AdRequest adRequest = new AdRequest.Builder().build();
-                InterstitialAd.load(EngineActivity.this, Utility.DEBUG ? INTERSTITIAL_AD_DEV : INTERSTITIAL_AD_PROD, adRequest, interstitialAdLoadCallback);
+        if (mCanShowAds) {
+            try {
+                if (Utility.isNetworkAvailable(this)) {
+                    runOnUiThread(() -> {
+                        final AdRequest adRequest = new AdRequest.Builder().build();
+                        InterstitialAd.load(EngineActivity.this, Utility.DEBUG ? INTERSTITIAL_AD_DEV : INTERSTITIAL_AD_PROD, adRequest, interstitialAdLoadCallback);
+                    });
+                }
+                else {
+                    throw new AdShowError();
+                }
             }
-            else {
+            catch (final AdShowError e) {
                 setRewardedInfo(ADS_NOT_AVAILABLE_TYPE, 0);
             }
-        });
+        }
     }
 
     /**
@@ -329,20 +336,25 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
      */
     @SuppressWarnings("unused")
     protected final void watchAdForPowerup() {
-        runOnUiThread(() -> {
-            if (mCanShowAds) {
-                final AdRequest adRequest = new AdRequest.Builder().build();
-                RewardedAd.load(EngineActivity.this, Utility.DEBUG ? REWARDED_AD_DEV : REWARDED_AD_PROD, adRequest, rewardedAdLoadCallback);
+        try {
+            if (mCanShowAds && Utility.isNetworkAvailable(this)) {
+                runOnUiThread(() -> {
+                    final AdRequest adRequest = new AdRequest.Builder().build();
+                    RewardedAd.load(EngineActivity.this, Utility.DEBUG ? REWARDED_AD_DEV : REWARDED_AD_PROD, adRequest, rewardedAdLoadCallback);
+                });
             }
             else {
-                setRewardedInfo(ADS_NOT_AVAILABLE_TYPE, 0);
-                new AlertDialog.Builder(EngineActivity.this)
-                        .setTitle(R.string.app_name)
-                        .setMessage(R.string.ad_not_available)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show();
+                throw new AdShowError();
             }
-        });
+        }
+        catch (final AdShowError e) {
+            setRewardedInfo(ADS_NOT_AVAILABLE_TYPE, 0);
+            new AlertDialog.Builder(EngineActivity.this)
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.ad_not_available)
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show();
+        }
     }
 
     /**
@@ -372,5 +384,14 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
                 .setMessage(message != null ? message : getString(R.string.ad_error))
                 .setPositiveButton(android.R.string.ok, null)
                 .show();
+    }
+
+    /**
+     * Custom class for ad show exception.
+     */
+    protected static class AdShowError extends RuntimeException {
+        protected AdShowError() {
+            super();
+        }
     }
 }

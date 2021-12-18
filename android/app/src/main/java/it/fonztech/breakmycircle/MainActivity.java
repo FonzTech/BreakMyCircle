@@ -8,18 +8,23 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class MainActivity extends EngineActivity implements Runnable, DialogInterface.OnClickListener {
+public class MainActivity extends EngineActivity implements Thread.UncaughtExceptionHandler, Runnable, DialogInterface.OnClickListener {
     private static final String TAG = EngineActivity.class.getSimpleName();
 
     protected AlertDialog mDialog;
@@ -29,6 +34,7 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
 
     protected static final String REWARD_TYPE_POWERUP = "powerup";
 
+    protected File lastExceptionFile;
     protected Handler handler;
     protected String mStoreUrl;
     protected String mDeveloperUrl;
@@ -49,10 +55,16 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
     protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Set unhandled exception handler
+        lastExceptionFile = new File(getFilesDir(), "last_exception.txt");
+        Thread.setDefaultUncaughtExceptionHandler(this);
+
+        Log.d(TAG, "Last exception file is: " + lastExceptionFile.getAbsolutePath() + " - Exists: " + lastExceptionFile.exists());
+
         // Load settings
         {
             final SharedPreferences prefs = getSharedPreferences(CONFIG_PREFERENCES, Context.MODE_PRIVATE);
-            mPlayAdThreshold = prefs.getInt("playAdThreshold", 3);
+            mPlayAdThreshold = prefs.getInt("playAdThreshold", 1);
             mStoreUrl = prefs.getString("storeUrl", URL_DEFAULT_VOTE_ME);
             mDeveloperUrl = prefs.getString("developerUrl", URL_DEFAULT_OTHER_APPS);
         }
@@ -86,6 +98,24 @@ public class MainActivity extends EngineActivity implements Runnable, DialogInte
                     .setNegativeButton(R.string.no, this)
                     .create();
             mDialog.show();
+        }
+    }
+
+    @Override
+    public final void uncaughtException(@NonNull final Thread thread, @NonNull final Throwable throwable) {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        throwable.printStackTrace(new PrintStream(out));
+        final String str = new String(out.toByteArray());
+
+        try {
+            final FileOutputStream fos = new FileOutputStream(lastExceptionFile, true);
+            fos.write(("--- " + System.currentTimeMillis() + "\n\n").getBytes());
+            fos.write(str.getBytes());
+            fos.write("\n\n".getBytes());
+            fos.close();
+        }
+        catch (final Exception e) {
+            e.printStackTrace();
         }
     }
 
