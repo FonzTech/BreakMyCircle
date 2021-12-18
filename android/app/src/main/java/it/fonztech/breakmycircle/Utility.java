@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 public final class Utility {
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
     public static final String BACKEND_URL = "https://breakmycircle.alfonsopauciello.com/";
     public static final String BACKEND_API = "api.php";
     public static final String BACKEND_FIREBASE = "firebase.php";
