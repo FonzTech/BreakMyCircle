@@ -4,7 +4,7 @@ import Network
 import SystemConfiguration
 
 class Utility {
-    public static var DEBUG = true
+    public static let DEBUG = true
     
     public static let API_BASE = "https://breakmycircle.alfonsopauciello.com/"
     public static let API_MAIN = "api.php"
