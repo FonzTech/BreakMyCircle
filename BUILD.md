@@ -74,6 +74,8 @@ This process should be repeated for both `arm64-v8a` and `x86_64`, and respectiv
 
 - CMake arguments `-std=c++17` and `-fno-rtti` must be set. `c++_static` must be used as *Android STL Library*.
 
+- Debug symbols are located in `<PROJECT_ROOT>/android/app/build/intermediates/cmake/release/obj/<ABI>/libnative-lib.so`, where the `<ABI>` folder can be `arm64-v8a` or `x86_64`.
+
 ### First common step
 ```
 mkdir build && cd build
@@ -125,6 +127,8 @@ cmake --build . --target install
 This process allows a single step to compile multiple architectures in a single shot, by specifing a value like `arm64;armv7;armv7s` for the `CMAKE_OSX_ARCHITECTURES` variable. However, from iOS 11 and beyond, only 64-bit architectures are supported. So, we are setting the value `arm64`.
 
 Toolchains must be downloaded from <https://github.com/mosra/toolchains>, whose contents goes into the `toolchains` folder of *Corrade* and *Magnum Graphics* library.
+
+- In Xcode's `Build Options` for this project, make sure `DWARF with dSYM File` is selected for `Release`, otherwise no native debugging symbols will be present, making crash logs practically unreadable.
 
 - `CORRADE_RC_EXECUTABLE` can be omitted, by installing the *last stable Corrade* build using Homebrew, with the following command: `brew install mosra/magnum/corrade`
 
