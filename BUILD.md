@@ -64,8 +64,8 @@ cmake .. ^
   -DWITH_AUDIO=ON ^
   -DWITH_ANYSCENEIMPORTER=ON ^
   -DWITH_ANYIMAGEIMPORTER=ON
-cmake --build .
-cmake --build . --target install
+cmake --build . --config Release
+cmake --build . --config Release --target install
 ```
 
 ## Compile for Android
@@ -118,8 +118,8 @@ cmake .. ^
 
 ### Last common step
 ```
-cmake --build .
-cmake --build . --target install
+cmake --build . --config Release
+cmake --build . --config Release --target install
 ```
 
 ## Compile for iOS
@@ -185,8 +185,8 @@ cmake .. \
 
 ### Last common step
 ```
-cmake --build .
-cmake --build . --target install
+cmake --build . --config Release
+cmake --build . --config Release --target install
 ```
 
 ### Application Entrypoint
