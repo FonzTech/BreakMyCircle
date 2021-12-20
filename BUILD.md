@@ -151,12 +151,6 @@ Toolchains must be downloaded from <https://github.com/mosra/toolchains>, whose 
 - You may have to referrer to this answer to disable *ARM NEON optimizations* on `arm64`:
   - <https://stackoverflow.com/questions/19089014/iphone-device-linker-error>
 
-- The following frameworks must be added in *Build Phases*:
-  - Foundation
-  - UIKit
-  - OpenGLES
-  - OpenAL
-
 ### First common step
 ```
 mkdir build && cd build
