@@ -1,5 +1,9 @@
 #pragma once
 
+#include <Magnum/Magnum.h>
+
+using namespace Magnum;
+
 class IAppStateCallback
 {
 public:
@@ -8,4 +12,9 @@ public:
     
     virtual void pauseApp() = 0;
     virtual void resumeApp() = 0;
+    
+protected:
+    static UnsignedInt staticAppStateCounter;
+    
+    UnsignedInt mAppStateCallbackId;
 };

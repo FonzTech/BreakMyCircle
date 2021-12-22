@@ -245,6 +245,11 @@ RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
 
 RoomManager::~RoomManager()
 {
+    if (!mGoLayers.empty())
+    {
+        Error{} << "RoomManager is about to be destructed, but it appears to be not cleared first.";
+    }
+    
 	clear();
 }
 
@@ -316,9 +321,9 @@ void RoomManager::pauseApp()
 	}
     
     // Notify app pause to who registered for it
-    for (auto* p : mAppStateCallbacks)
+    for (auto it = mAppStateCallbacks.begin(); it != mAppStateCallbacks.end(); ++it)
     {
-        p->pauseApp();
+        it->second->pauseApp();
     }
 }
 
@@ -334,14 +339,17 @@ void RoomManager::resumeApp()
 	}
     
     // Notify app resume to who registered for it
-    for (auto* p : mAppStateCallbacks)
+    for (auto it = mAppStateCallbacks.begin(); it != mAppStateCallbacks.end(); ++it)
     {
-        p->resumeApp();
+        it->second->resumeApp();
     }
 }
 
 void RoomManager::clear()
 {
+    // Clear app state callbacks
+    mAppStateCallbacks.clear();
+    
 	// Clear all layers and their children
 	mGoLayers.clear();
 
