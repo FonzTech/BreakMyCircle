@@ -82,7 +82,7 @@ LevelSelector::LS_ScreenButton::~LS_ScreenButton()
 	drawable->mDestroyMe = true;
 }
 
-LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), mCbEaseInOut(Vector2(0.0f, 0.0f), Vector2(0.42f, 0.0f), Vector2(0.58f, 1.0f), Vector2(1.0f, 1.0f)), mHelpTipsTimer(-10.0f)
+LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), IAppStateCallback(), mCbEaseInOut(Vector2(0.0f, 0.0f), Vector2(0.42f, 0.0f), Vector2(0.58f, 1.0f), Vector2(1.0f, 1.0f)), mHelpTipsTimer(-10.0f)
 {
 	// Assign parent index
 	mParentIndex = parentIndex;
@@ -950,6 +950,19 @@ void LevelSelector::shootCallback(const Int state, const Color3 & preColor, cons
 	}
 }
 
+void LevelSelector::pauseApp()
+{
+}
+
+void LevelSelector::resumeApp()
+{
+    // Trigger redraw for the first perspective layer on app resume, after it entered in background
+    auto& golf = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
+    if (!golf.drawEnabled) {
+        mViewportChange.count = 2;
+    }
+}
+
 constexpr void LevelSelector::manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment)
 {
 	if (increment)
@@ -1807,7 +1820,7 @@ void LevelSelector::manageLevelState()
 		if (ws != mViewportChange.size)
 		{
 			mViewportChange.size = ws;
-			mViewportChange.count = 2;
+            mViewportChange.count = 2;
 		}
 	}
 

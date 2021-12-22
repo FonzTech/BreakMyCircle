@@ -63,6 +63,7 @@
 #include "Onboarding.h"
 #include "MapPickup.h"
 #include "LevelSelectorSidecar.h"
+#include "Callbacks/IAppStateCallback.h"
 #include "Callbacks/IShootCallback.h"
 #include "../Graphics/BaseDrawable.h"
 #include "OverlayGui.h"
@@ -75,7 +76,7 @@
 
 using namespace Magnum;
 
-class LevelSelector : public GameObject, public IShootCallback, public std::enable_shared_from_this<LevelSelector>
+class LevelSelector : public GameObject, public IShootCallback, public IAppStateCallback, public std::enable_shared_from_this<LevelSelector>
 {
 public:
 	static std::shared_ptr<GameObject> getInstance(const nlohmann::json & params);
@@ -88,6 +89,9 @@ public:
 	void draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera) override;
 
 	void shootCallback(const Int state, const Color3 & preColor, const Color3 & postColor, const Int amount) override;
+    
+    void pauseApp() override;
+    void resumeApp() override;
 
 private:
 	static std::unordered_map<Int, std::array<Vector3, 6>> sLevelButtonPositions;
@@ -213,6 +217,7 @@ private:
 	void manageGuiLevelAnim(const UnsignedInt index, const bool increment, const Float factor = 1.0f);
 	void updateTimeCounter(const Int value);
 	void closeDialog(const bool resetNow);
+    void triggerViewportChange();
 
 	void createPowerupView();
 	void usePowerup(const UnsignedInt index);
