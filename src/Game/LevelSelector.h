@@ -187,6 +187,7 @@ private:
 	{
 		Vector2 size;
 		Int count;
+        Containers::Optional<Float> ticks;
 	};
 
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);

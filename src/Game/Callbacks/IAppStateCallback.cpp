@@ -8,5 +8,6 @@ IAppStateCallback::IAppStateCallback()
 
 IAppStateCallback::~IAppStateCallback()
 {
-    RoomManager::singleton->mAppStateCallbacks.erase(this);
+    auto& s = RoomManager::singleton->mAppStateCallbacks;
+    s.erase(s.find(this));
 }

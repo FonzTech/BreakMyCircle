@@ -151,6 +151,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), IAppStateCal
 	{
 		mViewportChange.size = RoomManager::singleton->getWindowSize();
 		mViewportChange.count = -1;
+        mViewportChange.ticks = Containers::NullOpt;
 	}
 
 	// Powerup handler
@@ -959,7 +960,7 @@ void LevelSelector::resumeApp()
     // Trigger redraw for the first perspective layer on app resume, after it entered in background
     auto& golf = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
     if (!golf.drawEnabled) {
-        mViewportChange.count = 2;
+        mViewportChange.ticks = 1.0f;
     }
 }
 
@@ -1823,6 +1824,16 @@ void LevelSelector::manageLevelState()
             mViewportChange.count = 2;
 		}
 	}
+    
+    if (mViewportChange.ticks != Containers::NullOpt)
+    {
+        *mViewportChange.ticks -= mDeltaTime;
+        if (*mViewportChange.ticks < 0.0f)
+        {
+            mViewportChange.count = 2;
+            mViewportChange.ticks = Containers::NullOpt;
+        }
+    }
 
 	if (mViewportChange.count > -1)
 	{
@@ -2031,6 +2042,7 @@ void LevelSelector::finishCurrentLevel(const bool success)
 		gol.updateEnabled = true;
 		gol.drawEnabled = true;
 		mViewportChange.count = -1;
+        mViewportChange.ticks = Containers::NullOpt;
 	}
 
 	// Set level state as "Finished"
