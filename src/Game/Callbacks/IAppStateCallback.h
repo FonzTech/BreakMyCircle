@@ -12,9 +12,4 @@ public:
     
     virtual void pauseApp() = 0;
     virtual void resumeApp() = 0;
-    
-protected:
-    static UnsignedInt staticAppStateCounter;
-    
-    UnsignedInt mAppStateCallbackId;
 };

@@ -131,6 +131,7 @@ if(CORRADE_TARGET_ANDROID)
         src/Common/CustomRenderers/PlasmaSquareRenderer.cpp
         src/Common/LinePath.cpp
         src/Engine.cpp
+        src/Game/Callbacks/IAppStateCallback.cpp
         src/Game/AbstractGuiElement.cpp
         src/Game/Bubble.cpp
         src/Game/Congrats.cpp
@@ -182,6 +183,7 @@ else()
         src/Common/CustomRenderers/PlasmaSquareRenderer.cpp
         src/Common/LinePath.cpp
         src/Engine.cpp
+        src/Game/Callbacks/IAppStateCallback.cpp
         src/Game/AbstractGuiElement.cpp
         src/Game/Bubble.cpp
         src/Game/Congrats.cpp

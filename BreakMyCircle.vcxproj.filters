@@ -52,6 +52,9 @@
     <Filter Include="Header Files\Game\Callbacks">
       <UniqueIdentifier>{2a0ea889-2ccd-4c7e-902e-20b5d88df667}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Game\Callbacks">
+      <UniqueIdentifier>{36cc2ffd-4e99-4f36-b8e3-034166bbfa82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -185,6 +188,9 @@
     </ClCompile>
     <ClCompile Include="src\Shaders\TimedBubbleShader.cpp">
       <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game\Callbacks\IAppStateCallback.cpp">
+      <Filter>Source Files\Game\Callbacks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -334,6 +340,9 @@
     </ClInclude>
     <ClInclude Include="src\Shaders\TimedBubbleShader.h">
       <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game\Callbacks\IAppStateCallback.h">
+      <Filter>Header Files\Game\Callbacks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

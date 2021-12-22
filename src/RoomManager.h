@@ -108,7 +108,7 @@ public:
 	static std::array<UnsignedInt, 7U> sBubbleKeys;
     
     // App callback objects
-    std::unordered_map<UnsignedInt, IAppStateCallback*> mAppStateCallbacks;
+    std::unordered_set<IAppStateCallback*> mAppStateCallbacks;
 
 	// Function creator mapper for room loader
 	std::unordered_map<Int, std::function<std::shared_ptr<GameObject>(const nlohmann::json & params)>> gameObjectCreators;

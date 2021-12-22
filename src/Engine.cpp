@@ -541,7 +541,6 @@ void Engine::exitInternal(void* arg)
         object holds data about game objects, and so they holds
         references about meshes, textures, shaders, etc...
     */
-    Debug{} << "okoko";
     RoomManager::singleton->clear();
     RoomManager::singleton = nullptr;
 

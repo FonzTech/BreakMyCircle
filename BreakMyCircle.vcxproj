@@ -164,6 +164,7 @@
     <ClCompile Include="src\Common\CustomRenderers\PlasmaSquareRenderer.cpp" />
     <ClCompile Include="src\Game\AbstractGuiElement.cpp" />
     <ClCompile Include="src\Game\Bubble.cpp" />
+    <ClCompile Include="src\Game\Callbacks\IAppStateCallback.cpp" />
     <ClCompile Include="src\Game\Congrats.cpp" />
     <ClCompile Include="src\Game\Dialog.cpp" />
     <ClCompile Include="src\Game\ElectricBall.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="src\Game\Bubble.h" />
     <ClInclude Include="src\Engine.h" />
     <ClInclude Include="src\GameObject.h" />
+    <ClInclude Include="src\Game\Callbacks\IAppStateCallback.h" />
     <ClInclude Include="src\Game\Callbacks\IShootCallback.h" />
     <ClInclude Include="src\Game\Congrats.h" />
     <ClInclude Include="src\Game\Dialog.h" />

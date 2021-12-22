@@ -321,10 +321,10 @@ void RoomManager::pauseApp()
 	}
     
     // Notify app pause to who registered for it
-    for (auto it = mAppStateCallbacks.begin(); it != mAppStateCallbacks.end(); ++it)
-    {
-        it->second->pauseApp();
-    }
+	for (auto* p : mAppStateCallbacks)
+	{
+		p->pauseApp();
+	}
 }
 
 void RoomManager::resumeApp()
@@ -339,10 +339,10 @@ void RoomManager::resumeApp()
 	}
     
     // Notify app resume to who registered for it
-    for (auto it = mAppStateCallbacks.begin(); it != mAppStateCallbacks.end(); ++it)
-    {
-        it->second->resumeApp();
-    }
+	for (auto* p : mAppStateCallbacks)
+	{
+		p->resumeApp();
+	}
 }
 
 void RoomManager::clear()
