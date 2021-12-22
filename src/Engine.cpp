@@ -517,12 +517,13 @@ void Engine::anyEvent(SDL_Event& event)
     switch(event.type)
     {
     case SDL_APP_WILLENTERBACKGROUND:
+        ios_WillEnterBackground();
         pauseApp();
         break;
             
     case SDL_APP_DIDENTERFOREGROUND:
+        ios_DidEnterForeground();
         resumeApp();
-        ios_ResumeAppOnSwiftSide();
         break;
             
     case SDL_APP_TERMINATING:

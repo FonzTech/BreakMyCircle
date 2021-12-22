@@ -78,6 +78,8 @@
 		05718C82271A32DE0090C631 /* AppAdmobDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */; };
 		0571A770274AEA0F00AC6272 /* BridgingRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0571A76F274AEA0F00AC6272 /* BridgingRoutines.mm */; };
 		0571A771274AEA0F00AC6272 /* BridgingRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0571A76F274AEA0F00AC6272 /* BridgingRoutines.mm */; };
+		05A371822773878600640930 /* IAppStateCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05A371812773878600640930 /* IAppStateCallback.cpp */; };
+		05A371832773878600640930 /* IAppStateCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05A371812773878600640930 /* IAppStateCallback.cpp */; };
 		05ADBCCD2749665200D3EC44 /* AppNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */; };
 		05ADBCCE2749665200D3EC44 /* AppNotificationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */; };
 		05ADBCD32749716E00D3EC44 /* TimedBubbleShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 05ADBCD22749716E00D3EC44 /* TimedBubbleShader.cpp */; };
@@ -287,6 +289,7 @@
 		05718C80271A32DE0090C631 /* AppAdmobDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAdmobDelegate.swift; sourceTree = "<group>"; };
 		0571A76E274AE9D000AC6272 /* BridgingRoutines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BridgingRoutines.h; sourceTree = "<group>"; };
 		0571A76F274AEA0F00AC6272 /* BridgingRoutines.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = BridgingRoutines.mm; sourceTree = "<group>"; };
+		05A371812773878600640930 /* IAppStateCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IAppStateCallback.cpp; path = ../src/Game/Callbacks/IAppStateCallback.cpp; sourceTree = "<group>"; };
 		05ADBCC7274941B600D3EC44 /* breakmycircle_sim.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = breakmycircle_sim.entitlements; sourceTree = "<group>"; };
 		05ADBCC8274941C000D3EC44 /* breakmycircle_arm.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = breakmycircle_arm.entitlements; sourceTree = "<group>"; };
 		05ADBCCC2749665200D3EC44 /* AppNotificationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNotificationHandler.swift; sourceTree = "<group>"; };
@@ -509,6 +512,7 @@
 		0560457D270A0AB60080AA3E /* Game */ = {
 			isa = PBXGroup;
 			children = (
+				05A371812773878600640930 /* IAppStateCallback.cpp */,
 				0560455E270A0AAE0080AA3E /* AbstractGuiElement.cpp */,
 				05604557270A0AAE0080AA3E /* Bubble.cpp */,
 				0560455A270A0AAE0080AA3E /* Congrats.cpp */,
@@ -911,6 +915,7 @@
 				05CB8EFE271358F8009AD69F /* Scenery.cpp in Sources */,
 				05CB8EFF271358F8009AD69F /* Skybox.cpp in Sources */,
 				05532C47274E7B8300F8691A /* main.cpp in Sources */,
+				05A371822773878600640930 /* IAppStateCallback.cpp in Sources */,
 				05CB8F00271358F8009AD69F /* OverlayGuiDetached.cpp in Sources */,
 				05CB8F01271358F8009AD69F /* Onboarding.cpp in Sources */,
 				05CB8F02271358F8009AD69F /* FallingBubble.cpp in Sources */,
@@ -971,6 +976,7 @@
 				05604576270A0AAF0080AA3E /* Scenery.cpp in Sources */,
 				05604577270A0AAF0080AA3E /* Skybox.cpp in Sources */,
 				05532C48274E7B8300F8691A /* main.cpp in Sources */,
+				05A371832773878600640930 /* IAppStateCallback.cpp in Sources */,
 				05604578270A0AAF0080AA3E /* OverlayGuiDetached.cpp in Sources */,
 				05604579270A0AAF0080AA3E /* Onboarding.cpp in Sources */,
 				0560457A270A0AAF0080AA3E /* FallingBubble.cpp in Sources */,

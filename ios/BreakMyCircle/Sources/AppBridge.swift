@@ -59,8 +59,12 @@ public func ios_SetupApp() {
     }
 }
 
-@_cdecl("ios_ResumeAppOnSwiftSide")
-public func ios_ResumeAppOnSwiftSide() {
+@_cdecl("ios_WillEnterBackground")
+public func ios_WillEnterBackground() {
+}
+
+@_cdecl("ios_DidEnterForeground")
+public func ios_DidEnterForeground() {
     if requestIdfaOnResume {
         requestIdfaOnResume = false
         requestIdentifierForAdvertising()

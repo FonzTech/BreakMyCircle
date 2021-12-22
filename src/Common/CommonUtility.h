@@ -39,8 +39,9 @@ using namespace Magnum;
 #if defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
 extern "C"
 {
+    void ios_WillEnterBackground();
+    void ios_DidEnterForeground();
     void ios_SetupApp();
-    void ios_ResumeAppOnSwiftSide();
 
     Int ios_GetLaunchOptionValue(const char * key);
     Int ios_GetPlayAdThreshold();

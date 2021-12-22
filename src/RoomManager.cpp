@@ -305,6 +305,7 @@ const void RoomManager::setSfxGain(const Float level)
 
 void RoomManager::pauseApp()
 {
+    // Pause background music
 	if (mBgMusic != nullptr)
 	{
 		mBgMusicState = mBgMusic->state();
@@ -313,10 +314,17 @@ void RoomManager::pauseApp()
 			mBgMusic->pause();
 		}
 	}
+    
+    // Notify app pause to who registered for it
+    for (auto* p : mAppStateCallbacks)
+    {
+        p->pauseApp();
+    }
 }
 
 void RoomManager::resumeApp()
 {
+    // Resume background music, if it was paused before
 	if (mBgMusic != nullptr)
 	{
 		if (mBgMusicState == Audio::Source::State::Playing)
@@ -324,6 +332,12 @@ void RoomManager::resumeApp()
 			mBgMusic->play();
 		}
 	}
+    
+    // Notify app resume to who registered for it
+    for (auto* p : mAppStateCallbacks)
+    {
+        p->resumeApp();
+    }
 }
 
 void RoomManager::clear()

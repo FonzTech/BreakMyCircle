@@ -38,6 +38,7 @@
 #include "CollisionManager.h"
 #include "Audio/StreamedAudioPlayable.h"
 #include "Game/Callbacks/IShootCallback.h"
+#include "Game/Callbacks/IAppStateCallback.h"
 
 using namespace Magnum;
 
@@ -105,6 +106,9 @@ public:
 	// Static members
 	static std::unordered_map<UnsignedInt, BubbleData> sBubbleColors;
 	static std::array<UnsignedInt, 7U> sBubbleKeys;
+    
+    // App callback objects
+    std::unordered_set<IAppStateCallback*> mAppStateCallbacks;
 
 	// Function creator mapper for room loader
 	std::unordered_map<Int, std::function<std::shared_ptr<GameObject>(const nlohmann::json & params)>> gameObjectCreators;
