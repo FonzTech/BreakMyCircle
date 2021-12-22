@@ -3,11 +3,14 @@ import GoogleMobileAds
 import FirebaseCore
 import FirebaseMessaging
 import SwiftHTTP
+import AppTrackingTransparency
+import AdSupport
 
 var appInfoTimer: Timer? = nil
 var appStoreUrl: String = ""
 var appDeveloperUrl: String = ""
 var appNotifSettings: String = ""
+var requestIdfaOnResume = false
 
 var isAdmobInitialized: Bool = false
 var playAdThreshold: Int = 1
@@ -53,6 +56,14 @@ public func ios_SetupApp() {
                 getAppInfo()
             }
         }
+    }
+}
+
+@_cdecl("ios_ResumeAppOnSwiftSide")
+public func ios_ResumeAppOnSwiftSide() {
+    if requestIdfaOnResume {
+        requestIdfaOnResume = false
+        requestIdentifierForAdvertising()
     }
 }
 
@@ -130,12 +141,14 @@ public func ios_WatchAdPowerup() {
                 }
             }
             else {
+                print("No parent window for rewarded ad")
                 cancelAdFlow()
                 showAdError()
             }
           }
     }
     else {
+        print("No rewarded ad can be shown")
         cancelAdFlow()
         showAdError()
     }
@@ -170,6 +183,7 @@ public func ios_ShowInterstitial() {
                 ad?.present(fromRootViewController: root!)
              }
              else {
+                print("No parent window for interstitial ad")
                 cancelAdFlow()
                 showAdError()
              }
@@ -190,6 +204,56 @@ public func ios_GameVoteMe() {
 @_cdecl("ios_GameOtherApps")
 public func ios_GameOtherApps() {
     openUrl(url: appDeveloperUrl)
+}
+
+/*
+ Get IDFA string (without permission)
+ */
+fileprivate func getIdfaString(isIos14: Bool) -> String? {
+    if #available(iOS 14, *) {
+        if ATTrackingManager.trackingAuthorizationStatus != .authorized {
+            print("Advertising Tracking is NOT authorized")
+            return nil
+        }
+    }
+    else if ASIdentifierManager.shared().isAdvertisingTrackingEnabled == false {
+        print("Advertising Tracking is Disabled")
+        return nil
+    }
+    return ASIdentifierManager.shared().advertisingIdentifier.uuidString
+}
+
+/*
+ Get IDFA string for advertising. Permission is requested, if necessary.
+ */
+fileprivate func requestIdentifierForAdvertising() {
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0, execute: {
+        if #available(iOS 14, *) {
+            ATTrackingManager.requestTrackingAuthorization { status in
+                switch status {
+                case .authorized:
+                    print("ATT Authorized")
+                    print("IDFA is:", getIdfaString(isIos14: true) ?? "<nil>")
+                    
+                case .denied:
+                    print("ATT Denied")
+                    
+                case .notDetermined:
+                    print("ATT Not Determined")
+                    
+                case .restricted:
+                    print("ATT Restricted")
+                    print("IDFA is:", getIdfaString(isIos14: true) ?? "<nil>")
+                    
+                @unknown default:
+                    print("ATT Unknown")
+                }
+            }
+        }
+        else {
+            print("IDFA is:", getIdfaString(isIos14: false) ?? "<nil>")
+        }
+    })
 }
 
 /*
@@ -244,6 +308,7 @@ fileprivate func setupFirebase() {
         notificationSettings in
         
         var message: String? = nil
+        var reqTracking = true
         
         switch notificationSettings.authorizationStatus {
         case .authorized,
@@ -268,6 +333,8 @@ fileprivate func setupFirebase() {
             #if DEBUG
             print("User has NOT made a choice regarding notifications yet")
             #endif
+            
+            reqTracking = false
             notificationAuthorizeRequest()
             
         default:
@@ -287,6 +354,7 @@ fileprivate func setupFirebase() {
                     UserDefaults.standard.set(curTime, forKey: PREFS_LAST_NOTIFICATION_CHECK)
                     
                     // Show alert dialog
+                    reqTracking = false
                     DispatchQueue.main.asyncAfter(deadline: .now() + 6) {
                         let alert = UIAlertController(title: Bundle.main.displayName, message: message, preferredStyle: .alert)
                         
@@ -294,14 +362,23 @@ fileprivate func setupFirebase() {
                             alert.addAction(UIAlertAction(title: "Go To Settings", style: .default) {
                                 _ in
                                 openUrl(url: appNotifSettings)
+                                requestIdfaOnResume = true
                             })
                         }
                         
-                        alert.addAction(UIAlertAction(title: "I Don't Care", style: .cancel, handler: nil))
+                        alert.addAction(UIAlertAction(title: "I Don't Care", style: .cancel) {
+                            _ in
+                            requestIdentifierForAdvertising()
+                        })
+                        
                         alert.presentInNewWindow(animated: true, completion: nil)
                     }
                 }
             }
+        }
+        
+        if reqTracking {
+            requestIdentifierForAdvertising()
         }
     }
 }
@@ -320,8 +397,10 @@ fileprivate func notificationAuthorizeRequest() {
             print("Notification - Error:", error ?? "<No error>")
             #endif
             
+            var reqTracking = true
             if !granted && appNotifSettings.count > 0 {
                 if #available(iOS 13.0, *) {
+                    reqTracking = false
                     DispatchQueue.main.async {
                         let alert = UIAlertController(title: Bundle.main.displayName, message: DENIED_NOTIFICATIONS_MESSAGE, preferredStyle: .alert)
                         
@@ -329,13 +408,22 @@ fileprivate func notificationAuthorizeRequest() {
                             alert.addAction(UIAlertAction(title: "Go To Settings", style: .default) {
                                 _ in
                                 openUrl(url: appNotifSettings)
+                                requestIdfaOnResume = true
                             })
                         }
                         
-                        alert.addAction(UIAlertAction(title: "I Understand", style: .cancel, handler: nil))
+                        alert.addAction(UIAlertAction(title: "I Understand", style: .cancel) {
+                            _ in
+                            requestIdentifierForAdvertising()
+                        })
+                        
                         alert.presentInNewWindow(animated: true, completion: nil)
                     }
                 }
+            }
+            
+            if reqTracking {
+                requestIdentifierForAdvertising()
             }
         }
     )

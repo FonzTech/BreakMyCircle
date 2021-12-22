@@ -522,6 +522,7 @@ void Engine::anyEvent(SDL_Event& event)
             
     case SDL_APP_DIDENTERFOREGROUND:
         resumeApp();
+        ios_ResumeAppOnSwiftSide();
         break;
             
     case SDL_APP_TERMINATING:

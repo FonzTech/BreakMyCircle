@@ -40,12 +40,12 @@ using namespace Magnum;
 extern "C"
 {
     void ios_SetupApp();
+    void ios_ResumeAppOnSwiftSide();
 
     Int ios_GetLaunchOptionValue(const char * key);
     Int ios_GetPlayAdThreshold();
     Long ios_GetGamePowerupExpire();
     Int ios_GetGamePowerupAmount();
-
 
     void ios_ClearPowerupData();
     void ios_WatchAdPowerup();
