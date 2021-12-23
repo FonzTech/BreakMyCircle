@@ -11,7 +11,7 @@ using namespace std::chrono_literals;
 StreamedAudioPlayable::StreamedAudioPlayable(Object3D* object) : mObject(object), mBufferIndex(0U), mLive(true)
 {
 	mLive = true;
-	mThreadSleepDuration = 200ms;
+	mThreadSleepDuration = 100ms;
 
 	mState = Audio::Source::State::Initial;
 	mGainLevel = 1.0f;
