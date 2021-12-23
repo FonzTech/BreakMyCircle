@@ -512,7 +512,7 @@
 		0560457D270A0AB60080AA3E /* Game */ = {
 			isa = PBXGroup;
 			children = (
-				05A371812773878600640930 /* IAppStateCallback.cpp */,
+				0566CF792773F38E0004CBAE /* Callbacks */,
 				0560455E270A0AAE0080AA3E /* AbstractGuiElement.cpp */,
 				05604557270A0AAE0080AA3E /* Bubble.cpp */,
 				0560455A270A0AAE0080AA3E /* Congrats.cpp */,
@@ -573,6 +573,14 @@
 				05532C46274E7B8300F8691A /* main.cpp */,
 			);
 			name = Base;
+			sourceTree = "<group>";
+		};
+		0566CF792773F38E0004CBAE /* Callbacks */ = {
+			isa = PBXGroup;
+			children = (
+				05A371812773878600640930 /* IAppStateCallback.cpp */,
+			);
+			name = Callbacks;
 			sourceTree = "<group>";
 		};
 		AFB14C0527007181005837DE /* Frameworks */ = {
