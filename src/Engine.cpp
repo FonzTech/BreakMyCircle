@@ -580,6 +580,12 @@ void Engine::upsertGameObjectLayers()
             {
                 // Layer exists
                 layer = &it->second;
+                
+                // Avoid recreating if viewport did not change its size
+                if (layer->frameBuffer->viewport().max() == mCachedFramebufferSize)
+                {
+                    continue;
+                }
 
                 // Clear framebuffer
                 layer->frameBuffer = nullptr;
