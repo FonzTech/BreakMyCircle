@@ -365,6 +365,7 @@ fileprivate func setupFirebase() {
                         if appNotifSettings.count > 0 {
                             alert.addAction(UIAlertAction(title: "Go To Settings", style: .default) {
                                 _ in
+                                alert.dismissCallback()
                                 openUrl(url: appNotifSettings)
                                 requestIdfaOnResume = true
                             })
@@ -372,6 +373,7 @@ fileprivate func setupFirebase() {
                         
                         alert.addAction(UIAlertAction(title: "I Don't Care", style: .cancel) {
                             _ in
+                            alert.dismissCallback()
                             requestIdentifierForAdvertising()
                         })
                         
@@ -411,6 +413,7 @@ fileprivate func notificationAuthorizeRequest() {
                         if appNotifSettings.count > 0 {
                             alert.addAction(UIAlertAction(title: "Go To Settings", style: .default) {
                                 _ in
+                                alert.dismissCallback()
                                 openUrl(url: appNotifSettings)
                                 requestIdfaOnResume = true
                             })
@@ -418,6 +421,7 @@ fileprivate func notificationAuthorizeRequest() {
                         
                         alert.addAction(UIAlertAction(title: "I Understand", style: .cancel) {
                             _ in
+                            alert.dismissCallback()
                             requestIdentifierForAdvertising()
                         })
                         
@@ -502,7 +506,10 @@ fileprivate func openUrl(url: String) {
         if #available(iOS 13.0, *) {
             DispatchQueue.main.async {
                 let alert = UIAlertController(title: Bundle.main.displayName, message: "Could not open the requested URL. Please, try again later.", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "Got It", style: .cancel, handler: nil))
+                alert.addAction(UIAlertAction(title: "Got It", style: .cancel) {
+                    _ in
+                    alert.dismissCallback()
+                })
                 alert.presentInNewWindow(animated: true, completion: nil)
             }
         }
@@ -555,7 +562,10 @@ fileprivate func showAdError() {
     if #available(iOS 13.0, *) {
         DispatchQueue.main.async {
             let alert = UIAlertController(title: Bundle.main.displayName, message: "This functionality is not available at this time. Please, try again later.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Got It", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "Got It", style: .cancel) {
+                _ in
+                alert.dismissCallback()
+            })
             alert.presentInNewWindow(animated: true, completion: nil)
         }
     }
