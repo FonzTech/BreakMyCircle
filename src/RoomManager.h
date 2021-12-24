@@ -161,7 +161,12 @@ public:
 
 	void pauseApp();
 	void resumeApp();
-    void viewportChange(Platform::Sdl2Application::ViewportEvent* event);
+
+#ifdef CORRADE_TARGET_ANDROID
+	void viewportChange(Platform::AndroidApplication::ViewportEvent* event);
+#else
+	void viewportChange(Platform::Sdl2Application::ViewportEvent* event);
+#endif
 
 	void clear();
 	void setup();

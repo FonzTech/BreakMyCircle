@@ -345,7 +345,11 @@ void RoomManager::resumeApp()
     }
 }
 
+#ifdef CORRADE_TARGET_ANDROID
+void RoomManager::viewportChange(Platform::AndroidApplication::ViewportEvent* event)
+#else
 void RoomManager::viewportChange(Platform::Sdl2Application::ViewportEvent* event)
+#endif
 {
     for (auto* p : mAppStateCallbacks)
     {

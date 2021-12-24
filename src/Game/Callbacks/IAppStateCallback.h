@@ -18,5 +18,10 @@ public:
     
     virtual void pauseApp() = 0;
     virtual void resumeApp() = 0;
+
+#ifdef CORRADE_TARGET_ANDROID
+    virtual void viewportChange(Platform::AndroidApplication::ViewportEvent* event) = 0;
+#else
     virtual void viewportChange(Platform::Sdl2Application::ViewportEvent* event) = 0;
+#endif
 };

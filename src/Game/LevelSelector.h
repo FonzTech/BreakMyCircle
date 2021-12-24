@@ -92,7 +92,12 @@ public:
     
     void pauseApp() override;
     void resumeApp() override;
-    void viewportChange(Platform::Sdl2Application::ViewportEvent* event) override;
+
+#ifdef CORRADE_TARGET_ANDROID
+	void viewportChange(Platform::AndroidApplication::ViewportEvent* event) override;
+#else
+	void viewportChange(Platform::Sdl2Application::ViewportEvent* event) override;
+#endif
 
 private:
 	static std::unordered_map<Int, std::array<Vector3, 6>> sLevelButtonPositions;
@@ -212,7 +217,6 @@ private:
 	void manageGuiLevelAnim(const UnsignedInt index, const bool increment, const Float factor = 1.0f);
 	void updateTimeCounter(const Int value);
 	void closeDialog(const bool resetNow);
-    void triggerViewportChange();
 
 	void createPowerupView();
 	void usePowerup(const UnsignedInt index);

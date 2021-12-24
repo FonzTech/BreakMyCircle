@@ -955,7 +955,11 @@ void LevelSelector::resumeApp()
 {
 }
 
+#ifdef CORRADE_TARGET_ANDROID
+void LevelSelector::viewportChange(Platform::AndroidApplication::ViewportEvent* event)
+#else
 void LevelSelector::viewportChange(Platform::Sdl2Application::ViewportEvent* event)
+#endif
 {
     redrawFirstLayer();
 }
