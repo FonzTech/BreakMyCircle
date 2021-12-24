@@ -330,19 +330,27 @@ void RoomManager::pauseApp()
 void RoomManager::resumeApp()
 {
     // Resume background music, if it was paused before
-	if (mBgMusic != nullptr)
-	{
-		if (mBgMusicState == Audio::Source::State::Playing)
-		{
-			mBgMusic->play();
-		}
-	}
+    if (mBgMusic != nullptr)
+    {
+        if (mBgMusicState == Audio::Source::State::Playing)
+        {
+            mBgMusic->play();
+        }
+    }
     
     // Notify app resume to who registered for it
-	for (auto* p : mAppStateCallbacks)
-	{
-		p->resumeApp();
-	}
+    for (auto* p : mAppStateCallbacks)
+    {
+        p->resumeApp();
+    }
+}
+
+void RoomManager::viewportChange(Platform::Sdl2Application::ViewportEvent* event)
+{
+    for (auto* p : mAppStateCallbacks)
+    {
+        p->viewportChange(event);
+    }
 }
 
 void RoomManager::clear()

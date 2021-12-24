@@ -92,6 +92,7 @@ public:
     
     void pauseApp() override;
     void resumeApp() override;
+    void viewportChange(Platform::Sdl2Application::ViewportEvent* event) override;
 
 private:
 	static std::unordered_map<Int, std::array<Vector3, 6>> sLevelButtonPositions;
@@ -183,13 +184,6 @@ private:
         Timeline touchTimeline;
 	};
 
-	struct LS_ViewportChange
-	{
-		Vector2 size;
-		Int count;
-        Containers::Optional<Float> ticks;
-	};
-
 	constexpr void manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment);
 	void setupCameraParameters();
 	void createSkyPlane();
@@ -227,6 +221,7 @@ private:
 
 	void createGuis();
 	void createTexts();
+    void redrawFirstLayer();
 
 	void callNativeMethod(const std::string & methodName);
 
@@ -241,7 +236,7 @@ private:
 	Object3D* mSkyManipulator;
 #endif
 
-	LS_ViewportChange mViewportChange;
+	Int mViewportChange;
 
 	LS_Scroll mScrolling;
 	Float mLevelButtonScaleAnim;

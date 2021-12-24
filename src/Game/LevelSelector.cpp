@@ -148,11 +148,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), IAppStateCal
 	}
 
 	// Viewport change
-	{
-		mViewportChange.size = RoomManager::singleton->getWindowSize();
-		mViewportChange.count = -1;
-        mViewportChange.ticks = Containers::NullOpt;
-	}
+    mViewportChange = -1;
 
 	// Powerup handler
 	mPickupHandler.timer = -1000.0f;
@@ -957,11 +953,11 @@ void LevelSelector::pauseApp()
 
 void LevelSelector::resumeApp()
 {
-    // Trigger redraw for the first perspective layer on app resume, after it entered in background
-    auto& golf = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
-    if (!golf.drawEnabled) {
-        mViewportChange.ticks = 1.0f;
-    }
+}
+
+void LevelSelector::viewportChange(Platform::Sdl2Application::ViewportEvent* event)
+{
+    redrawFirstLayer();
 }
 
 constexpr void LevelSelector::manageBackendAnimationVariable(Float & variable, const Float factor, const bool increment)
@@ -1814,41 +1810,10 @@ void LevelSelector::manageLevelState()
 	}
 
 	// Redraw first perspective layer (avoid black background on viewport change)
-	auto& golf = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
-	if (!golf.drawEnabled)
-	{
-		const auto& ws = RoomManager::singleton->getWindowSize();
-		if (ws != mViewportChange.size)
-		{
-			mViewportChange.size = ws;
-            mViewportChange.count = 2;
-		}
-	}
-    
-    if (mViewportChange.ticks != Containers::NullOpt)
+    if (mViewportChange > -1 && (--mViewportChange) == 0)
     {
-        *mViewportChange.ticks -= mDeltaTime;
-        if (*mViewportChange.ticks < 0.0f)
-        {
-            mViewportChange.count = 2;
-            mViewportChange.ticks = Containers::NullOpt;
-        }
+        RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST].drawEnabled = false;
     }
-
-	if (mViewportChange.count > -1)
-	{
-		switch (--mViewportChange.count)
-		{
-		case 1: {
-			golf.drawEnabled = true;
-			break;
-		}
-		case 0: {
-			golf.drawEnabled = false;
-			break;
-		}
-		}
-	}
 }
 
 void LevelSelector::managePickupState(const bool decrease)
@@ -2041,8 +2006,7 @@ void LevelSelector::finishCurrentLevel(const bool success)
 		auto& gol = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
 		gol.updateEnabled = true;
 		gol.drawEnabled = true;
-		mViewportChange.count = -1;
-        mViewportChange.ticks = Containers::NullOpt;
+		mViewportChange = -1;
 	}
 
 	// Set level state as "Finished"
@@ -3074,6 +3038,16 @@ void LevelSelector::createTexts()
 		mLevelTexts[GO_LS_TEXT_HELP] = go;
 		RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go);
 	}
+}
+
+void LevelSelector::redrawFirstLayer()
+{
+    // Trigger redraw for the first perspective layer on app resume, after it entered in background
+    auto& golf = RoomManager::singleton->mGoLayers[GOL_PERSP_FIRST];
+    if (!golf.drawEnabled || mViewportChange > -1) {
+        golf.drawEnabled = true;
+        mViewportChange = 100;
+    }
 }
 
 const std::string LevelSelector::getHelpTipText(const Int index) const

@@ -450,7 +450,6 @@ void Engine::mouseMoveEvent(MouseMoveEvent& event)
 
     // Update state for all mouse buttons
     updateMouseButtonStates(event);
-
     // Capture event
     event.setAccepted();
 }
@@ -483,6 +482,9 @@ void Engine::viewportInternal(ViewportEvent* event)
     
     // Update layers
     upsertGameObjectLayers();
+    
+    // Notify to room manager
+    RoomManager::singleton->viewportChange(event);
 }
 
 #ifndef CORRADE_TARGET_ANDROID
@@ -624,7 +626,7 @@ void Engine::upsertGameObjectLayers()
             const auto& v = RoomManager::singleton->getWindowSize();
             const auto& pm = index == GOL_ORTHO_FIRST ?
                 Matrix4::orthographicProjection(Vector2(1.0f), 0.01f, 100.0f) :
-                Matrix4::perspectiveProjection(35.0_degf, v.x() / v.y(), 0.01f, 1000.0f);
+                Matrix4::perspectiveProjection(35.0_degf, v.aspectRatio(), 0.01f, 1000.0f);
             layer->projectionMatrix = pm;
         }
 

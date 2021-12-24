@@ -161,6 +161,7 @@ public:
 
 	void pauseApp();
 	void resumeApp();
+    void viewportChange(Platform::Sdl2Application::ViewportEvent* event);
 
 	void clear();
 	void setup();
