@@ -2,9 +2,7 @@ package it.fonztech.breakmycircle;
 
 import android.app.AlertDialog;
 import android.app.NativeActivity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,20 +28,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.util.Iterator;
 
 public abstract class EngineActivity extends NativeActivity implements OnInitializationCompleteListener, OnUserEarnedRewardListener, OnCompleteListener<String> {
     private static final String TAG = EngineActivity.class.getSimpleName();
 
-    protected static final String ASSET_PREFERENCES = "ASSET_PREFERENCES";
     protected static final String CONFIG_PREFERENCES = "CONFIG_PREFERENCES";
     protected static final String SAVE_FILE = "SAVE_FILE.json";
     protected static final String ADS_NOT_AVAILABLE_TYPE = "_not_available";
@@ -169,55 +160,6 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
                 }
             }
         }
-
-        // Copy all packed assets into internal app storage
-        try {
-            final SharedPreferences prefs = getSharedPreferences(ASSET_PREFERENCES, Context.MODE_PRIVATE);
-            final SharedPreferences.Editor editor = prefs.edit();
-
-            final JSONObject json = new JSONObject(getAssetsJson());
-
-            final Iterator<String> iterator = json.keys();
-            while (iterator.hasNext()) {
-                final String fname = iterator.next();
-                final JSONObject assetJson = json.getJSONObject(fname);
-                final File dest = new File(getFilesDir(), fname);
-                final long assetVersion = assetJson.getLong("version");
-
-                if (prefs.getLong(fname, 0L) >= assetVersion) {
-                    Log.d(TAG, "Asset " + fname + " (" + assetVersion + ") already exists in " + dest.getAbsolutePath());
-                }
-                else {
-                    Log.d(TAG, "Copying asset " + fname + " (" + assetVersion + ") into " + dest.getAbsolutePath());
-
-                    {
-                        final File parentDir = dest.getParentFile();
-                        //noinspection ConstantConditions
-                        if (!parentDir.exists() && !parentDir.mkdirs()){
-                            throw new RuntimeException("Could not make parent directories for " + dest.getAbsolutePath());
-                        }
-                    }
-
-                    final InputStream is = getAssets().open(fname);
-                    final FileOutputStream fos = new FileOutputStream(dest);
-
-                    final byte[] buffer = new byte[1024 * 10];
-                    for (int length; (length = is.read(buffer)) != -1; ) {
-                        fos.write(buffer, 0, length);
-                    }
-
-                    fos.close();
-                    is.close();
-
-                    editor.putLong(fname, assetVersion);
-                }
-            }
-
-            editor.apply();
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e.getMessage() != null ? e.getMessage() : "Unknown exception error");
-        }
     }
 
     @Override
@@ -266,29 +208,6 @@ public abstract class EngineActivity extends NativeActivity implements OnInitial
      * @return backend API URL for the game (to sync settings, stats, etc...).
      */
     protected abstract String getBackendUrl();
-
-    /**
-     * Get entire JSON string, from the "assets" file containing all the assets
-     * and their version number, directly from the app bundle.
-     *
-     * @return entire JSON string representing the "assets" file content.
-     *
-     * @throws IOException any IO exception thrown during file read.
-     */
-    protected final String getAssetsJson() throws IOException {
-        final InputStream is = getResources().openRawResource(R.raw.assets);
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        final byte[] buffer = new byte[1024 * 10];
-        for (int length; (length = is.read(buffer)) != -1; ) {
-            baos.write(buffer, 0, length);
-        }
-
-        baos.close();
-        is.close();
-
-        return new String(baos.toByteArray());
-    }
 
     /**
      * Open any supported URI in Android, using the default user/system intent catcher.

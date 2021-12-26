@@ -32,16 +32,42 @@ public class MainActivity extends EngineActivity implements Thread.UncaughtExcep
     protected static final String URL_DEFAULT_VOTE_ME = "https://play.google.com/store/apps/details?id=it.fonztech.breakmycircle";
     protected static final String URL_DEFAULT_OTHER_APPS = "https://play.google.com/store/apps/developer?id=FonzTech";
 
+    protected static final String GAME_ASSET_UNPACKING = "game_asset_unpacking";
     protected static final String REWARD_TYPE_POWERUP = "powerup";
 
+    protected AlertDialog dialog;
     protected File lastExceptionFile;
+    protected AssetsUnpacker assetsUnpacker;
     protected Handler handler;
     protected String mStoreUrl;
     protected String mDeveloperUrl;
 
-    protected final Runnable configGetterRunnable = new Runnable() {
+    protected final Runnable assetsUnpackerCallback = new Runnable() {
         @Override
         public void run() {
+            Log.d(TAG, "AssetUnpacker " + assetsUnpacker + " did finish");
+
+            // De-reference thread
+            assetsUnpacker = null;
+
+            // Notify game that unpacking did finish and cancel dialog
+            runOnUiThread(() -> {
+                Log.d(TAG, "AssetUnpacker setting data to intent");
+
+                // Set intent data
+                getIntent().putExtra(GAME_ASSET_UNPACKING, "1");
+
+                // Cancel dialog
+                if (dialog != null) {
+                    dialog.cancel();
+                    dialog = null;
+                }
+            });
+        }
+    };
+    protected final Runnable configGetterRunnable = new Runnable() {
+        @Override
+        public final void run() {
             if (Utility.isNetworkAvailable(MainActivity.this)) {
                 new Thread(MainActivity.this).start();
             }
@@ -69,6 +95,17 @@ public class MainActivity extends EngineActivity implements Thread.UncaughtExcep
             mDeveloperUrl = prefs.getString("developerUrl", URL_DEFAULT_OTHER_APPS);
         }
 
+        // Run assets unpacker
+        dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.unpacking_desc)
+                .setView(R.layout.layout_alert_loading)
+                .setCancelable(false)
+                .show();
+
+        assetsUnpacker = new AssetsUnpacker(this, assetsUnpackerCallback);
+        assetsUnpacker.start();
+
         // Fetch configuration from API
         handler = new Handler();
         configGetterRunnable.run();
@@ -77,6 +114,11 @@ public class MainActivity extends EngineActivity implements Thread.UncaughtExcep
     @Override
     protected final void onDestroy() {
         super.onDestroy();
+
+        if (assetsUnpacker != null) {
+            assetsUnpacker.interrupt();
+            assetsUnpacker = null;
+        }
 
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);

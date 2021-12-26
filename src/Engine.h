@@ -21,6 +21,8 @@
 
 #define ENGINE_CONFIGURATION Configuration{}.setTitle("BreakMyCircle")
 
+#define GO_EN_ASSETS_UNPACKING "game_asset_unpacking"
+
 using namespace Magnum;
 
 class Engine : public Platform::Application
@@ -49,7 +51,7 @@ protected:
     void resumeApp();
 #endif
 
-	bool isInForeground;
+	bool mIsInForeground;
 
 private:
 	// List of layers
@@ -70,6 +72,7 @@ private:
 #endif
 
 	// Class methods
+	void startFirstRoom();
 	void upsertGameObjectLayers();
 	void drawInternal();
 	void exitInternal(void* arg);
@@ -78,7 +81,9 @@ private:
 	void updateMouseButtonState(MouseEvent& event, const bool & pressed);
 	void updateMouseButtonStates(MouseMoveEvent& event);
 
-#ifndef CORRADE_TARGET_ANDROID
+#ifdef CORRADE_TARGET_ANDROID
+	bool mWaitForUnpack;
+#else
 	void updateKeyButtonState(const KeyEvent& event, const bool & pressed);
 #endif
 

@@ -7,4 +7,5 @@
     <string name="unknown_error">Unknown error</string>
     <string name="ad_error">Error while showing ad. Please, be sure you are connected to the internet.</string>
     <string name="ad_not_available">This function is not available at the moment. Excuse us.</string>
+    <string name="unpacking_desc">The app is unpacking assets&#8230; Please, wait for few seconds!</string>
 </resources>

@@ -1,359 +1,478 @@
 {
   "audios/bgmusic.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 509336
   },
   "audios/bubble_fall.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 4612
   },
   "audios/bubble_pop.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 6068
   },
   "audios/bubble_stomp.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 5294
   },
   "audios/coin.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 8072
   },
   "audios/congrats_1.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 6099
   },
   "audios/congrats_2.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 7528
   },
   "audios/congrats_3.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 6451
   },
   "audios/congrats_4.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 8808
   },
   "audios/congrats_5.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 9512
   },
   "audios/electric.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 23880
   },
   "audios/end_lose.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 21535
   },
   "audios/end_win.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 15621
   },
   "audios/explosion.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 11184
   },
   "audios/pause_in.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 9680
   },
   "audios/pause_out.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 9710
   },
   "audios/powerup.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 6834
   },
   "audios/shot_1.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 5199
   },
   "audios/shot_2.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 6597
   },
   "audios/shot_3.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 5751
   },
   "audios/star_1.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 7688
   },
   "audios/star_2.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 7939
   },
   "audios/star_3.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 8109
   },
   "audios/wrong.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 6875
   },
   "audios/safe_open.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 20684
   },
   "audios/glory.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 13857
   },
   "audios/swap.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 9244
   },
   "audios/time.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 4657
   },
   "audios/stone.ogg": {
-    "version": 1
+    "version": 1,
+    "size": 7591
   },
   "fonts/ubuntu-title.ttf": {
-    "version": 1
+    "version": 1,
+    "size": 15108
   },
   "paths/new_sphere.txt": {
-    "version": 1
+    "version": 1,
+    "size": 1105
   },
   "rooms/intro.txt": {
-    "version": 1
+    "version": 1,
+    "size": 305
   },
   "scenes/bomb.glb": {
-    "version": 1
+    "version": 1,
+    "size": 27556
   },
   "scenes/bubble.glb": {
-    "version": 1
+    "version": 1,
+    "size": 5172
   },
   "scenes/cannon_1.glb": {
-    "version": 1
+    "version": 1,
+    "size": 104476
   },
   "scenes/coin.glb": {
-    "version": 1
+    "version": 1,
+    "size": 24576
   },
   "scenes/stone.glb": {
-    "version": 1
+    "version": 1,
+    "size": 13368
   },
   "scenes/level_button.glb": {
-    "version": 1
+    "version": 1,
+    "size": 35480
   },
   "scenes/level_glow.glb": {
-    "version": 1
+    "version": 1,
+    "size": 5708
   },
   "scenes/logo.glb": {
-    "version": 1
+    "version": 1,
+    "size": 302552
   },
   "scenes/scenery_pipe.glb": {
-    "version": 1
+    "version": 1,
+    "size": 80940
   },
   "scenes/world_1.glb": {
-    "version": 1
+    "version": 1,
+    "size": 1517820
   },
   "scenes/world_2.glb": {
-    "version": 1
+    "version": 1,
+    "size": 1546312
   },
   "scenes/world_3.glb": {
-    "version": 1
+    "version": 1,
+    "size": 2113500
   },
   "scenes/world_4.glb": {
-    "version": 1
+    "version": 1,
+    "size": 685676
   },
   "scenes/safe.glb": {
-    "version": 1
+    "version": 1,
+    "size": 162664
   },
   "scenes/world_wall.glb": {
-    "version": 1
+    "version": 1,
+    "size": 105408
   },
   "scenes/powerup.glb": {
-    "version": 1
+    "version": 1,
+    "size": 30088
   },
   "scenes/sparkle.glb": {
-    "version": 1
+    "version": 1,
+    "size": 4644
   },
   "shaders/cubemap.vert": {
-    "version": 1
+    "version": 1,
+    "size": 224
   },
   "shaders/cubemap.frag": {
-    "version": 1
+    "version": 1,
+    "size": 207
   },
   "shaders/passthrough.vert": {
-    "version": 1
+    "version": 1,
+    "size": 323
   },
   "shaders/plasma.frag": {
-    "version": 1
+    "version": 1,
+    "size": 907
   },
   "shaders/screen_quad.frag": {
-    "version": 1
+    "version": 1,
+    "size": 1164
   },
   "shaders/screen_quad.vert": {
-    "version": 1
+    "version": 1,
+    "size": 232
   },
   "shaders/sprite.frag": {
-    "version": 1
+    "version": 1,
+    "size": 736
   },
   "shaders/water.frag": {
-    "version": 1
+    "version": 1,
+    "size": 1232
   },
   "shaders/starroad.frag": {
-    "version": 1
+    "version": 1,
+    "size": 596
   },
   "shaders/sun.frag": {
-    "version": 1
+    "version": 1,
+    "size": 462
   },
   "shaders/shoot_path.frag": {
-    "version": 1
+    "version": 1,
+    "size": 407
   },
   "shaders/timed_bubble.frag": {
-    "version": 1
+    "version": 1,
+    "size": 702
   },
   "textures/bubble_blue.png": {
-    "version": 1
+    "version": 1,
+    "size": 3321
   },
   "textures/bubble_cyan.png": {
-    "version": 1
+    "version": 1,
+    "size": 2390
   },
   "textures/bubble_green.png": {
-    "version": 1
+    "version": 1,
+    "size": 2672
   },
   "textures/bubble_orange.png": {
-    "version": 1
+    "version": 1,
+    "size": 2550
   },
   "textures/bubble_purple.png": {
-    "version": 1
+    "version": 1,
+    "size": 2365
   },
   "textures/bubble_red.png": {
-    "version": 1
+    "version": 1,
+    "size": 2994
   },
   "textures/blackhole_bg.png": {
-    "version": 1
+    "version": 1,
+    "size": 29110
   },
   "textures/blackhole_fg.png": {
-    "version": 1
+    "version": 1,
+    "size": 7787
   },
   "textures/bubble_translucent.png": {
-    "version": 1
+    "version": 1,
+    "size": 8115
   },
   "textures/bubble_yellow.png": {
-    "version": 1
+    "version": 1,
+    "size": 3118
   },
   "textures/bubble_timed.png": {
-    "version": 1
+    "version": 1,
+    "size": 2075
   },
   "textures/moon.png": {
-    "version": 1
+    "version": 1,
+    "size": 66604
   },
   "textures/explosion.png": {
-    "version": 1
+    "version": 1,
+    "size": 150194
   },
   "textures/gui_back_arrow.png": {
-    "version": 1
+    "version": 1,
+    "size": 2302
   },
   "textures/gui_bgmusic_off.png": {
-    "version": 1
+    "version": 1,
+    "size": 22949
   },
   "textures/gui_bgmusic_on.png": {
-    "version": 1
+    "version": 1,
+    "size": 21347
   },
   "textures/gui_button_2x1.png": {
-    "version": 1
+    "version": 1,
+    "size": 23747
   },
   "textures/gui_button_4x1.png": {
-    "version": 1
+    "version": 1,
+    "size": 24727
   },
   "textures/gui_coin.png": {
-    "version": 1
+    "version": 1,
+    "size": 20551
   },
   "textures/gui_congrats.png": {
-    "version": 1
+    "version": 1,
+    "size": 31178
   },
   "textures/gui_exit.png": {
-    "version": 1
+    "version": 1,
+    "size": 23987
   },
   "textures/gui_help.png": {
-    "version": 1
+    "version": 1,
+    "size": 143
   },
   "textures/gui_level_panel.png": {
-    "version": 1
+    "version": 1,
+    "size": 199369
   },
   "textures/gui_next.png": {
-    "version": 1
+    "version": 1,
+    "size": 23157
   },
   "textures/gui_play.png": {
-    "version": 1
+    "version": 1,
+    "size": 35189
   },
   "textures/gui_pu_bomb.png": {
-    "version": 1
+    "version": 1,
+    "size": 20767
   },
   "textures/gui_pu_electric.png": {
-    "version": 1
+    "version": 1,
+    "size": 30791
   },
   "textures/gui_pu_plasma.png": {
-    "version": 1
+    "version": 1,
+    "size": 19247
   },
   "textures/gui_pu_time.png": {
-    "version": 1
+    "version": 1,
+    "size": 24688
   },
   "textures/gui_replay.png": {
-    "version": 1
+    "version": 1,
+    "size": 23760
   },
   "textures/gui_sad.png": {
-    "version": 1
+    "version": 1,
+    "size": 15927
   },
   "textures/gui_happy.png": {
-    "version": 1
+    "version": 1,
+    "size": 31862
   },
   "textures/gui_scroll_back.png": {
-    "version": 1
+    "version": 1,
+    "size": 7254
   },
   "textures/gui_settings.png": {
-    "version": 1
+    "version": 1,
+    "size": 6444
   },
   "textures/gui_sfx_off.png": {
-    "version": 1
+    "version": 1,
+    "size": 21459
   },
   "textures/gui_sfx_on.png": {
-    "version": 1
+    "version": 1,
+    "size": 22264
   },
   "textures/gui_share.png": {
-    "version": 1
+    "version": 1,
+    "size": 24649
   },
   "textures/gui_star.png": {
-    "version": 1
+    "version": 1,
+    "size": 11745
   },
   "textures/gui_time.png": {
-    "version": 1
+    "version": 1,
+    "size": 7525
   },
   "textures/gui_loading.png": {
-    "version": 1
+    "version": 1,
+    "size": 5454
   },
   "textures/gui_textcloud.png": {
-    "version": 1
+    "version": 1,
+    "size": 8294
   },
   "textures/gui_ob_o1.png": {
-    "version": 1
+    "version": 1,
+    "size": 78168
   },
   "textures/gui_ob_o2.png": {
-    "version": 1
+    "version": 1,
+    "size": 68643
   },
   "textures/gui_ob_o3.png": {
-    "version": 1
+    "version": 1,
+    "size": 82694
   },
   "textures/gui_ob_o4.png": {
-    "version": 1
+    "version": 1,
+    "size": 54580
   },
   "textures/lightning.png": {
-    "version": 1
+    "version": 1,
+    "size": 106835
   },
   "textures/lightorb.png": {
-    "version": 1
+    "version": 1,
+    "size": 23720
   },
   "textures/skybox_1_px.png": {
-    "version": 1
+    "version": 1,
+    "size": 86054
   },
   "textures/water_dm.png": {
-    "version": 1
+    "version": 1,
+    "size": 19690
   },
   "textures/water_tm.png": {
-    "version": 1
+    "version": 1,
+    "size": 143324
   },
   "textures/white.png": {
-    "version": 1
+    "version": 1,
+    "size": 130
   },
   "textures/world_1_wem.png": {
-    "version": 1
+    "version": 1,
+    "size": 10688
   },
   "textures/starroad_am.png": {
-    "version": 1
+    "version": 1,
+    "size": 244
   },
   "textures/glow.png": {
-    "version": 1
+    "version": 1,
+    "size": 41512
   },
   "textures/sparkle.png": {
-    "version": 1
+    "version": 1,
+    "size": 1766
   },
   "textures/fire.png": {
-    "version": 1
+    "version": 1,
+    "size": 92202
   },
   "textures/swap.png": {
-    "version": 1
+    "version": 1,
+    "size": 4257
   },
   "textures/shoot_path.png": {
-    "version": 1
+    "version": 1,
+    "size": 127
   }
 }

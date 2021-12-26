@@ -42,14 +42,9 @@ Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").se
 #else
 Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").setSize({ 768, 768 }).setWindowFlags(Configuration::WindowFlag::Resizable) }
 #endif
-, mFrameTime(0.0f), mCurrentGol(nullptr)
+, mFrameTime(0.0f), mCurrentGol(nullptr), mIsInForeground(true), mWaitForUnpack(true)
 {
-    // Setup window
-#if defined(CORRADE_TARGET_ANDROID)
-    
-    isInForeground = true;
-    
-#elif defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
+#if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
     
     // Get default framebuffer and renderbuffer
     {
@@ -84,16 +79,19 @@ Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").se
     CommonUtility::singleton = std::make_unique<CommonUtility>();
 
 #if defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
-    
+
+    // Configure engine parameters
     CommonUtility::singleton->mConfig.assetDir = ios_GetAssetDir();
     CommonUtility::singleton->mConfig.canvasVerticalPadding = ios_GetCanvasVerticalPadding();
     CommonUtility::singleton->mConfig.displayDensity = ios_GetDisplayDensity();
     CommonUtility::singleton->mConfig.saveFile = ios_GetSaveFile();
     
 #elif defined(CORRADE_TARGET_ANDROID)
-    
+
+    // Set native activity
     CommonUtility::singleton->mConfig.nativeActivity = nativeActivity();
 
+    // Configure engine parameters
     const std::array<std::string, 4> params = { "asset_dir", "canvas_vertical_height", "density", "save_file" };
     for (UnsignedInt i = 0; i != params.size(); ++i)
     {
@@ -130,9 +128,6 @@ Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").se
 
     Debug{} << "Asset base directory is" << CommonUtility::singleton->mConfig.assetDir;
 
-    // Setup screen quad shader (after the CommonUtility has started)
-    mScreenQuadShader.setup();
-
     // Init input manager
     InputManager::singleton = std::make_unique<InputManager>();
 
@@ -149,9 +144,9 @@ Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").se
     RoomManager::singleton->setWindowSize(Vector2(windowSize()));
     viewportInternal(nullptr);
 
-    // Build room
-    mTimeline.start();
-    RoomManager::singleton->loadRoom("intro");
+#ifndef GO_EN_REQUIRE_UNPACKING
+    startFirstRoom();
+#endif
 }
 
 Engine::~Engine()
@@ -164,7 +159,7 @@ Engine::~Engine()
 void Engine::tickEvent()
 {
 #if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
-    if (!isInForeground)
+    if (!mIsInForeground)
     {
         mTimeline.nextFrame();
         return;
@@ -352,7 +347,7 @@ void Engine::pauseApp()
 #endif
     
 #ifdef TARGET_MOBILE
-    isInForeground = false;
+    mIsInForeground = false;
     RoomManager::singleton->pauseApp();
 #endif
 }
@@ -364,7 +359,7 @@ void Engine::resumeApp()
 #endif
     
 #ifdef TARGET_MOBILE
-    isInForeground = true;
+    mIsInForeground = true;
     RoomManager::singleton->resumeApp();
 #endif
 }
@@ -372,8 +367,25 @@ void Engine::resumeApp()
 void Engine::drawEvent()
 {
 #ifdef CORRADE_TARGET_ANDROID
-    if (isInForeground)
+    if (mIsInForeground)
     {
+        // Wait for assets unpacking
+        if (mWaitForUnpack)
+        {
+            const auto& aup = CommonUtility::singleton->getValueFromIntent(GO_EN_ASSETS_UNPACKING);
+            while (aup == nullptr)
+            {
+                mTimeline.nextFrame();
+                redraw();
+                return;
+            }
+            mWaitForUnpack = false;
+
+            // Build room
+            startFirstRoom();
+        }
+
+        // Engine loop
         tickEvent();
         redraw();
     }
@@ -564,6 +576,13 @@ void Engine::exitInternal(void* arg)
         ((ExitEvent*)arg)->setAccepted();
     }
 #endif
+}
+
+void Engine::startFirstRoom()
+{
+    mTimeline.start();
+    mScreenQuadShader.setup();
+    RoomManager::singleton->loadRoom("intro");
 }
 
 void Engine::upsertGameObjectLayers()
