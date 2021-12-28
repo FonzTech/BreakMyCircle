@@ -12,7 +12,8 @@
 #include "RoomManager.h"
 #include "Shaders/ScreenQuadShader.h"
 
-#if defined(CORRADE_TARGET_ANDROID)
+#ifdef CORRADE_TARGET_ANDROID
+#define GO_EN_ASSETS_UNPACKING "game_asset_unpacking"
 #include <Magnum/Platform/AndroidApplication.h>
 #else
 #include <Magnum/Platform/Sdl2Application.h>
@@ -20,8 +21,6 @@
 #endif
 
 #define ENGINE_CONFIGURATION Configuration{}.setTitle("BreakMyCircle")
-
-#define GO_EN_ASSETS_UNPACKING "game_asset_unpacking"
 
 using namespace Magnum;
 
@@ -81,10 +80,12 @@ private:
 	void updateMouseButtonState(MouseEvent& event, const bool & pressed);
 	void updateMouseButtonStates(MouseMoveEvent& event);
 
-#ifdef CORRADE_TARGET_ANDROID
-	bool mWaitForUnpack;
-#else
+#ifndef CORRADE_TARGET_ANDROID
 	void updateKeyButtonState(const KeyEvent& event, const bool & pressed);
+#endif
+
+#ifdef GO_EN_ASSETS_UNPACKING
+	bool mWaitForUnpack;
 #endif
 
 	// Variables

@@ -36,13 +36,13 @@ const Int Engine::GO_LAYERS[] = {
 
 Engine::Engine(const Arguments& arguments) :
 #ifdef CORRADE_TARGET_ANDROID
-Platform::Application{ arguments, ENGINE_CONFIGURATION }
+Platform::Application{ arguments, ENGINE_CONFIGURATION }, mWaitForUnpack(true)
 #elif defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
 Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").setWindowFlags(Configuration::WindowFlag::Fullscreen | Configuration::WindowFlag::Resizable) }, mIosDefaultFramebuffer(Containers::NullOpt)
 #else
 Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").setSize({ 768, 768 }).setWindowFlags(Configuration::WindowFlag::Resizable) }
 #endif
-, mFrameTime(0.0f), mCurrentGol(nullptr), mIsInForeground(true), mWaitForUnpack(true)
+, mFrameTime(0.0f), mCurrentGol(nullptr), mIsInForeground(true)
 {
 #if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
     
@@ -144,7 +144,7 @@ Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").se
     RoomManager::singleton->setWindowSize(Vector2(windowSize()));
     viewportInternal(nullptr);
 
-#ifndef GO_EN_REQUIRE_UNPACKING
+#ifndef GO_EN_ASSETS_UNPACKING
     startFirstRoom();
 #endif
 }
@@ -158,6 +158,24 @@ Engine::~Engine()
 
 void Engine::tickEvent()
 {
+#ifdef GO_EN_ASSETS_UNPACKING
+    // Wait for assets unpacking
+    if (mWaitForUnpack)
+    {
+        const auto& aup = CommonUtility::singleton->getValueFromIntent(GO_EN_ASSETS_UNPACKING);
+        while (aup == nullptr)
+        {
+            mTimeline.nextFrame();
+            redraw();
+            return;
+        }
+        mWaitForUnpack = false;
+
+        // Build room
+        startFirstRoom();
+    }
+#endif
+
 #if defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_IOS_SIMULATOR)
     if (!mIsInForeground)
     {
@@ -369,22 +387,6 @@ void Engine::drawEvent()
 #ifdef CORRADE_TARGET_ANDROID
     if (mIsInForeground)
     {
-        // Wait for assets unpacking
-        if (mWaitForUnpack)
-        {
-            const auto& aup = CommonUtility::singleton->getValueFromIntent(GO_EN_ASSETS_UNPACKING);
-            while (aup == nullptr)
-            {
-                mTimeline.nextFrame();
-                redraw();
-                return;
-            }
-            mWaitForUnpack = false;
-
-            // Build room
-            startFirstRoom();
-        }
-
         // Engine loop
         tickEvent();
         redraw();
