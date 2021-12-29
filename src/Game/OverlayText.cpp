@@ -157,16 +157,7 @@ void OverlayText::updateTransformations()
 		mPosition.xy() - s2,
 		mPosition.xy() + s2
 	};
-	mBbox = Range3D{
-		{ r.min().x(), r.min().y(), -1.0f },
-		{ r.max().x(), r.max().y(), 1.0f }
-	};
-	/*
-	(*mManipulator)
-		.resetTransformation()
-		.scale(mScale)
-		.translate(mPosition);
-	*/
+	mBbox = getTransformedBbox(r);
 }
 
 Resource<GL::AbstractShaderProgram, Shaders::DistanceFieldVector2D> OverlayText::getShader()

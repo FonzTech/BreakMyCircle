@@ -34,6 +34,7 @@ protected:
 	virtual void updateTransformations() = 0;
 
 	void updateAspectRatioFactors();
+	Range3D getTransformedBbox(const Range2D & source);
 
 	Float mAspectRatio;
 	Vector2 mAnchor;

@@ -277,4 +277,5 @@ private:
 	LS_PickupHandler mPickupHandler;
 
 	UnsignedInt mWatchForPowerup;
+	bool mIsCenterDown;
 };

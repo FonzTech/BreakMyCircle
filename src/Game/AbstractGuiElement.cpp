@@ -55,3 +55,19 @@ void AbstractGuiElement::setIdentityCanvasSize()
 {
 	mCustomCanvasSize = Vector2(-1.0f);
 }
+
+Range3D AbstractGuiElement::getTransformedBbox(const Range2D & source)
+{
+	return {
+		{
+			Math::min(source.min().x(), source.max().x()),
+			Math::min(source.min().y(), source.max().y()),
+			-1.0f
+		},
+		{
+			Math::max(source.min().x(), source.max().x()),
+			Math::max(source.min().y(), source.max().y()),
+			1.0f
+		}
+	};
+}

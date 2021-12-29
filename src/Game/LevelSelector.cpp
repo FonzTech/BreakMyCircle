@@ -109,6 +109,7 @@ LevelSelector::LevelSelector(const Int parentIndex) : GameObject(), IAppStateCal
 
     mWatchForPowerup = 0U;
 	mDisplayMiniOnboarding = false;
+	mIsCenterDown = false;
 
 	// Level info
 	{
@@ -1224,7 +1225,12 @@ void LevelSelector::windowForCommon()
 	}
 
 	// Scroll back
-	mScreenButtons[GO_LS_GUI_SCROLL_BACK]->drawable->setPosition(Vector2(0.5f, -0.75f + (0.25f + p0.y()) * (mLevelGuiAnim[4] - mSettingsAnim - mLevelAnim)));
+	{
+		const auto& d = mScreenButtons[GO_LS_GUI_SCROLL_BACK]->drawable;
+		d->setPosition(Vector2(0.5f, -0.75f + (0.25f + p0.y()) * (mLevelGuiAnim[4] - mSettingsAnim - mLevelAnim)));
+		d->setSize({ 0.1f, mIsCenterDown ? 0.1f : -0.1f });
+		d->setAnchor({ -1.0f, mIsCenterDown ? 1.0f : -1.0f });
+	}
 
 	// Help tips
 	const auto& wrf = getWidthReferenceFactor();
@@ -1520,7 +1526,13 @@ void LevelSelector::manageLevelState()
 		}
 
 		// Check for distance between last level and current scroll position
-		mLevelInfo.lastLevelPos = getLastLevelPos();
+		{
+			mLevelInfo.lastLevelPos = getLastLevelPos();
+			if (Math::abs(mPosition.z() - mLevelInfo.lastLevelPos.z()) > 10.0f)
+			{
+				mIsCenterDown = mPosition.z() < mLevelInfo.lastLevelPos.z();
+			}
+		}
 
 		if (RoomManager::singleton->mGoLayers[GOL_PERSP_SECOND].list->empty())
 		{

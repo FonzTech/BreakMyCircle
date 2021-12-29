@@ -129,8 +129,5 @@ void OverlayGui::updateTransformations()
 		tp - size,
 		tp + size
 	};
-	mBbox = Range3D{
-		{ r.min().x(), r.min().y(), -1.0f },
-		{ r.max().x(), r.max().y(), 1.0f }
-	};
+	mBbox = getTransformedBbox(r);
 }
