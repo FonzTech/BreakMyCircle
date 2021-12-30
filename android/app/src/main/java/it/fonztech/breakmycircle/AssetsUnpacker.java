@@ -95,8 +95,6 @@ public final class AssetsUnpacker extends Thread {
 
                     // Save asset info
                     editor.putLong(fname, assetVersion);
-
-                    Thread.sleep(50L);
                 }
             }
 
