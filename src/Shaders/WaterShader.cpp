@@ -12,7 +12,7 @@
 WaterShader::WaterShader()
 {
 	// Setup shader from file
-#ifdef TARGET_MOBILE
+#if defined(TARGET_MOBILE) || defined(CORRADE_TARGET_EMSCRIPTEN)
 	MAGNUM_ASSERT_GL_VERSION_SUPPORTED(GL::Version::GLES300);
 
 	GL::Shader vert{ GL::Version::GLES300, GL::Shader::Type::Vertex };

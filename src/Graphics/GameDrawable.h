@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include "BaseDrawable.h"
 #include "../Common/CommonUtility.h"
 
@@ -50,6 +52,7 @@ public:
 
 	ClassShaderType& getShader() override
 	{
+		CommonUtility::singleton->setObjectIdOutputEnabled(std::is_same<ClassShaderType, Shaders::Phong>::value);
 		return *mShader;
 	}
 
@@ -57,10 +60,12 @@ public:
 	{
 		if (mDrawCallback != nullptr)
 		{
+			CommonUtility::singleton->setObjectIdOutputEnabled(false);
 			mDrawCallback->draw(this, transformationMatrix, camera);
 			return;
 		}
 
+		CommonUtility::singleton->setObjectIdOutputEnabled(std::is_same<ClassShaderType, Shaders::Phong>::value);
 		((Shaders::Phong&) *mShader)
 			.setAmbientColor(0x00000ff_rgbaf)
 			.setSpecularColor(0xffffffff_rgbf)

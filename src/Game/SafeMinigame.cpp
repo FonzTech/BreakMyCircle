@@ -63,19 +63,19 @@ SafeMinigame::SafeMinigame(const Int parentIndex, const Float startingScale) : G
 
 	for (const auto& item : mDrawables)
 	{
-		if (item->mMesh->label() == "HandleV")
+		if (item->mMeshName == "HandleV")
 		{
 			mDrawableHandle = item;
 		}
-		else if (item->mMesh->label() == "DoorV")
+		else if (item->mMeshName == "DoorV")
 		{
 			mDrawableDoor = item;
 		}
-		else if (item->mMesh->label() == "KnobV")
+		else if (item->mMeshName == "KnobV")
 		{
 			mDrawableKnob = item;
 		}
-        else if (item->mMesh->label() == "FaceV")
+        else if (item->mMeshName == "FaceV")
         {
             const std::string tn = CommonUtility::singleton->getTextureNameForPowerup(mPowerupIndex);
             item->mTexture = CommonUtility::singleton->loadTexture(tn);
@@ -322,7 +322,7 @@ void SafeMinigame::draw(BaseDrawable* baseDrawable, const Matrix4& transformatio
 	else
 	{
 #ifdef CORRADE_TARGET_ANDROID
-		const bool b2 = baseDrawable->mMesh->label() == "FaceV" || baseDrawable->mMesh->label() == "PowerupV";
+		const bool b2 = baseDrawable->mMeshName == "FaceV" || baseDrawable->mMeshName == "PowerupV";
         const auto ambientColor = b2 ? 0x303030_rgbf : 0x909090_rgbf;
 #else
 		const bool b2 = false;

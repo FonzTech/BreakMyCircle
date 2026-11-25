@@ -47,7 +47,7 @@ void LevelSelectorSidecar::update()
 
 void LevelSelectorSidecar::draw(BaseDrawable* baseDrawable, const Matrix4& transformationMatrix, SceneGraph::Camera3D& camera)
 {
-	if (mGlowManipulator != nullptr && baseDrawable->mMesh->label() == "GlowV")
+	if (mGlowManipulator != nullptr && baseDrawable->mMeshName == "GlowV")
 	{
 		(*mFlat3DShader)
 			.setTransformationProjectionMatrix(camera.projectionMatrix() * transformationMatrix)
@@ -85,7 +85,7 @@ void LevelSelectorSidecar::setParameters(Resource<GL::Texture2D> & texture, Unsi
 	for (auto& drawable : mDrawables)
 	{
 		// Set the correct texture for the "platform" mesh
-		if (drawable->mMesh->label() == GO_LS_MESH_PLATFORM)
+		if (drawable->mMeshName == GO_LS_MESH_PLATFORM)
 		{
 			drawable->mTexture = texture;
 		}

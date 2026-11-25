@@ -343,8 +343,12 @@ void Projectile::snapToGrid(const std::unique_ptr<std::unordered_set<GameObject*
 	else
 	{
 		// Correct position to protect against overlaps
+#ifdef CORRADE_TARGET_EMSCRIPTEN
+		adjustPosition();
+#else
 		std::thread tjob(&Projectile::adjustPosition, this);
 		tjob.join();
+#endif
 
 		// Create new bubbles with the same color
 		std::shared_ptr<Bubble> b = std::make_shared<Bubble>(mParentIndex, mAmbientColor);

@@ -52,7 +52,6 @@ public:
 	{
 	public:
 		SaveData();
-		~SaveData();
 
 		bool load();
 		bool save();
@@ -162,11 +161,7 @@ public:
 	void pauseApp();
 	void resumeApp();
 
-#ifdef CORRADE_TARGET_ANDROID
-	void viewportChange(Platform::AndroidApplication::ViewportEvent* event);
-#else
-	void viewportChange(Platform::Sdl2Application::ViewportEvent* event);
-#endif
+	void viewportChange(Platform::Application::ViewportEvent* event);
 
 	void clear();
 	void setup();

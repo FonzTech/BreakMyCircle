@@ -134,7 +134,7 @@ Scenery::Scenery(const Int parentIndex, const Int modelIndex, const Int subType)
 
 		for (const auto& item : mDrawables)
 		{
-			const auto& label = item->mMesh->label();
+			const auto& label = item->mMeshName;
 
 			// Saturn Globe
 			if (label == "SaturnGlobeV")
@@ -213,7 +213,7 @@ void Scenery::update()
 		mAlphaCheckTimer = 5.0f;
 		for (auto& item : mDrawables)
 		{
-			if (CommonUtility::singleton->stringEndsWith(item->mMesh->label(), "T"))
+			if (CommonUtility::singleton->stringEndsWith(item->mMeshName, "T"))
 			{
 				item->pushToFront();
 			}
@@ -241,7 +241,7 @@ void Scenery::update()
 					.rotateX(Deg(15.0f))
 					.rotateY(Deg(45.0f));
 
-				if (mSubType == 0 && d->mMesh->label() == "SaturnGlobeV")
+				if (mSubType == 0 && d->mMeshName == "SaturnGlobeV")
 				{
 					d->translate(Vector3(0.0f, 0.0f, 10.0f));
 				}

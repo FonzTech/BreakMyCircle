@@ -187,7 +187,14 @@ void Engine::tickEvent()
     // Update input events
     InputManager::singleton->updateMouseStates();
 
-#ifndef CORRADE_TARGET_ANDROID
+#ifdef CORRADE_TARGET_EMSCRIPTEN
+    if (RoomManager::singleton->mBgMusic)
+    {
+        RoomManager::singleton->mBgMusic->update();
+    }
+#endif
+
+#if !defined(CORRADE_TARGET_ANDROID) && !defined(CORRADE_TARGET_EMSCRIPTEN)
     InputManager::singleton->updateKeyStates();
 #endif
 
@@ -395,6 +402,9 @@ void Engine::drawEvent()
     {
         mTimeline.nextFrame();
     }
+#elif defined(CORRADE_TARGET_EMSCRIPTEN)
+    tickEvent();
+    redraw();
 #endif
 }
 
@@ -521,7 +531,7 @@ void Engine::keyReleaseEvent(KeyEvent& event)
 }
 #endif
 
-#ifndef CORRADE_TARGET_ANDROID
+#if !defined(CORRADE_TARGET_ANDROID) && !defined(CORRADE_TARGET_EMSCRIPTEN)
 void Engine::exitEvent(ExitEvent& event)
 {
     exitInternal(&event);
@@ -571,7 +581,7 @@ void Engine::exitInternal(void* arg)
     // Clear input manager
     InputManager::singleton = nullptr;
 
-#ifndef CORRADE_TARGET_ANDROID
+#if !defined(CORRADE_TARGET_ANDROID) && !defined(CORRADE_TARGET_EMSCRIPTEN)
     // Pass default behaviour
     if (arg != nullptr)
     {

@@ -15,6 +15,8 @@
 #ifdef CORRADE_TARGET_ANDROID
 #define GO_EN_ASSETS_UNPACKING "game_asset_unpacking"
 #include <Magnum/Platform/AndroidApplication.h>
+#elif defined(CORRADE_TARGET_EMSCRIPTEN)
+#include <Magnum/Platform/EmscriptenApplication.h>
 #else
 #include <Magnum/Platform/Sdl2Application.h>
 #include <SDL2/SDL.h>
@@ -34,7 +36,7 @@ public:
 protected:
 	static const Float mDrawFrameTime;
 
-#ifdef CORRADE_TARGET_ANDROID
+#if defined(CORRADE_TARGET_ANDROID) || defined(CORRADE_TARGET_EMSCRIPTEN)
     void tickEvent();
 #else
     void tickEvent() override;
@@ -66,6 +68,9 @@ private:
 #ifndef CORRADE_TARGET_ANDROID
 	void keyPressEvent(KeyEvent& event) override;
 	void keyReleaseEvent(KeyEvent& event) override;
+#endif
+
+#if !defined(CORRADE_TARGET_ANDROID) && !defined(CORRADE_TARGET_EMSCRIPTEN)
 	void exitEvent(ExitEvent& event) override;
     void anyEvent(SDL_Event& event) override;
 #endif

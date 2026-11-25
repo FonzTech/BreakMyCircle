@@ -89,7 +89,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 
 	for (auto& item : mDrawables)
 	{
-		const auto& label = item->mMesh->label();
+		const auto& label = item->mMeshName;
 		const auto& it = indexes.find(label);
 		if (it != indexes.end())
 		{

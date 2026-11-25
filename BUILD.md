@@ -81,7 +81,7 @@ This process should be repeated for both `arm64-v8a` and `x86_64`, and respectiv
 mkdir build && cd build
 ```
 
-### Windows 10 (NDK 22.0.7026061)
+### Building from Windows 10 (NDK 22.0.7026061)
 ```
 cmake .. ^
   -DCMAKE_MAKE_PROGRAM=D:\Development\ninja.exe ^
@@ -124,7 +124,9 @@ cmake --build . --config Release --target install
 
 ## Compile for iOS
 
-This process allows a single step to compile multiple architectures in a single shot, by specifing a value like `arm64;armv7;armv7s` for the `CMAKE_OSX_ARCHITECTURES` variable. However, from iOS 11 and beyond, only 64-bit architectures are supported. So, we are setting the value `arm64`.
+This process allows a single step to compile multiple architectures in a single shot, by specifing a value like `arm64
+armv7
+armv7s` for the `CMAKE_OSX_ARCHITECTURES` variable. However, from iOS 11 and beyond, only 64-bit architectures are supported. So, we are setting the value `arm64`.
 
 Toolchains must be downloaded from <https://github.com/mosra/toolchains>, whose contents goes into the `toolchains` folder of *Corrade* and *Magnum Graphics* library.
 
@@ -143,7 +145,8 @@ Toolchains must be downloaded from <https://github.com/mosra/toolchains>, whose 
 - File list in various *Build Phases* must be fixed, otherwise the compilation will not succed. If it succeded, the binary would be bloated with useless files (such as Source files!!). Beware of "Xcode magic"... bleh.
 
 - To build for iOS-Simulator, you must:
-  - set `CMAKE_OSX_ARCHITECTURES` to `x86_64`;
+  - set `CMAKE_OSX_ARCHITECTURES` to `x86_64`
+
   - set `CMAKE_OSX_SYSROOT` to `/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk`.
 
 - Like the Android guide, the `-fno-rtti` custom flag must be set in *Build Settings*, in *Other C++ Flags*.
@@ -189,16 +192,43 @@ cmake --build . --config Release
 cmake --build . --config Release --target install
 ```
 
-### Application Entrypoint
+## Compile for WebGL
+
+Use Emscripten 2.0.14 with the current 2020 Magnum sources, and activate it before configuring or building so Emscripten and its `node` runtime are available. Use a separate build directory; CMake caches the target platform and cannot share a build tree with the Windows build. Every library below, including zlib and libpng, must be built for Emscripten; the existing Windows binaries cannot be linked into WebGL. Magnum must be built with `WITH_EMSCRIPTENAPPLICATION=ON`, `TARGET_GLES=ON`, and `TARGET_GLES2=OFF`. The installed Magnum package must include the `EmscriptenApplication` component.
+
+### Build the application from Windows
+```
+call D:\Development\emsdk\emsdk_env.bat
+mkdir build-webgl && cd build-webgl
+cmake .. ^
+  -G Ninja ^
+  -DCMAKE_MAKE_PROGRAM="D:/Development/ninja.exe" ^
+  -DCMAKE_TOOLCHAIN_FILE="D:/Development/C++/toolchains/generic/Emscripten-wasm.cmake" ^
+  -DEMSCRIPTEN_PREFIX="D:/Development/emsdk/upstream/emscripten" ^
+  -DCMAKE_PREFIX_PATH="D:/Development/C++/corrade-emscripten-2.0.14-bin;D:/Development/C++/magnum-emscripten-2.0.14-bin;D:/Development/C++/magnum-plugins-emscripten-2.0.14-bin;D:/Development/C++/zlib-emscripten-2.0.14-bin;D:/Development/C++/libpng-emscripten-2.0.14-bin" ^
+  -DCMAKE_FIND_ROOT_PATH="D:/Development/C++/corrade-emscripten-2.0.14-bin;D:/Development/C++/magnum-emscripten-2.0.14-bin;D:/Development/C++/magnum-plugins-emscripten-2.0.14-bin;D:/Development/C++/zlib-emscripten-2.0.14-bin;D:/Development/C++/libpng-emscripten-2.0.14-bin" ^
+  -DMAGNUMPLUGINS_INCLUDE_DIR="D:/Development/C++/magnum-plugins-emscripten-2.0.14-bin/include" ^
+  -DCORRADE_RC_EXECUTABLE="D:/Development/C++/corrade-bin/bin/corrade-rc.exe" ^
+  -DCORRADE_TARGET_EMSCRIPTEN=ON ^
+  -DCMAKE_BUILD_TYPE=Release ^
+  -DCMAKE_INSTALL_PREFIX="D:/VisualStudioProjects/BreakMyCircle/build-webgl/deploy"
+cmake --build . --config Release
+cmake --install .
+```
+
+After installation, serve `build-webgl/deploy` over HTTP (for example, run `python -m http.server 8000` from that directory); browsers generally block the app's asset requests when opening the HTML directly as a `file://` URL. Open `http://localhost:8000/my-application.html`.
+
+## Application Entrypoint
 
 The following sources from *SDL 2.0.16* are modified:
 
 - `src/video/uikit/SDL_uikitappdelegate.h` (added the `getLaunchOption` instance method and `_launchOption` instance property).
-- `src/video/uikit/SDL_uikitappdelegate.m` (implemented the above instance method; "original" launch option are saved into the above-mentioned `_launchOption` property).
+- `src/video/uikit/SDL_uikitappdelegate.m` (implemented the above instance method
+ "original" launch option are saved into the above-mentioned `_launchOption` property).
 
 A slight modification to `SDL_uikitappdelegate` interface is applied, as described above. Specifically, the method `(NSDictionary*)SDL_uikitappdelegate::getLaunchOption` can be used in project, which uses this modified version of SDL2, to obtain launch options for the application, such as detecting if it was launched by a notification tap. The rest of the source is the same that can be found in the *SDL 2.0.16* release.
 
-### AppStore Upload
+## AppStore Upload
 
 - Disable *Bitcode support*, since third-party dependencies shall be compiled with bitcode support as well.
 - Error **ITMS-90429** is due to this <https://developer.apple.com/library/archive/technotes/tn2435/_index.html#//apple_ref/doc/uid/DTS40017543-CH1-TROUBLESHOOTING-BUNDLE_ERRORS>. For every `dylib`, wrap it in a `framework` file like the one included in this repo, in the `ios` folder. Then, build a `Info.plist` accordingly to the bundled dynamic library file. Also, changing the `@rpath` inside the `dylib` could be necessary. Check for `install_name_tool`. This step is required for `libopenal.1.dylib`, since the Xcode's provided OpenAL framework does NOT behave exactly as the version of the above specified library.

@@ -90,7 +90,7 @@ Player::Player(const Int parentIndex) : GameObject(), mPlasmaSquareRenderer(Vect
 		// Put "Spark" mesh always at the beginning
 		for (UnsignedInt i = 0; i < 3; ++i)
 		{
-			if (mBombDrawables[i]->mMesh->label() == "SparkV")
+			if (mBombDrawables[i]->mMeshName == "SparkV")
 			{
 				if (i != 0)
 				{

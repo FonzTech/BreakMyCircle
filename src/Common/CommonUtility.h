@@ -98,6 +98,7 @@ public:
 
 	// Clear method
 	void clear();
+	void setObjectIdOutputEnabled(const bool enabled);
 
 	// Read vector from JSON
 	template <std::size_t S, class T>

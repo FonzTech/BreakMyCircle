@@ -40,11 +40,12 @@ GameObject::~GameObject()
 const void GameObject::playSfxAudio(const Int index, const Float offset)
 {
 	const Float level = RoomManager::singleton->getSfxGain();
-	(*mPlayables[index])
-		.setGain(level)
-		.source()
-			.setOffsetInSeconds(offset)
-			.play();
+	auto& source = (*mPlayables[index]).setGain(level).source();
+	if (offset != 0.0f)
+	{
+		source.setOffsetInSeconds(offset);
+	}
+	source.play();
 }
 
 const void GameObject::pushToFront()

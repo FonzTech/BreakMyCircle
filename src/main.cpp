@@ -1,6 +1,6 @@
 #include "Engine.h"
 
-#if defined(CORRADE_TARGET_IOS_SIMULATOR) or defined(CORRADE_TARGET_IOS)
+#if defined(CORRADE_TARGET_IOS_SIMULATOR) || defined(CORRADE_TARGET_IOS) || defined(CORRADE_TARGET_EMSCRIPTEN)
 #include <MagnumPlugins/AnyImageImporter/importStaticPlugin.cpp>
 #include <MagnumPlugins/AnySceneImporter/importStaticPlugin.cpp>
 #include <MagnumPlugins/PngImporter/importStaticPlugin.cpp>

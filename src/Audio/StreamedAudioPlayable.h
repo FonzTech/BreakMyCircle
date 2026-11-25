@@ -24,6 +24,7 @@ public:
 
 	void clear();
 	void loadAudio(const std::string & filename);
+	void update();
 
 	const Audio::Source::State state() const;
 	void play();

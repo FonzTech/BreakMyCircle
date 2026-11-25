@@ -387,3 +387,8 @@ FodyWeavers.xsd
 # JetBrains Rider
 .idea/
 *.sln.iml
+
+# Build folders
+build-webgl
+build
+web

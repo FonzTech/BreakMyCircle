@@ -45,6 +45,35 @@ void CommonUtility::clear()
 	manager.clear();
 }
 
+void CommonUtility::setObjectIdOutputEnabled(const bool enabled)
+{
+#ifdef CORRADE_TARGET_EMSCRIPTEN
+	const Int parentIndex = RoomManager::singleton->getCurrentBoundParentIndex();
+	const auto layer = RoomManager::singleton->mGoLayers.find(parentIndex);
+	if (layer == RoomManager::singleton->mGoLayers.end() || !layer->second.objectIdBuffer)
+	{
+		return;
+	}
+
+	GLint boundFramebuffer;
+	glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &boundFramebuffer);
+	auto& framebuffer = *layer->second.frameBuffer;
+	if (GLuint(boundFramebuffer) != framebuffer.id())
+	{
+		return;
+	}
+
+	framebuffer.mapForDraw({
+		{ 0, GL::Framebuffer::ColorAttachment{ 0 } },
+		{ 1, enabled ?
+			GL::Framebuffer::DrawAttachment{ GL::Framebuffer::ColorAttachment{ 1 } } :
+			GL::Framebuffer::DrawAttachment::None }
+	});
+#else
+	static_cast<void>(enabled);
+#endif
+}
+
 Resource<Audio::Buffer> CommonUtility::loadAudioData(const std::string & filename)
 {
 	// Get required resource

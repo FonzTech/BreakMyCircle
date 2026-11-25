@@ -4,6 +4,8 @@
 
 #ifdef CORRADE_TARGET_ANDROID
 #include <Magnum/Platform/AndroidApplication.h>
+#elif defined(CORRADE_TARGET_EMSCRIPTEN)
+#include <Magnum/Platform/EmscriptenApplication.h>
 #else
 #include <Magnum/Platform/Sdl2Application.h>
 #endif
@@ -19,9 +21,5 @@ public:
     virtual void pauseApp() = 0;
     virtual void resumeApp() = 0;
 
-#ifdef CORRADE_TARGET_ANDROID
-    virtual void viewportChange(Platform::AndroidApplication::ViewportEvent* event) = 0;
-#else
-    virtual void viewportChange(Platform::Sdl2Application::ViewportEvent* event) = 0;
-#endif
+    virtual void viewportChange(Platform::Application::ViewportEvent* event) = 0;
 };

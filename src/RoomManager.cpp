@@ -2,9 +2,51 @@
 
 #include <vector>
 #include <unordered_set>
+#include <cstdlib>
 #include <Corrade/Utility/Directory.h>
 #include <Magnum/Audio/AbstractImporter.h>
 #include <Magnum/GL/DefaultFramebuffer.h>
+
+#ifdef CORRADE_TARGET_EMSCRIPTEN
+#include <emscripten.h>
+
+namespace {
+
+constexpr const char* BrowserSaveKey = "break-my-circle.save";
+
+EM_JS(int, readBrowserSave, (const char* key, char** result), {
+	const storageKey = UTF8ToString(key);
+	let value;
+	try {
+		value = localStorage.getItem(storageKey);
+	} catch (error) {
+		console.error("Could not read Break My Circle save data from localStorage:", error);
+		return -1;
+	}
+
+	if (value === null) return 0;
+
+	const size = lengthBytesUTF8(value) + 1;
+	const data = _malloc(size);
+	if (!data) return -1;
+
+	stringToUTF8(value, data, size);
+	HEAPU32[result >> 2] = data;
+	return 1;
+});
+
+EM_JS(int, writeBrowserSave, (const char* key, const char* value), {
+	try {
+		localStorage.setItem(UTF8ToString(key), UTF8ToString(value));
+		return 1;
+	} catch (error) {
+		console.error("Could not write Break My Circle save data to localStorage:", error);
+		return 0;
+	}
+});
+
+}
+#endif
 
 #include "Common/CommonUtility.h"
 #include "Common/PerlinNoise.hpp"
@@ -56,11 +98,6 @@ RoomManager::SaveData::SaveData()
 {
 }
 
-RoomManager::SaveData::~SaveData()
-{
-	Debug{} << "Save data was destroyed";
-}
-
 bool RoomManager::SaveData::load()
 {
 	// Set default value
@@ -90,17 +127,34 @@ bool RoomManager::SaveData::load()
 		}
 	}
 
-	// Check if file path is valid
+	// Load stored JSON
+	std::string rawJson;
+#ifdef CORRADE_TARGET_EMSCRIPTEN
+	char* browserSave = nullptr;
+	const Int result = readBrowserSave(BrowserSaveKey, &browserSave);
+	if (result == 0)
+	{
+		return false;
+	}
+	if (result < 0 || browserSave == nullptr)
+	{
+		Error{} << "Could not read save data from browser localStorage";
+		return false;
+	}
+	rawJson = browserSave;
+	std::free(browserSave);
+#else
 	if (CommonUtility::singleton->mConfig.saveFile.empty())
 	{
 		Error{} << "Save file to read from was NULL";
 		return false;
 	}
 
-	// Load JSON data
+	rawJson = Utility::Directory::readString(CommonUtility::singleton->mConfig.saveFile);
+#endif
+
 	nlohmann::json jsonData;
 	{
-		const auto rawJson = Utility::Directory::readString(CommonUtility::singleton->mConfig.saveFile);
 		try
 		{
 			jsonData = nlohmann::json::parse(rawJson);
@@ -174,12 +228,13 @@ bool RoomManager::SaveData::load()
 
 bool RoomManager::SaveData::save()
 {
-	// Check if file path is valid
+#ifndef CORRADE_TARGET_EMSCRIPTEN
 	if (CommonUtility::singleton->mConfig.saveFile.empty())
 	{
 		Error{} << "Save file to save to was NULL";
 		return false;
 	}
+#endif
 
 	// Dump JSON data to file
 	nlohmann::json jsonData = {
@@ -206,18 +261,31 @@ bool RoomManager::SaveData::save()
 		jsonData["levelScores"][key] = item.second;
 	}
 
-	Utility::Directory::writeString(CommonUtility::singleton->mConfig.saveFile, jsonData.dump());
+	const std::string serialized = jsonData.dump();
+#ifdef CORRADE_TARGET_EMSCRIPTEN
+	if (!writeBrowserSave(BrowserSaveKey, serialized.c_str()))
+	{
+		Error{} << "Could not write save data to browser localStorage";
+		return false;
+	}
+#else
+	Utility::Directory::writeString(CommonUtility::singleton->mConfig.saveFile, serialized);
+#endif
 	return true;
 }
 
 RoomManager::RoomManager() : mCurrentBoundParentIndex(-1), mSfxLevel(1.0f)
 {
 	// Create audio manager
+#ifdef CORRADE_TARGET_EMSCRIPTEN
+	mAudioContext = std::make_unique<Audio::Context>();
+#else
 	mAudioContext = std::make_unique<Audio::Context>(
 		Audio::Context::Configuration{}
 		.setHrtf(Audio::Context::Configuration::Hrtf::Disabled)
 		.setFrequency(44100)
 	);
+#endif
 	mAudioListener = std::make_unique<Audio::Listener3D>(mScene);
 	mBgMusicState = Audio::Source::State::Initial;
 
@@ -345,11 +413,7 @@ void RoomManager::resumeApp()
     }
 }
 
-#ifdef CORRADE_TARGET_ANDROID
-void RoomManager::viewportChange(Platform::AndroidApplication::ViewportEvent* event)
-#else
-void RoomManager::viewportChange(Platform::Sdl2Application::ViewportEvent* event)
-#endif
+void RoomManager::viewportChange(Platform::Application::ViewportEvent* event)
 {
     for (auto* p : mAppStateCallbacks)
     {

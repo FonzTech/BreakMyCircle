@@ -316,7 +316,7 @@ Int Bubble::destroyNearbyBubbles(const bool force)
 	// Make nearby bubbles with the same color explode
 	else
 	{
-		auto future = std::async(std::launch::async, [&]() {
+		fps = [&]() {
 			// Check for nearby collisions
 			BubbleCollisionGroup bg;
 			bg.insert(this);
@@ -345,9 +345,7 @@ Int Bubble::destroyNearbyBubbles(const bool force)
 
 			// Return the list
 			return fps;
-		});
-
-		fps = future.get();
+		}();
 	}
 
 	Int shootAmount = Int(fps->size());
@@ -412,7 +410,7 @@ Int Bubble::destroyNearbyBubblesImpl(BubbleCollisionGroup* group)
 
 Int Bubble::destroyDisjointBubbles()
 {
-	auto future = std::async(std::launch::async, [this]() {
+	auto fps = [this]() {
 		// Create list of bubbles
 		std::unordered_set<Bubble*> group;
 		for (const auto& go : *RoomManager::singleton->mGoLayers[mParentIndex].list)
@@ -467,8 +465,7 @@ Int Bubble::destroyDisjointBubbles()
 		
 		// Return list of positions
 		return fps;
-	});
-	auto fps = future.get();
+	}();
 
 	bool coinSound = true;
 	Int shootAmount = Int(fps->size());

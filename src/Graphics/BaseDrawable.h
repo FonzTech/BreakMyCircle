@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <Magnum/ResourceManager.h>
 #include <Magnum/GL/AbstractShaderProgram.h>
 #include <Magnum/Shaders/Phong.h>
@@ -23,6 +24,7 @@ public:
 
 	Resource<GL::Mesh> mMesh;
 	Resource<GL::Texture2D> mTexture;
+	std::string mMeshName;
 	Color4 mColor;
 
 	void setDrawCallback(IDrawCallback* drawCallback);

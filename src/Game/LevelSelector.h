@@ -93,11 +93,7 @@ public:
     void pauseApp() override;
     void resumeApp() override;
 
-#ifdef CORRADE_TARGET_ANDROID
-	void viewportChange(Platform::AndroidApplication::ViewportEvent* event) override;
-#else
-	void viewportChange(Platform::Sdl2Application::ViewportEvent* event) override;
-#endif
+	void viewportChange(Platform::Application::ViewportEvent* event) override;
 
 private:
 	static std::unordered_map<Int, std::array<Vector3, 6>> sLevelButtonPositions;

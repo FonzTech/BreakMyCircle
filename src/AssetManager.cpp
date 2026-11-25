@@ -203,10 +203,12 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 
 			// Compile the mesh
 			GL::Mesh mesh = MeshTools::compile(*meshData);
+#ifndef MAGNUM_TARGET_WEBGL
 			{
 				const auto& p = name.find('_');
 				mesh.setLabel(p != std::string::npos ? name.substr(0, p) : name);
 			}
+#endif
 
 			// Add to resources
 			CommonUtility::singleton->manager.set(assets.meshes[i].key(), std::move(mesh));
@@ -247,6 +249,9 @@ void AssetManager::loadAssets(GameObject& gameObject, Object3D& manipulator, con
 	{
 		auto& drawables = RoomManager::singleton->mGoLayers[gameObject.mParentIndex].drawables;
 		std::shared_ptr<GameDrawable<Shaders::Phong>> cd = std::make_shared<GameDrawable<Shaders::Phong>>(*drawables, coloredShader, assets.meshes[0], 0xffffffff_rgbaf);
+		const auto& name = importer->meshName(0);
+		const auto p = name.find('_');
+		cd->mMeshName = p != std::string::npos ? name.substr(0, p) : name;
 		cd->setParent(&manipulator);
 		cd->setDrawCallback(drawCallback);
 		gameObject.mDrawables.emplace_back(cd);
@@ -279,6 +284,9 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 	// Add a drawable if the object has a mesh and the mesh is loaded
 	if (objectData->instanceType() == Trade::ObjectInstanceType3D::Mesh && objectData->instance() != -1 && assets.meshes[objectData->instance()])
 	{
+		const auto& meshName = importer.meshName(objectData->instance());
+		const auto meshNameEnd = meshName.find('_');
+		const std::string drawableMeshName = meshName.substr(0, meshNameEnd);
 		const Int materialId = static_cast<Trade::MeshObjectData3D*>(objectData.get())->material();
 		auto& drawables = RoomManager::singleton->mGoLayers[gameObject.mParentIndex].drawables;
 
@@ -286,6 +294,7 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 		if (materialId == -1 || !assets.materials[materialId])
 		{
 			std::shared_ptr<GameDrawable<Shaders::Phong>> cd = std::make_shared<GameDrawable<Shaders::Phong>>(*drawables, coloredShader, assets.meshes[objectData->instance()], 0xffffffff_rgbaf);
+			cd->mMeshName = drawableMeshName;
 			cd->setParent(objectNode);
 			cd->setDrawCallback(drawCallback);
 			gameObject.mDrawables.emplace_back(cd);
@@ -300,6 +309,7 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 			if (texture)
 			{
 				std::shared_ptr<GameDrawable<Shaders::Phong>> td = std::make_shared<GameDrawable<Shaders::Phong>>(*drawables, texturedShader, assets.meshes[objectData->instance()], texture);
+				td->mMeshName = drawableMeshName;
 				td->setParent(objectNode);
 				td->setDrawCallback(drawCallback);
 				gameObject.mDrawables.emplace_back(td);
@@ -307,6 +317,7 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 			else
 			{
 				std::shared_ptr<GameDrawable<Shaders::Phong>> cd = std::make_shared<GameDrawable<Shaders::Phong>>(*drawables, coloredShader, assets.meshes[objectData->instance()], 0xffffffff_rgbaf);
+				cd->mMeshName = drawableMeshName;
 				cd->setParent(objectNode);
 				cd->setDrawCallback(drawCallback);
 				gameObject.mDrawables.emplace_back(cd);
@@ -317,6 +328,7 @@ void AssetManager::processChildrenAssets(GameObject& gameObject, ImportedAssets&
 		else if (assets.meshes[objectData->instance()]->count() > 0)
 		{
 			std::shared_ptr<GameDrawable<Shaders::Phong>> cd = std::make_shared<GameDrawable<Shaders::Phong>>(*drawables, coloredShader, assets.meshes[objectData->instance()], ((Trade::PhongMaterialData&) *assets.materials[materialId]).diffuseColor());
+			cd->mMeshName = drawableMeshName;
 			cd->setParent(objectNode);
 			cd->setDrawCallback(drawCallback);
 			gameObject.mDrawables.emplace_back(cd);
