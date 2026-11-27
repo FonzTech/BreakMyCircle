@@ -354,6 +354,7 @@ if(CORRADE_TARGET_EMSCRIPTEN)
     install(FILES
         web/my-application.html
         web/my-application.css
+        web/favicon.png
         ${MAGNUM_EMSCRIPTENAPPLICATION_JS}
         ${MAGNUM_WEBAPPLICATION_CSS}
         DESTINATION ${CMAKE_INSTALL_PREFIX})
