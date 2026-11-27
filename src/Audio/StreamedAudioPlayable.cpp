@@ -117,7 +117,12 @@ void StreamedAudioPlayable::update()
 		const auto internalState = source->state();
 		if (internalState == Audio::Source::State::Playing)
 		{
+#ifdef CORRADE_TARGET_EMSCRIPTEN
+			// Compare per-channel sample frames. Emscripten's OpenAL backend reports byte offsets without the channel count.
+			tryToFeed = source->offsetInSamples() >= mBuffers[mBufferIndex].sampleCount() ? 1 : 0;
+#else
 			tryToFeed = source->offsetInBytes() >= mBuffers[mBufferIndex].size() ? 1 : 0;
+#endif
 		}
 		else if (internalState == Audio::Source::State::Stopped)
 		{
