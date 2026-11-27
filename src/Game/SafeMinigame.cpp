@@ -1,5 +1,6 @@
 #include "SafeMinigame.h"
 
+#include <cmath>
 #include <Magnum/Animation/Easing.h>
 
 #include "LevelSelector.h"
@@ -174,7 +175,7 @@ void SafeMinigame::update()
 		// Check for tap
 		if (mTexts[0]->mColor.data()[3] >= 0.99f && InputManager::singleton->mMouseStates[PRIMARY_BUTTON] == IM_STATE_RELEASED)
 		{
-			mAnimY = std::fmodf(mAnimY, 2.0f);
+			mAnimY = std::fmod(mAnimY, 2.0f);
 			mMode = 1;
 		}
 		break;
@@ -227,7 +228,7 @@ void SafeMinigame::update()
 		{
 			obtainPowerup();
 			playSfxAudio(0);
-			mAnimY = std::fmodf(mAnimY, 2.0f);
+			mAnimY = std::fmod(mAnimY, 2.0f);
 			mMode = 5;
 		}
 		break;

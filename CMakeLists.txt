@@ -4,7 +4,7 @@ if(CORRADE_TARGET_EMSCRIPTEN AND CMAKE_VERSION VERSION_LESS 3.13)
     message(FATAL_ERROR "The Emscripten target requires CMake 3.13 or newer")
 endif()
 
-if(NOT CORRADE_TARGET_ANDROID AND NOT CORRADE_TARGET_EMSCRIPTEN)
+if(CMAKE_GENERATOR MATCHES "^Visual Studio" AND NOT CORRADE_TARGET_ANDROID AND NOT CORRADE_TARGET_EMSCRIPTEN)
     set(CMAKE_GENERATOR_PLATFORM "x64") # BEFORE PROJECT
     set(CMAKE_VS_PLATFORM_TOOLSET "v141") # BEFORE ON cmake build
 endif()
@@ -20,7 +20,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if(NOT CORRADE_TARGET_ANDROID AND NOT CORRADE_TARGET_EMSCRIPTEN)
     set(CMAKE_BUILD_TYPE "Debug")
-    set(CMAKE_VS_PLATFORM_TOOLSET "v141") # AFTER ON cmake install
+    if(CMAKE_GENERATOR MATCHES "^Visual Studio")
+        set(CMAKE_VS_PLATFORM_TOOLSET "v141") # AFTER ON cmake install
+    endif()
 endif()
 
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
@@ -74,7 +76,7 @@ else()
     if(NOT CORRADE_TARGET_EMSCRIPTEN)
         set(CORRADE_MODULES_PATH "D:/Development/C++/corrade/modules")
 
-        set(SDL2_INCLUDE_DIR "D:/Development/C++/SDL2-2.0.14/include")
+        set(SDL2_INCLUDE_DIR "D:/Development/C++/SDL2-2.0.14/include/SDL2" CACHE PATH "SDL2 include directory" FORCE)
         set(SDL2_LIBRARY "D:/Development/C++/SDL2-2.0.14/lib/x64")
         set(CORRADE_BIN_PATH "D:/Development/C++/corrade-bin")
         set(MAGNUM_BIN_PATH "D:/Development/C++/magnum-bin")
@@ -280,6 +282,12 @@ elseif(CORRADE_TARGET_EMSCRIPTEN)
     )
 
 else()
+
+  target_include_directories(${PROJECT_NAME} PRIVATE
+      "D:/Development/C++/nlohmann-json"
+      "D:/Development/C++/magnum-plugins/src/external/stb"
+      "D:/Development/C++/SDL2-2.0.14/include"
+  )
 
   target_link_libraries(${PROJECT_NAME} PRIVATE
     Corrade::Main

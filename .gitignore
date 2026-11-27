@@ -392,3 +392,6 @@ FodyWeavers.xsd
 build-webgl
 build
 web
+
+# Runtime files
+save.json

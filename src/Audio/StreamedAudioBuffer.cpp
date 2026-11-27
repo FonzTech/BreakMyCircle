@@ -1,5 +1,7 @@
 #include "StreamedAudioBuffer.h"
 
+#include <cstdlib>
+#include <cstring>
 #include <string>
 #include <Corrade/Utility/DebugStl.h>
 

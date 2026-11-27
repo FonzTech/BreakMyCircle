@@ -1,5 +1,6 @@
 #include "LevelSelector.h"
 
+#include <cmath>
 #include <utility>
 #include <Magnum/Math/Math.h>
 #include <Magnum/Math/Constants.h>
@@ -1904,8 +1905,8 @@ void LevelSelector::createLevelRoom()
 	// Level is started
 	{
 		const auto flid = Float(mLevelInfo.selectedLevelId);
-		const std::int32_t octaves = 4 + std::int32_t(std::fmodf(flid, 12.0f));
-		const double frequency = 8 + double(std::fmodf(flid, 56.0f));
+		const std::int32_t octaves = 4 + std::int32_t(std::fmod(flid, 12.0f));
+		const double frequency = 8 + double(std::fmod(flid, 56.0f));
 		const Int blen = Int(Math::round(Float(Int(mLevelInfo.selectedLevelId) % 10) * 0.2f)) + 6;
 		RoomManager::singleton->createLevelRoom(shared_from_this(), blen, blen - 1, mLevelInfo.selectedLevelId, octaves, frequency);
 

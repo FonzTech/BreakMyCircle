@@ -1,5 +1,6 @@
 #include "RoomManager.h"
 
+#include <cmath>
 #include <vector>
 #include <unordered_set>
 #include <cstdlib>
@@ -147,6 +148,10 @@ bool RoomManager::SaveData::load()
 	if (CommonUtility::singleton->mConfig.saveFile.empty())
 	{
 		Error{} << "Save file to read from was NULL";
+		return false;
+	}
+	if (!Utility::Directory::exists(CommonUtility::singleton->mConfig.saveFile))
+	{
 		return false;
 	}
 
@@ -720,7 +725,7 @@ std::unique_ptr<RoomManager::Instantiator> RoomManager::getGameObjectFromNoiseVa
 			else if (isTimed)
 			{
 				k = BUBBLE_TIMED.toSrgbInt();
-				params["timedDelay"] = std::fmodf(Float(seed % 10U) * 0.1f + Float(value) * 10.0f, 1.0f);
+				params["timedDelay"] = std::fmod(Float(seed % 10U) * 0.1f + Float(value) * 10.0f, 1.0f);
 			}
 
 			const auto& vd = sBubbleColors[k];

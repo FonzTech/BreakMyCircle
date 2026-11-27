@@ -124,6 +124,9 @@ Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").se
         }
     }
     
+#elif !defined(CORRADE_TARGET_EMSCRIPTEN)
+    CommonUtility::singleton->mConfig.saveFile = "save.json";
+
 #endif
 
     Debug{} << "Asset base directory is" << CommonUtility::singleton->mConfig.assetDir;
