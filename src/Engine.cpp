@@ -503,7 +503,10 @@ void Engine::viewportInternal(ViewportEvent* event)
     RoomManager::singleton->setWindowSize(Vector2(windowSize()));
     RoomManager::singleton->mCamera->setViewport(mCachedFramebufferSize);
 
-#if defined(CORRADE_TARGET_WINDOWS) || defined(CORRADE_TARGET_WINDOWS_RT) || defined(CORRADE_TARGET_APPLE)
+#if defined(CORRADE_TARGET_EMSCRIPTEN)
+    // Scale pixel-sized UI for the browser's high-DPI framebuffer.
+    CommonUtility::singleton->mConfig.displayDensity = devicePixelRatio().x();
+#elif defined(CORRADE_TARGET_WINDOWS) || defined(CORRADE_TARGET_WINDOWS_RT) || defined(CORRADE_TARGET_APPLE)
 #if !defined(CORRADE_TARGET_IOS) && !defined(CORRADE_TARGET_IOS_SIMULATOR)
     CommonUtility::singleton->mConfig.displayDensity = Math::max(1.0f, Math::round(mCachedFramebufferSize.y() / 256.0f) * 0.5f - 1.0f);
 #endif
