@@ -16,11 +16,61 @@
       <script>
         (() => {
           const canvas = document.getElementById("canvas");
+          let activeTouchId = null;
+
           const resizeCanvas = () => {
             canvas.style.width = `${window.innerWidth}px`;
             canvas.style.height = `${window.innerHeight}px`;
           };
 
+          const dispatchMouseEvent = (type, touch, buttons) => {
+            canvas.dispatchEvent(new MouseEvent(type, {
+              bubbles: true,
+              cancelable: true,
+              view: window,
+              clientX: touch.clientX,
+              clientY: touch.clientY,
+              button: 0,
+              buttons,
+            }));
+          };
+
+          const activeTouch = (touches) =>
+            Array.from(touches).find((touch) => touch.identifier === activeTouchId);
+
+          canvas.addEventListener("touchstart", (event) => {
+            if (activeTouchId !== null || event.touches.length !== 1) {
+              event.preventDefault();
+              return;
+            }
+
+            const touch = event.changedTouches[0];
+            activeTouchId = touch.identifier;
+            event.preventDefault();
+            dispatchMouseEvent("mousedown", touch, 1);
+          }, { passive: false });
+
+          window.addEventListener("touchmove", (event) => {
+            if (activeTouchId === null) return;
+            event.preventDefault();
+
+            const touch = activeTouch(event.changedTouches);
+            if (touch) dispatchMouseEvent("mousemove", touch, 1);
+          }, { passive: false });
+
+          const endTouch = (event) => {
+            if (activeTouchId === null) return;
+            event.preventDefault();
+
+            const touch = activeTouch(event.changedTouches);
+            if (!touch) return;
+
+            dispatchMouseEvent("mouseup", touch, 0);
+            activeTouchId = null;
+          };
+
+          window.addEventListener("touchend", endTouch, { passive: false });
+          window.addEventListener("touchcancel", endTouch, { passive: false });
           window.addEventListener("resize", resizeCanvas);
           resizeCanvas();
         })();
