@@ -2352,6 +2352,7 @@ void LevelSelector::createPowerupView()
 					offsetButton = Vector3(0.0f, 0.05f, 0.0f);
 				}
 
+#if BMC_SHOW_REWARDED_AD_BUTTON
 				// Watch Ad
 				{
 					const std::string& text = "Watch Rewarded Ad";
@@ -2368,6 +2369,7 @@ void LevelSelector::createPowerupView()
 						offsetButton
 						);
 				}
+#endif
 
 				// Buy for coins
 				{

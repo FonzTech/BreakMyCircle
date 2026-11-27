@@ -164,6 +164,14 @@
 #define BMC_SETTINGS_GITHUB_URL "https://github.com/FonzTech"
 #endif
 
+#ifndef BMC_SHOW_REWARDED_AD_BUTTON
+#if defined(__EMSCRIPTEN__)
+#define BMC_SHOW_REWARDED_AD_BUTTON 0
+#else
+#define BMC_SHOW_REWARDED_AD_BUTTON 1
+#endif
+#endif
+
 #if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
 #define TARGET_MOBILE
 #endif
