@@ -391,7 +391,7 @@ FodyWeavers.xsd
 # Build folders
 build-webgl
 build
-web
+web/my-application.js
 
 # Runtime files
 save.json

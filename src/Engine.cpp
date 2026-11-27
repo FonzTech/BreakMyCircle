@@ -39,6 +39,8 @@ Engine::Engine(const Arguments& arguments) :
 Platform::Application{ arguments, ENGINE_CONFIGURATION }, mWaitForUnpack(true)
 #elif defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
 Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").setWindowFlags(Configuration::WindowFlag::Fullscreen | Configuration::WindowFlag::Resizable) }, mIosDefaultFramebuffer(Containers::NullOpt)
+#elif defined(CORRADE_TARGET_EMSCRIPTEN)
+Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").setWindowFlags(Configuration::WindowFlag::Resizable) }
 #else
 Platform::Application{ arguments, Configuration{}.setTitle("Break My Circle").setSize({ 768, 768 }).setWindowFlags(Configuration::WindowFlag::Resizable) }
 #endif
