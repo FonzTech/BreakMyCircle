@@ -131,7 +131,7 @@ Logo::Logo(const Int parentIndex) : GameObject()
 	}
 
 	{
-		const std::string& text = "Copyright 2021";
+		const std::string& text = "Copyright 2026";
 		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
 		go->mSize = Vector2(0.75f);
 		go->mColor = Color4(1.0f, 0.9f, 0.0f, 0.0f);
