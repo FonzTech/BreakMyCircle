@@ -12,6 +12,7 @@
 #include "../InputManager.h"
 #include "../AssetManager.h"
 #include "../Common/CommonUtility.h"
+#include "../Common/CommonTypes.h"
 #include "../Common/CustomRenderers/LSNumberRenderer.h"
 #include "Player.h"
 #include "LimitLine.h"
@@ -20,8 +21,23 @@
 #include "FallingBubble.h"
 #include "SafeMinigame.h"
 
+#if defined(CORRADE_TARGET_EMSCRIPTEN)
+#include <emscripten/emscripten.h>
+#endif
+
 #ifdef CORRADE_TARGET_ANDROID
 #include <android/native_activity.h>
+#endif
+
+#if defined(CORRADE_TARGET_EMSCRIPTEN) && BMC_SETTINGS_USE_PERSONAL_LINKS
+namespace {
+
+void openSettingsUrl(const char* url)
+{
+	EM_ASM({ window.open(UTF8ToString($0), "_blank"); }, url);
+}
+
+}
 #endif
 
 std::shared_ptr<GameObject> LevelSelector::getInstance(const nlohmann::json & params)
@@ -2986,9 +3002,13 @@ void LevelSelector::createTexts()
 		RoomManager::singleton->mGoLayers[GOL_ORTHO_FIRST].push_back(go);
 	}
 
-	// Vote This App text
+	// First settings link
 	{
+#if defined(CORRADE_TARGET_EMSCRIPTEN) && BMC_SETTINGS_USE_PERSONAL_LINKS
+		const std::string text = "> My Website";
+#else
 		const std::string& text = "> Vote This App";
+#endif
 		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(0.6f, 1.0f, 0.6f, 1.0f);
@@ -3006,15 +3026,23 @@ void LevelSelector::createTexts()
 				return false;
 			}
 
-			Debug{} << "You have clicked VOTE ME";
+			Debug{} << "You have clicked the first settings link";
+#if defined(CORRADE_TARGET_EMSCRIPTEN) && BMC_SETTINGS_USE_PERSONAL_LINKS
+			openSettingsUrl(BMC_SETTINGS_WEBSITE_URL);
+#else
 			callNativeMethod(METHOD_GAME_VOTE_ME);
+#endif
 			return true;
 		};
 	}
 
-	// Other Apps text
+	// Second settings link
 	{
+#if defined(CORRADE_TARGET_EMSCRIPTEN) && BMC_SETTINGS_USE_PERSONAL_LINKS
+		const std::string text = "> My GitHub";
+#else
 		const std::string& text = "> Other Apps";
+#endif
 		const std::shared_ptr<OverlayText> go = std::make_shared<OverlayText>(GOL_ORTHO_FIRST, Text::Alignment::MiddleCenter, UnsignedInt(text.length()));
 		go->mPosition = Vector3(2.0f, 2.0f, 0.0f);
 		go->mColor = Color4(1.0f, 0.6f, 0.6f, 1.0f);
@@ -3032,8 +3060,12 @@ void LevelSelector::createTexts()
 				return false;
 			}
 
-			Debug{} << "You have clicked OTHER APPS";
+			Debug{} << "You have clicked the second settings link";
+#if defined(CORRADE_TARGET_EMSCRIPTEN) && BMC_SETTINGS_USE_PERSONAL_LINKS
+			openSettingsUrl(BMC_SETTINGS_GITHUB_URL);
+#else
 			callNativeMethod(METHOD_GAME_OTHER_APPS);
+#endif
 			return true;
 		};
 	}

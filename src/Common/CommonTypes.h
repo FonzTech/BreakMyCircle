@@ -148,6 +148,22 @@
 #define METHOD_GAME_VOTE_ME "gameVoteMe"
 #define METHOD_GAME_OTHER_APPS "gameOtherApps"
 
+#ifndef BMC_SETTINGS_USE_PERSONAL_LINKS
+#if defined(__EMSCRIPTEN__)
+#define BMC_SETTINGS_USE_PERSONAL_LINKS 1
+#else
+#define BMC_SETTINGS_USE_PERSONAL_LINKS 0
+#endif
+#endif
+
+#ifndef BMC_SETTINGS_WEBSITE_URL
+#define BMC_SETTINGS_WEBSITE_URL "https://www.alfonsopauciello.com"
+#endif
+
+#ifndef BMC_SETTINGS_GITHUB_URL
+#define BMC_SETTINGS_GITHUB_URL "https://github.com/FonzTech"
+#endif
+
 #if defined(CORRADE_TARGET_ANDROID) or defined(CORRADE_TARGET_IOS) or defined(CORRADE_TARGET_IOS_SIMULATOR)
 #define TARGET_MOBILE
 #endif
